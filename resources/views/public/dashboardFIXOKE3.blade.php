@@ -3079,17 +3079,12 @@ function setYouTubeVolume(v) {
             waktuDisplay = `<span class="time" style="color: #fcd34d; font-size: 8px;"><i class="fas fa-clock"></i> ${tgl.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})} WIB</span>`;
         }
         
-        // 🔥 DETEKSI SUMBER UNTUK TAMPILAN VISUAL
-        const metode = pelanggan.statusInfo && pelanggan.statusInfo.metode ? pelanggan.statusInfo.metode : 'Kantor';
-        const sumberText = metode === 'PPOB' ? 'PPOB' : 'Kantor Unit Darmaraja';
-        const iconSumber = metode === 'PPOB' ? 'fa-mobile-alt' : 'fa-building';
-
         const itemHTML = `
             <div class="notification-item new-payment">
                 <strong>${pelanggan.nama}</strong>
                 <span class="amount">${formatRupiah(pelanggan.jumlah)}</span>
                 ${waktuDisplay}
-                <span class="location"><i class="fas ${iconSumber}"></i> ${sumberText}</span>
+                <span class="location"><i class="fas fa-${pelanggan.statusInfo.metode === 'PPOB' ? 'mobile-alt' : 'building'}"></i> ${pelanggan.statusInfo.metode}</span>
             </div>
         `;
         
@@ -3118,66 +3113,47 @@ function setYouTubeVolume(v) {
 function handlePaymentReceived(pelanggan) {
     console.log('💰 Payment received:', pelanggan);
     
-    // 🔥 TETAP TAMPILKAN NOTIFIKASI VISUAL
-    if (typeof showNotification === 'function') {
-        showNotification(`💰 Pembayaran dari ${pelanggan.nama} - Terima kasih!`, 'payment');
-    }
+    // 🔥 TETAP TAMPILKAN NOTIFIKASI
+    showNotification(`💰 Pembayaran dari ${pelanggan.nama} - Terima kasih!`, 'payment');
     
+    // 🔥 JIKA LIVE MUTED, TETAP MAINKAN SUARA
+    // HAPUS: if (isLiveMuted) { return; }
+    
+    // 🔥 CEK SPEECH SYNTHESIS
     if (typeof speechSynthesis === 'undefined') {
         console.log('⚠️ Browser tidak support speechSynthesis');
         return;
     }
     
-    try { speechSynthesis.cancel(); } catch (e) {}
+    // 🔥 CANCEL SUARA SEBELUMNYA
+    try {
+        speechSynthesis.cancel();
+    } catch (e) {
+        console.log('⚠️ Cancel error:', e);
+    }
     
-    const namaNormal = typeof formatNameForSpeech === 'function' ? formatNameForSpeech(pelanggan.nama, 'female') : pelanggan.nama;
+    // 🔥 FORMAT PESAN
+    const namaNormal = formatNameForSpeech ? formatNameForSpeech(pelanggan.nama, 'female') : pelanggan.nama;
     
-    // 🔥 DETEKSI SUMBER PEMBAYARAN (PPOB vs KANTOR)
-    const metode = pelanggan.statusInfo && pelanggan.statusInfo.metode ? pelanggan.statusInfo.metode : 'Kantor';
-    // Untuk suara, kita gunakan "PPOB" dan "Kantor Unit Darmaraja"
-    const sumberText = metode === 'PPOB' ? 'PPOB' : 'Kantor Unit Darmaraja';
-    
-    // ============================================
-    // 🔥 10 KALIMAT RANDOM: HANGAT, DEKAT, & MENYANJUNG
-    // ============================================
-        // ============================================
-    // 🔥 10 KALIMAT RANDOM: PENUH KASIH SAYANG & KEHANGATAN
-    // ============================================
-        // ============================================
-    // 🔥 10 KALIMAT RANDOM: PROFESIONAL, HANGAT, & PENUH PENGHARGAAN
-    // ============================================
     const thankYouMessages = [
-        `Yang Terhormat, ${namaNormal}. Baru saja, pembayaran Anda kami terima. Dari keluarga besar PDAM Darmaraja, kami ucapkan terima kasih yang tulus. Semoga rezeki Anda selalu berlimpah dan berkah.`,
-        
-        `Kepada Yang Terhormat, ${namaNormal}. Tepat saat ini, pembayaran Anda telah kami konfirmasi. Terima kasih atas loyalitas Anda. Kebanggaan kami dapat melayani pelanggan sebaik Anda di Darmaraja.`,
-        
-        `Yang Terhormat, ${namaNormal}. Kabar baik, transaksi Anda baru saja berhasil. Terima kasih telah mendukung pelayanan air bersih. Bersama Anda, Darmaraja terus mengalir dengan lebih baik.`,
-        
-        `Salam hormat untuk, ${namaNormal}. Pembayaran Anda, baru saja kami terima dengan senang hati. Kami sangat menghargai kedisiplinan dan tanggung jawab Anda. Semoga Anda dan keluarga selalu sehat.`,
-        
-        `Yang kami muliakan, ${namaNormal}. Live update dari kami, pembayaran Anda telah lunas. Terima kasih atas kepercayaan Anda. Melayani Anda, adalah kehormatan dan komitmen utama kami di Unit Darmaraja.`,
-        
-        `Yang Terhormat, ${namaNormal}. Baru saja, notifikasi pembayaran Anda masuk. Terima kasih banyak. Kepercayaan Anda, adalah motivasi terbesar kami untuk terus memberikan pelayanan terbaik.`,
-        
-        `Kepada Yang Terhormat, ${namaNormal}. Pembayaran Anda, telah kami proses dengan sukses. Sikap tanggung jawab Anda, sangat menginspirasi kami. Terima kasih telah menjadi mitra sejati PDAM Darmaraja.`,
-        
-        `Yang Terhormat, ${namaNormal}. Pemberitahuan terkini, pembayaran Anda telah tercatat. Kami sangat bahagia dapat melayani Anda. Dedikasi Anda, adalah alasan kami terus berinovasi.`,
-        
-        `Yang Terhormat, ${namaNormal}. Tepat saat ini, kami telah menerima pembayaran dari Anda. Apresiasi setinggi-tingginya untuk Anda. Kami akan senantiasa berupaya memberikan pelayanan yang istimewa untuk Anda.`,
-        
-        `Salam hangat untuk, ${namaNormal}. Baru saja, pembayaran Anda kami konfirmasi. Terima kasih telah mempercayakan kebutuhan air Anda kepada kami. Kami akan selalu berusaha memberikan yang terbaik untuk Anda.`
+        "Terima kasih atas pembayaran Anda. Kepercayaan Anda adalah motivasi kami untuk terus memberikan pelayanan terbaik.",
+        "Pembayaran Anda telah kami terima. Terima kasih telah menjadi pelanggan setia PDAM Unit Pelaksana Darmaraja.",
+        "Terima kasih. Kontribusi Anda sangat berarti bagi kelangsungan pelayanan air bersih di wilayah Darmaraja."
     ];
-    // ============================================
-    // ============================================
-
-    // 🔥 GABUNGKAN UCAPAN DENGAN SUMBER PEMBAYARAN
-    const randomUcapan = thankYouMessages[Math.floor(Math.random() * thankYouMessages.length)];
-    const fullMessage = `${randomUcapan} Transaksi ini tercatat melalui ${sumberText}.`;
+    const thankYouMsg = thankYouMessages[Math.floor(Math.random() * thankYouMessages.length)];
+    
+    const metodeText = pelanggan.statusInfo && pelanggan.statusInfo.metode === 'PPOB' ? 'P. P. O. B.' : 'Kantor Unit Cabang';
+    
+    // 🔥 SUSUN PESAN (TANPA NOMINAL & TANPA JAM - SESUAI REQUEST)
+    const fullMessage = `${thankYouMsg} Atas nama ${namaNormal}, pembayaran telah kami terima melalui ${metodeText}.`;
     
     console.log('🔊 Playing message:', fullMessage);
     
+    // 🔥 PUTAR SUARA
     if (typeof speak === 'function') {
         speak(fullMessage, 'female');
+    } else {
+        console.error('❌ Fungsi speak() tidak ditemukan!');
     }
 }
    //  const fullMessage = `${thankYouMsg} Atas nama ${namaNormal}, pembayaran sebesar ${formatRupiah(pelanggan.jumlah)} telah kami terima melalui ${metodeText}${waktuText}.`;
