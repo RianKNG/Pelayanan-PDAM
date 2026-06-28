@@ -31,9 +31,7 @@ body { font-family: 'Inter', sans-serif; background: #f8fafc; overflow-x: hidden
 .notification-title { font-size: 10px; opacity: 0.9; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; font-weight: 600; }
 .notification-scroll { overflow: hidden; white-space: nowrap; position: relative; }
 .notification-scroll-content { display: inline-block; animation: scroll-left var(--scroll-duration, 60s) linear infinite; font-size: 11px; }
-.notification-item { display: inline-block; margin-right: 30px; padding: 4px 12px; background: rgba(255, 255, 255, 0.15); border-radius: 15px; backdrop-filter: blur(5px); transition: all 0.3s ease; }
-.notification-item.active-sync { background: linear-gradient(135deg, #fbbf24, #f59e0b) !important; transform: scale(1.15); box-shadow: 0 0 20px rgba(251, 191, 36, 0.8); }
-.notification-item.active-sync strong, .notification-item.active-sync .amount, .notification-item.active-sync .location { color: #7c2d12 !important; font-weight: 800 !important; }
+.notification-item { display: inline-block; margin-right: 30px; padding: 4px 12px; background: rgba(255, 255, 255, 0.15); border-radius: 15px; backdrop-filter: blur(5px); }
 .notification-item strong { color: #fff; font-weight: 700; }
 .notification-item .amount { color: #86efac; font-weight: 700; }
 .notification-item .location { color: #fcd34d; font-size: 10px; }
@@ -44,37 +42,22 @@ body { font-family: 'Inter', sans-serif; background: #f8fafc; overflow-x: hidden
 .contact-item:hover { background: #f0f9ff; transform: translateY(-2px); color: #0369a1; }
 .contact-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #e0f2fe, #bae6fd); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0369a1; font-size: 14px; flex-shrink: 0; }
 .contact-icon.whatsapp { background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: #047857; }
+.contact-item:hover .contact-icon.whatsapp { background: linear-gradient(135deg, #10b981, #059669); color: white; }
 .contact-icon.location { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #92400e; }
 .contact-icon.clock { background: linear-gradient(135deg, #ede9fe, #ddd6fe); color: #6d28d9; }
 .contact-text strong { display: block; font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; font-weight: 600; }
 .contact-text span { font-weight: 600; color: #1e293b; font-size: 13px; }
 .wa-qr-btn { background: #25D366; color: white; border: none; padding: 4px 8px; border-radius: 6px; font-size: 10px; margin-left: 5px; cursor: pointer; transition: all 0.2s; }
 .wa-qr-btn:hover { background: #128C7E; transform: scale(1.05); }
-.main-wrapper { display: flex; height: calc(100vh - 130px); position: relative; margin-right: 420px; }
+.main-wrapper { display: flex; height: calc(100vh - 130px); position: relative; }
 #map { flex: 1; height: 100%; z-index: 1; }
-.sidebar { position: fixed !important; right: 0 !important; top: 120px !important; bottom: 20px !important; width: 400px !important; background: white; box-shadow: -2px 0 15px rgba(0,0,0,0.15); z-index: 999; display: flex; flex-direction: column; transform: translateX(0) !important; border-radius: 12px 0 0 12px; overflow: hidden; }
-.sidebar-header { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 15px 20px; position: sticky; top: 0; z-index: 10; }
+.sidebar { width: 450px; background: white; box-shadow: -2px 0 15px rgba(0,0,0,0.08); z-index: 100; transition: transform 0.3s ease; display: flex; flex-direction: column; }
+.sidebar-header { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 18px 20px; position: sticky; top: 0; z-index: 10; }
 .sidebar-header h5 { margin: 0; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 .sidebar-header small { opacity: 0.85; font-size: 11px; display: block; margin-top: 3px; }
 .sidebar-content { padding: 15px; overflow-y: auto; flex: 1; scroll-behavior: smooth; }
 .sidebar-content::-webkit-scrollbar { width: 6px; }
 .sidebar-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-.search-container { background: linear-gradient(135deg, #f0f9ff, #e0f2fe); padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 2px solid #bae6fd; }
-.search-title { font-size: 11px; font-weight: 700; color: #0369a1; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-.search-row { display: flex; gap: 6px; margin-bottom: 8px; }
-.search-input { flex: 1; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 12px; background: white; }
-.search-input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
-.search-select { padding: 8px 6px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 11px; background: white; min-width: 110px; }
-.search-btn { padding: 8px 14px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 5px; }
-.search-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
-.search-btn.clear { background: linear-gradient(135deg, #94a3b8, #64748b); }
-.search-results { max-height: 200px; overflow-y: auto; margin-top: 8px; }
-.search-result-item { padding: 8px 10px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 5px; cursor: pointer; transition: all 0.2s; font-size: 11px; display: flex; justify-content: space-between; align-items: center; }
-.search-result-item:hover { background: #f0f9ff; border-color: #3b82f6; transform: translateX(3px); }
-.search-result-item .sr-name { font-weight: 600; color: #1e293b; }
-.search-result-item .sr-detail { color: #64748b; font-size: 10px; }
-.search-result-item .sr-badge { background: #3b82f6; color: white; padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: 700; }
-.search-empty { text-align: center; padding: 10px; color: #94a3b8; font-size: 11px; font-style: italic; }
 .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
 .stats-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
 .stat-card { padding: 12px; border-radius: 12px; text-align: center; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.2s; position: relative; overflow: hidden; cursor: pointer; }
@@ -103,7 +86,7 @@ body { font-family: 'Inter', sans-serif; background: #f8fafc; overflow-x: hidden
 .list-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
 .list-item-title { font-weight: 600; font-size: 13px; color: #1e293b; display: flex; align-items: center; gap: 8px; }
 .color-indicator { width: 20px; height: 4px; border-radius: 2px; }
-.control-buttons { position: fixed; right: 430px; top: 150px; z-index: 1001; display: flex; flex-direction: column; gap: 10px; }
+.control-buttons { position: fixed; right: 20px; top: 150px; z-index: 1001; display: flex; flex-direction: column; gap: 10px; }
 .control-btn { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; border: none; padding: 10px 16px; border-radius: 10px; box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3); cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
 .control-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(30, 60, 114, 0.4); }
 .control-btn.expand { background: linear-gradient(135deg, #10b981, #059669); }
@@ -201,7 +184,7 @@ body { font-family: 'Inter', sans-serif; background: #f8fafc; overflow-x: hidden
 .legend-item { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
 .legend-color { width: 20px; height: 4px; border-radius: 2px; }
 .legend-marker { width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 1px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; color: white; font-size: 8px; }
-.legend-pelanggan { position: absolute; bottom: 20px; right: 430px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); z-index: 500; max-width: 250px; font-size: 12px; }
+.legend-pelanggan { position: absolute; bottom: 20px; right: 20px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); z-index: 500; max-width: 250px; font-size: 12px; }
 .legend-pelanggan-title { font-weight: 700; margin-bottom: 10px; color: #1e293b; font-size: 13px; display: flex; align-items: center; gap: 6px; }
 .legend-pelanggan-item { display: flex; align-items: center; gap: 8px; margin: 5px 0; font-size: 11px; }
 .legend-pelanggan-marker { width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 1px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; color: white; font-size: 8px; }
@@ -214,13 +197,16 @@ body { font-family: 'Inter', sans-serif; background: #f8fafc; overflow-x: hidden
 .marker-pin:hover { transform: scale(1.15); z-index: 10; }
 .shape-circle { border-radius: 50%; }
 .shape-square { border-radius: 6px; }
+.shape-pin { border-radius: 50% 50% 50% 0 !important; transform: rotate(-45deg); }
+.shape-pin i { transform: rotate(45deg); }
 .marker-label { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: rgba(30, 41, 59, 0.9); color: white; padding: 2px 6px; border-radius: 8px; font-size: 9px; white-space: nowrap; font-weight: 600; margin-top: 4px; }
 .pulse-ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; border-radius: 50%; animation: pulse-animation 2s infinite; z-index: 1; }
 @keyframes pulse-animation { 0% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; box-shadow: 0 0 0 0 currentColor; } 70% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; box-shadow: 0 0 0 15px currentColor; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 0; } }
 .empty-state { text-align: center; padding: 20px; color: #94a3b8; font-size: 12px; font-style: italic; }
-.main-wrapper.is-fullscreen { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99999 !important; background: white; margin-right: 0 !important; }
+.main-wrapper.is-fullscreen { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99999 !important; background: white; }
 .main-wrapper.is-fullscreen #map { height: 100vh !important; }
-.main-wrapper.is-fullscreen .top-info-bar, .main-wrapper.is-fullscreen .contact-bar, .main-wrapper.is-fullscreen .sidebar { display: none !important; }
+.main-wrapper.is-fullscreen .top-info-bar, .main-wrapper.is-fullscreen .contact-bar { display: none !important; }
+.main-wrapper.is-fullscreen .sidebar { height: 100vh; }
 .wa-modal-content { border-radius: 20px; overflow: hidden; }
 .wa-modal-header { background: linear-gradient(135deg, #25D366, #128C7E); color: white; padding: 20px; text-align: center; }
 .wa-modal-header h4 { margin: 0; font-weight: 700; }
@@ -259,18 +245,25 @@ body { font-family: 'Inter', sans-serif; background: #f8fafc; overflow-x: hidden
 .estimasi-value.big .unit { font-size: 10px; color: #92400e; font-weight: 600; }
 .estimasi-sub { font-size: 9px; color: #78350f; margin-top: 2px; }
 .estimasi-sub strong { color: #dc2626; }
-.wilayah-card { margin-bottom: 15px; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; }
-.wilayah-header { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; padding: 10px 12px; font-weight: 600; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-.wilayah-blok-list { padding: 8px; }
-.blok-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; margin: 4px 0; background: #f8fafc; border-radius: 6px; font-size: 12px; cursor: pointer; transition: all 0.2s; }
-.blok-item:hover { background: #e0f2fe; }
+
+/* 🔥 SLIDESHOW STYLES */
+.slideshow-container { position: relative; width: 100%; border-radius: 8px; overflow: hidden; margin-bottom: 10px; background: #000; }
+.slideshow-container img, .slideshow-container video { width: 100%; height: 200px; object-fit: cover; display: block; }
+.slideshow-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.6); color: white; border: none; padding: 8px 12px; cursor: pointer; font-size: 14px; border-radius: 4px; z-index: 10; }
+.slideshow-btn:hover { background: rgba(0,0,0,0.8); }
+.slideshow-prev { left: 8px; }
+.slideshow-next { right: 8px; }
+.slideshow-dots { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
+.slideshow-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; }
+.slideshow-dot.active { background: white; }
+
 @media (max-width: 768px) {
 .top-info-container { flex-direction: column; text-align: center; }
 .contact-container { flex-direction: column; }
 .notification-bar { max-width: 100%; }
-.sidebar { width: 100% !important; max-width: 400px !important; top: auto !important; bottom: 80px !important; right: 0 !important; transform: translateY(100%) !important; }
-.sidebar.active { transform: translateY(0) !important; }
-.main-wrapper { margin-right: 0; height: calc(100vh - 200px); }
+.sidebar { position: fixed; right: 0; top: 0; height: 100vh; transform: translateX(100%); width: 100%; max-width: 400px; }
+.sidebar.active { transform: translateX(0); }
+.main-wrapper { height: calc(100vh - 200px); }
 .legend { max-width: 180px; font-size: 11px; }
 .legend-pelanggan { max-width: 180px; font-size: 11px; right: 10px; bottom: 10px; }
 .control-buttons { top: auto; bottom: 20px; right: 10px; flex-direction: row; }
@@ -283,6 +276,7 @@ body { font-family: 'Inter', sans-serif; background: #f8fafc; overflow-x: hidden
 <body>
 <audio id="backgroundMusic" loop preload="auto"></audio>
 <div id="youtubePlayerContainer" style="position: fixed; bottom: -200px; right: -200px; width: 1px; height: 1px; opacity: 0; pointer-events: none; z-index: -1;"></div>
+
 <div class="top-info-bar">
 <div class="top-info-container">
 <div class="brand-section">
@@ -311,6 +305,7 @@ $totalAktif = $gangguanAktif->count();
 </div>
 </div>
 </div>
+
 <div class="contact-bar">
 <div class="contact-container">
 <a href="tel:+622621500000" class="contact-item"><div class="contact-icon"><i class="fas fa-headset"></i></div><div class="contact-text"><strong>Call Center</strong><span>(0262) 1500-XXX</span></div></a>
@@ -322,8 +317,10 @@ $totalAktif = $gangguanAktif->count();
 <div class="contact-item" style="cursor: default;"><div class="contact-icon clock"><i class="fas fa-clock"></i></div><div class="contact-text"><strong>Jam Layanan</strong><span>Senin - Sabtu, 08.00 - 16.00</span></div></div>
 </div>
 </div>
+
 <div class="main-wrapper" id="mainWrapper">
 <div id="map"></div>
+
 <div class="live-info-panel" id="liveInfoPanel" style="display: none;">
 <div class="live-indicator"><div class="live-dot"></div><span>LIVE</span></div>
 <div class="customer-info">
@@ -337,6 +334,7 @@ $totalAktif = $gangguanAktif->count();
 <div class="counter-num" id="liveCounterTotal">0</div>
 </div>
 </div>
+
 <div class="custom-layer-control" id="layerControl">
 <div class="layer-control-title"><i class="fas fa-layer-group"></i> Mode Peta</div>
 <div class="layer-btn-group">
@@ -346,17 +344,20 @@ $totalAktif = $gangguanAktif->count();
 <button class="layer-btn" data-layer="dark" onclick="switchLayer('dark')"><i class="fas fa-moon"></i><span>Gelap</span></button>
 </div>
 </div>
+
 <div class="control-buttons">
 <button class="control-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i> Info Jaringan</button>
 <button class="control-btn expand" id="expandBtn" onclick="toggleFullscreen()"><i class="fas fa-expand" id="expandIcon"></i> <span id="expandText">Fullscreen</span></button>
 <button class="control-btn voice active" id="voiceBtn" onclick="toggleVoicePanel()"><i class="fas fa-sliders-h" id="voiceIcon"></i> <span id="voiceText">Kontrol Suara</span></button>
-<button class="control-btn live" id="liveBtn" onclick="toggleLiveDashboard()"><i class="fas fa-broadcast-tower" id="liveIcon"></i> <span id="liveText">LIVE OFF</span></button>
+<button class="control-btn live active" id="liveBtn" onclick="toggleLiveDashboard()"><i class="fas fa-broadcast-tower" id="liveIcon"></i> <span id="liveText">LIVE ON</span></button>
 </div>
+
 <div class="voice-panel" id="voicePanel">
 <div class="voice-panel-header">
 <div class="voice-panel-title"><i class="fas fa-sliders-h"></i> Panel Kontrol Suara</div>
 <button class="voice-panel-close" onclick="toggleVoicePanel()"><i class="fas fa-times"></i></button>
 </div>
+
 <div class="music-control">
 <div class="voice-control-title"><i class="fas fa-music"></i> KONTROL MUSIK LATAR</div>
 <label class="voice-select-label">🎵 Pilih Musik dari Folder:</label>
@@ -388,24 +389,20 @@ $totalAktif = $gangguanAktif->count();
 <input type="text" class="youtube-input" id="youtubeUrl" placeholder="URL atau ID YouTube">
 <button class="youtube-btn" onclick="playYouTube()"><i class="fab fa-youtube"></i> Putar</button>
 </div>
-<div class="voice-control-row" style="margin-top: 8px;">
-<div class="voice-control-label">Volume YT</div>
-<input type="range" min="0" max="100" value="100" id="youtubeVolumeSlider" oninput="setYouTubeVolume(this.value)">
-<span id="youtubeVolumeValue" style="font-size: 11px; font-weight: 600; min-width: 35px;">100%</span>
-</div>
 <div class="youtube-status" id="youtubeStatus" style="display: none;">
 <i class="fas fa-check-circle"></i> <span id="youtubeStatusText">YouTube diputar</span>
 </div>
 <button class="voice-btn stop" id="btnStopYouTube" onclick="stopYouTube()" disabled style="width: 100%; margin-top: 6px; padding: 6px; font-size: 10px;"><i class="fas fa-stop"></i> Stop YouTube</button>
 </div>
 </div>
+
 <div class="gangguan-voice-control">
 <div class="voice-control-title"><i class="fas fa-exclamation-triangle"></i> KONTROL SUARA GANGGUAN</div>
 <div class="voice-select-group">
 <label class="voice-select-label">🎤 Pilih Gender Suara Gangguan:</label>
 <select class="voice-select" id="gangguanGenderSelect" onchange="updateGangguanGender()">
 <option value="male">👨 Laki-laki</option>
-<option value="female" selected>👩 Perempuan</option>
+<option value="female">👩 Perempuan</option>
 </select>
 </div>
 <div class="voice-select-group">
@@ -414,7 +411,7 @@ $totalAktif = $gangguanAktif->count();
 <option value="0">1. Default</option>
 <option value="1">2. Alternatif 1</option>
 <option value="2">3. Alternatif 2</option>
-<option value="3" selected>4. Alternatif 3 ⭐</option>
+<option value="3">4. Alternatif 3</option>
 <option value="4">5. Alternatif 4</option>
 </select>
 </div>
@@ -429,12 +426,13 @@ $totalAktif = $gangguanAktif->count();
 <span id="gangguanVoiceStatusText">Siap - Tidak ada gangguan aktif</span>
 </div>
 </div>
+
 <div class="payment-voice-control">
 <div class="voice-control-title"><i class="fas fa-money-bill-wave"></i> KONTROL SUARA PELANGGAN</div>
 <div class="voice-select-group">
 <label class="voice-select-label">🎤 Pilih Gender Suara Pembayaran:</label>
 <select class="voice-select" id="paymentGenderSelect" onchange="updatePaymentGender()">
-<option value="female" selected>👩 Perempuan</option>
+<option value="female">👩 Perempuan</option>
 <option value="male">👨 Laki-laki</option>
 </select>
 </div>
@@ -444,7 +442,7 @@ $totalAktif = $gangguanAktif->count();
 <option value="0">1. Default</option>
 <option value="1">2. Alternatif 1</option>
 <option value="2">3. Alternatif 2</option>
-<option value="3" selected>4. Alternatif 3 ⭐</option>
+<option value="3">4. Alternatif 3</option>
 <option value="4">5. Alternatif 4</option>
 </select>
 </div>
@@ -459,6 +457,7 @@ $totalAktif = $gangguanAktif->count();
 <span id="paymentVoiceStatusText">Siap - Menunggu pembayaran</span>
 </div>
 </div>
+
 <div class="scroll-control">
 <div class="voice-control-title"><i class="fas fa-broadcast-tower"></i> LIVE DASHBOARD</div>
 <div class="voice-control-row">
@@ -471,6 +470,7 @@ $totalAktif = $gangguanAktif->count();
 <button class="voice-btn stop" id="btnLiveStop" onclick="stopLiveCycle()" disabled><i class="fas fa-stop"></i> Stop</button>
 </div>
 </div>
+
 <div style="margin-top: 15px; padding: 15px; background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border-radius: 12px; border: 2px solid #94a3b8;">
 <div class="voice-control-title" style="color: #334155;"><i class="fas fa-cog"></i> PENGATURAN UMUM</div>
 <div class="voice-control-row">
@@ -480,6 +480,7 @@ $totalAktif = $gangguanAktif->count();
 </div>
 <button class="voice-test-btn" onclick="testVoice()"><i class="fas fa-play"></i> Test Suara</button>
 </div>
+
 <div class="scroll-control">
 <div class="voice-control-title"><i class="fas fa-tachometer-alt"></i> KECEPATAN TULISAN BERJALAN</div>
 <div class="voice-control-row">
@@ -489,36 +490,10 @@ $totalAktif = $gangguanAktif->count();
 </div>
 </div>
 </div>
+
 <div class="sidebar" id="sidebar">
 <div class="sidebar-header"><h5><i class="fas fa-network-wired"></i> Informasi Jaringan</h5><small>Kecamatan Darmaraja, Kab. Sumedang</small></div>
 <div class="sidebar-content" id="sidebarContent">
-
-<!-- 🔥 SEARCH BOX -->
-<div class="search-container">
-<div class="search-title"><i class="fas fa-search"></i> Pencarian Pelanggan</div>
-<div class="search-row">
-<input type="text" class="search-input" id="searchInput" placeholder="No. Sambungan / Nama / Wilayah..." oninput="performSearch()">
-<select class="search-select" id="searchFilter" onchange="performSearch()">
-<option value="all">Semua Status</option>
-<option value="Kantor">Kantor</option>
-<option value="PPOB">PPOB</option>
-<option value="Belum Bayar">Belum Bayar</option>
-</select>
-</div>
-<div class="search-row">
-<button class="search-btn" onclick="performSearch()"><i class="fas fa-search"></i> Cari</button>
-<button class="search-btn clear" onclick="clearSearch()"><i class="fas fa-times"></i> Reset</button>
-</div>
-<div class="search-results" id="searchResults"></div>
-</div>
-
-<!-- 🔥 STATISTIK HARI INI -->
-<div id="today-stats-card" class="revenue-card" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); margin-bottom: 15px;">
-<div class="revenue-title"><i class="fas fa-calendar-day"></i> <span id="today-date">Hari Ini</span></div>
-<div class="revenue-amount" id="today-amount">Rp 0</div>
-<div class="revenue-kubikasi"><i class="fas fa-users"></i> <strong id="today-count">0</strong> rekening • <strong id="today-kubikasi">0</strong> m³</div>
-</div>
-
 <div class="stats-grid">
 <div class="stat-card stat-total"><i class="fas fa-list stat-icon"></i><div class="stat-value">{{ $stats['total'] ?? 0 }}</div><div class="stat-label">Total Gangguan</div></div>
 <div class="stat-card stat-menunggu"><i class="fas fa-clock stat-icon"></i><div class="stat-value">{{ $stats['menunggu'] ?? 0 }}</div><div class="stat-label">Menunggu</div></div>
@@ -529,6 +504,7 @@ $totalAktif = $gangguanAktif->count();
 <div class="stat-card stat-jalur"><i class="fas fa-route stat-icon"></i><div class="stat-value">{{ ($jalurPipa ?? collect())->count() }}</div><div class="stat-label">Jalur Pipa</div></div>
 <div class="stat-card stat-bangunan"><i class="fas fa-building stat-icon"></i><div class="stat-value">{{ ($bangunan ?? collect())->count() }}</div><div class="stat-label">Bangunan</div></div>
 </div>
+
 <div class="section-title"><i class="fas fa-exclamation-triangle text-danger"></i> Gangguan Aktif <span class="badge bg-danger ms-auto">{{ $gangguanAktif->count() }}</span></div>
 @forelse($gangguanAktif as $gang)
 @if(is_object($gang))
@@ -560,32 +536,30 @@ $totalAktif = $gangguanAktif->count();
 @empty
 <div class="empty-state"><i class="fas fa-check-circle" style="font-size: 32px; color: #10b981; margin-bottom: 8px;"></i><div>Tidak ada gangguan aktif</div><small style="color: #94a3b8;">Semua jaringan beroperasi normal</small></div>
 @endforelse
+
 <div class="section-title"><i class="fas fa-route"></i> Jalur Pipa</div>
 @forelse($jalurPipa ?? [] as $jalur)
 <div class="list-item" data-id="{{ $jalur->id }}" data-type="jalur" onclick="focusOnJalur({{ $jalur->id }})"><div class="layer-info"><div class="layer-name"><span class="color-dot" style="background: {{ $jalur->warna }};"></span> {{ $jalur->nama_jalur }}</div><div class="layer-meta"><i class="fas fa-ruler"></i> {{ $jalur->ukuran_pipa }}</div></div></div>
 @empty
 <div class="empty-state">Belum ada data jalur pipa</div>
 @endforelse
+
 <div class="section-title"><i class="fas fa-building"></i> Bangunan</div>
 @forelse($bangunan ?? [] as $b)
 <div class="list-item" data-id="{{ $b->id }}" data-type="bangunan" onclick="focusOnBangunan({{ $b->id }})"><div class="layer-info"><div class="layer-name"><span class="color-dot" style="background: {{ $b->warna }};"></span> {{ $b->nama_bangunan }}</div><div class="layer-meta"><i class="fas fa-tag"></i> {{ ucfirst(str_replace('_', ' ', $b->jenis_bangunan)) }}</div></div></div>
 @empty
 <div class="empty-state">Belum ada data bangunan</div>
 @endforelse
-<div class="section-title"><i class="fas fa-map-marked-alt text-primary"></i> Wilayah & Blok</div>
-<div id="wilayah-blok-container">
-<div class="text-center py-3 text-muted">
-<i class="fas fa-spinner fa-spin"></i> Memuat data wilayah...
 </div>
 </div>
-</div>
-</div>
+
 <div class="legend">
 <div class="legend-title"><i class="fas fa-info-circle"></i> Legenda Peta</div>
 <div class="legend-group"><div class="legend-group-title">Jalur Pipa</div><div class="legend-item"><div class="legend-color" style="background: #ef4444;"></div><span>Transmisi</span></div><div class="legend-item"><div class="legend-color" style="background: #3b82f6;"></div><span>Distribusi</span></div><div class="legend-item"><div class="legend-color" style="background: #10b981;"></div><span>Tersier</span></div></div>
 <div class="legend-group"><div class="legend-group-title">Bangunan</div><div class="legend-item"><div class="legend-marker" style="background: #06b6d4;"><i class="fas fa-database"></i></div><span>Reservoir</span></div><div class="legend-item"><div class="legend-marker" style="background: #8b5cf6;"><i class="fas fa-industry"></i></div><span>IPA</span></div><div class="legend-item"><div class="legend-marker" style="background: #3b82f6;"><i class="fas fa-building"></i></div><span>Kantor</span></div></div>
 <div class="legend-group"><div class="legend-group-title">Gangguan</div><div class="legend-item"><div class="legend-marker" style="background: #ef4444;"><i class="fas fa-exclamation"></i></div><span>Aktif (Merah)</span></div><div class="legend-item"><div class="legend-marker" style="background: #f59e0b;"><i class="fas fa-tools"></i></div><span>Proses (Kuning)</span></div><div class="legend-item"><div class="legend-marker" style="background: #10b981;"><i class="fas fa-check"></i></div><span>Selesai (Hijau)</span></div></div>
 </div>
+
 <div class="legend-pelanggan">
 <div class="legend-pelanggan-title"><i class="fas fa-users"></i> Status Pembayaran</div>
 <div class="legend-pelanggan-item"><div class="legend-pelanggan-marker" style="background: #10b981;"><i class="fas fa-building"></i></div><span>Bayar di Kantor</span></div>
@@ -593,6 +567,7 @@ $totalAktif = $gangguanAktif->count();
 <div class="legend-pelanggan-item"><div class="legend-pelanggan-marker" style="background: #ef4444;"><i class="fas fa-times"></i></div><span>Belum Bayar</span></div>
 </div>
 </div>
+
 <div class="modal fade" id="waQRModal" tabindex="-1" aria-hidden="true">
 <div class="modal-dialog modal-dialog-centered"><div class="modal-content wa-modal-content">
 <div class="wa-modal-header"><i class="fab fa-whatsapp" style="font-size: 40px;"></i><h4 class="mt-2">WhatsApp PDAM Tirta Medal</h4><small>Scan QR Code atau klik tombol di bawah</small></div>
@@ -602,30 +577,13 @@ $totalAktif = $gangguanAktif->count();
 <button type="button" class="btn btn-light mt-2" data-bs-dismiss="modal" style="width: 100%;"><i class="fas fa-times"></i> Tutup</button>
 </div></div></div>
 </div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 <script>
-// ============================================
-// 🔥 YOUTUBE IFRAME API
-// ============================================
-var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-let ytPlayer = null;
-let ytOriginalVolume = 100;
-let ytUserVolume = 100;
-let isYouTubeDucked = false;
-let isYouTubeAPIReady = false;
-
-function onYouTubeIframeAPIReady() {
-    isYouTubeAPIReady = true;
-    console.log('✅ YouTube IFrame API Ready');
-}
-
 // ============================================
 // DATA DARI LARAVEL
 // ============================================
@@ -641,6 +599,7 @@ const pelangganDataFromLaravel = @json($pelanggan ?? []);
 let map, jalurLayers = {}, markerLayers = {}, pelangganLayers = {}, pelangganClusterGroup;
 let isFullscreen = false, waQRGenerated = false, totalRevenue = 0, totalKubikasi = 0;
 let currentLayer = 'satellite', baseLayers = {}, currentBaseLayer = null;
+
 const voiceProfiles = [
     { name: 'Default', pitch: 1.0, rate: 0.95 },
     { name: 'Alternatif 1', pitch: 1.1, rate: 0.90 },
@@ -648,6 +607,8 @@ const voiceProfiles = [
     { name: 'Alternatif 3', pitch: 1.2, rate: 0.85 },
     { name: 'Alternatif 4', pitch: 0.8, rate: 1.05 }
 ];
+
+// 🔥 MUSIK DARI FOLDER LOKAL
 const musicFolder = '/audio/';
 const musicPlaylist = ['musik1.mp3', 'musik2.mp3', 'musik3.mp3', 'musik4.mp3', 'musik5.mp3'];
 const musicNames = {
@@ -659,30 +620,35 @@ const musicNames = {
 };
 let currentPlaylistIndex = 0;
 let autoRotateMusic = true;
+
 let voiceSettings = {
     enabled: true, volume: 0.8,
-    gangguanGender: 'female', gangguanVoiceIndex: 3,
-    paymentGender: 'female', paymentVoiceIndex: 3
+    gangguanGender: 'male', gangguanVoiceIndex: 0,
+    paymentGender: 'female', paymentVoiceIndex: 0
 };
+
 let availableVoices = [];
 let indonesianVoices = [], indonesianFemaleVoices = [], indonesianMaleVoices = [];
+
 const ID_KEYWORDS = ['indonesia', 'bahasa indonesia', 'id-id', 'indonesian', 'damayanti', 'andika', 'ardian', 'gadis', 'ardi', 'bimo', 'siti', 'ratu'];
 const FEMALE_KEYWORDS = ['female', 'wanita', 'perempuan', 'woman', 'girl', 'damayanti', 'gadis', 'siti', 'ratu', 'samantha', 'victoria', 'zira'];
 const MALE_KEYWORDS = ['male', 'pria', 'laki', 'man', 'boy', 'andika', 'ardian', 'ardi', 'bimo', 'david', 'mark', 'daniel'];
+
 let gangguanVoiceInterval = null, isGangguanVoicePlaying = false, isGangguanVoicePaused = false, repeatGangguanVoice = false, activeGangguanList = [];
 let paymentVoiceInterval = null, isPaymentVoicePlaying = false, isPaymentVoicePaused = false, repeatPaymentVoice = false, last5Payments = [], currentPaymentIndex = 0;
 let lastActivityTime = Date.now(), sidebarScrollDirection = 1, sidebarScrollInterval, isSidebarAutoScrolling = false;
 let isMusicPlaying = false, isMusicPaused = false, musicLoop = true;
 let currentMusicType = '';
 let isYouTubePlaying = false;
+
+// 🔥 VARIABEL LIVE DASHBOARD
 let unpaidCustomerMarkers = [], unpaidCustomerList = [];
 let liveCycleInterval = null, liveCycleIndex = 0, liveCycleSpeed = 7000;
-let isLiveDashboardActive = false, highlightedMarkerElement = null;
-let voiceQueue = [];
-let isVoiceSpeaking = false;
+let isLiveDashboardActive = true, highlightedMarkerElement = null;
+let isNarrationRunning = false, narrationQueue = [];
 
 // ============================================
-// 🔥 FUNGSI NORMALISASI TEKS - NAMA DIBACA NORMAL
+// FUNGSI NORMALISASI TEKS
 // ============================================
 function cleanSpacedLetters(text) {
     if (!text) return text;
@@ -721,14 +687,9 @@ function convertRegionRomanToNumber(regionName) {
     return regionName.replace(romanPattern, (match) => romanMap[match] || match);
 }
 
-// 🔥 FUNGSI PENGUCAPAN NAMA - DIBACA NORMAL (TIDAK DIEJA)
-function formatNameForSpeech(name, gender) {
+function removeNameSpaces(name) {
     if (!name) return 'Pelanggan';
-    // 🔥 Bersihkan nama, hilangkan spasi berlebih, baca normal
-    let cleanName = name.trim().replace(/\s+/g, ' ');
-    // Title case agar TTS membaca dengan intonasi yang benar
-    cleanName = toTitleCase(cleanName.toLowerCase());
-    return cleanName;
+    return name.replace(/\s+/g, '').trim() || 'Pelanggan';
 }
 
 // ============================================
@@ -789,133 +750,6 @@ function showNotification(msg, type = 'info') {
 }
 
 // ============================================
-// 🔥 STATISTIK HARI INI
-// ============================================
-function calculateTodayStats() {
-    const now = new Date();
-    const todayStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
-    
-    let totalToday = 0;
-    let countToday = 0;
-    let kubikasiToday = 0;
-    
-    pelangganDataFromLaravel.forEach(p => {
-        const status = getPaymentStatus(p);
-        if (status.tanggal) {
-            const payDate = new Date(status.tanggal);
-            const payDateStr = payDate.toISOString().split('T')[0];
-            if (payDateStr === todayStr) {
-                totalToday += parseFloat(p.jumlah) || 0;
-                kubikasiToday += parseFloat(p.pakai) || 0;
-                countToday++;
-            }
-        }
-    });
-    
-    return { totalToday, countToday, kubikasiToday, todayStr };
-}
-
-function updateTodayStatsDisplay() {
-    const stats = calculateTodayStats();
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    
-    document.getElementById('today-date').textContent = dateStr;
-    document.getElementById('today-amount').textContent = formatRupiah(stats.totalToday);
-    document.getElementById('today-count').textContent = stats.countToday;
-    document.getElementById('today-kubikasi').textContent = stats.kubikasiToday.toFixed(1);
-}
-
-// ============================================
-// 🔥 FITUR PENCARIAN
-// ============================================
-function performSearch() {
-    const query = document.getElementById('searchInput').value.trim().toLowerCase();
-    const filter = document.getElementById('searchFilter').value;
-    const resultsContainer = document.getElementById('searchResults');
-    
-    if (!query && filter === 'all') {
-        resultsContainer.innerHTML = '<div class="search-empty">Ketik untuk mencari pelanggan</div>';
-        return;
-    }
-    
-    let results = pelangganDataFromLaravel.filter(p => {
-        const status = getPaymentStatus(p);
-        
-        // Filter status
-        if (filter !== 'all' && status.status !== filter) return false;
-        
-        // Filter query
-        if (!query) return true;
-        
-        const noSamb = (p.no_pelanggan || '').toLowerCase();
-        const nama = (p.nama || '').toLowerCase();
-        const wilayah = (p.nama_wilayah || '').toLowerCase();
-        const alamat = (p.lokasi || p.alamat || '').toLowerCase();
-        
-        return noSamb.includes(query) || nama.includes(query) || wilayah.includes(query) || alamat.includes(query);
-    });
-    
-    if (results.length === 0) {
-        resultsContainer.innerHTML = '<div class="search-empty">Tidak ditemukan pelanggan</div>';
-        return;
-    }
-    
-    // Batasi hasil max 20
-    results = results.slice(0, 20);
-    
-    let html = '';
-    results.forEach(p => {
-        const status = getPaymentStatus(p);
-        const statusColor = status.color;
-        const statusIcon = status.icon;
-        html += `
-            <div class="search-result-item" onclick="focusOnPelanggan('${p.no_pelanggan}')">
-                <div>
-                    <div class="sr-name"><i class="fas ${statusIcon}" style="color: ${statusColor};"></i> ${p.nama || 'Tanpa Nama'}</div>
-                    <div class="sr-detail">No: ${p.no_pelanggan} • ${p.nama_wilayah || '-'}</div>
-                </div>
-                <div class="sr-badge" style="background: ${statusColor};">${status.status}</div>
-            </div>
-        `;
-    });
-    
-    resultsContainer.innerHTML = html;
-}
-
-function clearSearch() {
-    document.getElementById('searchInput').value = '';
-    document.getElementById('searchFilter').value = 'all';
-    document.getElementById('searchResults').innerHTML = '<div class="search-empty">Ketik untuk mencari pelanggan</div>';
-    
-    // Reset filter peta
-    resetPelangganFilter();
-}
-
-function focusOnPelanggan(noPelanggan) {
-    const data = pelangganLayers[`pelanggan_${noPelanggan}`];
-    if (data && data.coords) {
-        map.flyTo(data.coords, 18, { duration: 1 });
-        setTimeout(() => {
-            data.marker.openPopup();
-        }, 1000);
-        showNotification(`📍 Menuju pelanggan: ${noPelanggan}`, 'info');
-    } else {
-        // Cari di unpaid list
-        const unpaid = unpaidCustomerList.find(u => u.data.no_pelanggan === noPelanggan);
-        if (unpaid) {
-            map.flyTo(unpaid.coords, 18, { duration: 1 });
-            setTimeout(() => {
-                unpaid.marker.openPopup();
-            }, 1000);
-            showNotification(`📍 Menuju pelanggan: ${noPelanggan}`, 'info');
-        } else {
-            showNotification('Koordinat pelanggan tidak ditemukan', 'warning');
-        }
-    }
-}
-
-// ============================================
 // LAYER CONTROL
 // ============================================
 function initBaseLayers() {
@@ -939,189 +773,78 @@ function switchLayer(name) {
 }
 
 // ============================================
-// 🔥 YOUTUBE VOLUME DUCKING
+// 🔥 SLIDESHOW FUNCTIONS
 // ============================================
-function duckYouTubeVolume() {
-    if (ytPlayer && isYouTubePlaying && !isYouTubeDucked && typeof ytPlayer.setVolume === 'function') {
-        try {
-            ytOriginalVolume = ytPlayer.getVolume();
-            const duckedVol = Math.max(5, Math.floor(ytUserVolume * 0.15));
-            ytPlayer.setVolume(duckedVol);
-            isYouTubeDucked = true;
-        } catch(e) { console.warn('YT duck error:', e); }
+function createSlideshowHTML(images, videos) {
+    const media = [];
+    if (images && images.length > 0) {
+        images.forEach(img => media.push({ type: 'image', src: img }));
     }
-}
-
-function restoreYouTubeVolume() {
-    if (ytPlayer && isYouTubeDucked && typeof ytPlayer.setVolume === 'function') {
-        try {
-            ytPlayer.setVolume(ytUserVolume);
-            isYouTubeDucked = false;
-        } catch(e) { console.warn('YT restore error:', e); }
+    if (videos && videos.length > 0) {
+        videos.forEach(vid => media.push({ type: 'video', src: vid }));
     }
-}
-
-function setYouTubeVolume(v) {
-    ytUserVolume = parseInt(v);
-    document.getElementById('youtubeVolumeValue').textContent = v + '%';
-    if (ytPlayer && isYouTubePlaying && !isYouTubeDucked && typeof ytPlayer.setVolume === 'function') {
-        try { ytPlayer.setVolume(ytUserVolume); } catch(e) {}
-    }
-}
-
-// ============================================
-// SISTEM ANTRIAN SUARA
-// ============================================
-function addToVoiceQueue(text, gender = 'female', callback = null) {
-    voiceQueue.push({ text, gender, callback });
-    processVoiceQueue();
-}
-
-function processVoiceQueue() {
-    if (isVoiceSpeaking || voiceQueue.length === 0) return;
-    isVoiceSpeaking = true;
-    const item = voiceQueue.shift();
-    speak(item.text, item.gender, () => {
-        isVoiceSpeaking = false;
-        if (item.callback) item.callback();
-        setTimeout(() => processVoiceQueue(), 500);
+    
+    if (media.length === 0) return '';
+    
+    let html = '<div class="slideshow-container" data-current="0">';
+    media.forEach((m, i) => {
+        if (m.type === 'image') {
+            html += `<img src="${m.src}" alt="Foto ${i+1}" style="display: ${i === 0 ? 'block' : 'none'};">`;
+        } else {
+            html += `<video src="${m.src}" controls style="display: ${i === 0 ? 'block' : 'none'};"></video>`;
+        }
     });
-}
-
-function clearVoiceQueue() {
-    voiceQueue = [];
-    isVoiceSpeaking = false;
-    speechSynthesis.cancel();
-}
-
-// ============================================
-// WILAYAH & BLOK
-// ============================================
-async function loadWilayahDanBlok() {
-    const container = document.getElementById('wilayah-blok-container');
-    try {
-        const dataWilayah = [
-            { id: 1, nama_wilayah: 'Wilayah I', blok: [
-                { nama_blok: 'Blok A', jumlah_pelanggan: 125 },
-                { nama_blok: 'Blok B', jumlah_pelanggan: 98 },
-                { nama_blok: 'Blok C', jumlah_pelanggan: 156 },
-                { nama_blok: 'Blok D', jumlah_pelanggan: 87 }
-            ]},
-            { id: 2, nama_wilayah: 'Wilayah II', blok: [
-                { nama_blok: 'Blok E', jumlah_pelanggan: 143 },
-                { nama_blok: 'Blok F', jumlah_pelanggan: 76 }
-            ]}
-        ];
-
-        let html = '';
-        dataWilayah.forEach(wilayah => {
-            const totalPelangganWilayah = wilayah.blok.reduce((sum, blok) => sum + blok.jumlah_pelanggan, 0);
-            html += `<div class="wilayah-card"><div class="wilayah-header"><span><i class="fas fa-map-marker-alt"></i> ${wilayah.nama_wilayah}</span><span style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 12px; font-size: 11px;">${totalPelangganWilayah} Pelanggan</span></div><div class="wilayah-blok-list">`;
-            wilayah.blok.forEach(blok => {
-                html += `<div class="blok-item"><div style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-layer-group" style="color: #3b82f6; font-size: 10px;"></i><span style="font-weight: 600; color: #1e293b;">${blok.nama_blok}</span></div><div style="display: flex; align-items: center; gap: 6px;"><span style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 2px 8px; border-radius: 10px; font-weight: 700; font-size: 11px;">${blok.jumlah_pelanggan}</span><span style="color: #64748b; font-size: 10px;">pelanggan</span></div></div>`;
-            });
-            html += `</div></div>`;
+    
+    if (media.length > 1) {
+        html += '<button class="slideshow-btn slideshow-prev" onclick="slideshowPrev(this)">&#10094;</button>';
+        html += '<button class="slideshow-btn slideshow-next" onclick="slideshowNext(this)">&#10095;</button>';
+        html += '<div class="slideshow-dots">';
+        media.forEach((_, i) => {
+            html += `<div class="slideshow-dot ${i === 0 ? 'active' : ''}" onclick="slideshowGoTo(this, ${i})"></div>`;
         });
-        container.innerHTML = html;
-    } catch (error) {
-        console.error('Error loading wilayah dan blok:', error);
-        container.innerHTML = `<div class="alert alert-danger" style="font-size: 12px;"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data wilayah</div>`;
+        html += '</div>';
     }
+    
+    html += '</div>';
+    return html;
 }
 
-// ============================================
-// 🔥 STATISTIK BULANAN PER WILAYAH + SYNC MAP
-// ============================================
-function calculateMonthlyWilayahStats() {
-    const now = new Date();
-    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const wilayahStats = {};
-    let totalPelanggan = 0;
-    let totalKubikasi = 0;
-    let totalAmount = 0;
-
-    pelangganDataFromLaravel.forEach(p => {
-        const status = getPaymentStatus(p);
-        if (status.tanggal) {
-            const paymentDate = new Date(status.tanggal);
-            if (paymentDate >= firstDayOfMonth) {
-                totalPelanggan++;
-                const kubikasi = parseFloat(p.pakai) || 0;
-                const jumlah = parseFloat(p.jumlah) || 0;
-                totalKubikasi += kubikasi;
-                totalAmount += jumlah;
-                
-                let wilayah = p.nama_wilayah || 'Tidak Diketahui';
-                wilayah = convertRegionRomanToNumber(wilayah);
-                
-                if (!wilayahStats[wilayah]) {
-                    wilayahStats[wilayah] = { count: 0, amount: 0, kubikasi: 0, coords: [] };
-                }
-                wilayahStats[wilayah].count++;
-                wilayahStats[wilayah].amount += jumlah;
-                wilayahStats[wilayah].kubikasi += kubikasi;
-                
-                // 🔥 KUMPULKAN KOORDINAT UNTUK ZOOM
-                const coords = parseKoordinator(p.koordinator);
-                if (coords && isInArea(coords[0], coords[1])) {
-                    wilayahStats[wilayah].coords.push(coords);
-                }
-            }
-        }
-    });
-
-    return { totalPelanggan, totalKubikasi, totalAmount, wilayahStats };
+function slideshowPrev(btn) {
+    const container = btn.parentElement;
+    const items = container.querySelectorAll('img, video');
+    const dots = container.querySelectorAll('.slideshow-dot');
+    let current = parseInt(container.dataset.current);
+    items[current].style.display = 'none';
+    if (dots[current]) dots[current].classList.remove('active');
+    current = (current - 1 + items.length) % items.length;
+    items[current].style.display = 'block';
+    if (dots[current]) dots[current].classList.add('active');
+    container.dataset.current = current;
 }
 
-// 🔥 NARASI BULANAN DENGAN ZOOM PETA PER WILAYAH
-function narrateMonthlyStats(callback) {
-    const stats = calculateMonthlyWilayahStats();
-    const wilayahEntries = Object.entries(stats.wilayahStats);
-    const totalWilayah = wilayahEntries.length;
-    
-    const introText = `Sampai dengan hari ini, tanggal ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}, jumlah pelanggan yang sudah melakukan pembayaran sebanyak ${stats.totalPelanggan} rekening, dengan total penerimaan ${formatRupiah(stats.totalAmount)}.`;
-    
-    addToVoiceQueue(introText, voiceSettings.paymentGender, () => {
-        if (wilayahEntries.length === 0) {
-            if (callback) callback();
-            return;
-        }
-        
-        let index = 0;
-        
-        function narrateNextWilayah() {
-            if (index >= wilayahEntries.length) {
-                // 🔥 KEMBALI KE TAMPILAN AWAL
-                map.flyTo([-6.88, 107.97], 14, { duration: 1.5 });
-                const summaryText = `Total keseluruhan: ${stats.totalPelanggan} rekening, dengan pemakaian ${stats.totalKubikasi.toFixed(1)} meter kubik, dan total penerimaan ${formatRupiah(stats.totalAmount)}.`;
-                addToVoiceQueue(summaryText, voiceSettings.paymentGender, callback);
-                return;
-            }
-            
-            const [wilayah, data] = wilayahEntries[index];
-            
-            // 🔥 ZOOM KE WILAYAH DI PETA
-            if (data.coords.length > 0) {
-                const bounds = L.latLngBounds(data.coords);
-                map.flyToBounds(bounds, { padding: [80, 80], duration: 1.5, maxZoom: 16 });
-            }
-            
-            const text = `Untuk ${wilayah}, total jumlah rekening ${data.count}, dengan pemakaian ${data.kubikasi.toFixed(1)} meter kubik, dan ${formatRupiah(data.amount)}.`;
-            
-            addToVoiceQueue(text, voiceSettings.paymentGender, () => {
-                index++;
-                if (index < wilayahEntries.length) {
-                    setTimeout(() => {
-                        addToVoiceQueue('Kita lanjut ke wilayah berikutnya.', voiceSettings.paymentGender, narrateNextWilayah);
-                    }, 1500);
-                } else {
-                    narrateNextWilayah();
-                }
-            });
-        }
-        
-        narrateNextWilayah();
-    });
+function slideshowNext(btn) {
+    const container = btn.parentElement;
+    const items = container.querySelectorAll('img, video');
+    const dots = container.querySelectorAll('.slideshow-dot');
+    let current = parseInt(container.dataset.current);
+    items[current].style.display = 'none';
+    if (dots[current]) dots[current].classList.remove('active');
+    current = (current + 1) % items.length;
+    items[current].style.display = 'block';
+    if (dots[current]) dots[current].classList.add('active');
+    container.dataset.current = current;
+}
+
+function slideshowGoTo(dot, index) {
+    const container = dot.parentElement.parentElement;
+    const items = container.querySelectorAll('img, video');
+    const dots = container.querySelectorAll('.slideshow-dot');
+    let current = parseInt(container.dataset.current);
+    items[current].style.display = 'none';
+    if (dots[current]) dots[current].classList.remove('active');
+    items[index].style.display = 'block';
+    if (dots[index]) dots[index].classList.add('active');
+    container.dataset.current = index;
 }
 
 // ============================================
@@ -1133,7 +856,7 @@ function createUnpaidMarker(pelanggan, coords) {
     const noPelanggan = pelanggan.no_pelanggan || '-';
     let wilayah = pelanggan.nama_wilayah || 'Tidak Diketahui';
     wilayah = convertRegionRomanToNumber(wilayah);
-
+    
     const html = `
         <div class="unpaid-marker-wrapper" data-no-pelanggan="${noPelanggan}">
             <div class="unpaid-marker-label">${nama}</div>
@@ -1142,7 +865,7 @@ function createUnpaidMarker(pelanggan, coords) {
             <div class="unpaid-marker-amount">${formatRupiah(jumlah)}</div>
         </div>
     `;
-
+    
     return L.marker(coords, {
         icon: L.divIcon({ className: 'custom-div-icon', html: html, iconSize: [100, 60], iconAnchor: [50, 30] }),
         zIndexOffset: 1000
@@ -1153,17 +876,17 @@ function loadUnpaidCustomerMarkers() {
     unpaidCustomerMarkers.forEach(m => map.removeLayer(m));
     unpaidCustomerMarkers = [];
     unpaidCustomerList = [];
-
+    
     pelangganDataFromLaravel.forEach(p => {
         const status = getPaymentStatus(p);
         if (status.status === 'Belum Bayar') {
             const coords = parseKoordinator(p.koordinator);
             if (!coords || !isInArea(coords[0], coords[1])) return;
-
+            
             const marker = createUnpaidMarker(p, coords);
             let wilayah = p.nama_wilayah || 'Tidak Diketahui';
             wilayah = convertRegionRomanToNumber(wilayah);
-
+            
             marker.bindPopup(`
                 <div style="min-width: 250px; font-family: 'Inter', sans-serif;">
                     <div style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 10px; border-radius: 8px 8px 0 0; font-weight: 700;">
@@ -1184,7 +907,7 @@ function loadUnpaidCustomerMarkers() {
                     </div>
                 </div>
             `, { maxWidth: 280 });
-
+            
             marker.addTo(map);
             unpaidCustomerMarkers.push(marker);
             unpaidCustomerList.push({
@@ -1195,38 +918,26 @@ function loadUnpaidCustomerMarkers() {
             });
         }
     });
-
+    
+    console.log(`🔴 Marker pelanggan belum bayar: ${unpaidCustomerList.length}`);
     document.getElementById('liveCounterTotal').textContent = unpaidCustomerList.length;
-}
-
-function syncNotificationBarWithMarker(customer) {
-    const content = document.getElementById('notificationContent');
-    if (!content) return;
     
-    content.querySelectorAll('.notification-item').forEach(item => {
-        item.classList.remove('active-sync');
-    });
-    
-    const items = content.querySelectorAll('.notification-item');
-    items.forEach(item => {
-        const nama = item.querySelector('strong')?.textContent?.trim();
-        if (nama === customer.nama) {
-            item.classList.add('active-sync');
-        }
-    });
+    if (unpaidCustomerList.length > 0 && isLiveDashboardActive) {
+        setTimeout(() => { startNarrationSequence(); }, 5000);
+    }
 }
 
 function highlightUnpaidMarker(index) {
     if (highlightedMarkerElement) highlightedMarkerElement.classList.remove('highlighted');
     if (index < 0 || index >= unpaidCustomerList.length) return;
-
+    
     const customer = unpaidCustomerList[index];
     const marker = customer.marker;
-
+    
     map.flyTo(customer.coords, 18, { duration: 1.5 });
-
+    
     setTimeout(() => { marker.openPopup(); }, 1500);
-
+    
     setTimeout(() => {
         const markerEl = marker.getElement();
         if (markerEl) {
@@ -1237,24 +948,21 @@ function highlightUnpaidMarker(index) {
             }
         }
     }, 1600);
-
+    
     updateLiveInfoPanel(customer, index);
-    syncNotificationBarWithMarker(customer);
-
-    // 🔥 NAMA DIBACA NORMAL (TIDAK DIEJA)
-    const namaNormal = formatNameForSpeech(customer.nama, voiceSettings.paymentGender);
-    if (voiceSettings.enabled) {
-        const text = `Pelanggan ${namaNormal}, di ${customer.wilayah}, dengan tagihan ${formatRupiah(customer.jumlah)}, belum melakukan pembayaran.`;
-        addToVoiceQueue(text, voiceSettings.paymentGender);
+    
+    const namaTanpaSpasi = removeNameSpaces(customer.nama);
+    if (voiceSettings.enabled && !isNarrationRunning) {
+        const text = `Pelanggan ${namaTanpaSpasi}, di ${customer.wilayah}, dengan tagihan ${formatRupiah(customer.jumlah)}, belum melakukan pembayaran.`;
+        speak(text, voiceSettings.paymentGender);
     }
-
+    
     showNotification(`🔴 ${customer.nama} - ${customer.wilayah} - ${formatRupiah(customer.jumlah)}`, 'live');
 }
 
 function updateLiveInfoPanel(customer, index) {
     const panel = document.getElementById('liveInfoPanel');
     if (!panel) return;
-
     panel.style.display = 'flex';
     document.getElementById('liveCustomerName').textContent = customer.nama;
     document.getElementById('liveCustomerDetail').textContent = `${customer.wilayah} • No. ${customer.data.no_pelanggan}`;
@@ -1268,52 +976,37 @@ function startLiveCycle() {
         showNotification('Tidak ada pelanggan belum bayar', 'warning');
         return;
     }
-
     if (liveCycleInterval) clearInterval(liveCycleInterval);
-
+    
     isLiveDashboardActive = true;
     liveCycleIndex = 0;
-
     highlightUnpaidMarker(liveCycleIndex);
-
+    
     liveCycleInterval = setInterval(() => {
         liveCycleIndex = (liveCycleIndex + 1) % unpaidCustomerList.length;
         highlightUnpaidMarker(liveCycleIndex);
     }, liveCycleSpeed);
-
+    
     document.getElementById('btnLiveStart').disabled = true;
     document.getElementById('btnLiveStop').disabled = false;
     document.getElementById('liveBtn').classList.add('active');
     document.getElementById('liveText').textContent = 'LIVE ON';
-
+    
     showNotification(`🔴 LIVE MODE: Auto-cycle ${unpaidCustomerList.length} pelanggan belum bayar`, 'live');
 }
 
 function stopLiveCycle() {
     if (liveCycleInterval) { clearInterval(liveCycleInterval); liveCycleInterval = null; }
-
     isLiveDashboardActive = false;
-
-    if (highlightedMarkerElement) {
-        highlightedMarkerElement.classList.remove('highlighted');
-        highlightedMarkerElement = null;
-    }
+    if (highlightedMarkerElement) { highlightedMarkerElement.classList.remove('highlighted'); highlightedMarkerElement = null; }
     
-    const content = document.getElementById('notificationContent');
-    if (content) {
-        content.querySelectorAll('.notification-item').forEach(item => {
-            item.classList.remove('active-sync');
-        });
-    }
-
     document.getElementById('btnLiveStart').disabled = false;
     document.getElementById('btnLiveStop').disabled = true;
     document.getElementById('liveBtn').classList.remove('active');
     document.getElementById('liveText').textContent = 'LIVE OFF';
     document.getElementById('liveInfoPanel').style.display = 'none';
-
+    
     map.flyTo([-6.88, 107.97], 14, { duration: 1 });
-
     showNotification('⏸️ LIVE MODE dimatikan', 'info');
 }
 
@@ -1325,7 +1018,6 @@ function toggleLiveDashboard() {
 function setLiveSpeed(v) {
     liveCycleSpeed = v * 1000;
     document.getElementById('liveSpeedValue').textContent = v + ' detik';
-
     if (isLiveDashboardActive && liveCycleInterval) {
         clearInterval(liveCycleInterval);
         liveCycleInterval = setInterval(() => {
@@ -1336,105 +1028,172 @@ function setLiveSpeed(v) {
 }
 
 // ============================================
-// 🔥 AUTO NARASI BERURUTAN
+// NARASI BERTAHAP
 // ============================================
-function startAutoNarration() {
-    clearVoiceQueue();
-    stopLiveCycle();
-
-    const recentOfficePayment = pelangganDataFromLaravel
-        .filter(p => getPaymentStatus(p).metode === 'Kantor' && getPaymentStatus(p).tanggal)
-        .sort((a, b) => new Date(getPaymentStatus(b).tanggal) - new Date(getPaymentStatus(a).tanggal))[0];
-
-    let firstCallback = () => {
-        narrateMonthlyStats(() => {
-            narrateTunggakan(() => {
-                addToVoiceQueue('Sekarang kami tampilkan data pelanggan yang belum melakukan pembayaran.', voiceSettings.paymentGender, () => {
-                    setTimeout(() => {
-                        if (unpaidCustomerList.length > 0) {
-                            startLiveCycle();
-                        }
-                    }, 2000);
-                });
-            });
-        });
-    };
-
-    addToVoiceQueue('Selamat datang di sistem monitoring PDAM UP Darmaraja.', voiceSettings.paymentGender, () => {
-        if (recentOfficePayment) {
-            addToVoiceQueue(formatPaymentVoiceText(recentOfficePayment), voiceSettings.paymentGender, firstCallback);
-        } else {
-            firstCallback();
-        }
-    });
+function addToNarrationQueue(text, gender = 'female', delay = 0) {
+    narrationQueue.push({ text, gender, delay });
 }
 
-function narrateTunggakan(callback) {
-    const unpaidData = calculateUnpaidBillsByRegion();
-
-    if (unpaidData.totalUnpaid > 0) {
-        let text = `Sisa tunggakan saat ini sebanyak ${unpaidData.totalUnpaid} rekening, dengan total nominal ${formatRupiah(unpaidData.totalAmount)}. Mohon kepada para pelanggan yang belum melakukan pembayaran, agar segera melunasi tagihan.`;
-        addToVoiceQueue(text, voiceSettings.paymentGender, callback);
-    } else {
-        if (callback) callback();
+function processNarrationQueue() {
+    if (narrationQueue.length === 0) {
+        isNarrationRunning = false;
+        if (isLiveDashboardActive && unpaidCustomerList.length > 0) {
+            setTimeout(() => { startLiveCycle(); }, 2000);
+        }
+        return;
     }
+    const next = narrationQueue.shift();
+    isNarrationRunning = true;
+    setTimeout(() => {
+        speak(next.text, next.gender, () => { processNarrationQueue(); });
+    }, next.delay);
+}
+
+function startNarrationSequence() {
+    if (isNarrationRunning) return;
+    if (liveCycleInterval) { clearInterval(liveCycleInterval); liveCycleInterval = null; }
+    narrationQueue = [];
+    
+    // TAHAP 1: UCAPAN TERIMA KASIH
+    const recentPayments = [];
+    pelangganDataFromLaravel.forEach(p => {
+        const status = getPaymentStatus(p);
+        if (status.tanggal) recentPayments.push({ ...p, status: status });
+    });
+    recentPayments.sort((a, b) => new Date(b.status.tanggal) - new Date(a.status.tanggal));
+    const top5Payments = recentPayments.slice(0, 5);
+    
+    if (top5Payments.length > 0) {
+        let thanksText = 'Terima kasih kami ucapkan kepada para pelanggan yang telah melakukan pembayaran. ';
+        top5Payments.forEach((p) => {
+            const namaTanpaSpasi = removeNameSpaces(p.nama);
+            thanksText += `Yang terhormat ${namaTanpaSpasi}, `;
+        });
+        thanksText += 'Terima kasih atas kepercayaan Anda kepada PDAM UP Darmaraja.';
+        addToNarrationQueue(thanksText, voiceSettings.paymentGender, 0);
+    }
+    
+    // TAHAP 2: NARASI WILAYAH & BLOK
+    const wilayahStats = calculateWilayahAndBlokStats();
+    let wilayahText = `Saat ini PDAM UP Darmaraja melayani ${wilayahStats.totalWilayah} wilayah. `;
+    wilayahStats.wilayahList.forEach((w) => {
+        wilayahText += `Wilayah ${w.nama} memiliki ${w.blokList.length} blok, yaitu ${w.blokList.join(', ')}. `;
+    });
+    addToNarrationQueue(wilayahText, voiceSettings.paymentGender, 1000);
+    
+    // TAHAP 3: TUNGGAKAN
+    const unpaidData = calculateUnpaidBillsByRegion();
+    if (unpaidData.totalUnpaid > 0) {
+        let tunggakanText = `Sisa tunggakan saat ini sebanyak ${unpaidData.totalUnpaid} rekening, dengan total nominal ${formatRupiah(unpaidData.totalAmount)}. Mohon kepada para pelanggan yang belum melakukan pembayaran, agar segera melunasi tagihan.`;
+        addToNarrationQueue(tunggakanText, voiceSettings.paymentGender, 1000);
+    }
+    
+    // TAHAP 4: STATISTIK REAL-TIME
+    const realtimeStats = calculateRealtimeStats();
+    const now = new Date();
+    const jamSekarang = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+    const tanggalSekarang = now.getDate();
+    const bulanSekarang = now.toLocaleDateString('id-ID', { month: 'long' });
+    
+    let realtimeText = `Sampai dengan jam ${jamSekarang} tanggal ${tanggalSekarang} ${bulanSekarang}, telah mendapatkan ${realtimeStats.totalKonsumen} konsumen yang melakukan pembayaran, dengan total penerimaan sebesar ${formatRupiah(realtimeStats.totalBayar)}. Terima kasih atas partisipasi Anda.`;
+    addToNarrationQueue(realtimeText, voiceSettings.paymentGender, 1000);
+    
+    // TAHAP 5: MASUK KE LIVE
+    addToNarrationQueue('Sekarang kami tampilkan data pelanggan yang belum melakukan pembayaran.', voiceSettings.paymentGender, 1000);
+    
+    processNarrationQueue();
+}
+
+// 🔥 Hitung statistik wilayah & BLOK (bukan desa)
+function calculateWilayahAndBlokStats() {
+    const wilayahMap = {};
+    pelangganDataFromLaravel.forEach(p => {
+        let wilayah = p.nama_wilayah || 'Tidak Diketahui';
+        wilayah = convertRegionRomanToNumber(wilayah);
+        // Gunakan nama_blok atau blok jika ada, fallback ke wilayah
+        const blok = p.nama_blok || p.blok || wilayah;
+        
+        if (!wilayahMap[wilayah]) {
+            wilayahMap[wilayah] = { nama: wilayah, blokSet: new Set() };
+        }
+        wilayahMap[wilayah].blokSet.add(blok);
+    });
+    
+    const wilayahList = Object.values(wilayahMap).map(w => ({
+        nama: w.nama,
+        blokList: Array.from(w.blokSet)
+    }));
+    
+    return { totalWilayah: wilayahList.length, wilayahList: wilayahList };
+}
+
+function calculateRealtimeStats() {
+    let totalKonsumen = 0, totalBayar = 0;
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    
+    pelangganDataFromLaravel.forEach(p => {
+        const status = getPaymentStatus(p);
+        if (status.tanggal) {
+            const paymentDate = new Date(status.tanggal);
+            if (paymentDate >= firstDayOfMonth) {
+                totalKonsumen++;
+                totalBayar += parseFloat(p.jumlah) || 0;
+            }
+        }
+    });
+    return { totalKonsumen, totalBayar };
 }
 
 function calculateUnpaidBillsByRegion() {
     const unpaidByRegion = {};
     let totalUnpaid = 0, totalAmount = 0;
-
+    
     pelangganDataFromLaravel.forEach(p => {
         const status = getPaymentStatus(p);
-
         if (status.status === 'Belum Bayar') {
             let wilayah = p.nama_wilayah || 'Tidak Diketahui';
             wilayah = convertRegionRomanToNumber(wilayah);
-
+            
             if (!unpaidByRegion[wilayah]) {
                 unpaidByRegion[wilayah] = { count: 0, amount: 0, names: [] };
             }
-
             unpaidByRegion[wilayah].count++;
             unpaidByRegion[wilayah].amount += parseFloat(p.jumlah) || 0;
-
+            const namaPelanggan = removeNameSpaces(p.nama);
+            if (!unpaidByRegion[wilayah].names.includes(namaPelanggan)) {
+                unpaidByRegion[wilayah].names.push(namaPelanggan);
+            }
             totalUnpaid++;
             totalAmount += parseFloat(p.jumlah) || 0;
         }
     });
-
     return { byRegion: unpaidByRegion, totalUnpaid, totalAmount };
 }
 
 // ============================================
-// 🔥 VOICE SYSTEM
+// VOICE SYSTEM
 // ============================================
 function isIndonesianVoice(voice) {
     if (!voice) return false;
     const lang = (voice.lang || '').toLowerCase();
     const name = (voice.name || '').toLowerCase();
-
     if (lang === 'id-id' || lang === 'id' || lang.startsWith('id-') || lang.startsWith('id_')) return true;
     for (const keyword of ID_KEYWORDS) { if (name.includes(keyword)) return true; }
-
     return false;
 }
 
 function detectGender(voice) {
     if (!voice) return 'unknown';
     const name = (voice.name || '').toLowerCase();
-
     for (const keyword of FEMALE_KEYWORDS) { if (name.includes(keyword)) return 'female'; }
     for (const keyword of MALE_KEYWORDS) { if (name.includes(keyword)) return 'male'; }
-
     return 'unknown';
 }
 
 function loadVoices() {
     if (!('speechSynthesis' in window)) return;
-
     availableVoices = speechSynthesis.getVoices();
-
     if (availableVoices.length === 0) {
         speechSynthesis.onvoiceschanged = () => { availableVoices = speechSynthesis.getVoices(); categorizeIndonesianVoices(); };
     } else { categorizeIndonesianVoices(); }
@@ -1442,7 +1201,6 @@ function loadVoices() {
 
 function categorizeIndonesianVoices() {
     indonesianVoices = []; indonesianFemaleVoices = []; indonesianMaleVoices = [];
-
     availableVoices.forEach(voice => {
         if (isIndonesianVoice(voice)) {
             indonesianVoices.push(voice);
@@ -1451,67 +1209,53 @@ function categorizeIndonesianVoices() {
             else if (gender === 'male') indonesianMaleVoices.push(voice);
         }
     });
-
     if (indonesianVoices.length === 0) {
         indonesianVoices = [...availableVoices];
+        availableVoices.forEach(voice => {
+            const gender = detectGender(voice);
+            if (gender === 'female') indonesianFemaleVoices.push(voice);
+            else if (gender === 'male') indonesianMaleVoices.push(voice);
+        });
     }
-
     if (indonesianFemaleVoices.length === 0) indonesianFemaleVoices = [...indonesianVoices];
     if (indonesianMaleVoices.length === 0) indonesianMaleVoices = [...indonesianVoices];
 }
 
 function stopAllVoices() {
-    clearVoiceQueue();
+    speechSynthesis.cancel();
     if (isPaymentVoicePlaying) stopPaymentVoice();
     if (isGangguanVoicePlaying) stopGangguanVoice();
 }
 
 function speak(text, gender = 'female', callback) {
     if (!voiceSettings.enabled || !('speechSynthesis' in window)) { if (callback) callback(); return; }
-
     speechSynthesis.cancel();
-
+    
     const audioEl = document.getElementById('backgroundMusic');
     const wasPlaying = isMusicPlaying && !isMusicPaused;
     const originalVolume = audioEl ? audioEl.volume : 0.3;
-
     if (wasPlaying && audioEl) audioEl.volume = Math.max(0.05, originalVolume * 0.3);
-    duckYouTubeVolume();
-
+    
     setTimeout(() => {
         const u = new SpeechSynthesisUtterance(text);
         u.lang = 'id-ID';
-
         const idx = gender === 'female' ? voiceSettings.paymentVoiceIndex : voiceSettings.gangguanVoiceIndex;
         const voicePool = gender === 'female' ? indonesianFemaleVoices : indonesianMaleVoices;
-
         if (voicePool.length > 0) { u.voice = voicePool[idx % voicePool.length] || voicePool[0]; }
         else if (indonesianVoices.length > 0) { u.voice = indonesianVoices[0]; }
-
+        
         const p = voiceProfiles[idx] || voiceProfiles[0] || { pitch: 1, rate: 1 };
         u.pitch = p.pitch; u.rate = p.rate; u.volume = voiceSettings.volume;
-
         if (u.voice && u.voice.lang && !u.voice.lang.startsWith('id')) u.lang = 'id-ID';
-
-        u.onend = () => { 
-            if (wasPlaying && audioEl) audioEl.volume = originalVolume; 
-            restoreYouTubeVolume();
-            if (callback) callback(); 
-        };
-        u.onerror = (e) => { 
-            console.error('❌ Error saat speak:', e); 
-            if (wasPlaying && audioEl) audioEl.volume = originalVolume; 
-            restoreYouTubeVolume();
-            if (callback) callback(); 
-        };
-
+        
+        u.onend = () => { if (wasPlaying && audioEl) audioEl.volume = originalVolume; if (callback) callback(); };
+        u.onerror = (e) => { console.error('❌ Error saat speak:', e); if (wasPlaying && audioEl) audioEl.volume = originalVolume; if (callback) callback(); };
         speechSynthesis.speak(u);
     }, 100);
 }
 
 function updateGangguanGender() { voiceSettings.gangguanGender = document.getElementById('gangguanGenderSelect').value; }
 function updatePaymentGender() { voiceSettings.paymentGender = document.getElementById('paymentGenderSelect').value; }
-
 function updateVoiceIndex() {
     voiceSettings.gangguanVoiceIndex = parseInt(document.getElementById('gangguanVoiceSelect').value);
     voiceSettings.paymentVoiceIndex = parseInt(document.getElementById('paymentVoiceSelect').value);
@@ -1522,74 +1266,47 @@ function formatGangguanVoiceText(g) {
     const jenisText = g.jenis_gangguan ? g.jenis_gangguan.toUpperCase() : '-';
     const tipeText = g.tipe_kerusakan ? g.tipe_kerusakan.toUpperCase().replace('_', ' ') : '-';
     const statusText = g.status === 'menunggu' ? 'Menunggu' : g.status === 'dalam_proses' ? 'Dalam Proses' : 'Selesai';
-
+    
     let lokasiText = g.lokasi || '-';
     lokasiText = cleanSpacedLetters(lokasiText);
     lokasiText = convertRegionRomanToNumber(lokasiText);
     lokasiText = toTitleCase(lokasiText.toLowerCase());
-
+    
     let wilayahText = g.wilayah_terdampak || '-';
     wilayahText = cleanSpacedLetters(wilayahText);
     wilayahText = convertRegionRomanToNumber(wilayahText);
     wilayahText = toTitleCase(wilayahText.toLowerCase());
-
+    
     const ukuranText = g.ukuran_pipa || '-';
-
     let deskripsiText = g.deskripsi || 'Tidak ada deskripsi';
     deskripsiText = cleanSpacedLetters(deskripsiText);
     deskripsiText = normalizeTextForSpeech(deskripsiText);
-
     const estimasiText = g.estimasi_selesai ? new Date(g.estimasi_selesai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
-
+    
     return `Gangguan nomor ${kodeText}. Status: ${statusText}. Tipe: ${tipeText}. Lokasi: ${lokasiText}. Wilayah Terdampak: ${wilayahText}. Jenis: ${jenisText}. Ukuran: ${ukuranText}. Deskripsi: ${deskripsiText}. Estimasi Penyelesaian: ${estimasiText}.`;
 }
 
-// 🔥 FORMAT PEMBAYARAN - NAMA DIBACA NORMAL
 function formatPaymentVoiceText(p) {
     let lokasiText = p.lokasi || 'lokasi tidak diketahui';
     lokasiText = convertRegionRomanToNumber(lokasiText);
-
-    // 🔥 NAMA DIBACA NORMAL (TIDAK DIEJA PER HURUF)
-    let namaText = formatNameForSpeech(p.nama, voiceSettings.paymentGender);
-
+    let namaText = removeNameSpaces(p.nama);
+    namaText = toTitleCase(namaText.toLowerCase());
     const metodeText = p.metode === 'PPOB' ? 'P. P. O. B.' : 'Kantor Unit Cabang';
-
     return `Terima kasih kepada Yang Terhormat, ${namaText}, yang berlokasi di ${lokasiText}, telah melakukan pembayaran di ${metodeText}. Dan apabila ada keluhan, silahkan hubungi Kantor Unit atau call center kami. Terima kasih, semoga sehat selalu.`;
 }
 
 function announcePayment(p, auto = true) {
     if (!voiceSettings.enabled) return;
-
-    if (p.metode === 'Kantor') {
-        const wasLiveActive = isLiveDashboardActive;
-        
-        if (isLiveDashboardActive && liveCycleInterval) {
-            clearInterval(liveCycleInterval);
-            liveCycleInterval = null;
-        }
-
-        clearVoiceQueue();
-
-        addToVoiceQueue(formatPaymentVoiceText(p), voiceSettings.paymentGender, () => {
+    if (isNarrationRunning) { narrationQueue = []; isNarrationRunning = false; speechSynthesis.cancel(); }
+    if (isLiveDashboardActive) stopLiveCycle();
+    
+    if (auto) {
+        speak(formatPaymentVoiceText(p), voiceSettings.paymentGender, () => {
             setTimeout(() => {
-                if (wasLiveActive && unpaidCustomerList.length > 0) {
-                    isLiveDashboardActive = true;
-                    liveCycleInterval = setInterval(() => {
-                        liveCycleIndex = (liveCycleIndex + 1) % unpaidCustomerList.length;
-                        highlightUnpaidMarker(liveCycleIndex);
-                    }, liveCycleSpeed);
-                } else {
-                    startAutoNarration();
-                }
-            }, 2000);
+                if (isLiveDashboardActive && !isNarrationRunning) startNarrationSequence();
+            }, 3000);
         });
-
-        showNotification(`Pembayaran baru dari ${p.nama} di Kantor`, 'success');
-    } else {
-        if (auto) {
-            addToVoiceQueue(formatPaymentVoiceText(p), voiceSettings.paymentGender);
-            showNotification(`Pembayaran baru dari ${p.nama}`, 'success');
-        }
+        showNotification(`Pembayaran baru dari ${p.nama}`, 'success');
     }
 }
 
@@ -1599,55 +1316,43 @@ function announcePayment(p, auto = true) {
 function playGangguanVoiceLoop() {
     if (!isGangguanVoicePlaying || isGangguanVoicePaused) return;
     if (activeGangguanList.length === 0) { updateGangguanVoiceStatus('idle', 'Tidak ada gangguan aktif'); return; }
-
     let currentIndex = 0;
-
     function playNext() {
         if (!isGangguanVoicePlaying || isGangguanVoicePaused) return;
-
         if (currentIndex >= activeGangguanList.length) {
             if (repeatGangguanVoice) { currentIndex = 0; setTimeout(playNext, 2000); }
             else { stopGangguanVoice(); }
             return;
         }
-
         const g = activeGangguanList[currentIndex];
         updateGangguanVoiceStatus('playing', `Memutar: ${g.kode_laporan}`);
-
-        addToVoiceQueue(formatGangguanVoiceText(g), voiceSettings.gangguanGender, () => {
+        speak(formatGangguanVoiceText(g), voiceSettings.gangguanGender, () => {
             currentIndex++;
             setTimeout(playNext, 1500);
         });
     }
-
     playNext();
 }
 
 function playGangguanVoice() {
     if (activeGangguanList.length === 0) { showNotification('Tidak ada gangguan aktif', 'warning'); return; }
-
     isGangguanVoicePlaying = true; isGangguanVoicePaused = false;
     updateGangguanVoiceStatus('playing', `Memutar ${activeGangguanList.length} gangguan`);
-    updateGangguanVoiceButtons();
-    playGangguanVoiceLoop();
+    updateGangguanVoiceButtons(); playGangguanVoiceLoop();
 }
 
 function pauseGangguanVoice() {
     if (!isGangguanVoicePlaying) return;
-
     isGangguanVoicePaused = !isGangguanVoicePaused;
-
     if (isGangguanVoicePaused) { speechSynthesis.pause(); updateGangguanVoiceStatus('paused', 'Dijeda'); }
     else { speechSynthesis.resume(); updateGangguanVoiceStatus('playing', 'Dilanjutkan'); }
-
     updateGangguanVoiceButtons();
 }
 
 function stopGangguanVoice() {
     isGangguanVoicePlaying = false; isGangguanVoicePaused = false;
     speechSynthesis.cancel();
-    updateGangguanVoiceStatus('idle', 'Dihentikan');
-    updateGangguanVoiceButtons();
+    updateGangguanVoiceStatus('idle', 'Dihentikan'); updateGangguanVoiceButtons();
 }
 
 function toggleRepeatGangguan() {
@@ -1677,17 +1382,14 @@ function updateGangguanVoiceButtons() {
 // ============================================
 function playPaymentSequence() {
     if (!isPaymentVoicePlaying || isPaymentVoicePaused) return;
-
     if (currentPaymentIndex >= last5Payments.length) {
         if (repeatPaymentVoice) { currentPaymentIndex = 0; setTimeout(() => playPaymentSequence(), 2000); }
         else { stopPaymentVoice(); }
         return;
     }
-
     const p = last5Payments[currentPaymentIndex];
     updatePaymentVoiceStatus('playing', `Memutar: ${p.nama}`);
-
-    addToVoiceQueue(formatPaymentVoiceText(p), voiceSettings.paymentGender, () => {
+    speak(formatPaymentVoiceText(p), voiceSettings.paymentGender, () => {
         currentPaymentIndex++;
         setTimeout(() => { if (isPaymentVoicePlaying && !isPaymentVoicePaused) playPaymentSequence(); }, 1500);
     });
@@ -1695,29 +1397,22 @@ function playPaymentSequence() {
 
 function playLast5Payments() {
     if (last5Payments.length === 0) { showNotification('Belum ada data pembayaran', 'warning'); return; }
-
     isPaymentVoicePlaying = true; isPaymentVoicePaused = false; currentPaymentIndex = 0;
     updatePaymentVoiceStatus('playing', `Memutar ${last5Payments.length} pembayaran`);
-    updatePaymentVoiceButtons();
-    playPaymentSequence();
+    updatePaymentVoiceButtons(); playPaymentSequence();
 }
 
 function pausePaymentVoice() {
     if (!isPaymentVoicePlaying) return;
-
     isPaymentVoicePaused = !isPaymentVoicePaused;
-
     if (isPaymentVoicePaused) { speechSynthesis.pause(); updatePaymentVoiceStatus('paused', 'Dijeda'); }
     else { speechSynthesis.resume(); updatePaymentVoiceStatus('playing', 'Dilanjutkan'); }
-
     updatePaymentVoiceButtons();
 }
 
 function stopPaymentVoice() {
     isPaymentVoicePlaying = false; isPaymentVoicePaused = false; currentPaymentIndex = 0;
-    speechSynthesis.cancel();
-    updatePaymentVoiceStatus('idle', 'Dihentikan');
-    updatePaymentVoiceButtons();
+    speechSynthesis.cancel(); updatePaymentVoiceStatus('idle', 'Dihentikan'); updatePaymentVoiceButtons();
 }
 
 function toggleRepeatPayment() {
@@ -1743,17 +1438,16 @@ function updatePaymentVoiceButtons() {
 }
 
 // ============================================
-// MUSIC CONTROLS
+// 🔥 MUSIC CONTROLS - DARI FOLDER LOKAL
 // ============================================
 function changeMusic() {
     const sel = document.getElementById('musicSelect');
     const t = sel.value;
     if (!t) return;
-
     currentMusicType = t;
     const playlistIndex = musicPlaylist.indexOf(t);
     if (playlistIndex !== -1) currentPlaylistIndex = playlistIndex;
-
+    
     const audioEl = document.getElementById('backgroundMusic');
     stopYouTube();
     audioEl.src = musicFolder + t;
@@ -1768,13 +1462,12 @@ function playMusic() {
         showNotification('Pilih musik terlebih dahulu', 'warning');
         return;
     }
-
     stopYouTube();
     const volume = parseInt(document.getElementById('musicVolumeSlider').value) / 100;
     audioEl.volume = volume;
     audioEl.loop = false;
     audioEl.onended = () => { if (autoRotateMusic && !isYouTubePlaying) playNextTrack(); };
-
+    
     const playPromise = audioEl.play();
     if (playPromise !== undefined) {
         playPromise.then(() => {
@@ -1793,11 +1486,9 @@ function playMusic() {
 
 function playNextTrack() {
     if (!autoRotateMusic) return;
-
     currentPlaylistIndex = (currentPlaylistIndex + 1) % musicPlaylist.length;
     const nextTrack = musicPlaylist[currentPlaylistIndex];
     currentMusicType = nextTrack;
-
     const audioEl = document.getElementById('backgroundMusic');
     audioEl.src = musicFolder + nextTrack;
     audioEl.load();
@@ -1805,14 +1496,12 @@ function playNextTrack() {
         audioEl.play();
         document.getElementById('musicStatusText').textContent = `🎵 ${musicNames[nextTrack] || nextTrack}`;
     };
-
     setTimeout(() => { if (audioEl.paused) audioEl.play().catch(() => {}); }, 1000);
 }
 
 function pauseMusic() {
     const audioEl = document.getElementById('backgroundMusic');
     if (!isMusicPlaying) return;
-
     if (isMusicPaused) {
         audioEl.play(); isMusicPaused = false;
         document.getElementById('btnPauseMusic').innerHTML = '<i class="fas fa-pause"></i> Pause';
@@ -1826,7 +1515,6 @@ function stopMusic() {
     const audioEl = document.getElementById('backgroundMusic');
     audioEl.pause(); audioEl.currentTime = 0;
     isMusicPlaying = false; isMusicPaused = false;
-
     document.getElementById('btnPlayMusic').disabled = false;
     document.getElementById('btnPauseMusic').disabled = true;
     document.getElementById('btnStopMusic').disabled = true;
@@ -1852,89 +1540,33 @@ function setMusicVolume(v) {
 function extractYouTubeId(url) {
     if (!url) return null;
     url = url.trim();
-
     if (/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
-
     const patterns = [/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/, /[?&]v=([a-zA-Z0-9_-]{11})/];
     for (const pattern of patterns) { const match = url.match(pattern); if (match && match[1]) return match[1]; }
-
     return null;
 }
 
 function playYouTube() {
     const url = document.getElementById('youtubeUrl').value.trim();
     if (!url) { showNotification('Masukkan URL atau ID YouTube', 'warning'); return; }
-
     const videoId = extractYouTubeId(url);
     if (!videoId) { showNotification('URL/ID YouTube tidak valid', 'warning'); return; }
-
-    stopMusic();
-    
-    if (ytPlayer && typeof ytPlayer.destroy === 'function') {
-        try { ytPlayer.destroy(); } catch(e) {}
-        ytPlayer = null;
-    }
-
+    stopMusic(); stopYouTube();
+    const loopParam = musicLoop ? '1' : '0';
     const container = document.getElementById('youtubePlayerContainer');
-    container.innerHTML = '<div id="ytPlayerDiv"></div>';
-
-    if (!isYouTubeAPIReady) {
-        showNotification('YouTube API belum siap, coba lagi', 'warning');
-        return;
-    }
-
-    ytPlayer = new YT.Player('ytPlayerDiv', {
-        height: '1',
-        width: '1',
-        videoId: videoId,
-        playerVars: {
-            autoplay: 1,
-            controls: 0,
-            loop: musicLoop ? 1 : 0,
-            playlist: videoId,
-            modestbranding: 1,
-            rel: 0,
-            showinfo: 0
-        },
-        events: {
-            'onReady': (event) => {
-                event.target.setVolume(ytUserVolume);
-                event.target.playVideo();
-                isYouTubePlaying = true;
-                document.getElementById('youtubeStatus').style.display = 'flex';
-                document.getElementById('youtubeStatusText').textContent = `▶ YouTube: ${videoId}`;
-                document.getElementById('btnStopYouTube').disabled = false;
-                document.getElementById('musicStatus').style.display = 'flex';
-                document.getElementById('musicStatusText').textContent = '📺 YouTube sedang diputar';
-            },
-            'onStateChange': (event) => {
-                if (event.data === YT.PlayerState.ENDED && musicLoop) {
-                    ytPlayer.playVideo();
-                }
-            },
-            'onError': (event) => {
-                console.error('YouTube error:', event.data);
-                showNotification('Error memutar YouTube', 'warning');
-                stopYouTube();
-            }
-        }
-    });
+    container.innerHTML = `<iframe id="ytIframe" width="1" height="1" src="https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&loop=${loopParam}&playlist=${videoId}&enablejsapi=1&modestbranding=1&rel=0&showinfo=0" frameborder="0" allow="autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute; bottom: -200px; right: -200px; width: 1px; height: 1px; opacity: 0; pointer-events: none;"></iframe>`;
+    isYouTubePlaying = true;
+    document.getElementById('youtubeStatus').style.display = 'flex';
+    document.getElementById('youtubeStatusText').textContent = `▶ YouTube: ${videoId}`;
+    document.getElementById('btnStopYouTube').disabled = false;
+    document.getElementById('musicStatus').style.display = 'flex';
+    document.getElementById('musicStatusText').textContent = '📺 YouTube sedang diputar';
 }
 
 function stopYouTube() {
-    if (ytPlayer) {
-        try {
-            ytPlayer.stopVideo();
-            ytPlayer.destroy();
-        } catch(e) {}
-        ytPlayer = null;
-    }
-    
     const container = document.getElementById('youtubePlayerContainer');
     container.innerHTML = '';
     isYouTubePlaying = false;
-    isYouTubeDucked = false;
-
     document.getElementById('youtubeStatus').style.display = 'none';
     document.getElementById('btnStopYouTube').disabled = true;
     if (!isMusicPlaying) document.getElementById('musicStatus').style.display = 'none';
@@ -1946,7 +1578,6 @@ function stopYouTube() {
 function setScrollSpeed(v) {
     const duration = 210 - v;
     document.documentElement.style.setProperty('--scroll-duration', duration + 's');
-
     const content = document.getElementById('notificationContent');
     if (content) {
         content.style.animationDuration = duration + 's';
@@ -1954,24 +1585,21 @@ function setScrollSpeed(v) {
         content.offsetHeight;
         content.style.animation = `scroll-left ${duration}s linear infinite`;
     }
-
     let label = 'Normal';
     if (v < 40) label = 'Sangat Lambat (' + duration + 's)';
     else if (v < 70) label = 'Lambat (' + duration + 's)';
     else if (v < 90) label = 'Normal (' + duration + 's)';
     else if (v < 130) label = 'Cepat (' + duration + 's)';
     else label = 'Sangat Cepat (' + duration + 's)';
-
     document.getElementById('scrollSpeedValue').textContent = label;
 }
 
 function toggleVoicePanel() { document.getElementById('voicePanel').classList.toggle('active'); }
-
 function setVoiceVolume(v) { voiceSettings.volume = v / 100; document.getElementById('volumeValue').textContent = v + '%'; }
 
 function testVoice() {
     const gender = voiceSettings.paymentGender;
-    const text = gender === 'female' ? 'Halo, ini adalah suara perempuan Alternatif 3 untuk notifikasi pembayaran PDAM UP Darmaraja. Contoh nama dibaca normal: Budi Santoso, Siti Aminah, Ahmad Hidayat.' : 'Halo, ini adalah suara laki-laki untuk notifikasi gangguan PDAM UP Darmaraja';
+    const text = gender === 'female' ? 'Halo, ini adalah suara perempuan untuk notifikasi pembayaran PDAM UP Darmaraja' : 'Halo, ini adalah suara laki-laki untuk notifikasi gangguan PDAM UP Darmaraja';
     speak(text, gender);
 }
 
@@ -1983,17 +1611,13 @@ if ('speechSynthesis' in window) { loadVoices(); setTimeout(loadVoices, 500); se
 function updateNotificationBar(payments) {
     const bar = document.getElementById('notificationBar');
     const content = document.getElementById('notificationContent');
-
     if (payments.length === 0) { bar.style.display = 'none'; return; }
-
     bar.style.display = 'block';
     last5Payments = payments.slice(0, 5);
-
     let html = '';
     payments.forEach((p) => {
-        html += `<div class="notification-item" data-nama="${p.nama}"><strong>${p.nama}</strong> <span class="amount">${formatRupiah(p.jumlah)}</span> <span style="color: #86efac;">(${p.kubikasi} m³)</span> <span class="location"><i class="fas fa-${p.lokasi === 'Kantor' ? 'building' : 'mobile-alt'}"></i> ${p.lokasi}</span></div>`;
+        html += `<div class="notification-item"><strong>${p.nama}</strong> <span class="amount">${formatRupiah(p.jumlah)}</span> <span style="color: #86efac;">(${p.kubikasi} m³)</span> <span class="location"><i class="fas fa-${p.lokasi === 'Kantor' ? 'building' : 'mobile-alt'}"></i> ${p.lokasi}</span></div>`;
     });
-
     content.innerHTML = html + html;
     updatePaymentVoiceButtons();
 }
@@ -2001,7 +1625,6 @@ function updateNotificationBar(payments) {
 function getPaymentStatus(p) {
     const hasLoket = p.tanggal_pembayaran_loket && p.tanggal_pembayaran_loket !== '-' && p.tanggal_pembayaran_loket !== '.' && p.tanggal_pembayaran_loket !== null;
     const hasPPOB = p.tanggal_pembayaran_ppob && p.tanggal_pembayaran_ppob !== '-' && p.tanggal_pembayaran_ppob !== '.' && p.tanggal_pembayaran_ppob !== null;
-
     if (hasLoket) return { status: 'Kantor', color: '#10b981', icon: 'fa-building', tanggal: p.tanggal_pembayaran_loket, metode: 'Kantor' };
     else if (hasPPOB) return { status: 'PPOB', color: '#f59e0b', icon: 'fa-mobile-alt', tanggal: p.tanggal_pembayaran_ppob, metode: 'PPOB' };
     else return { status: 'Belum Bayar', color: '#ef4444', icon: 'fa-times', tanggal: null, metode: null };
@@ -2009,7 +1632,6 @@ function getPaymentStatus(p) {
 
 function calculateRevenue() {
     totalRevenue = 0; totalKubikasi = 0; let recent = [];
-
     pelangganDataFromLaravel.forEach(p => {
         const s = getPaymentStatus(p);
         if (s.status !== 'Belum Bayar') {
@@ -2018,7 +1640,6 @@ function calculateRevenue() {
             if (s.tanggal) recent.push({ nama: p.nama || 'Pelanggan', jumlah: parseFloat(p.jumlah) || 0, kubikasi: parseFloat(p.pakai) || 0, lokasi: p.nama_wilayah || 'Tidak Diketahui', tanggal: s.tanggal, metode: s.metode });
         }
     });
-
     recent.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
     updateRevenueDisplay();
     updateNotificationBar(recent.slice(0, 10));
@@ -2034,7 +1655,6 @@ function updateRevenueDisplay() {
 function initSidebarAutoScroll() {
     const sb = document.getElementById('sidebarContent');
     if (!sb) return;
-
     const scrollSpeed = 50, scrollAmount = 1;
     sidebarScrollInterval = setInterval(() => {
         const idle = Date.now() - lastActivityTime;
@@ -2045,7 +1665,6 @@ function initSidebarAutoScroll() {
             else if (sb.scrollTop <= 0) sidebarScrollDirection = 1;
         } else { isSidebarAutoScrolling = false; }
     }, scrollSpeed);
-
     const resetIdle = () => { lastActivityTime = Date.now(); };
     document.addEventListener('mousemove', resetIdle);
     document.addEventListener('click', resetIdle);
@@ -2061,48 +1680,26 @@ function initMap() {
     const bounds = L.latLngBounds(L.latLng(-6.98, 107.80), L.latLng(-6.80, 108.15));
     map = L.map('map', { center: [-6.88, 107.97], zoom: 14, minZoom: 11, maxZoom: 18, maxBounds: bounds, maxBoundsViscosity: 0.8, zoomControl: false });
     L.control.zoom({ position: 'topright' }).addTo(map);
-
     initBaseLayers();
     currentBaseLayer = baseLayers[currentLayer];
     currentBaseLayer.addTo(map);
 
     const polygon = [[-6.9584, 108.0315], [-6.9421, 108.0242], [-6.9315, 108.0198], [-6.9202, 108.0211], [-6.9110, 108.0322], [-6.8985, 108.0410], [-6.8842, 108.0556], [-6.8810, 108.0695], [-6.8892, 108.0841], [-6.9011, 108.0920], [-6.9154, 108.0985], [-6.9320, 108.0950], [-6.9488, 108.0862], [-6.9595, 108.0711], [-6.9680, 108.0544], [-6.9642, 108.0398], [-6.9584, 108.0315]];
     L.polygon(polygon, { color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.1, weight: 3, dashArray: '10, 5' }).addTo(map).bindPopup(`<div style="text-align:center; padding:10px;"><h6 style="color:#1e3c72; margin:0;"><i class="fas fa-map-marker-alt"></i> KECAMATAN DARMARAJA</h6><small>Kab. Sumedang, Jawa Barat</small></div>`);
-
     const center = L.polygon(polygon).getBounds().getCenter();
     L.marker([center.lat, center.lng], { icon: L.divIcon({ className: 'custom-div-icon', html: `<div id="darmaraja-label" style="background: rgba(30, 60, 114, 0.9); color: white; padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 14px; letter-spacing: 2px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 3px solid white; white-space: nowrap; transition: opacity 0.3s;"><i class="fas fa-map-marker-alt"></i> DARMARAJA</div>`, iconSize: [200, 40], iconAnchor: [100, 20] }), interactive: false }).addTo(map);
-
-    map.on('zoomend', () => {
-        const l = document.getElementById('darmaraja-label');
-        if (l) {
-            l.style.opacity = map.getZoom() >= 14 ? '0' : '1';
-            l.style.pointerEvents = map.getZoom() >= 14 ? 'none' : 'auto';
-        }
-    });
+    map.on('zoomend', () => { const l = document.getElementById('darmaraja-label'); if (l) { l.style.opacity = map.getZoom() >= 14 ? '0' : '1'; l.style.pointerEvents = map.getZoom() >= 14 ? 'none' : 'auto'; } });
 
     loadJalurPipa(); loadBangunan(); loadGangguan(); loadTitikPenting(); loadPelanggan();
     calculateRevenue();
     loadUnpaidCustomerMarkers();
-    loadWilayahDanBlok();
-    updateTodayStatsDisplay();
-
+    
     if (gangguanData && gangguanData.length > 0) {
         activeGangguanList = gangguanData.filter(g => g.status !== 'selesai');
-        if (activeGangguanList.length > 0) {
-            updateGangguanVoiceButtons();
-            updateGangguanVoiceStatus('idle', `${activeGangguanList.length} gangguan siap diputar`);
-        }
+        if (activeGangguanList.length > 0) { updateGangguanVoiceButtons(); updateGangguanVoiceStatus('idle', `${activeGangguanList.length} gangguan siap diputar`); }
     }
-
     initSidebarAutoScroll();
     setScrollSpeed(60);
-    
-    // 🔥 INIT SEARCH
-    document.getElementById('searchResults').innerHTML = '<div class="search-empty">Ketik untuk mencari pelanggan</div>';
-
-    if (unpaidCustomerList.length > 0) {
-        setTimeout(() => { startAutoNarration(); }, 5000);
-    }
 }
 
 function loadJalurPipa() {
@@ -2110,12 +1707,9 @@ function loadJalurPipa() {
         try {
             const c = parseCoordinates(j.coordinates);
             if (!c || c.length === 0 || !hasPointInArea(c)) return;
-
             const pl = L.polyline(c, { color: j.warna, weight: parseInt(j.ketebalan) || 4, opacity: 0.85 }).addTo(map);
             let d = 0; for (let i = 0; i < c.length - 1; i++) d += L.latLng(c[i]).distanceTo(L.latLng(c[i+1]));
-
             pl.bindPopup(`<div style="min-width:250px;"><h6 style="background:${j.warna};color:white;padding:10px;border-radius:8px 8px 0 0;margin:0;"><i class="fas fa-route"></i> ${j.nama_jalur}</h6><div style="padding:12px; font-size:12px;"><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #e2e8f0;"><span style="color:#64748b;">Jenis:</span><strong>${j.jenis_jalur.toUpperCase()}</strong></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #e2e8f0;"><span style="color:#64748b;">Ukuran:</span><strong>${j.ukuran_pipa}</strong></div><div style="display:flex;justify-content:space-between;padding:6px 0;"><span style="color:#64748b;">Panjang:</span><strong style="color:#0369a1;">${(d/1000).toFixed(2)} km</strong></div>${j.keterangan ? `<div style="margin-top:8px;padding-top:8px;border-top:1px dashed #e2e8f0;color:#64748b;font-size:11px;"><i class="fas fa-info-circle"></i> ${j.keterangan}</div>` : ''}</div></div>`, { maxWidth: 300 });
-
             jalurLayers[j.id] = pl;
         } catch(e) { console.error(e); }
     });
@@ -2126,17 +1720,12 @@ function loadBangunan() {
         try {
             const c = parseCoordinates(b.coordinates);
             if (!c || c.length === 0 || !hasPointInArea(c)) return;
-
             const poly = L.polygon(c, { color: b.warna, fillColor: b.warna, fillOpacity: 0.25, weight: 2 }).addTo(map);
             const center = poly.getBounds().getCenter();
-
             const icons = { 'reservoir': { i: 'fa-database', c: '#06b6d4' }, 'ipa': { i: 'fa-industry', c: '#8b5cf6' }, 'kantor': { i: 'fa-building', c: '#3b82f6' }, 'lainnya': { i: 'fa-building', c: '#6b7280' } };
             const cfg = icons[b.jenis_bangunan] || icons['lainnya'];
-
             const m = L.marker(center, { icon: L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-wrapper"><div class="marker-pin shape-square" style="background: ${cfg.c}; width: 34px; height: 34px;"><i class="fas ${cfg.i}"></i></div><div class="marker-label">${b.nama_bangunan}</div></div>`, iconSize: [34, 50], iconAnchor: [17, 17] }) }).addTo(map);
-
             m.bindPopup(`<div style="min-width:220px;"><h6 style="background:${cfg.c};color:white;padding:10px;border-radius:8px 8px 0 0;margin:0;"><i class="fas ${cfg.i}"></i> ${b.nama_bangunan}</h6><div style="padding:12px; font-size:12px;"><div style="display:flex;justify-content:space-between;padding:6px 0;"><span style="color:#64748b;">Jenis:</span><strong>${b.jenis_bangunan.toUpperCase()}</strong></div>${b.keterangan ? `<div style="margin-top:8px;padding-top:8px;border-top:1px dashed #e2e8f0;color:#64748b;font-size:11px;"><i class="fas fa-info-circle"></i> ${b.keterangan}</div>` : ''}</div></div>`);
-
             markerLayers[`bangunan_${b.id}`] = m;
         } catch(e) { console.error(e); }
     });
@@ -2147,16 +1736,18 @@ function loadGangguan() {
         try {
             const lat = parseFloat(g.latitude), lng = parseFloat(g.longitude);
             if (isNaN(lat) || isNaN(lng)) return;
-
             const cfg = { 'menunggu': { c: '#ef4444', i: 'fa-clock', t: 'Menunggu', bg: '#fee2e2' }, 'dalam_proses': { c: '#f59e0b', i: 'fa-tools', t: 'Dalam Proses', bg: '#fef3c7' }, 'selesai': { c: '#10b981', i: 'fa-check', t: 'Selesai', bg: '#d1fae5' } }[g.status] || { c: '#ef4444', i: 'fa-clock', t: 'Menunggu', bg: '#fee2e2' };
             const icons = { 'bocor': 'fa-tint', 'pecah': 'fa-bomb', 'mampet': 'fa-ban', 'rusak_ringan': 'fa-exclamation', 'rusak_berat': 'fa-exclamation-triangle', 'lainnya': 'fa-question' };
             const di = icons[g.tipe_kerusakan] || 'fa-question';
             const active = g.status !== 'selesai';
-
             const html = `<div class="marker-wrapper">${active ? `<div class="marker-banner"><i class="fas fa-exclamation-triangle"></i> GANGGUAN AKTIF</div>` : ''}<div style="position: relative; width: 50px; height: 50px;">${active ? `<div class="pulse-ring" style="background: ${cfg.c}; color: ${cfg.c}; animation: pulse-red 1.5s infinite;"></div>` : ''}<div class="marker-pin shape-circle" style="background: ${cfg.c}; width: 50px; height: 50px; border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.4);"><i class="fas ${di}" style="font-size: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i></div><div style="position: absolute; top: -2px; right: -2px; background: white; color: ${cfg.c}; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; border: 3px solid ${cfg.c}; box-shadow: 0 2px 8px rgba(0,0,0,0.3); font-weight: 700;"><i class="fas ${cfg.i}"></i></div></div><div class="marker-label" style="background: ${cfg.c}; font-weight: 700; font-size: 10px; padding: 3px 8px;">${g.kode_laporan}</div></div>`;
-
             const m = L.marker([lat, lng], { icon: L.divIcon({ className: 'custom-div-icon', html: html, iconSize: [110, 120], iconAnchor: [55, 60], popupAnchor: [0, -60] }) }).addTo(map);
-
+            
+            // 🔥 SLIDESHOW DI POPUP GANGGUAN
+            const images = g.images || [];
+            const videos = g.videos || [];
+            const slideshowHTML = createSlideshowHTML(images, videos);
+            
             m.bindPopup(`
                 <div style="min-width:300px;">
                     <div style="background:linear-gradient(135deg, ${cfg.c}, ${cfg.c}dd);color:white;padding:12px;text-align:center;">
@@ -2164,6 +1755,7 @@ function loadGangguan() {
                         <div style="font-weight:700;font-size:13px;">${g.status === 'selesai' ? 'Gangguan Telah Selesai' : 'Mohon Maaf Pelayanan Terganggu'}</div>
                     </div>
                     <div style="padding:15px;">
+                        ${slideshowHTML}
                         <h6 style="margin:0 0 12px 0; color:#1e293b; font-size:15px;">${g.kode_laporan}</h6>
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
                             <div style="background:${cfg.bg};padding:10px;border-radius:8px;text-align:center;">
@@ -2186,7 +1778,6 @@ function loadGangguan() {
                     </div>
                 </div>
             `, { maxWidth: 350 });
-
             markerLayers[`gangguan_${g.id}`] = m;
         } catch(e) { console.error(e); }
     });
@@ -2194,18 +1785,13 @@ function loadGangguan() {
 
 function loadTitikPenting() {
     const icons = { 'valve': { i: 'fa-toggle-on', c: '#ef4444' }, 'hydrant': { i: 'fa-fire', c: '#dc2626' }, 'meter': { i: 'fa-tachometer-alt', c: '#3b82f6' }, 'sambungan': { i: 'fa-link', c: '#8b5cf6' }, 'pompa': { i: 'fa-water', c: '#10b981' }, 'tandon': { i: 'fa-database', c: '#06b6d4' }, 'lainnya': { i: 'fa-map-pin', c: '#6b7280' } };
-
     titikPentingData.forEach(t => {
         try {
             const lat = parseFloat(t.latitude), lng = parseFloat(t.longitude);
             if (isNaN(lat) || isNaN(lng) || !isInArea(lat, lng)) return;
-
             const c = icons[t.jenis_titik] || icons['lainnya'];
-
             const m = L.marker([lat, lng], { icon: L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-wrapper"><div class="marker-pin shape-circle" style="background:${c.c};width:28px;height:28px;"><i class="fas ${c.i}"></i></div><div class="marker-label">${t.nama_titik}</div></div>`, iconSize: [28, 40], iconAnchor: [14, 14] }) }).addTo(map);
-
             m.bindPopup(`<div style="min-width:200px;"><h6 style="background:${c.c};color:white;padding:10px;border-radius:8px 8px 0 0;margin:0;"><i class="fas ${c.i}"></i> ${t.nama_titik}</h6><div style="padding:12px;font-size:12px;"><div><strong>Jenis:</strong> ${t.jenis_titik}</div>${t.keterangan ? `<div style="margin-top:5px;"><strong>Ket:</strong> ${t.keterangan}</div>` : ''}</div></div>`);
-
             markerLayers[`titik_${t.id}`] = m;
         } catch(e) { console.error(e); }
     });
@@ -2213,7 +1799,6 @@ function loadTitikPenting() {
 
 function loadPelanggan() {
     if (!pelangganDataFromLaravel || pelangganDataFromLaravel.length === 0) return;
-
     pelangganClusterGroup = L.markerClusterGroup({
         maxClusterRadius: 50, spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true,
         iconCreateFunction: function(cluster) {
@@ -2223,40 +1808,29 @@ function loadPelanggan() {
             return L.divIcon({ html: `<div style="background:${color};color:white;width:${size};height:${size};border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);">${count}</div>`, className: 'marker-cluster-custom', iconSize: L.point(parseInt(size), parseInt(size)) });
         }
     });
-
     const grouped = { byPayment: {}, byGolongan: {}, byWilayah: {}, totalKantor: 0, totalPPOB: 0, totalBelumBayar: 0, countKantor: 0, countPPOB: 0, countBelumBayar: 0 };
-
     pelangganDataFromLaravel.forEach(p => {
         const s = getPaymentStatus(p);
         if (!grouped.byPayment[s.status]) grouped.byPayment[s.status] = [];
         grouped.byPayment[s.status].push(p);
-
         const j = parseFloat(p.jumlah) || 0, k = parseFloat(p.pakai) || 0;
         if (s.status === 'Kantor') { grouped.totalKantor += j; grouped.countKantor++; }
         else if (s.status === 'PPOB') { grouped.totalPPOB += j; grouped.countPPOB++; }
         else { grouped.totalBelumBayar += j; grouped.countBelumBayar++; }
-
         const gol = p.kode_gol_trf || 'Lainnya';
         if (!grouped.byGolongan[gol]) grouped.byGolongan[gol] = [];
         grouped.byGolongan[gol].push(p);
-
         const w = p.nama_wilayah || 'Tidak Diketahui';
         if (!grouped.byWilayah[w]) grouped.byWilayah[w] = [];
         grouped.byWilayah[w].push(p);
-
         if (s.status === 'Belum Bayar') return;
-
         const coords = parseKoordinator(p.koordinator);
         if (!coords || !isInArea(coords[0], coords[1])) return;
-
         const m = L.marker(coords, { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background: ${s.color}; width: 18px; height: 18px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;"><i class="fas ${s.icon}" style="color: white; font-size: 8px;"></i></div>`, iconSize: [18, 18], iconAnchor: [9, 9] }), zIndexOffset: 100 });
-
         m.bindPopup(`<div style="min-width:250px; font-family: 'Inter', sans-serif; font-size: 12px;"><div style="background: ${s.color}; color: white; padding: 8px; border-radius: 6px 6px 0 0; font-weight: 700;"><i class="fas ${s.icon}"></i> ${p.nama || 'Tanpa Nama'}</div><div style="padding: 10px;"><div style="margin-bottom: 6px;"><strong>No:</strong> ${p.no_pelanggan}</div><div style="margin-bottom: 6px;"><strong>Golongan:</strong> ${gol}</div><div style="margin-bottom: 6px;"><strong>Wilayah:</strong> ${w}</div><div style="margin-bottom: 6px;"><strong>Status:</strong> <span style="color: ${s.color}; font-weight: 700;"><i class="fas ${s.icon}"></i> ${s.status}</span></div><div style="margin-bottom: 6px;"><strong>Pemakaian:</strong> ${k} m³</div>${s.tanggal ? `<div style="margin-bottom: 6px;"><strong>Tgl Bayar:</strong> ${formatDate(s.tanggal)}</div>` : ''}<div style="background: #fef3c7; padding: 6px; border-radius: 4px; margin-top: 8px;"><strong>Tagihan:</strong> ${formatRupiah(p.jumlah)}</div></div></div>`, { maxWidth: 280 });
-
         pelangganClusterGroup.addLayer(m);
         pelangganLayers[`pelanggan_${p.no_pelanggan}`] = { marker: m, coords: coords, golongan: gol, wilayah: w, paymentStatus: s.status };
     });
-
     map.addLayer(pelangganClusterGroup);
     updatePelangganStats(grouped);
 }
@@ -2264,8 +1838,12 @@ function loadPelanggan() {
 function updatePelangganStats(g) {
     const c = document.querySelector('.sidebar-content');
     if (!c) return;
-
     const html = `
+        <div id="revenue-display" class="revenue-card" onclick="checkPassword()" style="cursor: pointer;" title="Klik untuk masukkan password">
+            <div class="revenue-title"><i class="fas fa-coins"></i> Total Pendapatan Hari Ini</div>
+            <div class="revenue-amount">${formatRupiahMasked(totalRevenue)}</div>
+            <div class="revenue-kubikasi"><i class="fas fa-tint"></i> <strong>${totalKubikasi.toFixed(1)} m³</strong> total pemakaian</div>
+        </div>
         <div class="section-title" style="margin-top: 20px; cursor: pointer;" onclick="resetPelangganFilter()"><i class="fas fa-money-bill-wave text-success"></i> Penerimaan Pembayaran <small style="color: #94a3b8; font-size: 10px; margin-left: auto;">(klik untuk reset)</small></div>
         <div class="stats-grid-3">
             <div class="stat-card stat-kantor" onclick="filterByPayment('Kantor')"><i class="fas fa-building stat-icon"></i><div class="stat-value">${g.countKantor}</div><div class="stat-label">Kantor</div></div>
@@ -2280,7 +1858,6 @@ function updatePelangganStats(g) {
         <div class="section-title"><i class="fas fa-map"></i> Berdasarkan Wilayah</div>
         <div id="wilayah-list">${Object.entries(g.byWilayah).slice(0, 5).map(([w, data]) => `<div class="list-item" onclick="filterPelangganByWilayah('${w}')"><div class="list-item-header"><div class="list-item-title"><i class="fas fa-map-marker-alt" style="color: #64748b;"></i> ${w}</div><span class="badge bg-secondary">${data.length}</span></div></div>`).join('')}${Object.keys(g.byWilayah).length > 5 ? `<div style="text-align: center; padding: 8px; color: #64748b; font-size: 11px;">+${Object.keys(g.byWilayah).length - 5} wilayah lainnya</div>` : ''}</div>
     `;
-
     const sec = c.querySelector('.section-title');
     if (sec) { const d = document.createElement('div'); d.innerHTML = html; sec.parentNode.insertBefore(d, sec.nextSibling); }
 }
@@ -2288,11 +1865,9 @@ function updatePelangganStats(g) {
 function filterByPayment(t) {
     if (pelangganClusterGroup) map.removeLayer(pelangganClusterGroup);
     pelangganClusterGroup = L.markerClusterGroup({ maxClusterRadius: 50, spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true });
-
     const f = pelangganDataFromLaravel.filter(p => getPaymentStatus(p).status === t);
     const b = [];
     f.forEach(p => { const d = pelangganLayers[`pelanggan_${p.no_pelanggan}`]; if (d && d.coords) { pelangganClusterGroup.addLayer(d.marker); b.push(d.coords); } });
-
     map.addLayer(pelangganClusterGroup);
     if (b.length > 0) map.fitBounds(L.latLngBounds(b), { padding: [50, 50] });
     showNotification(`Menampilkan ${f.length} pelanggan ${t}`, 'success');
@@ -2301,7 +1876,6 @@ function filterByPayment(t) {
 function resetPelangganFilter() {
     if (pelangganClusterGroup) map.removeLayer(pelangganClusterGroup);
     pelangganClusterGroup = L.markerClusterGroup({ maxClusterRadius: 50, spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true });
-
     Object.values(pelangganLayers).forEach(d => pelangganClusterGroup.addLayer(d.marker));
     map.addLayer(pelangganClusterGroup);
     showNotification('Menampilkan semua pelanggan', 'info');
@@ -2310,11 +1884,9 @@ function resetPelangganFilter() {
 function filterPelangganByGolongan(gol) {
     if (pelangganClusterGroup) map.removeLayer(pelangganClusterGroup);
     pelangganClusterGroup = L.markerClusterGroup({ maxClusterRadius: 50, spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true });
-
     const f = pelangganDataFromLaravel.filter(p => p.kode_gol_trf === gol);
     const b = [];
     f.forEach(p => { const d = pelangganLayers[`pelanggan_${p.no_pelanggan}`]; if (d && d.coords) { pelangganClusterGroup.addLayer(d.marker); b.push(d.coords); } });
-
     map.addLayer(pelangganClusterGroup);
     if (b.length > 0) map.fitBounds(L.latLngBounds(b), { padding: [50, 50] });
     showNotification(`Filter: Golongan ${gol} (${f.length} pelanggan)`, 'info');
@@ -2323,11 +1895,9 @@ function filterPelangganByGolongan(gol) {
 function filterPelangganByWilayah(w) {
     if (pelangganClusterGroup) map.removeLayer(pelangganClusterGroup);
     pelangganClusterGroup = L.markerClusterGroup({ maxClusterRadius: 50, spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true });
-
     const f = pelangganDataFromLaravel.filter(p => p.nama_wilayah === w);
     const b = [];
     f.forEach(p => { const d = pelangganLayers[`pelanggan_${p.no_pelanggan}`]; if (d && d.coords) { pelangganClusterGroup.addLayer(d.marker); b.push(d.coords); } });
-
     map.addLayer(pelangganClusterGroup);
     if (b.length > 0) map.fitBounds(L.latLngBounds(b), { padding: [50, 50] });
     showNotification(`Filter: Wilayah ${w} (${f.length} pelanggan)`, 'info');
@@ -2335,16 +1905,13 @@ function filterPelangganByWilayah(w) {
 
 function focusOnJalur(id) { if (jalurLayers[id]) { map.fitBounds(jalurLayers[id].getBounds(), { padding: [50, 50] }); jalurLayers[id].openPopup(); if (window.innerWidth < 768) toggleSidebar(); } }
 function focusOnBangunan(id) { const m = markerLayers[`bangunan_${id}`]; if (m) { map.setView(m.getLatLng(), 17); m.openPopup(); if (window.innerWidth < 768) toggleSidebar(); } }
-
 function focusOnGangguan(id) {
     document.querySelectorAll('.gangguan-card, .list-item').forEach(i => i.classList.remove('active'));
     const t = document.querySelector(`.gangguan-card[data-id="${id}"]`);
     if (t) { t.classList.add('active'); t.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
-
     if (markerLayers[`gangguan_${id}`]) { const m = markerLayers[`gangguan_${id}`]; map.flyTo(m.getLatLng(), 17, { duration: 0.8 }); setTimeout(() => m.openPopup(), 800); }
     if (window.innerWidth < 768) toggleSidebar();
 }
-
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
 
 function toggleFullscreen() {
@@ -2360,17 +1927,18 @@ function toggleFullscreen() {
     }
     setTimeout(() => { if (map) map.invalidateSize(); }, 300);
 }
-
 document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && !document.webkitFullscreenElement) { document.getElementById('mainWrapper').classList.remove('is-fullscreen'); isFullscreen = false; document.getElementById('expandBtn').classList.remove('active'); document.getElementById('expandBtn').innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>'; setTimeout(() => { if (map) map.invalidateSize(); }, 300); } });
 document.addEventListener('keydown', e => { if (e.key === 'F11') { e.preventDefault(); toggleFullscreen(); } });
 
 function showWAQR() {
     new bootstrap.Modal(document.getElementById('waQRModal')).show();
-    if (!waQRGenerated) {
-        document.getElementById('wa-qrcode').innerHTML = '';
-        new QRCode(document.getElementById('wa-qrcode'), { text: 'https://wa.me/6281234567890?text=Halo%20PDAM%20Tirta%20Medal', width: 220, height: 220, colorDark: '#128C7E', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
-        waQRGenerated = true;
-    }
+    if (!waQRGenerated) { document.getElementById('wa-qrcode').innerHTML = ''; new QRCode(document.getElementById('wa-qrcode'), { text: 'https://wa.me/6281234567890?text=Halo%20PDAM%20Tirta%20Medal', width: 220, height: 220, colorDark: '#128C7E', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H }); waQRGenerated = true; }
+}
+
+function checkPassword() {
+    const password = prompt('Masukkan password untuk melihat pendapatan:');
+    if (password === 'admin123') { showNotification('Password diterima. Pendapatan ditampilkan.', 'success'); }
+    else if (password !== null) { showNotification('Password salah!', 'warning'); }
 }
 
 document.addEventListener('DOMContentLoaded', initMap);
