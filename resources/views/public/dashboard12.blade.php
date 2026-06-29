@@ -46,49 +46,6 @@ body { font-family: 'Inter', sans-serif; background: #0f172a; overflow: hidden; 
 }
 .brand-text h1 { font-size: 13px; font-weight: 700; margin: 0; letter-spacing: 0.3px; }
 .brand-text small { font-size: 9px; opacity: 0.7; }
-
-/* CONTACT INFO BAR */
-.contact-info-bar {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background: rgba(255,255,255,0.05);
-    padding: 4px 12px;
-    border-radius: 8px;
-}
-.contact-item-nav {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    padding: 3px 8px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 6px;
-    transition: all 0.2s;
-}
-.contact-item-nav:hover {
-    background: rgba(255,255,255,0.2);
-    transform: translateY(-1px);
-}
-.contact-item-nav i {
-    font-size: 12px;
-}
-.wa-qr-btn-nav {
-    background: #25D366;
-    color: white;
-    border: none;
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 9px;
-    cursor: pointer;
-    margin-left: 5px;
-    transition: all 0.2s;
-}
-.wa-qr-btn-nav:hover {
-    background: #128C7E;
-    transform: scale(1.05);
-}
-
 .alert-section {
     display: flex; align-items: center; gap: 8px;
     background: rgba(245, 158, 11, 0.15);
@@ -709,29 +666,13 @@ body { font-family: 'Inter', sans-serif; background: #0f172a; overflow: hidden; 
 <audio id="backgroundMusic" loop preload="auto"></audio>
 <div id="youtubePlayerContainer" style="position: fixed; bottom: -200px; right: -200px; width: 1px; height: 1px; opacity: 0; pointer-events: none; z-index: -1;"></div>
 
-<!-- 🔥 NAVBAR COMPACT DENGAN CONTACT INFO -->
+<!-- 🔥 NAVBAR COMPACT -->
 <div class="top-navbar">
 <div class="top-navbar-container">
 <div class="brand-section">
 <div class="brand-logo"><i class="fas fa-tint"></i></div>
 <div class="brand-text"><h1>PDAM UP - DARMARAJA</h1><small>Sistem Monitoring Jaringan</small></div>
 </div>
-
-<!-- CONTACT INFO BAR -->
-<div class="contact-info-bar">
-<div class="contact-item-nav">
-<i class="fas fa-headset"></i>
-<span>Call Center: <strong>088294979966</strong></span>
-</div>
-<div class="contact-item-nav" style="background: rgba(37, 211, 102, 0.2);">
-<i class="fab fa-whatsapp"></i>
-<span>WhatsApp: <strong>088294979966</strong></span>
-<button class="wa-qr-btn-nav" onclick="showWAQR()">
-<i class="fas fa-qrcode"></i> QR
-</button>
-</div>
-</div>
-
 @php
 $gangguanAktif = isset($gangguanAktif) ? $gangguanAktif : collect($gangguan ?? [])->where('status', '!=', 'selesai');
 $totalAktif = $gangguanAktif->count();
@@ -1057,46 +998,9 @@ $totalAktif = $gangguanAktif->count();
 </div>
 </div>
 
-<!-- Modal WhatsApp QR -->
-<div class="modal fade" id="waQRModal" tabindex="-1" aria-hidden="true">
-<div class="modal-dialog modal-dialog-centered">
-<div class="modal-content wa-modal-content">
-<div class="wa-modal-header">
-<i class="fab fa-whatsapp" style="font-size: 40px;"></i>
-<h4 class="mt-2">WhatsApp PDAM Tirta Medal</h4>
-<small>Scan QR Code atau klik tombol di bawah</small>
-</div>
-<div class="wa-qr-container">
-<div id="wa-qrcode"></div>
-<div class="wa-info">
-<div class="wa-info-item">
-<i class="fas fa-phone"></i>
-<span><strong>088294979966</strong></span>
-</div>
-<div class="wa-info-item">
-<i class="fas fa-clock"></i>
-<span>Senin - Sabtu, 08.00 - 16.00 WIB</span>
-</div>
-<div class="wa-info-item">
-<i class="fas fa-info-circle"></i>
-<span>Layanan pengaduan & informasi pelanggan</span>
-</div>
-</div>
-<a href="https://wa.me/6288294979966?text=Halo%20PDAM%20Tirta%20Medal%2C%20saya%20ingin%20melaporkan%20gangguan" target="_blank" class="wa-btn-direct">
-<i class="fab fa-whatsapp"></i> Buka WhatsApp Langsung
-</a>
-<button type="button" class="btn btn-light mt-2" data-bs-dismiss="modal" style="width: 100%;">
-<i class="fas fa-times"></i> Tutup
-</button>
-</div>
-</div>
-</div>
-</div>
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 // ============================================
 // DATA DARI LARAVEL
@@ -1513,11 +1417,6 @@ document.getElementById('searchResults').innerHTML = '<div class="search-empty">
 resetPelangganFilter();
 }
 function focusOnPelanggan(noPelanggan) {
-// 🔥 STOP LIVE CYCLE SAAT KLIK MARKER
-if (isLiveDashboardActive) {
-stopLiveCycle();
-}
-
 const data = pelangganLayers[`pelanggan_${noPelanggan}`];
 if (data && data.coords) {
 map.flyTo(data.coords, 18, { duration: 1 });
@@ -2411,26 +2310,9 @@ map.addLayer(pelangganClusterGroup);
 if (b.length > 0) map.fitBounds(L.latLngBounds(b), { padding: [50, 50] });
 showNotification(`Filter: Wilayah ${w} (${f.length} pelanggan)`, 'info');
 }
-function focusOnJalur(id) { 
-// 🔥 STOP LIVE CYCLE SAAT KLIK MARKER
-if (isLiveDashboardActive) {
-stopLiveCycle();
-}
-if (jalurLayers[id]) { map.fitBounds(jalurLayers[id].getBounds(), { padding: [50, 50] }); jalurLayers[id].openPopup(); if (window.innerWidth < 768) toggleSidebar(); } 
-}
-function focusOnBangunan(id) { 
-// 🔥 STOP LIVE CYCLE SAAT KLIK MARKER
-if (isLiveDashboardActive) {
-stopLiveCycle();
-}
-const m = markerLayers[`bangunan_${id}`]; if (m) { map.setView(m.getLatLng(), 17); m.openPopup(); if (window.innerWidth < 768) toggleSidebar(); } 
-}
+function focusOnJalur(id) { if (jalurLayers[id]) { map.fitBounds(jalurLayers[id].getBounds(), { padding: [50, 50] }); jalurLayers[id].openPopup(); if (window.innerWidth < 768) toggleSidebar(); } }
+function focusOnBangunan(id) { const m = markerLayers[`bangunan_${id}`]; if (m) { map.setView(m.getLatLng(), 17); m.openPopup(); if (window.innerWidth < 768) toggleSidebar(); } }
 function focusOnGangguan(id) {
-// 🔥 STOP LIVE CYCLE SAAT KLIK MARKER
-if (isLiveDashboardActive) {
-stopLiveCycle();
-}
-
 document.querySelectorAll('.gangguan-card, .list-item').forEach(i => i.classList.remove('active'));
 const t = document.querySelector(`.gangguan-card[data-id="${id}"]`);
 if (t) { t.classList.add('active'); t.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
@@ -2453,14 +2335,6 @@ setTimeout(() => { if (map) map.invalidateSize(); }, 300);
 }
 document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && !document.webkitFullscreenElement) { document.getElementById('mainWrapper').classList.remove('is-fullscreen'); isFullscreen = false; document.getElementById('expandBtn').classList.remove('active'); document.getElementById('expandBtn').innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>'; setTimeout(() => { if (map) map.invalidateSize(); }, 300); } });
 document.addEventListener('keydown', e => { if (e.key === 'F11') { e.preventDefault(); toggleFullscreen(); } });
-function showWAQR() {
-new bootstrap.Modal(document.getElementById('waQRModal')).show();
-if (!waQRGenerated) {
-document.getElementById('wa-qrcode').innerHTML = '';
-new QRCode(document.getElementById('wa-qrcode'), { text: 'https://wa.me/6288294979966?text=Halo%20PDAM%20Tirta%20Medal', width: 220, height: 220, colorDark: '#128C7E', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
-waQRGenerated = true;
-}
-}
 document.addEventListener('DOMContentLoaded', initMap);
 </script>
 </body>
