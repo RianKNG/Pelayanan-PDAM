@@ -887,111 +887,100 @@ function startRealtimePolling() {
   // Cek pertama setelah 3 detik
   setTimeout(checkNewPayments, 3000);
 }
-function initializePaymentTimestamps() {
-    if (typeof pelangganDataFromLaravel !== 'undefined') {
-        pelangganDataFromLaravel.forEach(p => {
-            const s = getPaymentStatus(p);
-            if (s.tanggal) {
-                lastKnownPaymentTimestamps[p.no_pelanggan] = s.tanggal;
-            }
-        });
-    }
-    isFirstLoad = false;
-}
 
-// function initializePaymentTimestamps() {
-//   pelangganDataFromLaravel.forEach(p => {
-//     const s = getPaymentStatus(p);
-//     if (s.tanggal) {
-//       lastKnownPaymentTimestamps[p.no_pelanggan] = s.tanggal;
-//     }
-//   });
-//   isFirstLoad = false;
-// }
+function initializePaymentTimestamps() {
+  pelangganDataFromLaravel.forEach(p => {
+    const s = getPaymentStatus(p);
+    if (s.tanggal) {
+      lastKnownPaymentTimestamps[p.no_pelanggan] = s.tanggal;
+    }
+  });
+  isFirstLoad = false;
+}
 
 async function checkNewPayments() {
-    try {
-        console.log('🔍 Memeriksa pembayaran baru...');
-        
-        // 🔥 PENTING: Gunakan '?' bukan '&'
-        const response = await fetch(API_REALTIME_URL + '?t=' + Date.now(), {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (!result.success || !result.pelanggan) {
-            console.warn('⚠️ Tidak ada data pelanggan dari API');
-            return;
-        }
-        
-        const pelangganData = result.pelanggan;
-        const newPayments = [];
-        
-        pelangganData.forEach(p => {
-            const pelangganMapped = {
-                no_pelanggan: p.no_pelanggan || p.no_rekening || '-',
-                nama: p.nama || 'Tanpa Nama',
-                jumlah: p.jumlah || '0',
-                pakai: p.pakai || '0',
-                kode_gol_trf: p.kode_gol_trf || '-',
-                nama_wilayah: p.nama_wilayah || p.cabang || 'Tidak Diketahui',
-                koordinator: p.koordinator || '',
-                tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null,
-                tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null,
-                status: p.status_sl || p.status || 'Aktif'
-            };
-            
-            const s = getPaymentStatus(pelangganMapped);
-            if (s.tanggal) {
-                const lastTimestamp = lastKnownPaymentTimestamps[pelangganMapped.no_pelanggan];
-                
-                // Deteksi pembayaran baru
-                if (!lastTimestamp || lastTimestamp !== s.tanggal) {
-                    newPayments.push({
-                        ...pelangganMapped,
-                        statusInfo: s,
-                        isNewPayment: !lastTimestamp
-                    });
-                    lastKnownPaymentTimestamps[pelangganMapped.no_pelanggan] = s.tanggal;
-                }
-            }
-        });
-        
-        // Update data
-        if (pelangganData.length > 0 && typeof updatePelangganDataFromAPI === 'function') {
-            updatePelangganDataFromAPI(pelangganData);
-        }
-        
-        // Proses pembayaran baru
-        if (newPayments.length > 0 && !isFirstLoad) {
-            const realNewPayments = newPayments.filter(p => p.isNewPayment);
-            
-            if (realNewPayments.length > 0) {
-                console.log('💰 Pembayaran baru terdeteksi:', realNewPayments.length);
-                realNewPayments.forEach((p, idx) => {
-                    setTimeout(() => {
-                        handlePaymentReceived(p);
-                        updateUIAfterPayment(p);
-                    }, idx * 3000); // Delay 3 detik antar pembayaran
-                });
-            }
-        }
-        
-    } catch (error) {
-        console.error('❌ Error polling:', error);
+  try {
+    // 🔥 GUNAKAN API YANG BENAR
+    const response = await fetch(API_REALTIME_URL + '&t=' + Date.now(), {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    
+    const data = await response.json();
+    
+    // 🔥 HANDLE FORMAT DATA DARI API
+    // Sesuaikan dengan struktur data API Anda
+    const pelangganData = Array.isArray(data) ? data : (data.pelanggan || data.data || []);
+    
+    if (!pelangganData || pelangganData.length === 0) {
+      console.log('⚠️ Tidak ada data pelanggan dari API');
+      return;
+    }
+    
+    const newPayments = [];
+    
+    pelangganData.forEach(p => {
+      // 🔥 MAPPING FIELD DARI API
+      const pelangganMapped = {
+        no_pelanggan: p.no_pelanggan,
+        nama: p.nama,
+        jumlah: p.jumlah || '0',
+        pakai: p.pakai || '0',
+        kode_gol_trf: p.kode_gol_trf,
+        nama_wilayah: p.nama_wilayah || p.cabang,
+        koordinator: p.koordinator,
+        tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null,
+        tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null,
+        status: p.status
+      };
+      
+      const s = getPaymentStatus(pelangganMapped);
+      if (s.tanggal) {
+        const lastTimestamp = lastKnownPaymentTimestamps[pelangganMapped.no_pelanggan];
+        
+        if (!lastTimestamp || lastTimestamp !== s.tanggal) {
+          newPayments.push({
+            ...pelangganMapped,
+            statusInfo: s,
+            isNewPayment: !lastTimestamp
+          });
+          lastKnownPaymentTimestamps[pelangganMapped.no_pelanggan] = s.tanggal;
+        }
+      }
+    });
+    
+    // Update data pelanggan global
+    if (pelangganData.length > 0) {
+      updatePelangganDataFromAPI(pelangganData);
+    }
+    
+    // 🔥 PROSES PEMBAYARAN BARU
+    if (newPayments.length > 0 && !isFirstLoad) {
+      const realNewPayments = newPayments.filter(p => p.isNewPayment);
+      
+      if (realNewPayments.length > 0) {
+        console.log('💰 Pembayaran baru terdeteksi:', realNewPayments.length);
+        
+        realNewPayments.forEach((p, idx) => {
+          setTimeout(() => {
+            handlePaymentReceived(p);
+            updateUIAfterPayment(p);
+          }, idx * 2000);
+        });
+      }
+    }
+    
+  } catch (error) {
+    console.error('❌ Error polling:', error);
+    showNotification('Gagal mengambil data pembayaran', 'warning');
+  }
 }
-
-
 function updatePelangganDataFromAPI(newData) {
   // Mapping data dari API
   const mappedData = newData.map(p => ({
@@ -1026,32 +1015,52 @@ function updatePelangganDataFromAPI(newData) {
 }
 
 function updateUIAfterPayment(pelanggan) {
-    const bar = document.getElementById('notificationBar');
-    const content = document.getElementById('notificationContent');
+  // Update notification bar
+  const bar = document.getElementById('notificationBar');
+  const content = document.getElementById('notificationContent');
+  if (bar && content) {
+    bar.style.display = 'block';
     
-    if (bar && content) {
-        bar.style.display = 'block';
-        
-        const newItem = document.createElement('div');
-        newItem.className = 'notification-item';
-        newItem.innerHTML = `
-            <strong>${pelanggan.nama}</strong> 
-            <span class="amount">${formatRupiah(pelanggan.jumlah)}</span>
-            <span class="location"><i class="fas fa-${pelanggan.statusInfo.metode === 'PPOB' ? 'mobile-alt' : 'building'}"></i> ${pelanggan.statusInfo.metode}</span>
-        `;
-        
-        content.insertBefore(newItem, content.firstChild);
-        
-        // Update stats jika ada
-        if (typeof updateTodayStatsDisplay === 'function') {
-            updateTodayStatsDisplay();
-        }
-        if (typeof calculateRevenue === 'function') {
-            calculateRevenue();
-        }
+    const s = getPaymentStatus(pelanggan);
+    const newItem = document.createElement('div');
+    newItem.className = 'notification-item new-payment';
+    newItem.dataset.nama = pelanggan.nama;
+    newItem.innerHTML = `
+      <strong>${pelanggan.nama}</strong> 
+      <span class="amount">${formatRupiah(pelanggan.jumlah)}</span> 
+      <span style="color: #86efac;">(${parseFloat(pelanggan.pakai) || 0} m³)</span> 
+      <span class="location"><i class="fas fa-${s.metode === 'PPOB' ? 'mobile-alt' : 'building'}"></i> ${s.metode}</span>
+    `;
+    
+    content.insertBefore(newItem, content.firstChild);
+    
+    // Update last5Payments
+    last5Payments.unshift({
+      nama: pelanggan.nama || 'Pelanggan',
+      jumlah: parseFloat(pelanggan.jumlah) || 0,
+      kubikasi: parseFloat(pelanggan.pakai) || 0,
+      lokasi: pelanggan.nama_wilayah || 'Tidak Diketahui',
+      tanggal: s.tanggal,
+      metode: s.metode
+    });
+    last5Payments = last5Payments.slice(0, 5);
+  }
+  
+  // Flash marker di peta
+  const markerData = pelangganLayers[`pelanggan_${pelanggan.no_pelanggan}`];
+  if (markerData && markerData.marker) {
+    const el = markerData.marker.getElement();
+    if (el) {
+      el.style.transition = 'all 0.5s';
+      el.style.transform = 'scale(2)';
+      el.style.filter = 'drop-shadow(0 0 10px #10b981)';
+      setTimeout(() => {
+        el.style.transform = 'scale(1)';
+        el.style.filter = '';
+      }, 2000);
     }
+  }
 }
-
 
 function stopRealtimePolling() {
   if (realtimePollingInterval) {
@@ -1065,37 +1074,32 @@ function stopRealtimePolling() {
 // 🔥 FUNGSI TERIMA KASIH SAAT PEMBAYARAN
 // ============================================
 function handlePaymentReceived(pelanggan) {
-    // Stop semua suara yang sedang berjalan
-    if (typeof speechSynthesis !== 'undefined') {
-        speechSynthesis.cancel();
-    }
-    
-    const namaNormal = formatNameForSpeech ? formatNameForSpeech(pelanggan.nama, 'female') : pelanggan.nama;
-    const thankYouMessages = [
-        "Terima kasih atas pembayaran Anda. Kepercayaan Anda adalah motivasi kami untuk terus memberikan pelayanan terbaik.",
-        "Pembayaran Anda telah kami terima. Terima kasih telah menjadi pelanggan setia PDAM Unit Pelaksana Darmaraja.",
-        "Terima kasih. Kontribusi Anda sangat berarti bagi kelangsungan pelayanan air bersih di wilayah Darmaraja."
-    ];
-    const thankYouMsg = thankYouMessages[Math.floor(Math.random() * thankYouMessages.length)];
-    const metodeText = pelanggan.statusInfo.metode === 'PPOB' ? 'P. P. O. B.' : 'Kantor Unit Cabang';
-    
-    const fullMessage = `${thankYouMsg} Atas nama ${namaNormal}, pembayaran sebesar ${formatRupiah(pelanggan.jumlah)} telah kami terima melalui ${metodeText}.`;
-    
-    // Ucapan suara
-    if (typeof speak === 'function') {
-        speak(fullMessage, 'female');
-    } else if (typeof speechSynthesis !== 'undefined') {
-        const utterance = new SpeechSynthesisUtterance(fullMessage);
-        utterance.lang = 'id-ID';
-        utterance.rate = 0.95;
-        utterance.pitch = 1.1;
-        speechSynthesis.speak(utterance);
-    }
-    
-    // Notifikasi toast
-    showNotification ? showNotification(`💰 Pembayaran dari ${pelanggan.nama} - Terima kasih!`, 'payment') : 
-        console.log('💰 Pembayaran:', pelanggan.nama);
+  // 🔥 STOP SEMUA AKTIVITAS
+  isNarrating = false;
+  narrationPaused = true;
+  clearVoiceQueue();
+  speechSynthesis.cancel();
+  
+  if (isLiveDashboardActive) stopLiveCycle();
+  if (isGangguanVoicePlaying) stopGangguanVoice();
+  if (isPaymentVoicePlaying) stopPaymentVoice();
+  
+  // 🔥 UCAPKAN TERIMA KASIH
+  const namaNormal = formatNameForSpeech(pelanggan.nama, voiceSettings.paymentGender);
+  const thankYouMsg = paymentThankYouMessages[Math.floor(Math.random() * paymentThankYouMessages.length)];
+  const metodeText = getPaymentStatus(pelanggan).metode === 'PPOB' ? 'P. P. O. B.' : 'Kantor Unit Cabang';
+  const fullMessage = `${thankYouMsg} Atas nama ${namaNormal}, pembayaran sebesar ${formatRupiah(pelanggan.jumlah)} telah kami terima melalui ${metodeText}.`;
+  
+  addToVoiceQueue(fullMessage, voiceSettings.paymentGender, () => {
+    setTimeout(() => {
+      narrationPaused = false;
+      showNotification('Sistem siap', 'info');
+    }, 2000);
+  });
+  
+  showNotification(`💰 Pembayaran dari ${pelanggan.nama} - Terima kasih!`, 'payment');
 }
+
 const paymentThankYouMessages = [
   "Terima kasih atas pembayaran Anda. Kepercayaan Anda adalah motivasi kami untuk terus memberikan pelayanan terbaik.",
   "Pembayaran Anda telah kami terima. Terima kasih telah menjadi pelanggan setia PDAM Unit Pelaksana Darmaraja.",
@@ -2076,6 +2080,93 @@ function loadPelanggan() {
   });
   
   map.addLayer(pelangganClusterGroup);
+}
+
+// 🔥 FUNGSI CHECK NEW PAYMENTS (UPDATED)
+async function checkNewPayments() {
+  try {
+    console.log('🔄 Memeriksa pembayaran baru...');
+    
+    const response = await fetch(API_REALTIME_URL + '&t=' + Date.now(), {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    
+    if (!result.success || !result.pelanggan) {
+      console.warn('⚠️ Tidak ada data pelanggan dari API');
+      return;
+    }
+    
+    const pelangganData = result.pelanggan;
+    const newPayments = [];
+    
+    pelangganData.forEach(p => {
+      // Mapping field dari API eksternal
+      const pelangganMapped = {
+        no_pelanggan: p.no_pelanggan || '-',
+        nama: p.nama || 'Tanpa Nama',
+        jumlah: p.jumlah || '0',
+        pakai: p.pakai || '0',
+        kode_gol_trf: p.kode_gol_trf || '-',
+        nama_wilayah: p.nama_wilayah || p.cabang || 'Tidak Diketahui',
+        koordinator: p.koordinator || '',
+        tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null,
+        tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null,
+        status: p.status || 'Aktif'
+      };
+      
+      const s = getPaymentStatus(pelangganMapped);
+      if (s.tanggal) {
+        const lastTimestamp = lastKnownPaymentTimestamps[pelangganMapped.no_pelanggan];
+        
+        if (!lastTimestamp || lastTimestamp !== s.tanggal) {
+          newPayments.push({
+            ...pelangganMapped,
+            statusInfo: s,
+            isNewPayment: !lastTimestamp
+          });
+          lastKnownPaymentTimestamps[pelangganMapped.no_pelanggan] = s.tanggal;
+        }
+      }
+    });
+    
+    // Update data pelanggan global
+    if (pelangganData.length > 0) {
+      updatePelangganDataFromAPI(pelangganData);
+    }
+    
+    // 🔥 PROSES PEMBAYARAN BARU
+    if (newPayments.length > 0 && !isFirstLoad) {
+      const realNewPayments = newPayments.filter(p => p.isNewPayment);
+      
+      if (realNewPayments.length > 0) {
+        console.log('💰 Pembayaran baru terdeteksi:', realNewPayments.length);
+        
+        realNewPayments.forEach((p, idx) => {
+          setTimeout(() => {
+            handlePaymentReceived(p);
+            updateUIAfterPayment(p);
+          }, idx * 2000);
+        });
+      }
+    }
+    
+  } catch (error) {
+    console.error('❌ Error polling:', error);
+    // Jangan tampilkan notifikasi error terus menerus
+    if (error.message.includes('Failed to fetch')) {
+      console.log('⚠️ API tidak dapat diakses, pastikan server Laravel berjalan');
+    }
+  }
 }
 
 function updatePelangganDataFromAPI(newData) {

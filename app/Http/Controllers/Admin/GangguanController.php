@@ -106,4 +106,5 @@ public function store(Request $request)
         $gangguan->delete();
         return back()->with('success', 'Data dihapus');
     }
+    
 }
