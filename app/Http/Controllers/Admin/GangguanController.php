@@ -25,38 +25,47 @@ class GangguanController extends Controller
     {
         return view('admin.gangguan.create');
     }
+public function store(Request $request)
+{
+    // 1. Validasi manual untuk menangkap error jika gagal
+    $validator = \Validator::make($request->all(), [
+        'jenis_gangguan' => 'required|in:transmisi,distribusi',
+        'sumber_jalur' => 'required',
+        'tipe_kerusakan' => 'required',
+        'ukuran_pipa' => 'required',
+        'lokasi' => 'required',
+        'wilayah_terdampak' => 'required',
+        'latitude' => 'required|numeric',
+        'longitude' => 'required|numeric',
+        'foto' => 'nullable|mimes:jpeg,jpg,png,gif|max:2048',
+        'pelapor' => 'required',
+        'no_hp_pelapor' => 'required',
+        'tanggal_laporan' => 'required|date',
+        'estimasi_selesai' => 'nullable|date',
+        'deskripsi' => 'nullable',
+    ]);
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'jenis_gangguan' => 'required|in:transmisi,distribusi',
-            'sumber_jalur' => 'required',
-            'tipe_kerusakan' => 'required',
-            'ukuran_pipa' => 'required',
-            'lokasi' => 'required',
-            'wilayah_terdampak' => 'required',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
-            'foto' => 'nullable|image|max:2048',
-            'pelapor' => 'required',
-            'no_hp_pelapor' => 'required',
-            'tanggal_laporan' => 'required|date',
-            'estimasi_selesai' => 'nullable|date',
-            'deskripsi' => 'nullable',
-        ]);
-
-        if ($request->hasFile('foto')) {
-            $validated['foto'] = $request->file('foto')->store('gangguan', 'public');
-        }
-
-        $validated['kode_laporan'] = Gangguan::generateKodeLaporan();
-        $validated['status'] = 'menunggu';
-
-        Gangguan::create($validated);
-
-        return redirect()->route('admin.gangguan.index')
-            ->with('success', 'Data berhasil ditambahkan');
+    // 2. Jika validasi gagal, DD akan langsung menampilkan kolom mana yang error!
+    if ($validator->fails()) {
+        dd($validator->errors()->all());
     }
+
+    // 3. Jika lolos validasi, ambil data yang sudah valid
+    $validated = $validator->validated();
+
+    if ($request->hasFile('foto')) {
+        $validated['foto'] = $request->file('foto')->store('gangguan', 'public');
+    }
+
+    $validated['kode_laporan'] = Gangguan::generateKodeLaporan();
+    $validated['status'] = 'menunggu';
+
+    Gangguan::create($validated);
+
+    return redirect()->route('admin.gangguan.index')
+        ->with('success', 'Data berhasil ditambahkan');
+}
+
 
     public function edit(Gangguan $gangguan)
     {
