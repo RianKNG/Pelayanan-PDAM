@@ -270,7 +270,6 @@ body { font-family: 'Inter', sans-serif; background: #0f172a; overflow: hidden; 
 <body>
 <audio id="backgroundMusic" loop preload="auto"></audio>
 <div id="youtubePlayerContainer" style="position: fixed; bottom: -200px; right: -200px; width: 1px; height: 1px; opacity: 0; pointer-events: none; z-index: -1;"></div>
-
 <div class="top-navbar">
 <div class="top-navbar-container">
 <div class="brand-section">
@@ -312,7 +311,6 @@ $totalAktif = $gangguanAktif->count();
 </div>
 </div>
 </div>
-
 <div class="unit-progress-bar">
 <div class="unit-progress-container">
 <div class="unit-image-wrapper">
@@ -367,7 +365,6 @@ $totalAktif = $gangguanAktif->count();
 </div>
 </div>
 </div>
-
 <div class="main-wrapper" id="mainWrapper">
 <div id="map"></div>
 <div class="live-info-panel" id="liveInfoPanel" style="display: none;">
@@ -398,7 +395,6 @@ $totalAktif = $gangguanAktif->count();
 <button class="control-btn voice active" id="voiceBtn" onclick="toggleVoicePanel()"><i class="fas fa-sliders-h"></i> <span>Suara</span></button>
 <button class="control-btn live" id="liveBtn" onclick="toggleLiveDashboard()"><i class="fas fa-broadcast-tower"></i> <span id="liveText">LIVE OFF</span></button>
 </div>
-
 <div class="voice-panel" id="voicePanel">
 <div class="voice-panel-header">
 <div class="voice-panel-title"><i class="fas fa-sliders-h"></i> Panel Kontrol Suara</div>
@@ -517,7 +513,6 @@ $totalAktif = $gangguanAktif->count();
 </div>
 </div>
 </div>
-
 <div class="sidebar" id="sidebar">
 <div class="sidebar-header"><h5><i class="fas fa-network-wired"></i> Informasi Jaringan</h5><small>Kecamatan Darmaraja, Kab. Sumedang</small></div>
 <div class="sidebar-content" id="sidebarContent">
@@ -602,7 +597,6 @@ $totalAktif = $gangguanAktif->count();
 </div>
 </div>
 </div>
-
 <div class="legend">
 <div class="legend-title"><i class="fas fa-info-circle"></i> Legenda Peta</div>
 <div class="legend-group"><div class="legend-group-title">Jalur Pipa</div><div class="legend-item"><div class="legend-color" style="background: #ef4444;"></div><span>Transmisi</span></div><div class="legend-item"><div class="legend-color" style="background: #3b82f6;"></div><span>Distribusi</span></div><div class="legend-item"><div class="legend-color" style="background: #10b981;"></div><span>Tersier</span></div></div>
@@ -616,7 +610,6 @@ $totalAktif = $gangguanAktif->count();
 <div class="legend-pelanggan-item"><div class="legend-pelanggan-marker" style="background: #ef4444;"><i class="fas fa-times"></i></div><span>Belum Bayar</span></div>
 </div>
 </div>
-
 <div class="modal fade" id="waQRModal" tabindex="-1" aria-hidden="true">
 <div class="modal-dialog modal-dialog-centered">
 <div class="modal-content wa-modal-content">
@@ -638,7 +631,6 @@ $totalAktif = $gangguanAktif->count();
 </div>
 </div>
 </div>
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -652,11 +644,9 @@ const bangunanData = @json($bangunan ?? []);
 const gangguanData = @json($gangguan ?? []);
 const titikPentingData = @json($titikPenting ?? []);
 const pelangganDataFromLaravel = @json($pelanggan ?? []);
-
 // 🔥 URL API UNTUK REAL-TIME POLLING
 const API_REALTIME_URL = '/api/pelanggan/realtime';
 const POLLING_INTERVAL = 10000; // 10 detik
-
 // ============================================
 // VARIABEL GLOBAL
 // ============================================
@@ -664,20 +654,20 @@ let map, jalurLayers = {}, markerLayers = {}, pelangganLayers = {}, pelangganClu
 let isFullscreen = false, totalRevenue = 0, totalKubikasi = 0;
 let currentLayer = 'satellite', baseLayers = {}, currentBaseLayer = null;
 const voiceProfiles = [
-  { name: 'Default', pitch: 1.0, rate: 0.95 },
-  { name: 'Alternatif 1', pitch: 1.1, rate: 0.90 },
-  { name: 'Alternatif 2', pitch: 0.9, rate: 1.00 },
-  { name: 'Alternatif 3', pitch: 1.2, rate: 0.85 },
-  { name: 'Alternatif 4', pitch: 0.8, rate: 1.05 }
+{ name: 'Default', pitch: 1.0, rate: 0.95 },
+{ name: 'Alternatif 1', pitch: 1.1, rate: 0.90 },
+{ name: 'Alternatif 2', pitch: 0.9, rate: 1.00 },
+{ name: 'Alternatif 3', pitch: 1.2, rate: 0.85 },
+{ name: 'Alternatif 4', pitch: 0.8, rate: 1.05 }
 ];
 const musicFolder = '/audio/';
 const musicPlaylist = ['musik1.mp3', 'musik2.mp3', 'musik3.mp3', 'musik4.mp3', 'musik5.mp3'];
 let currentPlaylistIndex = 0;
 let autoRotateMusic = true;
 let voiceSettings = {
-  enabled: true, volume: 0.8,
-  gangguanGender: 'female', gangguanVoiceIndex: 3,
-  paymentGender: 'female', paymentVoiceIndex: 3
+enabled: true, volume: 0.8,
+gangguanGender: 'female', gangguanVoiceIndex: 3,
+paymentGender: 'female', paymentVoiceIndex: 3
 };
 let availableVoices = [];
 let indonesianVoices = [], indonesianFemaleVoices = [], indonesianMaleVoices = [];
@@ -697,1558 +687,1344 @@ let isVoiceSpeaking = false;
 let isNarrating = false;
 let currentNarrationIndex = 0;
 let narrationPaused = false;
-
 // 🔥 VARIABEL UNTUK REAL-TIME POLLING
 let realtimePollingInterval = null;
 let lastKnownPaymentTimestamps = {}; // Track pembayaran terakhir per pelanggan
 let isFirstLoad = true;
-
 // ============================================
 // 🔥 NARASI DINAMIS - OTOMATIS BACA DATA
 // ============================================
 function generateDynamicNarration() {
-  const narrations = [];
-  
-  // 1. PEMBUKAAN
-  narrations.push("Selamat datang di Sistem Monitoring PDAM Unit Pelaksana Darmaraja. Unit ini melayani kebutuhan air bersih untuk masyarakat Kecamatan Darmaraja, Kabupaten Sumedang, Jawa Barat.");
-  
-  // 2. STATISTIK TOTAL PELANGGAN
-  const totalPelanggan = pelangganDataFromLaravel.length;
-  let totalKantor = 0, totalPPOB = 0, totalBelumBayar = 0;
-  const golCount = {};
-  const wilayahData = {};
-  
-  pelangganDataFromLaravel.forEach(p => {
-    const s = getPaymentStatus(p);
-    if (s.status === 'Kantor') totalKantor++;
-    else if (s.status === 'PPOB') totalPPOB++;
-    else totalBelumBayar++;
-    
-    const gol = p.kode_gol_trf || 'Lainnya';
-    golCount[gol] = (golCount[gol] || 0) + 1;
-    
-    const wilayah = p.nama_wilayah || 'Tidak Diketahui';
-    if (!wilayahData[wilayah]) wilayahData[wilayah] = { count: 0, kantor: 0, ppob: 0, belumBayar: 0 };
-    wilayahData[wilayah].count++;
-    if (s.status === 'Kantor') wilayahData[wilayah].kantor++;
-    else if (s.status === 'PPOB') wilayahData[wilayah].ppob++;
-    else wilayahData[wilayah].belumBayar++;
-  });
-  
-  narrations.push(`Saat ini kami melayani total ${totalPelanggan} pelanggan. Dengan rincian ${totalKantor} pelanggan membayar di kantor, ${totalPPOB} pelanggan membayar melalui P P O B, dan ${totalBelumBayar} pelanggan yang belum melakukan pembayaran.`);
-  
-  // 3. DATA GOLONGAN
-  const golEntries = Object.entries(golCount).sort((a, b) => b[1] - a[1]);
-  if (golEntries.length > 0) {
-    let golText = `Pelanggan kami terbagi dalam ${golEntries.length} golongan tarif. `;
-    golEntries.slice(0, 5).forEach(([gol, count], idx) => {
-      if (idx > 0) golText += ', ';
-      golText += `Golongan ${gol} sebanyak ${count} pelanggan`;
-    });
-    if (golEntries.length > 5) golText += `, dan golongan lainnya.`;
-    golText += '.';
-    narrations.push(golText);
-  }
-  
-  // 4. DATA WILAYAH + JUMLAH JALUR PER WILAYAH
-  const wilayahEntries = Object.entries(wilayahData).sort((a, b) => b[1].count - a[1].count);
-  if (wilayahEntries.length > 0) {
-    let wilayahText = `Wilayah layanan kami mencakup ${wilayahEntries.length} wilayah. `;
-    wilayahEntries.slice(0, 4).forEach(([wilayah, data], idx) => {
-      if (idx > 0) wilayahText += '. ';
-      
-      // Hitung jumlah jalur di wilayah ini (berdasarkan nama wilayah di jalur pipa)
-      const jalurDiWilayah = jalurPipaData.filter(j => {
-        const namaJalur = (j.nama_jalur || '').toLowerCase();
-        return namaJalur.includes(wilayah.toLowerCase()) || 
-               (j.keterangan || '').toLowerCase().includes(wilayah.toLowerCase());
-      }).length;
-      
-      wilayahText += `Di ${wilayah}, terdapat ${data.count} pelanggan`;
-      if (jalurDiWilayah > 0) {
-        wilayahText += ` dengan ${jalurDiWilayah} jalur pipa`;
-      }
-      if (data.belumBayar > 0) {
-        wilayahText += `, dan ${data.belumBayar} pelanggan belum membayar`;
-      }
-    });
-    wilayahText += '.';
-    narrations.push(wilayahText);
-  }
-  
-  // 5. DATA JALUR PIPA
-  const totalJalur = jalurPipaData.length;
-  let totalPanjangJalur = 0;
-  jalurPipaData.forEach(j => {
-    const c = parseCoordinates(j.coordinates);
-    if (c && c.length > 1) {
-      for (let i = 0; i < c.length - 1; i++) {
-        totalPanjangJalur += L.latLng(c[i]).distanceTo(L.latLng(c[i+1]));
-      }
-    }
-  });
-  const panjangKm = (totalPanjangJalur / 1000).toFixed(2);
-  
-  narrations.push(`Jaringan distribusi kami terdiri dari ${totalJalur} jalur pipa dengan total panjang ${panjangKm} kilometer, yang tersebar di seluruh wilayah layanan.`);
-  
-  // 6. DATA BANGUNAN
-  const totalBangunan = bangunanData.length;
-  if (totalBangunan > 0) {
-    const bangunanByJenis = {};
-    bangunanData.forEach(b => {
-      const jenis = b.jenis_bangunan || 'lainnya';
-      bangunanByJenis[jenis] = (bangunanByJenis[jenis] || 0) + 1;
-    });
-    let bangunanText = `Kami memiliki ${totalBangunan} bangunan fasilitas. `;
-    Object.entries(bangunanByJenis).forEach(([jenis, count], idx) => {
-      if (idx > 0) bangunanText += ', ';
-      bangunanText += `${count} ${jenis}`;
-    });
-    bangunanText += '.';
-    narrations.push(bangunanText);
-  }
-  
-  // 7. DATA GANGGUAN AKTIF
-  const gangguanAktifCount = gangguanData.filter(g => g.status !== 'selesai').length;
-  if (gangguanAktifCount > 0) {
-    narrations.push(`Saat ini terdapat ${gangguanAktifCount} gangguan aktif yang sedang dalam penanganan tim teknis kami. Kami mohon maaf atas ketidaknyamanan yang terjadi.`);
-  } else {
-    narrations.push(`Seluruh jaringan kami beroperasi dengan normal tanpa gangguan.`);
-  }
-  
-  // 8. PENDAPATAN BULANAN
-  const stats = calculateMonthlyRevenue();
-  const persentase = stats.percentage.toFixed(1);
-  narrations.push(`Progres pendapatan bulan ini telah mencapai ${persentase} persen dari target, dengan total terkumpul ${formatRupiah(stats.totalCollected)} dari target ${formatRupiah(stats.totalTarget)}.`);
-  
-  // 9. PENUTUP
-  narrations.push("Untuk informasi lebih lanjut atau pengaduan, pelanggan dapat menghubungi kantor unit kami atau melalui layanan WhatsApp di nomor 088294979966. Terima kasih atas kepercayaan Anda.");
-  
-  return narrations;
+const narrations = [];
+// 1. PEMBUKAAN
+narrations.push("Selamat datang di Sistem Monitoring PDAM Unit Pelaksana Darmaraja. Unit ini melayani kebutuhan air bersih untuk masyarakat Kecamatan Darmaraja, Kabupaten Sumedang, Jawa Barat.");
+// 2. STATISTIK TOTAL PELANGGAN
+const totalPelanggan = pelangganDataFromLaravel.length;
+let totalKantor = 0, totalPPOB = 0, totalBelumBayar = 0;
+const golCount = {};
+const wilayahData = {};
+pelangganDataFromLaravel.forEach(p => {
+const s = getPaymentStatus(p);
+if (s.status === 'Kantor') totalKantor++;
+else if (s.status === 'PPOB') totalPPOB++;
+else totalBelumBayar++;
+const gol = p.kode_gol_trf || 'Lainnya';
+golCount[gol] = (golCount[gol] || 0) + 1;
+const wilayah = p.nama_wilayah || 'Tidak Diketahui';
+if (!wilayahData[wilayah]) wilayahData[wilayah] = { count: 0, kantor: 0, ppob: 0, belumBayar: 0 };
+wilayahData[wilayah].count++;
+if (s.status === 'Kantor') wilayahData[wilayah].kantor++;
+else if (s.status === 'PPOB') wilayahData[wilayah].ppob++;
+else wilayahData[wilayah].belumBayar++;
+});
+narrations.push(`Saat ini kami melayani total ${totalPelanggan} pelanggan. Dengan rincian ${totalKantor} pelanggan membayar di kantor, ${totalPPOB} pelanggan membayar melalui P P O B, dan ${totalBelumBayar} pelanggan yang belum melakukan pembayaran.`);
+// 3. DATA GOLONGAN
+const golEntries = Object.entries(golCount).sort((a, b) => b[1] - a[1]);
+if (golEntries.length > 0) {
+let golText = `Pelanggan kami terbagi dalam ${golEntries.length} golongan tarif. `;
+golEntries.slice(0, 5).forEach(([gol, count], idx) => {
+if (idx > 0) golText += ', ';
+golText += `Golongan ${gol} sebanyak ${count} pelanggan`;
+});
+if (golEntries.length > 5) golText += `, dan golongan lainnya.`;
+golText += '.';
+narrations.push(golText);
 }
-
+// 4. DATA WILAYAH + JUMLAH JALUR PER WILAYAH
+const wilayahEntries = Object.entries(wilayahData).sort((a, b) => b[1].count - a[1].count);
+if (wilayahEntries.length > 0) {
+let wilayahText = `Wilayah layanan kami mencakup ${wilayahEntries.length} wilayah. `;
+wilayahEntries.slice(0, 4).forEach(([wilayah, data], idx) => {
+if (idx > 0) wilayahText += '. ';
+// Hitung jumlah jalur di wilayah ini (berdasarkan nama wilayah di jalur pipa)
+const jalurDiWilayah = jalurPipaData.filter(j => {
+const namaJalur = (j.nama_jalur || '').toLowerCase();
+return namaJalur.includes(wilayah.toLowerCase()) ||
+(j.keterangan || '').toLowerCase().includes(wilayah.toLowerCase());
+}).length;
+wilayahText += `Di ${wilayah}, terdapat ${data.count} pelanggan`;
+if (jalurDiWilayah > 0) {
+wilayahText += ` dengan ${jalurDiWilayah} jalur pipa`;
+}
+if (data.belumBayar > 0) {
+wilayahText += `, dan ${data.belumBayar} pelanggan belum membayar`;
+}
+});
+wilayahText += '.';
+narrations.push(wilayahText);
+}
+// 5. DATA JALUR PIPA
+const totalJalur = jalurPipaData.length;
+let totalPanjangJalur = 0;
+jalurPipaData.forEach(j => {
+const c = parseCoordinates(j.coordinates);
+if (c && c.length > 1) {
+for (let i = 0; i < c.length - 1; i++) {
+totalPanjangJalur += L.latLng(c[i]).distanceTo(L.latLng(c[i+1]));
+}
+}
+});
+const panjangKm = (totalPanjangJalur / 1000).toFixed(2);
+narrations.push(`Jaringan distribusi kami terdiri dari ${totalJalur} jalur pipa dengan total panjang ${panjangKm} kilometer, yang tersebar di seluruh wilayah layanan.`);
+// 6. DATA BANGUNAN
+const totalBangunan = bangunanData.length;
+if (totalBangunan > 0) {
+const bangunanByJenis = {};
+bangunanData.forEach(b => {
+const jenis = b.jenis_bangunan || 'lainnya';
+bangunanByJenis[jenis] = (bangunanByJenis[jenis] || 0) + 1;
+});
+let bangunanText = `Kami memiliki ${totalBangunan} bangunan fasilitas. `;
+Object.entries(bangunanByJenis).forEach(([jenis, count], idx) => {
+if (idx > 0) bangunanText += ', ';
+bangunanText += `${count} ${jenis}`;
+});
+bangunanText += '.';
+narrations.push(bangunanText);
+}
+// 7. DATA GANGGUAN AKTIF
+const gangguanAktifCount = gangguanData.filter(g => g.status !== 'selesai').length;
+if (gangguanAktifCount > 0) {
+narrations.push(`Saat ini terdapat ${gangguanAktifCount} gangguan aktif yang sedang dalam penanganan tim teknis kami. Kami mohon maaf atas ketidaknyamanan yang terjadi.`);
+} else {
+narrations.push(`Seluruh jaringan kami beroperasi dengan normal tanpa gangguan.`);
+}
+// 8. PENDAPATAN BULANAN
+const stats = calculateMonthlyRevenue();
+const persentase = stats.percentage.toFixed(1);
+narrations.push(`Progres pendapatan bulan ini telah mencapai ${persentase} persen dari target, dengan total terkumpul ${formatRupiah(stats.totalCollected)} dari target ${formatRupiah(stats.totalTarget)}.`);
+// 9. PENUTUP
+narrations.push("Untuk informasi lebih lanjut atau pengaduan, pelanggan dapat menghubungi kantor unit kami atau melalui layanan WhatsApp di nomor 088294979966. Terima kasih atas kepercayaan Anda.");
+return narrations;
+}
 // ============================================
 // 🔥 NARASI UNIT PROFIL (DIPERBAIKI)
 // ============================================
 function narrateUnitProfile() {
-  if (isNarrating) {
-    isNarrating = false;
-    clearVoiceQueue();
-    speechSynthesis.cancel();
-    showNotification('Narasi dihentikan', 'info');
-    return;
-  }
-  
-  isNarrating = true;
-  currentNarrationIndex = 0;
-  narrationPaused = false;
-  
-  if (isLiveDashboardActive) stopLiveCycle();
-  
-  // 🔥 GENERATE NARASI DINAMIS DARI DATA
-  const dynamicNarrations = generateDynamicNarration();
-  
-  playDynamicNarration(dynamicNarrations);
+if (isNarrating) {
+isNarrating = false;
+clearVoiceQueue();
+speechSynthesis.cancel();
+showNotification('Narasi dihentikan', 'info');
+return;
 }
-
+isNarrating = true;
+currentNarrationIndex = 0;
+narrationPaused = false;
+if (isLiveDashboardActive) stopLiveCycle();
+// 🔥 GENERATE NARASI DINAMIS DARI DATA
+const dynamicNarrations = generateDynamicNarration();
+playDynamicNarration(dynamicNarrations);
+}
 function playDynamicNarration(narrations) {
-  if (!isNarrating || currentNarrationIndex >= narrations.length) {
-    isNarrating = false;
-    currentNarrationIndex = 0;
-    showNotification('Narasi profil selesai', 'success');
-    return;
-  }
-  
-  if (narrationPaused) return;
-  
-  const narration = narrations[currentNarrationIndex];
-  addToVoiceQueue(narration, voiceSettings.paymentGender, () => {
-    currentNarrationIndex++;
-    setTimeout(() => {
-      if (isNarrating && !narrationPaused) {
-        playDynamicNarration(narrations);
-      }
-    }, 800);
-  });
+if (!isNarrating || currentNarrationIndex >= narrations.length) {
+isNarrating = false;
+currentNarrationIndex = 0;
+showNotification('Narasi profil selesai', 'success');
+return;
 }
-
+if (narrationPaused) return;
+const narration = narrations[currentNarrationIndex];
+addToVoiceQueue(narration, voiceSettings.paymentGender, () => {
+currentNarrationIndex++;
+setTimeout(() => {
+if (isNarrating && !narrationPaused) {
+playDynamicNarration(narrations);
+}
+}, 800);
+});
+}
 // ============================================
 // 🔥 REAL-TIME PAYMENT POLLING
 // ============================================
 function startRealtimePolling() {
-  console.log('🔄 Memulai real-time polling setiap', POLLING_INTERVAL/1000, 'detik');
-  
-  // Inisialisasi timestamp pembayaran awal
-  initializePaymentTimestamps();
-  
-  // Mulai polling
-  realtimePollingInterval = setInterval(checkNewPayments, POLLING_INTERVAL);
-  
-  // Cek pertama setelah 3 detik
-  setTimeout(checkNewPayments, 3000);
+console.log('🔄 Memulai real-time polling setiap', POLLING_INTERVAL/1000, 'detik');
+// Inisialisasi timestamp pembayaran awal
+initializePaymentTimestamps();
+// Mulai polling
+realtimePollingInterval = setInterval(checkNewPayments, POLLING_INTERVAL);
+// Cek pertama setelah 3 detik
+setTimeout(checkNewPayments, 3000);
 }
 function initializePaymentTimestamps() {
-    if (typeof pelangganDataFromLaravel !== 'undefined') {
-        pelangganDataFromLaravel.forEach(p => {
-            const s = getPaymentStatus(p);
-            if (s.tanggal) {
-                lastKnownPaymentTimestamps[p.no_pelanggan] = s.tanggal;
-            }
-        });
-    }
-    isFirstLoad = false;
+if (typeof pelangganDataFromLaravel !== 'undefined') {
+pelangganDataFromLaravel.forEach(p => {
+const s = getPaymentStatus(p);
+if (s.tanggal) {
+lastKnownPaymentTimestamps[p.no_pelanggan] = s.tanggal;
 }
-
-// function initializePaymentTimestamps() {
-//   pelangganDataFromLaravel.forEach(p => {
-//     const s = getPaymentStatus(p);
-//     if (s.tanggal) {
-//       lastKnownPaymentTimestamps[p.no_pelanggan] = s.tanggal;
-//     }
-//   });
-//   isFirstLoad = false;
-// }
-
+});
+}
+isFirstLoad = false;
+}
 async function checkNewPayments() {
-    try {
-        console.log('🔍 Memeriksa pembayaran baru...');
-        
-        // 🔥 PENTING: Gunakan '?' bukan '&'
-        const response = await fetch(API_REALTIME_URL + '?t=' + Date.now(), {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (!result.success || !result.pelanggan) {
-            console.warn('⚠️ Tidak ada data pelanggan dari API');
-            return;
-        }
-        
-        const pelangganData = result.pelanggan;
-        const newPayments = [];
-        
-        pelangganData.forEach(p => {
-            const pelangganMapped = {
-                no_pelanggan: p.no_pelanggan || p.no_rekening || '-',
-                nama: p.nama || 'Tanpa Nama',
-                jumlah: p.jumlah || '0',
-                pakai: p.pakai || '0',
-                kode_gol_trf: p.kode_gol_trf || '-',
-                nama_wilayah: p.nama_wilayah || p.cabang || 'Tidak Diketahui',
-                koordinator: p.koordinator || '',
-                tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null,
-                tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null,
-                status: p.status_sl || p.status || 'Aktif'
-            };
-            
-            const s = getPaymentStatus(pelangganMapped);
-            if (s.tanggal) {
-                const lastTimestamp = lastKnownPaymentTimestamps[pelangganMapped.no_pelanggan];
-                
-                // Deteksi pembayaran baru
-                if (!lastTimestamp || lastTimestamp !== s.tanggal) {
-                    newPayments.push({
-                        ...pelangganMapped,
-                        statusInfo: s,
-                        isNewPayment: !lastTimestamp
-                    });
-                    lastKnownPaymentTimestamps[pelangganMapped.no_pelanggan] = s.tanggal;
-                }
-            }
-        });
-        
-        // Update data
-        if (pelangganData.length > 0 && typeof updatePelangganDataFromAPI === 'function') {
-            updatePelangganDataFromAPI(pelangganData);
-        }
-        
-        // Proses pembayaran baru
-        if (newPayments.length > 0 && !isFirstLoad) {
-            const realNewPayments = newPayments.filter(p => p.isNewPayment);
-            
-            if (realNewPayments.length > 0) {
-                console.log('💰 Pembayaran baru terdeteksi:', realNewPayments.length);
-                realNewPayments.forEach((p, idx) => {
-                    setTimeout(() => {
-                        handlePaymentReceived(p);
-                        updateUIAfterPayment(p);
-                    }, idx * 3000); // Delay 3 detik antar pembayaran
-                });
-            }
-        }
-        
-    } catch (error) {
-        console.error('❌ Error polling:', error);
-    }
+try {
+console.log('🔍 Memeriksa pembayaran baru...');
+// 🔥 PENTING: Gunakan '?' bukan '&'
+const response = await fetch(API_REALTIME_URL + '?t=' + Date.now(), {
+method: 'GET',
+headers: {
+'Accept': 'application/json',
+'Content-Type': 'application/json',
 }
-
-
+});
+if (!response.ok) {
+throw new Error(`HTTP error! status: ${response.status}`);
+}
+const result = await response.json();
+if (!result.success || !result.pelanggan) {
+console.warn('⚠️ Tidak ada data pelanggan dari API');
+return;
+}
+const pelangganData = result.pelanggan;
+const newPayments = [];
+pelangganData.forEach(p => {
+const pelangganMapped = {
+no_pelanggan: p.no_pelanggan || p.no_rekening || '-',
+nama: p.nama || 'Tanpa Nama',
+jumlah: p.jumlah || '0',
+pakai: p.pakai || '0',
+kode_gol_trf: p.kode_gol_trf || '-',
+nama_wilayah: p.nama_wilayah || p.cabang || 'Tidak Diketahui',
+koordinator: p.koordinator || '',
+tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null,
+tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null,
+status: p.status_sl || p.status || 'Aktif'
+};
+const s = getPaymentStatus(pelangganMapped);
+if (s.tanggal) {
+const lastTimestamp = lastKnownPaymentTimestamps[pelangganMapped.no_pelanggan];
+// Deteksi pembayaran baru
+if (!lastTimestamp || lastTimestamp !== s.tanggal) {
+newPayments.push({
+...pelangganMapped,
+statusInfo: s,
+isNewPayment: !lastTimestamp
+});
+lastKnownPaymentTimestamps[pelangganMapped.no_pelanggan] = s.tanggal;
+}
+}
+});
+// Update data
+if (pelangganData.length > 0 && typeof updatePelangganDataFromAPI === 'function') {
+updatePelangganDataFromAPI(pelangganData);
+}
+// Proses pembayaran baru
+if (newPayments.length > 0 && !isFirstLoad) {
+const realNewPayments = newPayments.filter(p => p.isNewPayment);
+if (realNewPayments.length > 0) {
+console.log('💰 Pembayaran baru terdeteksi:', realNewPayments.length);
+realNewPayments.forEach((p, idx) => {
+setTimeout(() => {
+handlePaymentReceived(p);
+updateUIAfterPayment(p);
+}, idx * 3000); // Delay 3 detik antar pembayaran
+});
+}
+}
+} catch (error) {
+console.error('❌ Error polling:', error);
+}
+}
 function updatePelangganDataFromAPI(newData) {
-  // Mapping data dari API
-  const mappedData = newData.map(p => ({
-    no_pelanggan: p.no_pelanggan,
-    nama: p.nama,
-    jumlah: p.jumlah || '0',
-    pakai: p.pakai || '0',
-    kode_gol_trf: p.kode_gol_trf,
-    nama_wilayah: p.nama_wilayah || p.cabang,
-    koordinator: p.koordinator,
-    tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null,
-    tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null,
-    status: p.status,
-    alamat: p.alamat
-  }));
-  
-  // Update data global
-  mappedData.forEach(newP => {
-    const idx = pelangganDataFromLaravel.findIndex(p => p.no_pelanggan === newP.no_pelanggan);
-    if (idx !== -1) {
-      pelangganDataFromLaravel[idx] = newP;
-    } else {
-      pelangganDataFromLaravel.push(newP);
-    }
-  });
-  
-  // Update UI
-  updateRevenueProgress();
-  updateTodayStatsDisplay();
-  calculateRevenue();
-  loadUnpaidCustomerMarkers();
+// Mapping data dari API
+const mappedData = newData.map(p => ({
+no_pelanggan: p.no_pelanggan,
+nama: p.nama,
+jumlah: p.jumlah || '0',
+pakai: p.pakai || '0',
+kode_gol_trf: p.kode_gol_trf,
+nama_wilayah: p.nama_wilayah || p.cabang,
+koordinator: p.koordinator,
+tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null,
+tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null,
+status: p.status,
+alamat: p.alamat
+}));
+// Update data global
+mappedData.forEach(newP => {
+const idx = pelangganDataFromLaravel.findIndex(p => p.no_pelanggan === newP.no_pelanggan);
+if (idx !== -1) {
+pelangganDataFromLaravel[idx] = newP;
+} else {
+pelangganDataFromLaravel.push(newP);
 }
-
+});
+// Update UI
+updateRevenueProgress();
+updateTodayStatsDisplay();
+calculateRevenue();
+loadUnpaidCustomerMarkers();
+}
 function updateUIAfterPayment(pelanggan) {
-    const bar = document.getElementById('notificationBar');
-    const content = document.getElementById('notificationContent');
-    
-    if (bar && content) {
-        bar.style.display = 'block';
-        
-        const newItem = document.createElement('div');
-        newItem.className = 'notification-item';
-        newItem.innerHTML = `
-            <strong>${pelanggan.nama}</strong> 
-            <span class="amount">${formatRupiah(pelanggan.jumlah)}</span>
-            <span class="location"><i class="fas fa-${pelanggan.statusInfo.metode === 'PPOB' ? 'mobile-alt' : 'building'}"></i> ${pelanggan.statusInfo.metode}</span>
-        `;
-        
-        content.insertBefore(newItem, content.firstChild);
-        
-        // Update stats jika ada
-        if (typeof updateTodayStatsDisplay === 'function') {
-            updateTodayStatsDisplay();
-        }
-        if (typeof calculateRevenue === 'function') {
-            calculateRevenue();
-        }
-    }
+const bar = document.getElementById('notificationBar');
+const content = document.getElementById('notificationContent');
+if (bar && content) {
+bar.style.display = 'block';
+const newItem = document.createElement('div');
+newItem.className = 'notification-item';
+newItem.innerHTML = `
+<strong>${pelanggan.nama}</strong>
+<span class="amount">${formatRupiah(pelanggan.jumlah)}</span>
+<span class="location"><i class="fas fa-${pelanggan.statusInfo.metode === 'PPOB' ? 'mobile-alt' : 'building'}"></i> ${pelanggan.statusInfo.metode}</span>
+`;
+content.insertBefore(newItem, content.firstChild);
+// Update stats jika ada
+if (typeof updateTodayStatsDisplay === 'function') {
+updateTodayStatsDisplay();
 }
-
-
+if (typeof calculateRevenue === 'function') {
+calculateRevenue();
+}
+}
+}
 function stopRealtimePolling() {
-  if (realtimePollingInterval) {
-    clearInterval(realtimePollingInterval);
-    realtimePollingInterval = null;
-    console.log('⏸️ Real-time polling dihentikan');
-  }
+if (realtimePollingInterval) {
+clearInterval(realtimePollingInterval);
+realtimePollingInterval = null;
+console.log('⏸️ Real-time polling dihentikan');
 }
-
+}
 // ============================================
 // 🔥 FUNGSI TERIMA KASIH SAAT PEMBAYARAN
 // ============================================
 function handlePaymentReceived(pelanggan) {
-    // Stop semua suara yang sedang berjalan
-    if (typeof speechSynthesis !== 'undefined') {
-        speechSynthesis.cancel();
-    }
-    
-    const namaNormal = formatNameForSpeech ? formatNameForSpeech(pelanggan.nama, 'female') : pelanggan.nama;
-    const thankYouMessages = [
-        "Terima kasih atas pembayaran Anda. Kepercayaan Anda adalah motivasi kami untuk terus memberikan pelayanan terbaik.",
-        "Pembayaran Anda telah kami terima. Terima kasih telah menjadi pelanggan setia PDAM Unit Pelaksana Darmaraja.",
-        "Terima kasih. Kontribusi Anda sangat berarti bagi kelangsungan pelayanan air bersih di wilayah Darmaraja."
-    ];
-    const thankYouMsg = thankYouMessages[Math.floor(Math.random() * thankYouMessages.length)];
-    const metodeText = pelanggan.statusInfo.metode === 'PPOB' ? 'P. P. O. B.' : 'Kantor Unit Cabang';
-    
-    const fullMessage = `${thankYouMsg} Atas nama ${namaNormal}, pembayaran sebesar ${formatRupiah(pelanggan.jumlah)} telah kami terima melalui ${metodeText}.`;
-    
-    // Ucapan suara
-    if (typeof speak === 'function') {
-        speak(fullMessage, 'female');
-    } else if (typeof speechSynthesis !== 'undefined') {
-        const utterance = new SpeechSynthesisUtterance(fullMessage);
-        utterance.lang = 'id-ID';
-        utterance.rate = 0.95;
-        utterance.pitch = 1.1;
-        speechSynthesis.speak(utterance);
-    }
-    
-    // Notifikasi toast
-    showNotification ? showNotification(`💰 Pembayaran dari ${pelanggan.nama} - Terima kasih!`, 'payment') : 
-        console.log('💰 Pembayaran:', pelanggan.nama);
+// Stop semua suara yang sedang berjalan
+if (typeof speechSynthesis !== 'undefined') {
+speechSynthesis.cancel();
+}
+const namaNormal = formatNameForSpeech ? formatNameForSpeech(pelanggan.nama, 'female') : pelanggan.nama;
+const thankYouMessages = [
+"Terima kasih atas pembayaran Anda. Kepercayaan Anda adalah motivasi kami untuk terus memberikan pelayanan terbaik.",
+"Pembayaran Anda telah kami terima. Terima kasih telah menjadi pelanggan setia PDAM Unit Pelaksana Darmaraja.",
+"Terima kasih. Kontribusi Anda sangat berarti bagi kelangsungan pelayanan air bersih di wilayah Darmaraja."
+];
+const thankYouMsg = thankYouMessages[Math.floor(Math.random() * thankYouMessages.length)];
+const metodeText = pelanggan.statusInfo.metode === 'PPOB' ? 'P. P. O. B.' : 'Kantor Unit Cabang';
+const fullMessage = `${thankYouMsg} Atas nama ${namaNormal}, pembayaran sebesar ${formatRupiah(pelanggan.jumlah)} telah kami terima melalui ${metodeText}.`;
+// Ucapan suara
+if (typeof speak === 'function') {
+speak(fullMessage, 'female');
+} else if (typeof speechSynthesis !== 'undefined') {
+const utterance = new SpeechSynthesisUtterance(fullMessage);
+utterance.lang = 'id-ID';
+utterance.rate = 0.95;
+utterance.pitch = 1.1;
+speechSynthesis.speak(utterance);
+}
+// Notifikasi toast
+showNotification ? showNotification(`💰 Pembayaran dari ${pelanggan.nama} - Terima kasih!`, 'payment') :
+console.log('💰 Pembayaran:', pelanggan.nama);
 }
 const paymentThankYouMessages = [
-  "Terima kasih atas pembayaran Anda. Kepercayaan Anda adalah motivasi kami untuk terus memberikan pelayanan terbaik.",
-  "Pembayaran Anda telah kami terima. Terima kasih telah menjadi pelanggan setia PDAM Unit Pelaksana Darmaraja.",
-  "Terima kasih. Kontribusi Anda sangat berarti bagi kelangsungan pelayanan air bersih di wilayah Darmaraja.",
-  "Pembayaran berhasil. Kami mengucapkan terima kasih dan semoga sehat selalu bersama keluarga.",
-  "Terima kasih atas kepercayaan Anda. Air bersih untuk kehidupan yang lebih baik."
+"Terima kasih atas pembayaran Anda. Kepercayaan Anda adalah motivasi kami untuk terus memberikan pelayanan terbaik.",
+"Pembayaran Anda telah kami terima. Terima kasih telah menjadi pelanggan setia PDAM Unit Pelaksana Darmaraja.",
+"Terima kasih. Kontribusi Anda sangat berarti bagi kelangsungan pelayanan air bersih di wilayah Darmaraja.",
+"Pembayaran berhasil. Kami mengucapkan terima kasih dan semoga sehat selalu bersama keluarga.",
+"Terima kasih atas kepercayaan Anda. Air bersih untuk kehidupan yang lebih baik."
 ];
-
 // ============================================
 // 🔥 FUNGSI HITUNG PENDAPATAN BULANAN
 // ============================================
 function calculateMonthlyRevenue() {
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth();
-  const currentDay = now.getDate();
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const remainingDays = daysInMonth - currentDay;
-  
-  let totalTarget = 0;
-  let totalCollected = 0;
-  let totalUnpaidWithPenalty = 0;
-  
-  pelangganDataFromLaravel.forEach(p => {
-    const jumlah = parseFloat(p.jumlah) || 0;
-    const hasLoket = p.tanggal_pembayaran_loket && p.tanggal_pembayaran_loket !== '-' && p.tanggal_pembayaran_loket !== '.' && p.tanggal_pembayaran_loket !== null;
-    const hasPPOB = p.tanggal_pembayaran_ppob && p.tanggal_pembayaran_ppob !== '-' && p.tanggal_pembayaran_ppob !== '.' && p.tanggal_pembayaran_ppob !== null;
-    
-    if (hasLoket || hasPPOB) {
-      totalCollected += jumlah;
-    } else {
-      let tagihanFinal = jumlah;
-      if (currentDay > 20) tagihanFinal += 5000;
-      if (jumlah > 1000000) tagihanFinal += 10000;
-      totalUnpaidWithPenalty += tagihanFinal;
-    }
-    totalTarget += jumlah;
-  });
-  
-  const percentage = totalTarget > 0 ? (totalCollected / totalTarget) * 100 : 0;
-  const dailyTarget = remainingDays > 0 ? totalUnpaidWithPenalty / remainingDays : 0;
-  
-  return {
-    totalTarget, totalCollected, totalUnpaidWithPenalty, percentage,
-    currentDay, daysInMonth, remainingDays, dailyTarget
-  };
+const now = new Date();
+const currentYear = now.getFullYear();
+const currentMonth = now.getMonth();
+const currentDay = now.getDate();
+const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+const remainingDays = daysInMonth - currentDay;
+let totalTarget = 0;
+let totalCollected = 0;
+let totalUnpaidWithPenalty = 0;
+pelangganDataFromLaravel.forEach(p => {
+const jumlah = parseFloat(p.jumlah) || 0;
+const hasLoket = p.tanggal_pembayaran_loket && p.tanggal_pembayaran_loket !== '-' && p.tanggal_pembayaran_loket !== '.' && p.tanggal_pembayaran_loket !== null;
+const hasPPOB = p.tanggal_pembayaran_ppob && p.tanggal_pembayaran_ppob !== '-' && p.tanggal_pembayaran_ppob !== '.' && p.tanggal_pembayaran_ppob !== null;
+if (hasLoket || hasPPOB) {
+totalCollected += jumlah;
+} else {
+let tagihanFinal = jumlah;
+if (currentDay > 20) tagihanFinal += 5000;
+if (jumlah > 1000000) tagihanFinal += 10000;
+totalUnpaidWithPenalty += tagihanFinal;
 }
-
+totalTarget += jumlah;
+});
+const percentage = totalTarget > 0 ? (totalCollected / totalTarget) * 100 : 0;
+const dailyTarget = remainingDays > 0 ? totalUnpaidWithPenalty / remainingDays : 0;
+return {
+totalTarget, totalCollected, totalUnpaidWithPenalty, percentage,
+currentDay, daysInMonth, remainingDays, dailyTarget
+};
+}
 function updateRevenueProgress() {
-  const stats = calculateMonthlyRevenue();
-  const progressBar = document.getElementById('revenueProgressBar');
-  const progressPercentage = document.getElementById('revenueProgressPercentage');
-  progressBar.style.width = stats.percentage.toFixed(1) + '%';
-  progressPercentage.textContent = stats.percentage.toFixed(1) + '%';
-  document.getElementById('currentDayOfMonth').textContent = stats.currentDay;
-  document.getElementById('remainingDays').textContent = stats.remainingDays;
-  document.getElementById('targetRevenue').textContent = formatRupiah(stats.totalTarget);
-  document.getElementById('collectedRevenue').textContent = formatRupiah(stats.totalCollected);
-  document.getElementById('remainingRevenue').textContent = formatRupiah(stats.totalUnpaidWithPenalty);
-  document.getElementById('dailyTarget').textContent = formatRupiah(stats.dailyTarget);
+const stats = calculateMonthlyRevenue();
+const progressBar = document.getElementById('revenueProgressBar');
+const progressPercentage = document.getElementById('revenueProgressPercentage');
+progressBar.style.width = stats.percentage.toFixed(1) + '%';
+progressPercentage.textContent = stats.percentage.toFixed(1) + '%';
+document.getElementById('currentDayOfMonth').textContent = stats.currentDay;
+document.getElementById('remainingDays').textContent = stats.remainingDays;
+document.getElementById('targetRevenue').textContent = formatRupiah(stats.totalTarget);
+document.getElementById('collectedRevenue').textContent = formatRupiah(stats.totalCollected);
+document.getElementById('remainingRevenue').textContent = formatRupiah(stats.totalUnpaidWithPenalty);
+document.getElementById('dailyTarget').textContent = formatRupiah(stats.dailyTarget);
 }
-
 // ============================================
 // UTILITY FUNCTIONS
 // ============================================
 function parseKoordinator(s) {
-  try {
-    if (!s) return null;
-    const c = s.split(',').map(x => parseFloat(x.trim()));
-    return (c.length === 2 && !isNaN(c[0]) && !isNaN(c[1])) ? c : null;
-  } catch(e) { return null; }
+try {
+if (!s) return null;
+const c = s.split(',').map(x => parseFloat(x.trim()));
+return (c.length === 2 && !isNaN(c[0]) && !isNaN(c[1])) ? c : null;
+} catch(e) { return null; }
 }
-
 function formatRupiah(a) {
-  if (!a || a === 0) return 'Rp 0';
-  return 'Rp ' + parseInt(a).toLocaleString('id-ID');
+if (!a || a === 0) return 'Rp 0';
+return 'Rp ' + parseInt(a).toLocaleString('id-ID');
 }
-
 function formatRupiahMasked(a) {
-  if (!a || a === 0) return 'Rp 0';
-  let formatted = parseInt(a).toLocaleString('id-ID');
-  return 'Rp ' + formatted.replace(/\d/g, '*');
+if (!a || a === 0) return 'Rp 0';
+let formatted = parseInt(a).toLocaleString('id-ID');
+return 'Rp ' + formatted.replace(/\d/g, '*');
 }
-
 function formatDate(s) {
-  if (!s || s === '-' || s === '.') return '-';
-  return new Date(s).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+if (!s || s === '-' || s === '.') return '-';
+return new Date(s).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 }
-
 function getStatusColor(g) {
-  const c = { 'R1': '#3b82f6', 'R2': '#60a5fa', 'R3': '#93c5fd', 'B1': '#10b981', 'B2': '#34d399', 'B3': '#6ee7b7', 'I1': '#f59e0b', 'I2': '#fbbf24', 'I3': '#fcd34d', 'S1': '#8b5cf6', 'S2': '#a78bfa' };
-  return c[g] || '#6b7280';
+const c = { 'R1': '#3b82f6', 'R2': '#60a5fa', 'R3': '#93c5fd', 'B1': '#10b981', 'B2': '#34d399', 'B3': '#6ee7b7', 'I1': '#f59e0b', 'I2': '#fbbf24', 'I3': '#fcd34d', 'S1': '#8b5cf6', 'S2': '#a78bfa' };
+return c[g] || '#6b7280';
 }
-
 function isInArea(lat, lng) { return lat >= -6.98 && lat <= -6.80 && lng >= 107.80 && lng <= 108.15; }
-
 function parseCoordinates(s) {
-  try {
-    if (!s) return null;
-    let str = String(s).trim();
-    if (str.startsWith('"') && str.endsWith('"')) str = str.substring(1, str.length - 1);
-    str = str.replace(/\\/g, '');
-    let coords = JSON.parse(str);
-    if (Array.isArray(coords) && coords.length > 0 && Array.isArray(coords[0])) coords = coords[0];
-    return coords.map(c => (typeof c === 'object' && c !== null && c.lat !== undefined && c.lng !== undefined) ? [parseFloat(c.lat), parseFloat(c.lng)] : c);
-  } catch(e) { return null; }
+try {
+if (!s) return null;
+let str = String(s).trim();
+if (str.startsWith('"') && str.endsWith('"')) str = str.substring(1, str.length - 1);
+str = str.replace(/\\/g, '');
+let coords = JSON.parse(str);
+if (Array.isArray(coords) && coords.length > 0 && Array.isArray(coords[0])) coords = coords[0];
+return coords.map(c => (typeof c === 'object' && c !== null && c.lat !== undefined && c.lng !== undefined) ? [parseFloat(c.lat), parseFloat(c.lng)] : c);
+} catch(e) { return null; }
 }
-
 function hasPointInArea(coords) { return coords && Array.isArray(coords) && coords.some(c => isInArea(c[0], c[1])); }
-
 function showNotification(msg, type = 'info') {
-  const toast = document.createElement('div');
-  toast.className = `toast-notification ${type}`;
-  const icons = { 'success': 'fa-check-circle', 'info': 'fa-info-circle', 'warning': 'fa-exclamation-triangle', 'live': 'fa-broadcast-tower', 'payment': 'fa-money-bill-wave' };
-  toast.innerHTML = `<i class="fas ${icons[type] || 'fa-info-circle'}"></i><span>${msg}</span>`;
-  document.body.appendChild(toast);
-  setTimeout(() => { toast.style.animation = 'toastSlide 0.3s ease reverse'; setTimeout(() => toast.remove(), 300); }, 3000);
+const toast = document.createElement('div');
+toast.className = `toast-notification ${type}`;
+const icons = { 'success': 'fa-check-circle', 'info': 'fa-info-circle', 'warning': 'fa-exclamation-triangle', 'live': 'fa-broadcast-tower', 'payment': 'fa-money-bill-wave' };
+toast.innerHTML = `<i class="fas ${icons[type] || 'fa-info-circle'}"></i><span>${msg}</span>`;
+document.body.appendChild(toast);
+setTimeout(() => { toast.style.animation = 'toastSlide 0.3s ease reverse'; setTimeout(() => toast.remove(), 300); }, 3000);
 }
-
 function calculateTodayStats() {
-  const now = new Date();
-  const todayStr = now.toISOString().split('T')[0];
-  let totalToday = 0, countToday = 0, kubikasiToday = 0;
-  
-  pelangganDataFromLaravel.forEach(p => {
-    const status = getPaymentStatus(p);
-    if (status.tanggal) {
-      const payDate = new Date(status.tanggal);
-      const payDateStr = payDate.toISOString().split('T')[0];
-      if (payDateStr === todayStr) {
-        totalToday += parseFloat(p.jumlah) || 0;
-        kubikasiToday += parseFloat(p.pakai) || 0;
-        countToday++;
-      }
-    }
-  });
-  
-  return { totalToday, countToday, kubikasiToday, todayStr };
+const now = new Date();
+const todayStr = now.toISOString().split('T')[0];
+let totalToday = 0, countToday = 0, kubikasiToday = 0;
+pelangganDataFromLaravel.forEach(p => {
+const status = getPaymentStatus(p);
+if (status.tanggal) {
+const payDate = new Date(status.tanggal);
+const payDateStr = payDate.toISOString().split('T')[0];
+if (payDateStr === todayStr) {
+totalToday += parseFloat(p.jumlah) || 0;
+kubikasiToday += parseFloat(p.pakai) || 0;
+countToday++;
 }
-
+}
+});
+return { totalToday, countToday, kubikasiToday, todayStr };
+}
 function updateTodayStatsDisplay() {
-  const stats = calculateTodayStats();
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  document.getElementById('today-date').textContent = dateStr;
-  document.getElementById('today-amount').textContent = formatRupiah(stats.totalToday);
-  document.getElementById('today-count').textContent = stats.countToday;
-  document.getElementById('today-kubikasi').textContent = stats.kubikasiToday.toFixed(1);
+const stats = calculateTodayStats();
+const now = new Date();
+const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+document.getElementById('today-date').textContent = dateStr;
+document.getElementById('today-amount').textContent = formatRupiah(stats.totalToday);
+document.getElementById('today-count').textContent = stats.countToday;
+document.getElementById('today-kubikasi').textContent = stats.kubikasiToday.toFixed(1);
 }
-
 function getPaymentStatus(p) {
-  const hasLoket = p.tanggal_pembayaran_loket && p.tanggal_pembayaran_loket !== '-' && p.tanggal_pembayaran_loket !== '.' && p.tanggal_pembayaran_loket !== null;
-  const hasPPOB = p.tanggal_pembayaran_ppob && p.tanggal_pembayaran_ppob !== '-' && p.tanggal_pembayaran_ppob !== '.' && p.tanggal_pembayaran_ppob !== null;
-  if (hasLoket) return { status: 'Kantor', color: '#10b981', icon: 'fa-building', tanggal: p.tanggal_pembayaran_loket, metode: 'Kantor' };
-  else if (hasPPOB) return { status: 'PPOB', color: '#f59e0b', icon: 'fa-mobile-alt', tanggal: p.tanggal_pembayaran_ppob, metode: 'PPOB' };
-  else return { status: 'Belum Bayar', color: '#ef4444', icon: 'fa-times', tanggal: null, metode: null };
+const hasLoket = p.tanggal_pembayaran_loket && p.tanggal_pembayaran_loket !== '-' && p.tanggal_pembayaran_loket !== '.' && p.tanggal_pembayaran_loket !== null;
+const hasPPOB = p.tanggal_pembayaran_ppob && p.tanggal_pembayaran_ppob !== '-' && p.tanggal_pembayaran_ppob !== '.' && p.tanggal_pembayaran_ppob !== null;
+if (hasLoket) return { status: 'Kantor', color: '#10b981', icon: 'fa-building', tanggal: p.tanggal_pembayaran_loket, metode: 'Kantor' };
+else if (hasPPOB) return { status: 'PPOB', color: '#f59e0b', icon: 'fa-mobile-alt', tanggal: p.tanggal_pembayaran_ppob, metode: 'PPOB' };
+else return { status: 'Belum Bayar', color: '#ef4444', icon: 'fa-times', tanggal: null, metode: null };
 }
-
 function cleanSpacedLetters(text) {
-  if (!text) return text;
-  const parts = text.trim().split(/\s+/);
-  if (parts.length >= 2 && parts.every(p => p.length === 1 && /^[A-Za-z]$/.test(p))) {
-    const joined = parts.join('');
-    return joined.charAt(0).toUpperCase() + joined.slice(1).toLowerCase();
-  }
-  return text;
+if (!text) return text;
+const parts = text.trim().split(/\s+/);
+if (parts.length >= 2 && parts.every(p => p.length === 1 && /^[A-Za-z]$/.test(p))) {
+const joined = parts.join('');
+return joined.charAt(0).toUpperCase() + joined.slice(1).toLowerCase();
 }
-
+return text;
+}
 function toTitleCase(str) {
-  if (!str) return str;
-  return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+if (!str) return str;
+return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 }
-
 function normalizePPOB(text) {
-  if (!text) return text;
-  return text.replace(/\bPPOB\b/gi, 'P. P. O. B.');
+if (!text) return text;
+return text.replace(/\bPPOB\b/gi, 'P. P. O. B.');
 }
-
 function normalizeTextForSpeech(text) {
-  if (!text) return text;
-  text = normalizePPOB(text);
-  text = text.replace(/\b([A-Z]{3,})\b/g, (word) => {
-    if (word.includes('.')) return word;
-    return word.charAt(0) + word.slice(1).toLowerCase();
-  });
-  return text;
+if (!text) return text;
+text = normalizePPOB(text);
+text = text.replace(/\b([A-Z]{3,})\b/g, (word) => {
+if (word.includes('.')) return word;
+return word.charAt(0) + word.slice(1).toLowerCase();
+});
+return text;
 }
-
 function convertRegionRomanToNumber(regionName) {
-  if (!regionName) return regionName;
-  const romanMap = { 'X': '10', 'IX': '9', 'VIII': '8', 'VII': '7', 'VI': '6', 'V': '5', 'IV': '4', 'III': '3', 'II': '2', 'I': '1' };
-  const romanPattern = /\b(X|IX|VIII|VII|VI|V|IV|III|II|I)\b/g;
-  return regionName.replace(romanPattern, (match) => romanMap[match] || match);
+if (!regionName) return regionName;
+const romanMap = { 'X': '10', 'IX': '9', 'VIII': '8', 'VII': '7', 'VI': '6', 'V': '5', 'IV': '4', 'III': '3', 'II': '2', 'I': '1' };
+const romanPattern = /\b(X|IX|VIII|VII|VI|V|IV|III|II|I)\b/g;
+return regionName.replace(romanPattern, (match) => romanMap[match] || match);
 }
-
 function formatNameForSpeech(name, gender) {
-  if (!name) return 'Pelanggan';
-  let cleanName = name.trim().replace(/\s+/g, ' ');
-  cleanName = toTitleCase(cleanName.toLowerCase());
-  return cleanName;
+if (!name) return 'Pelanggan';
+let cleanName = name.trim().replace(/\s+/g, ' ');
+cleanName = toTitleCase(cleanName.toLowerCase());
+return cleanName;
 }
-
 // ============================================
 // SISTEM ANTRIAN SUARA
 // ============================================
 function addToVoiceQueue(text, gender = 'female', callback = null) {
-  voiceQueue.push({ text, gender, callback });
-  processVoiceQueue();
+voiceQueue.push({ text, gender, callback });
+processVoiceQueue();
 }
-
 function processVoiceQueue() {
-  if (isVoiceSpeaking || voiceQueue.length === 0) return;
-  isVoiceSpeaking = true;
-  const item = voiceQueue.shift();
-  speak(item.text, item.gender, () => {
-    isVoiceSpeaking = false;
-    if (item.callback) item.callback();
-    setTimeout(() => processVoiceQueue(), 500);
-  });
+if (isVoiceSpeaking || voiceQueue.length === 0) return;
+isVoiceSpeaking = true;
+const item = voiceQueue.shift();
+speak(item.text, item.gender, () => {
+isVoiceSpeaking = false;
+if (item.callback) item.callback();
+setTimeout(() => processVoiceQueue(), 500);
+});
 }
-
 function clearVoiceQueue() {
-  voiceQueue = [];
-  isVoiceSpeaking = false;
-  speechSynthesis.cancel();
+voiceQueue = [];
+isVoiceSpeaking = false;
+speechSynthesis.cancel();
 }
-
 // ============================================
 // VOICE SYSTEM
 // ============================================
 function isIndonesianVoice(voice) {
-  if (!voice) return false;
-  const lang = (voice.lang || '').toLowerCase();
-  const name = (voice.name || '').toLowerCase();
-  if (lang === 'id-id' || lang === 'id' || lang.startsWith('id-') || lang.startsWith('id_')) return true;
-  for (const keyword of ID_KEYWORDS) { if (name.includes(keyword)) return true; }
-  return false;
+if (!voice) return false;
+const lang = (voice.lang || '').toLowerCase();
+const name = (voice.name || '').toLowerCase();
+if (lang === 'id-id' || lang === 'id' || lang.startsWith('id-') || lang.startsWith('id_')) return true;
+for (const keyword of ID_KEYWORDS) { if (name.includes(keyword)) return true; }
+return false;
 }
-
 function detectGender(voice) {
-  if (!voice) return 'unknown';
-  const name = (voice.name || '').toLowerCase();
-  for (const keyword of FEMALE_KEYWORDS) { if (name.includes(keyword)) return 'female'; }
-  for (const keyword of MALE_KEYWORDS) { if (name.includes(keyword)) return 'male'; }
-  return 'unknown';
+if (!voice) return 'unknown';
+const name = (voice.name || '').toLowerCase();
+for (const keyword of FEMALE_KEYWORDS) { if (name.includes(keyword)) return 'female'; }
+for (const keyword of MALE_KEYWORDS) { if (name.includes(keyword)) return 'male'; }
+return 'unknown';
 }
-
 function loadVoices() {
-  if (!('speechSynthesis' in window)) return;
-  availableVoices = speechSynthesis.getVoices();
-  if (availableVoices.length === 0) {
-    speechSynthesis.onvoiceschanged = () => { availableVoices = speechSynthesis.getVoices(); categorizeIndonesianVoices(); };
-  } else { categorizeIndonesianVoices(); }
+if (!('speechSynthesis' in window)) return;
+availableVoices = speechSynthesis.getVoices();
+if (availableVoices.length === 0) {
+speechSynthesis.onvoiceschanged = () => { availableVoices = speechSynthesis.getVoices(); categorizeIndonesianVoices(); };
+} else { categorizeIndonesianVoices(); }
 }
-
 function categorizeIndonesianVoices() {
-  indonesianVoices = []; indonesianFemaleVoices = []; indonesianMaleVoices = [];
-  availableVoices.forEach(voice => {
-    if (isIndonesianVoice(voice)) {
-      indonesianVoices.push(voice);
-      const gender = detectGender(voice);
-      if (gender === 'female') indonesianFemaleVoices.push(voice);
-      else if (gender === 'male') indonesianMaleVoices.push(voice);
-    }
-  });
-  if (indonesianVoices.length === 0) indonesianVoices = [...availableVoices];
-  if (indonesianFemaleVoices.length === 0) indonesianFemaleVoices = [...indonesianVoices];
-  if (indonesianMaleVoices.length === 0) indonesianMaleVoices = [...indonesianVoices];
+indonesianVoices = []; indonesianFemaleVoices = []; indonesianMaleVoices = [];
+availableVoices.forEach(voice => {
+if (isIndonesianVoice(voice)) {
+indonesianVoices.push(voice);
+const gender = detectGender(voice);
+if (gender === 'female') indonesianFemaleVoices.push(voice);
+else if (gender === 'male') indonesianMaleVoices.push(voice);
 }
-
+});
+if (indonesianVoices.length === 0) indonesianVoices = [...availableVoices];
+if (indonesianFemaleVoices.length === 0) indonesianFemaleVoices = [...indonesianVoices];
+if (indonesianMaleVoices.length === 0) indonesianMaleVoices = [...indonesianVoices];
+}
 function speak(text, gender = 'female', callback) {
-  if (!voiceSettings.enabled || !('speechSynthesis' in window)) { if (callback) callback(); return; }
-  speechSynthesis.cancel();
-  const audioEl = document.getElementById('backgroundMusic');
-  const wasPlaying = isMusicPlaying && !isMusicPaused;
-  const originalVolume = audioEl ? audioEl.volume : 0.3;
-  if (wasPlaying && audioEl) audioEl.volume = Math.max(0.05, originalVolume * 0.3);
-  
-  setTimeout(() => {
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'id-ID';
-    const idx = gender === 'female' ? voiceSettings.paymentVoiceIndex : voiceSettings.gangguanVoiceIndex;
-    const voicePool = gender === 'female' ? indonesianFemaleVoices : indonesianMaleVoices;
-    if (voicePool.length > 0) u.voice = voicePool[idx % voicePool.length] || voicePool[0];
-    else if (indonesianVoices.length > 0) u.voice = indonesianVoices[0];
-    
-    const p = voiceProfiles[idx] || voiceProfiles[0] || { pitch: 1, rate: 1 };
-    u.pitch = p.pitch; u.rate = p.rate; u.volume = voiceSettings.volume;
-    if (u.voice && u.voice.lang && !u.voice.lang.startsWith('id')) u.lang = 'id-ID';
-    
-    u.onend = () => {
-      if (wasPlaying && audioEl) audioEl.volume = originalVolume;
-      if (callback) callback();
-    };
-    u.onerror = (e) => {
-      console.error('❌ Error saat speak:', e);
-      if (wasPlaying && audioEl) audioEl.volume = originalVolume;
-      if (callback) callback();
-    };
-    speechSynthesis.speak(u);
-  }, 100);
+if (!voiceSettings.enabled || !('speechSynthesis' in window)) { if (callback) callback(); return; }
+speechSynthesis.cancel();
+const audioEl = document.getElementById('backgroundMusic');
+const wasPlaying = isMusicPlaying && !isMusicPaused;
+const originalVolume = audioEl ? audioEl.volume : 0.3;
+if (wasPlaying && audioEl) audioEl.volume = Math.max(0.05, originalVolume * 0.3);
+setTimeout(() => {
+const u = new SpeechSynthesisUtterance(text);
+u.lang = 'id-ID';
+const idx = gender === 'female' ? voiceSettings.paymentVoiceIndex : voiceSettings.gangguanVoiceIndex;
+const voicePool = gender === 'female' ? indonesianFemaleVoices : indonesianMaleVoices;
+if (voicePool.length > 0) u.voice = voicePool[idx % voicePool.length] || voicePool[0];
+else if (indonesianVoices.length > 0) u.voice = indonesianVoices[0];
+const p = voiceProfiles[idx] || voiceProfiles[0] || { pitch: 1, rate: 1 };
+u.pitch = p.pitch; u.rate = p.rate; u.volume = voiceSettings.volume;
+if (u.voice && u.voice.lang && !u.voice.lang.startsWith('id')) u.lang = 'id-ID';
+u.onend = () => {
+if (wasPlaying && audioEl) audioEl.volume = originalVolume;
+if (callback) callback();
+};
+u.onerror = (e) => {
+console.error('❌ Error saat speak:', e);
+if (wasPlaying && audioEl) audioEl.volume = originalVolume;
+if (callback) callback();
+};
+speechSynthesis.speak(u);
+}, 100);
 }
-
 function updateGangguanGender() { voiceSettings.gangguanGender = document.getElementById('gangguanGenderSelect').value; }
 function updatePaymentGender() { voiceSettings.paymentGender = document.getElementById('paymentGenderSelect').value; }
 function updateVoiceIndex() {
-  voiceSettings.gangguanVoiceIndex = parseInt(document.getElementById('gangguanVoiceSelect').value);
-  voiceSettings.paymentVoiceIndex = parseInt(document.getElementById('paymentVoiceSelect').value);
+voiceSettings.gangguanVoiceIndex = parseInt(document.getElementById('gangguanVoiceSelect').value);
+voiceSettings.paymentVoiceIndex = parseInt(document.getElementById('paymentVoiceSelect').value);
 }
-
 function testVoice() {
-  const gender = voiceSettings.paymentGender;
-  const text = gender === 'female' ? 'Halo, ini adalah suara perempuan untuk notifikasi pembayaran PDAM UP Darmaraja.' : 'Halo, ini adalah suara laki-laki untuk notifikasi gangguan PDAM UP Darmaraja';
-  speak(text, gender);
+const gender = voiceSettings.paymentGender;
+const text = gender === 'female' ? 'Halo, ini adalah suara perempuan untuk notifikasi pembayaran PDAM UP Darmaraja.' : 'Halo, ini adalah suara laki-laki untuk notifikasi gangguan PDAM UP Darmaraja';
+speak(text, gender);
 }
-
 if ('speechSynthesis' in window) { loadVoices(); setTimeout(loadVoices, 500); setTimeout(loadVoices, 1500); }
-
 // ============================================
 // MUSIC CONTROLS
 // ============================================
 function changeMusic() {
-  const sel = document.getElementById('musicSelect');
-  const t = sel.value;
-  if (!t) return;
-  currentMusicType = t;
-  const playlistIndex = musicPlaylist.indexOf(t);
-  if (playlistIndex !== -1) currentPlaylistIndex = playlistIndex;
-  const audioEl = document.getElementById('backgroundMusic');
-  audioEl.src = musicFolder + t;
-  audioEl.load();
-  audioEl.oncanplaythrough = () => { if (!isMusicPlaying) playMusic(); };
-  setTimeout(() => { if (!isMusicPlaying && currentMusicType === t) playMusic(); }, 1000);
+const sel = document.getElementById('musicSelect');
+const t = sel.value;
+if (!t) return;
+currentMusicType = t;
+const playlistIndex = musicPlaylist.indexOf(t);
+if (playlistIndex !== -1) currentPlaylistIndex = playlistIndex;
+const audioEl = document.getElementById('backgroundMusic');
+audioEl.src = musicFolder + t;
+audioEl.load();
+audioEl.oncanplaythrough = () => { if (!isMusicPlaying) playMusic(); };
+setTimeout(() => { if (!isMusicPlaying && currentMusicType === t) playMusic(); }, 1000);
 }
-
 function playMusic() {
-  const audioEl = document.getElementById('backgroundMusic');
-  if (!audioEl.src || audioEl.src === window.location.href) {
-    showNotification('Pilih musik terlebih dahulu', 'warning');
-    return;
-  }
-  const volume = parseInt(document.getElementById('musicVolumeSlider').value) / 100;
-  audioEl.volume = volume;
-  audioEl.loop = false;
-  audioEl.onended = () => { if (autoRotateMusic) playNextTrack(); };
-  const playPromise = audioEl.play();
-  if (playPromise !== undefined) {
-    playPromise.then(() => {
-      isMusicPlaying = true; isMusicPaused = false;
-      document.getElementById('btnPlayMusic').disabled = true;
-      document.getElementById('btnPauseMusic').disabled = false;
-      document.getElementById('btnStopMusic').disabled = false;
-    }).catch(err => {
-      console.error('Play error:', err);
-      showNotification('Klik halaman dulu untuk mengaktifkan musik', 'warning');
-    });
-  }
+const audioEl = document.getElementById('backgroundMusic');
+if (!audioEl.src || audioEl.src === window.location.href) {
+showNotification('Pilih musik terlebih dahulu', 'warning');
+return;
 }
-
+const volume = parseInt(document.getElementById('musicVolumeSlider').value) / 100;
+audioEl.volume = volume;
+audioEl.loop = false;
+audioEl.onended = () => { if (autoRotateMusic) playNextTrack(); };
+const playPromise = audioEl.play();
+if (playPromise !== undefined) {
+playPromise.then(() => {
+isMusicPlaying = true; isMusicPaused = false;
+document.getElementById('btnPlayMusic').disabled = true;
+document.getElementById('btnPauseMusic').disabled = false;
+document.getElementById('btnStopMusic').disabled = false;
+}).catch(err => {
+console.error('Play error:', err);
+showNotification('Klik halaman dulu untuk mengaktifkan musik', 'warning');
+});
+}
+}
 function playNextTrack() {
-  if (!autoRotateMusic) return;
-  currentPlaylistIndex = (currentPlaylistIndex + 1) % musicPlaylist.length;
-  const nextTrack = musicPlaylist[currentPlaylistIndex];
-  currentMusicType = nextTrack;
-  const audioEl = document.getElementById('backgroundMusic');
-  audioEl.src = musicFolder + nextTrack;
-  audioEl.load();
-  audioEl.oncanplaythrough = () => { audioEl.play(); };
-  setTimeout(() => { if (audioEl.paused) audioEl.play().catch(() => {}); }, 1000);
+if (!autoRotateMusic) return;
+currentPlaylistIndex = (currentPlaylistIndex + 1) % musicPlaylist.length;
+const nextTrack = musicPlaylist[currentPlaylistIndex];
+currentMusicType = nextTrack;
+const audioEl = document.getElementById('backgroundMusic');
+audioEl.src = musicFolder + nextTrack;
+audioEl.load();
+audioEl.oncanplaythrough = () => { audioEl.play(); };
+setTimeout(() => { if (audioEl.paused) audioEl.play().catch(() => {}); }, 1000);
 }
-
 function pauseMusic() {
-  const audioEl = document.getElementById('backgroundMusic');
-  if (!isMusicPlaying) return;
-  if (isMusicPaused) {
-    audioEl.play(); isMusicPaused = false;
-    document.getElementById('btnPauseMusic').innerHTML = '<i class="fas fa-pause"></i> Pause';
-  } else {
-    audioEl.pause(); isMusicPaused = true;
-    document.getElementById('btnPauseMusic').innerHTML = '<i class="fas fa-play"></i> Lanjut';
-  }
+const audioEl = document.getElementById('backgroundMusic');
+if (!isMusicPlaying) return;
+if (isMusicPaused) {
+audioEl.play(); isMusicPaused = false;
+document.getElementById('btnPauseMusic').innerHTML = '<i class="fas fa-pause"></i> Pause';
+} else {
+audioEl.pause(); isMusicPaused = true;
+document.getElementById('btnPauseMusic').innerHTML = '<i class="fas fa-play"></i> Lanjut';
 }
-
+}
 function stopMusic() {
-  const audioEl = document.getElementById('backgroundMusic');
-  audioEl.pause(); audioEl.currentTime = 0;
-  isMusicPlaying = false; isMusicPaused = false;
-  document.getElementById('btnPlayMusic').disabled = false;
-  document.getElementById('btnPauseMusic').disabled = true;
-  document.getElementById('btnStopMusic').disabled = true;
-  document.getElementById('btnPauseMusic').innerHTML = '<i class="fas fa-pause"></i> Pause';
+const audioEl = document.getElementById('backgroundMusic');
+audioEl.pause(); audioEl.currentTime = 0;
+isMusicPlaying = false; isMusicPaused = false;
+document.getElementById('btnPlayMusic').disabled = false;
+document.getElementById('btnPauseMusic').disabled = true;
+document.getElementById('btnStopMusic').disabled = true;
+document.getElementById('btnPauseMusic').innerHTML = '<i class="fas fa-pause"></i> Pause';
 }
-
 function toggleLoopMusic() {
-  autoRotateMusic = !autoRotateMusic;
-  const btn = document.getElementById('btnLoopMusic');
-  btn.innerHTML = autoRotateMusic ? '<i class="fas fa-redo"></i> Rotasi: ON' : '<i class="fas fa-redo"></i> Rotasi: OFF';
+autoRotateMusic = !autoRotateMusic;
+const btn = document.getElementById('btnLoopMusic');
+btn.innerHTML = autoRotateMusic ? '<i class="fas fa-redo"></i> Rotasi: ON' : '<i class="fas fa-redo"></i> Rotasi: OFF';
 }
-
 function setMusicVolume(v) {
-  const audioEl = document.getElementById('backgroundMusic');
-  audioEl.volume = v / 100;
-  document.getElementById('musicVolumeValue').textContent = v + '%';
+const audioEl = document.getElementById('backgroundMusic');
+audioEl.volume = v / 100;
+document.getElementById('musicVolumeValue').textContent = v + '%';
 }
-
 function setScrollSpeed(v) {
-  const duration = 210 - v;
-  document.documentElement.style.setProperty('--scroll-duration', duration + 's');
-  const content = document.getElementById('notificationContent');
-  if (content) {
-    content.style.animationDuration = duration + 's';
-    content.style.animation = 'none';
-    content.offsetHeight;
-    content.style.animation = `scroll-left ${duration}s linear infinite`;
-  }
-  let label = 'Normal';
-  if (v < 40) label = 'Sangat Lambat';
-  else if (v < 70) label = 'Lambat';
-  else if (v < 90) label = 'Normal';
-  else if (v < 130) label = 'Cepat';
-  else label = 'Sangat Cepat';
-  document.getElementById('scrollSpeedValue').textContent = label;
+const duration = 210 - v;
+document.documentElement.style.setProperty('--scroll-duration', duration + 's');
+const content = document.getElementById('notificationContent');
+if (content) {
+content.style.animationDuration = duration + 's';
+content.style.animation = 'none';
+content.offsetHeight;
+content.style.animation = `scroll-left ${duration}s linear infinite`;
 }
-
+let label = 'Normal';
+if (v < 40) label = 'Sangat Lambat';
+else if (v < 70) label = 'Lambat';
+else if (v < 90) label = 'Normal';
+else if (v < 130) label = 'Cepat';
+else label = 'Sangat Cepat';
+document.getElementById('scrollSpeedValue').textContent = label;
+}
 function toggleVoicePanel() { document.getElementById('voicePanel').classList.toggle('active'); }
 function setVoiceVolume(v) { voiceSettings.volume = v / 100; document.getElementById('volumeValue').textContent = v + '%'; }
-
 // ============================================
 // GANGGUAN VOICE
 // ============================================
 function formatGangguanVoiceText(g) {
-  const kodeText = g.kode_laporan.split('').join(' ');
-  const jenisText = g.jenis_gangguan ? g.jenis_gangguan.toUpperCase() : '-';
-  const tipeText = g.tipe_kerusakan ? g.tipe_kerusakan.toUpperCase().replace('_', ' ') : '-';
-  const statusText = g.status === 'menunggu' ? 'Menunggu' : g.status === 'dalam_proses' ? 'Dalam Proses' : 'Selesai';
-  let lokasiText = g.lokasi || '-';
-  lokasiText = cleanSpacedLetters(lokasiText);
-  lokasiText = convertRegionRomanToNumber(lokasiText);
-  lokasiText = toTitleCase(lokasiText.toLowerCase());
-  let wilayahText = g.wilayah_terdampak || '-';
-  wilayahText = cleanSpacedLetters(wilayahText);
-  wilayahText = convertRegionRomanToNumber(wilayahText);
-  wilayahText = toTitleCase(wilayahText.toLowerCase());
-  const ukuranText = g.ukuran_pipa || '-';
-  let deskripsiText = g.deskripsi || 'Tidak ada deskripsi';
-  deskripsiText = cleanSpacedLetters(deskripsiText);
-  deskripsiText = normalizeTextForSpeech(deskripsiText);
-  const estimasiText = g.estimasi_selesai ? new Date(g.estimasi_selesai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
-  return `Gangguan nomor ${kodeText}. Status: ${statusText}. Tipe: ${tipeText}. Lokasi: ${lokasiText}. Wilayah Terdampak: ${wilayahText}. Jenis: ${jenisText}. Ukuran: ${ukuranText}. Deskripsi: ${deskripsiText}. Estimasi Penyelesaian: ${estimasiText}.`;
+const kodeText = g.kode_laporan.split('').join(' ');
+const jenisText = g.jenis_gangguan ? g.jenis_gangguan.toUpperCase() : '-';
+const tipeText = g.tipe_kerusakan ? g.tipe_kerusakan.toUpperCase().replace('_', ' ') : '-';
+const statusText = g.status === 'menunggu' ? 'Menunggu' : g.status === 'dalam_proses' ? 'Dalam Proses' : 'Selesai';
+let lokasiText = g.lokasi || '-';
+lokasiText = cleanSpacedLetters(lokasiText);
+lokasiText = convertRegionRomanToNumber(lokasiText);
+lokasiText = toTitleCase(lokasiText.toLowerCase());
+let wilayahText = g.wilayah_terdampak || '-';
+wilayahText = cleanSpacedLetters(wilayahText);
+wilayahText = convertRegionRomanToNumber(wilayahText);
+wilayahText = toTitleCase(wilayahText.toLowerCase());
+const ukuranText = g.ukuran_pipa || '-';
+let deskripsiText = g.deskripsi || 'Tidak ada deskripsi';
+deskripsiText = cleanSpacedLetters(deskripsiText);
+deskripsiText = normalizeTextForSpeech(deskripsiText);
+const estimasiText = g.estimasi_selesai ? new Date(g.estimasi_selesai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
+return `Gangguan nomor ${kodeText}. Status: ${statusText}. Tipe: ${tipeText}. Lokasi: ${lokasiText}. Wilayah Terdampak: ${wilayahText}. Jenis: ${jenisText}. Ukuran: ${ukuranText}. Deskripsi: ${deskripsiText}. Estimasi Penyelesaian: ${estimasiText}.`;
 }
-
 function playGangguanVoiceLoop() {
-  if (!isGangguanVoicePlaying || isGangguanVoicePaused) return;
-  if (activeGangguanList.length === 0) { updateGangguanVoiceStatus('idle', 'Tidak ada gangguan aktif'); return; }
-  let currentIndex = 0;
-  function playNext() {
-    if (!isGangguanVoicePlaying || isGangguanVoicePaused) return;
-    if (currentIndex >= activeGangguanList.length) {
-      if (repeatGangguanVoice) { currentIndex = 0; setTimeout(playNext, 2000); }
-      else { stopGangguanVoice(); }
-      return;
-    }
-    const g = activeGangguanList[currentIndex];
-    updateGangguanVoiceStatus('playing', `Memutar: ${g.kode_laporan}`);
-    addToVoiceQueue(formatGangguanVoiceText(g), voiceSettings.gangguanGender, () => {
-      currentIndex++;
-      setTimeout(playNext, 1500);
-    });
-  }
-  playNext();
+if (!isGangguanVoicePlaying || isGangguanVoicePaused) return;
+if (activeGangguanList.length === 0) { updateGangguanVoiceStatus('idle', 'Tidak ada gangguan aktif'); return; }
+let currentIndex = 0;
+function playNext() {
+if (!isGangguanVoicePlaying || isGangguanVoicePaused) return;
+if (currentIndex >= activeGangguanList.length) {
+if (repeatGangguanVoice) { currentIndex = 0; setTimeout(playNext, 2000); }
+else { stopGangguanVoice(); }
+return;
 }
-
+const g = activeGangguanList[currentIndex];
+updateGangguanVoiceStatus('playing', `Memutar: ${g.kode_laporan}`);
+addToVoiceQueue(formatGangguanVoiceText(g), voiceSettings.gangguanGender, () => {
+currentIndex++;
+setTimeout(playNext, 1500);
+});
+}
+playNext();
+}
 function playGangguanVoice() {
-  if (activeGangguanList.length === 0) { showNotification('Tidak ada gangguan aktif', 'warning'); return; }
-  isGangguanVoicePlaying = true; isGangguanVoicePaused = false;
-  updateGangguanVoiceStatus('playing', `Memutar ${activeGangguanList.length} gangguan`);
-  updateGangguanVoiceButtons();
-  playGangguanVoiceLoop();
+if (activeGangguanList.length === 0) { showNotification('Tidak ada gangguan aktif', 'warning'); return; }
+isGangguanVoicePlaying = true; isGangguanVoicePaused = false;
+updateGangguanVoiceStatus('playing', `Memutar ${activeGangguanList.length} gangguan`);
+updateGangguanVoiceButtons();
+playGangguanVoiceLoop();
 }
-
 function pauseGangguanVoice() {
-  if (!isGangguanVoicePlaying) return;
-  isGangguanVoicePaused = !isGangguanVoicePaused;
-  if (isGangguanVoicePaused) { speechSynthesis.pause(); updateGangguanVoiceStatus('paused', 'Dijeda'); }
-  else { speechSynthesis.resume(); updateGangguanVoiceStatus('playing', 'Dilanjutkan'); }
-  updateGangguanVoiceButtons();
+if (!isGangguanVoicePlaying) return;
+isGangguanVoicePaused = !isGangguanVoicePaused;
+if (isGangguanVoicePaused) { speechSynthesis.pause(); updateGangguanVoiceStatus('paused', 'Dijeda'); }
+else { speechSynthesis.resume(); updateGangguanVoiceStatus('playing', 'Dilanjutkan'); }
+updateGangguanVoiceButtons();
 }
-
 function stopGangguanVoice() {
-  isGangguanVoicePlaying = false; isGangguanVoicePaused = false;
-  speechSynthesis.cancel();
-  updateGangguanVoiceStatus('idle', 'Dihentikan');
-  updateGangguanVoiceButtons();
+isGangguanVoicePlaying = false; isGangguanVoicePaused = false;
+speechSynthesis.cancel();
+updateGangguanVoiceStatus('idle', 'Dihentikan');
+updateGangguanVoiceButtons();
 }
-
 function toggleRepeatGangguan() {
-  repeatGangguanVoice = !repeatGangguanVoice;
-  const btn = document.getElementById('btnRepeatGangguan');
-  btn.innerHTML = repeatGangguanVoice ? '<i class="fas fa-redo"></i> Ulang: ON' : '<i class="fas fa-redo"></i> Ulang: OFF';
+repeatGangguanVoice = !repeatGangguanVoice;
+const btn = document.getElementById('btnRepeatGangguan');
+btn.innerHTML = repeatGangguanVoice ? '<i class="fas fa-redo"></i> Ulang: ON' : '<i class="fas fa-redo"></i> Ulang: OFF';
 }
-
 function updateGangguanVoiceStatus(s, t) {
-  const d = document.getElementById('gangguanVoiceStatusDot');
-  d.className = 'voice-status-dot';
-  if (s === 'playing') d.classList.add('active');
-  else if (s === 'paused') d.classList.add('paused');
-  document.getElementById('gangguanVoiceStatusText').textContent = t;
+const d = document.getElementById('gangguanVoiceStatusDot');
+d.className = 'voice-status-dot';
+if (s === 'playing') d.classList.add('active');
+else if (s === 'paused') d.classList.add('paused');
+document.getElementById('gangguanVoiceStatusText').textContent = t;
 }
-
 function updateGangguanVoiceButtons() {
-  const h = activeGangguanList.length > 0;
-  document.getElementById('btnPlayGangguan').disabled = isGangguanVoicePlaying || !h;
-  document.getElementById('btnPauseGangguan').disabled = !isGangguanVoicePlaying || !h;
-  document.getElementById('btnStopGangguan').disabled = !isGangguanVoicePlaying && !isGangguanVoicePaused;
-  document.getElementById('btnPauseGangguan').innerHTML = isGangguanVoicePaused ? '<i class="fas fa-play"></i> Lanjut' : '<i class="fas fa-pause"></i> Pause';
+const h = activeGangguanList.length > 0;
+document.getElementById('btnPlayGangguan').disabled = isGangguanVoicePlaying || !h;
+document.getElementById('btnPauseGangguan').disabled = !isGangguanVoicePlaying || !h;
+document.getElementById('btnStopGangguan').disabled = !isGangguanVoicePlaying && !isGangguanVoicePaused;
+document.getElementById('btnPauseGangguan').innerHTML = isGangguanVoicePaused ? '<i class="fas fa-play"></i> Lanjut' : '<i class="fas fa-pause"></i> Pause';
 }
-
 // ============================================
 // PAYMENT VOICE
 // ============================================
 function formatPaymentVoiceText(p) {
-  let lokasiText = p.lokasi || 'lokasi tidak diketahui';
-  lokasiText = convertRegionRomanToNumber(lokasiText);
-  let namaText = formatNameForSpeech(p.nama, voiceSettings.paymentGender);
-  const metodeText = p.metode === 'PPOB' ? 'P. P. O. B.' : 'Kantor Unit Cabang';
-  return `Terima kasih kepada Yang Terhormat, ${namaText}, yang berlokasi di ${lokasiText}, telah melakukan pembayaran di ${metodeText}. Dan apabila ada keluhan, silahkan hubungi Kantor Unit atau call center kami. Terima kasih, semoga sehat selalu.`;
+let lokasiText = p.lokasi || 'lokasi tidak diketahui';
+lokasiText = convertRegionRomanToNumber(lokasiText);
+let namaText = formatNameForSpeech(p.nama, voiceSettings.paymentGender);
+const metodeText = p.metode === 'PPOB' ? 'P. P. O. B.' : 'Kantor Unit Cabang';
+return `Terima kasih kepada Yang Terhormat, ${namaText}, yang berlokasi di ${lokasiText}, telah melakukan pembayaran di ${metodeText}. Dan apabila ada keluhan, silahkan hubungi Kantor Unit atau call center kami. Terima kasih, semoga sehat selalu.`;
 }
-
 function playPaymentSequence() {
-  if (!isPaymentVoicePlaying || isPaymentVoicePaused) return;
-  if (currentPaymentIndex >= last5Payments.length) {
-    if (repeatPaymentVoice) { currentPaymentIndex = 0; setTimeout(() => playPaymentSequence(), 2000); }
-    else { stopPaymentVoice(); }
-    return;
-  }
-  const p = last5Payments[currentPaymentIndex];
-  updatePaymentVoiceStatus('playing', `Memutar: ${p.nama}`);
-  addToVoiceQueue(formatPaymentVoiceText(p), voiceSettings.paymentGender, () => {
-    currentPaymentIndex++;
-    setTimeout(() => { if (isPaymentVoicePlaying && !isPaymentVoicePaused) playPaymentSequence(); }, 1500);
-  });
+if (!isPaymentVoicePlaying || isPaymentVoicePaused) return;
+if (currentPaymentIndex >= last5Payments.length) {
+if (repeatPaymentVoice) { currentPaymentIndex = 0; setTimeout(() => playPaymentSequence(), 2000); }
+else { stopPaymentVoice(); }
+return;
 }
-
+const p = last5Payments[currentPaymentIndex];
+updatePaymentVoiceStatus('playing', `Memutar: ${p.nama}`);
+addToVoiceQueue(formatPaymentVoiceText(p), voiceSettings.paymentGender, () => {
+currentPaymentIndex++;
+setTimeout(() => { if (isPaymentVoicePlaying && !isPaymentVoicePaused) playPaymentSequence(); }, 1500);
+});
+}
 function playLast5Payments() {
-  if (last5Payments.length === 0) { showNotification('Belum ada data pembayaran', 'warning'); return; }
-  isPaymentVoicePlaying = true; isPaymentVoicePaused = false; currentPaymentIndex = 0;
-  updatePaymentVoiceStatus('playing', `Memutar ${last5Payments.length} pembayaran`);
-  updatePaymentVoiceButtons();
-  playPaymentSequence();
+if (last5Payments.length === 0) { showNotification('Belum ada data pembayaran', 'warning'); return; }
+isPaymentVoicePlaying = true; isPaymentVoicePaused = false; currentPaymentIndex = 0;
+updatePaymentVoiceStatus('playing', `Memutar ${last5Payments.length} pembayaran`);
+updatePaymentVoiceButtons();
+playPaymentSequence();
 }
-
 function pausePaymentVoice() {
-  if (!isPaymentVoicePlaying) return;
-  isPaymentVoicePaused = !isPaymentVoicePaused;
-  if (isPaymentVoicePaused) { speechSynthesis.pause(); updatePaymentVoiceStatus('paused', 'Dijeda'); }
-  else { speechSynthesis.resume(); updatePaymentVoiceStatus('playing', 'Dilanjutkan'); }
-  updatePaymentVoiceButtons();
+if (!isPaymentVoicePlaying) return;
+isPaymentVoicePaused = !isPaymentVoicePaused;
+if (isPaymentVoicePaused) { speechSynthesis.pause(); updatePaymentVoiceStatus('paused', 'Dijeda'); }
+else { speechSynthesis.resume(); updatePaymentVoiceStatus('playing', 'Dilanjutkan'); }
+updatePaymentVoiceButtons();
 }
-
 function stopPaymentVoice() {
-  isPaymentVoicePlaying = false; isPaymentVoicePaused = false; currentPaymentIndex = 0;
-  speechSynthesis.cancel();
-  updatePaymentVoiceStatus('idle', 'Dihentikan');
-  updatePaymentVoiceButtons();
+isPaymentVoicePlaying = false; isPaymentVoicePaused = false; currentPaymentIndex = 0;
+speechSynthesis.cancel();
+updatePaymentVoiceStatus('idle', 'Dihentikan');
+updatePaymentVoiceButtons();
 }
-
 function toggleRepeatPayment() {
-  repeatPaymentVoice = !repeatPaymentVoice;
-  const btn = document.getElementById('btnRepeatPayment');
-  btn.innerHTML = repeatPaymentVoice ? '<i class="fas fa-redo"></i> Auto: ON' : '<i class="fas fa-redo"></i> Auto: OFF';
+repeatPaymentVoice = !repeatPaymentVoice;
+const btn = document.getElementById('btnRepeatPayment');
+btn.innerHTML = repeatPaymentVoice ? '<i class="fas fa-redo"></i> Auto: ON' : '<i class="fas fa-redo"></i> Auto: OFF';
 }
-
 function updatePaymentVoiceStatus(s, t) {
-  const d = document.getElementById('paymentVoiceStatusDot');
-  d.className = 'voice-status-dot';
-  if (s === 'playing') d.classList.add('active');
-  else if (s === 'paused') d.classList.add('paused');
-  document.getElementById('paymentVoiceStatusText').textContent = t;
+const d = document.getElementById('paymentVoiceStatusDot');
+d.className = 'voice-status-dot';
+if (s === 'playing') d.classList.add('active');
+else if (s === 'paused') d.classList.add('paused');
+document.getElementById('paymentVoiceStatusText').textContent = t;
 }
-
 function updatePaymentVoiceButtons() {
-  const h = last5Payments.length > 0;
-  document.getElementById('btnPlayPayment').disabled = isPaymentVoicePlaying || !h;
-  document.getElementById('btnPausePayment').disabled = !isPaymentVoicePlaying || !h;
-  document.getElementById('btnStopPayment').disabled = !isPaymentVoicePlaying && !isPaymentVoicePaused;
-  document.getElementById('btnPausePayment').innerHTML = isPaymentVoicePaused ? '<i class="fas fa-play"></i> Lanjut' : '<i class="fas fa-pause"></i> Pause';
+const h = last5Payments.length > 0;
+document.getElementById('btnPlayPayment').disabled = isPaymentVoicePlaying || !h;
+document.getElementById('btnPausePayment').disabled = !isPaymentVoicePlaying || !h;
+document.getElementById('btnStopPayment').disabled = !isPaymentVoicePlaying && !isPaymentVoicePaused;
+document.getElementById('btnPausePayment').innerHTML = isPaymentVoicePaused ? '<i class="fas fa-play"></i> Lanjut' : '<i class="fas fa-pause"></i> Pause';
 }
-
 // ============================================
 // LIVE DASHBOARD
 // ============================================
 function createUnpaidMarker(pelanggan, coords) {
-  const nama = pelanggan.nama || 'Tanpa Nama';
-  const jumlah = parseFloat(pelanggan.jumlah) || 0;
-  const noPelanggan = pelanggan.no_pelanggan || '-';
-  let wilayah = pelanggan.nama_wilayah || 'Tidak Diketahui';
-  wilayah = convertRegionRomanToNumber(wilayah);
-  const html = `
-    <div class="unpaid-marker-wrapper" data-no-pelanggan="${noPelanggan}">
-      <div class="unpaid-marker-label">${nama}</div>
-      <div class="unpaid-marker-pulse"></div>
-      <div class="unpaid-marker-pin"><i class="fas fa-exclamation"></i></div>
-      <div class="unpaid-marker-amount">${formatRupiah(jumlah)}</div>
-    </div>
-  `;
-  return L.marker(coords, {
-    icon: L.divIcon({ className: 'custom-div-icon', html: html, iconSize: [80, 50], iconAnchor: [40, 25] }),
-    zIndexOffset: 1000
-  });
+const nama = pelanggan.nama || 'Tanpa Nama';
+const jumlah = parseFloat(pelanggan.jumlah) || 0;
+const noPelanggan = pelanggan.no_pelanggan || '-';
+let wilayah = pelanggan.nama_wilayah || 'Tidak Diketahui';
+wilayah = convertRegionRomanToNumber(wilayah);
+const html = `
+<div class="unpaid-marker-wrapper" data-no-pelanggan="${noPelanggan}">
+<div class="unpaid-marker-label">${nama}</div>
+<div class="unpaid-marker-pulse"></div>
+<div class="unpaid-marker-pin"><i class="fas fa-exclamation"></i></div>
+<div class="unpaid-marker-amount">${formatRupiah(jumlah)}</div>
+</div>
+`;
+return L.marker(coords, {
+icon: L.divIcon({ className: 'custom-div-icon', html: html, iconSize: [80, 50], iconAnchor: [40, 25] }),
+zIndexOffset: 1000
+});
 }
-
 function loadUnpaidCustomerMarkers() {
-  unpaidCustomerMarkers.forEach(m => map.removeLayer(m));
-  unpaidCustomerMarkers = [];
-  unpaidCustomerList = [];
-  
-  pelangganDataFromLaravel.forEach(p => {
-    const status = getPaymentStatus(p);
-    if (status.status === 'Belum Bayar') {
-      const coords = parseKoordinator(p.koordinator);
-      if (!coords || !isInArea(coords[0], coords[1])) return;
-      const marker = createUnpaidMarker(p, coords);
-      let wilayah = p.nama_wilayah || 'Tidak Diketahui';
-      wilayah = convertRegionRomanToNumber(wilayah);
-      marker.bindPopup(`
-        <div style="min-width: 220px; font-family: 'Inter', sans-serif;">
-          <div style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 8px; border-radius: 6px 6px 0 0; font-weight: 700; font-size: 12px;">
-            <i class="fas fa-exclamation-triangle"></i> BELUM BAYAR
-          </div>
-          <div style="padding: 10px;">
-            <div style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">${p.nama || 'Tanpa Nama'}</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px;">
-              <div><strong>No:</strong> ${p.no_pelanggan}</div>
-              <div><strong>Gol:</strong> ${p.kode_gol_trf || '-'}</div>
-              <div style="grid-column: span 2;"><strong>Wilayah:</strong> ${wilayah}</div>
-            </div>
-            <div style="margin-top: 8px; padding: 8px; background: #fef2f2; border-radius: 6px; border: 2px solid #fecaca;">
-              <div style="font-size: 9px; color: #991b1b; font-weight: 600;">TAGIHAN</div>
-              <div style="font-size: 16px; font-weight: 800; color: #dc2626;">${formatRupiah(p.jumlah)}</div>
-              <div style="font-size: 10px; color: #7f1d1d;">${parseFloat(p.pakai) || 0} m³</div>
-            </div>
-          </div>
-        </div>
-      `, { maxWidth: 250 });
-      marker.addTo(map);
-      unpaidCustomerMarkers.push(marker);
-      unpaidCustomerList.push({
-        marker: marker, coords: coords, data: p,
-        nama: p.nama || 'Tanpa Nama',
-        jumlah: parseFloat(p.jumlah) || 0,
-        wilayah: wilayah
-      });
-    }
-  });
-  
-  document.getElementById('liveCounterTotal').textContent = unpaidCustomerList.length;
+unpaidCustomerMarkers.forEach(m => map.removeLayer(m));
+unpaidCustomerMarkers = [];
+unpaidCustomerList = [];
+pelangganDataFromLaravel.forEach(p => {
+const status = getPaymentStatus(p);
+if (status.status === 'Belum Bayar') {
+const coords = parseKoordinator(p.koordinator);
+if (!coords || !isInArea(coords[0], coords[1])) return;
+const marker = createUnpaidMarker(p, coords);
+let wilayah = p.nama_wilayah || 'Tidak Diketahui';
+wilayah = convertRegionRomanToNumber(wilayah);
+marker.bindPopup(`
+<div style="min-width: 220px; font-family: 'Inter', sans-serif;">
+<div style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 8px; border-radius: 6px 6px 0 0; font-weight: 700; font-size: 12px;">
+<i class="fas fa-exclamation-triangle"></i> BELUM BAYAR
+</div>
+<div style="padding: 10px;">
+<div style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">${p.nama || 'Tanpa Nama'}</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px;">
+<div><strong>No:</strong> ${p.no_pelanggan}</div>
+<div><strong>Gol:</strong> ${p.kode_gol_trf || '-'}</div>
+<div style="grid-column: span 2;"><strong>Wilayah:</strong> ${wilayah}</div>
+</div>
+<div style="margin-top: 8px; padding: 8px; background: #fef2f2; border-radius: 6px; border: 2px solid #fecaca;">
+<div style="font-size: 9px; color: #991b1b; font-weight: 600;">TAGIHAN</div>
+<div style="font-size: 16px; font-weight: 800; color: #dc2626;">${formatRupiah(p.jumlah)}</div>
+<div style="font-size: 10px; color: #7f1d1d;">${parseFloat(p.pakai) || 0} m³</div>
+</div>
+</div>
+</div>
+`, { maxWidth: 250 });
+marker.addTo(map);
+unpaidCustomerMarkers.push(marker);
+unpaidCustomerList.push({
+marker: marker, coords: coords, data: p,
+nama: p.nama || 'Tanpa Nama',
+jumlah: parseFloat(p.jumlah) || 0,
+wilayah: wilayah
+});
 }
-
+});
+document.getElementById('liveCounterTotal').textContent = unpaidCustomerList.length;
+}
 function syncNotificationBarWithMarker(customer) {
-  const content = document.getElementById('notificationContent');
-  if (!content) return;
-  content.querySelectorAll('.notification-item').forEach(item => item.classList.remove('active-sync'));
-  const items = content.querySelectorAll('.notification-item');
-  items.forEach(item => {
-    const nama = item.querySelector('strong')?.textContent?.trim();
-    if (nama === customer.nama) item.classList.add('active-sync');
-  });
+const content = document.getElementById('notificationContent');
+if (!content) return;
+content.querySelectorAll('.notification-item').forEach(item => item.classList.remove('active-sync'));
+const items = content.querySelectorAll('.notification-item');
+items.forEach(item => {
+const nama = item.querySelector('strong')?.textContent?.trim();
+if (nama === customer.nama) item.classList.add('active-sync');
+});
 }
-
 function highlightUnpaidMarker(index) {
-  if (highlightedMarkerElement) highlightedMarkerElement.classList.remove('highlighted');
-  if (index < 0 || index >= unpaidCustomerList.length) return;
-  const customer = unpaidCustomerList[index];
-  const marker = customer.marker;
-  
-  if (voiceSettings.enabled) {
-    const namaNormal = formatNameForSpeech(customer.nama, voiceSettings.paymentGender);
-    const kalimatPembuka = `Pelanggan atas nama ${namaNormal}, di ${customer.wilayah}.`;
-    const kalimatDetail = `Belum membayar tagihan sebesar ${formatRupiah(customer.jumlah)}`;
-    speak(kalimatPembuka, voiceSettings.paymentGender, function() {
-      map.flyTo(customer.coords, 18, { duration: 1.5 });
-      speak(kalimatDetail, voiceSettings.paymentGender, function() {
-        if (isLiveDashboardActive) {
-          if (liveCycleInterval) clearTimeout(liveCycleInterval);
-          liveCycleInterval = setTimeout(() => {
-            liveCycleIndex = (liveCycleIndex + 1) % unpaidCustomerList.length;
-            highlightUnpaidMarker(liveCycleIndex);
-          }, 3000);
-        }
-      });
-      setTimeout(() => { marker.openPopup(); }, 1500);
-    });
-  } else {
-    map.flyTo(customer.coords, 18, { duration: 1.5 });
-    setTimeout(() => {
-      marker.openPopup();
-      if (isLiveDashboardActive) {
-        if (liveCycleInterval) clearTimeout(liveCycleInterval);
-        liveCycleInterval = setTimeout(() => {
-          liveCycleIndex = (liveCycleIndex + 1) % unpaidCustomerList.length;
-          highlightUnpaidMarker(liveCycleIndex);
-        }, liveCycleSpeed);
-      }
-    }, 1500);
-  }
-  updateLiveInfoPanel(customer, index);
-  syncNotificationBarWithMarker(customer);
+if (highlightedMarkerElement) highlightedMarkerElement.classList.remove('highlighted');
+if (index < 0 || index >= unpaidCustomerList.length) return;
+const customer = unpaidCustomerList[index];
+const marker = customer.marker;
+if (voiceSettings.enabled) {
+const namaNormal = formatNameForSpeech(customer.nama, voiceSettings.paymentGender);
+const kalimatPembuka = `Pelanggan atas nama ${namaNormal}, di ${customer.wilayah}.`;
+const kalimatDetail = `Belum membayar tagihan sebesar ${formatRupiah(customer.jumlah)}`;
+speak(kalimatPembuka, voiceSettings.paymentGender, function() {
+map.flyTo(customer.coords, 18, { duration: 1.5 });
+speak(kalimatDetail, voiceSettings.paymentGender, function() {
+if (isLiveDashboardActive) {
+if (liveCycleInterval) clearTimeout(liveCycleInterval);
+liveCycleInterval = setTimeout(() => {
+liveCycleIndex = (liveCycleIndex + 1) % unpaidCustomerList.length;
+highlightUnpaidMarker(liveCycleIndex);
+}, 3000);
 }
-
+});
+setTimeout(() => { marker.openPopup(); }, 1500);
+});
+} else {
+map.flyTo(customer.coords, 18, { duration: 1.5 });
+setTimeout(() => {
+marker.openPopup();
+if (isLiveDashboardActive) {
+if (liveCycleInterval) clearTimeout(liveCycleInterval);
+liveCycleInterval = setTimeout(() => {
+liveCycleIndex = (liveCycleIndex + 1) % unpaidCustomerList.length;
+highlightUnpaidMarker(liveCycleIndex);
+}, liveCycleSpeed);
+}
+}, 1500);
+}
+updateLiveInfoPanel(customer, index);
+syncNotificationBarWithMarker(customer);
+}
 function startLiveCycle() {
-  if (unpaidCustomerList.length === 0) {
-    showNotification('Tidak ada pelanggan belum bayar', 'warning');
-    return;
-  }
-  if (liveCycleInterval) clearTimeout(liveCycleInterval);
-  isLiveDashboardActive = true;
-  liveCycleIndex = 0;
-  highlightUnpaidMarker(liveCycleIndex);
-  document.getElementById('btnLiveStart').disabled = true;
-  document.getElementById('btnLiveStop').disabled = false;
-  document.getElementById('liveBtn').classList.add('active');
-  document.getElementById('liveText').textContent = 'LIVE ON';
-  showNotification(`🔴 LIVE MODE: ${unpaidCustomerList.length} pelanggan belum bayar`, 'live');
+if (unpaidCustomerList.length === 0) {
+showNotification('Tidak ada pelanggan belum bayar', 'warning');
+return;
 }
-
+if (liveCycleInterval) clearTimeout(liveCycleInterval);
+isLiveDashboardActive = true;
+liveCycleIndex = 0;
+highlightUnpaidMarker(liveCycleIndex);
+document.getElementById('btnLiveStart').disabled = true;
+document.getElementById('btnLiveStop').disabled = false;
+document.getElementById('liveBtn').classList.add('active');
+document.getElementById('liveText').textContent = 'LIVE ON';
+showNotification(`🔴 LIVE MODE: ${unpaidCustomerList.length} pelanggan belum bayar`, 'live');
+}
 function updateLiveInfoPanel(customer, index) {
-  const panel = document.getElementById('liveInfoPanel');
-  if (!panel) return;
-  panel.style.display = 'flex';
-  document.getElementById('liveCustomerName').textContent = customer.nama;
-  document.getElementById('liveCustomerDetail').textContent = `${customer.wilayah} • No. ${customer.data.no_pelanggan}`;
-  document.getElementById('liveCustomerAmount').textContent = formatRupiah(customer.jumlah);
-  document.getElementById('liveCounterCurrent').textContent = (index + 1);
-  document.getElementById('liveCounterTotal').textContent = unpaidCustomerList.length;
+const panel = document.getElementById('liveInfoPanel');
+if (!panel) return;
+panel.style.display = 'flex';
+document.getElementById('liveCustomerName').textContent = customer.nama;
+document.getElementById('liveCustomerDetail').textContent = `${customer.wilayah} • No. ${customer.data.no_pelanggan}`;
+document.getElementById('liveCustomerAmount').textContent = formatRupiah(customer.jumlah);
+document.getElementById('liveCounterCurrent').textContent = (index + 1);
+document.getElementById('liveCounterTotal').textContent = unpaidCustomerList.length;
 }
-
 function stopLiveCycle() {
-  if (liveCycleInterval) { clearInterval(liveCycleInterval); liveCycleInterval = null; }
-  isLiveDashboardActive = false;
-  if (highlightedMarkerElement) {
-    highlightedMarkerElement.classList.remove('highlighted');
-    highlightedMarkerElement = null;
-  }
-  const content = document.getElementById('notificationContent');
-  if (content) content.querySelectorAll('.notification-item').forEach(item => item.classList.remove('active-sync'));
-  document.getElementById('btnLiveStart').disabled = false;
-  document.getElementById('btnLiveStop').disabled = true;
-  document.getElementById('liveBtn').classList.remove('active');
-  document.getElementById('liveText').textContent = 'LIVE OFF';
-  document.getElementById('liveInfoPanel').style.display = 'none';
-  map.flyTo([-6.88, 107.97], 14, { duration: 1 });
-  showNotification('⏸️ LIVE MODE dimatikan', 'info');
+if (liveCycleInterval) { clearInterval(liveCycleInterval); liveCycleInterval = null; }
+isLiveDashboardActive = false;
+if (highlightedMarkerElement) {
+highlightedMarkerElement.classList.remove('highlighted');
+highlightedMarkerElement = null;
 }
-
+const content = document.getElementById('notificationContent');
+if (content) content.querySelectorAll('.notification-item').forEach(item => item.classList.remove('active-sync'));
+document.getElementById('btnLiveStart').disabled = false;
+document.getElementById('btnLiveStop').disabled = true;
+document.getElementById('liveBtn').classList.remove('active');
+document.getElementById('liveText').textContent = 'LIVE OFF';
+document.getElementById('liveInfoPanel').style.display = 'none';
+map.flyTo([-6.88, 107.97], 14, { duration: 1 });
+showNotification('⏸️ LIVE MODE dimatikan', 'info');
+}
 function toggleLiveDashboard() {
-  if (isLiveDashboardActive) stopLiveCycle();
-  else startLiveCycle();
+if (isLiveDashboardActive) stopLiveCycle();
+else startLiveCycle();
 }
-
 function setLiveSpeed(v) {
-  liveCycleSpeed = v * 1000;
-  document.getElementById('liveSpeedValue').textContent = v + ' detik';
-  if (isLiveDashboardActive && liveCycleInterval) {
-    clearInterval(liveCycleInterval);
-    liveCycleInterval = setInterval(() => {
-      liveCycleIndex = (liveCycleIndex + 1) % unpaidCustomerList.length;
-      highlightUnpaidMarker(liveCycleIndex);
-    }, liveCycleSpeed);
-  }
+liveCycleSpeed = v * 1000;
+document.getElementById('liveSpeedValue').textContent = v + ' detik';
+if (isLiveDashboardActive && liveCycleInterval) {
+clearInterval(liveCycleInterval);
+liveCycleInterval = setInterval(() => {
+liveCycleIndex = (liveCycleIndex + 1) % unpaidCustomerList.length;
+highlightUnpaidMarker(liveCycleIndex);
+}, liveCycleSpeed);
 }
-
+}
 // ============================================
 // DATA PROCESSING
 // ============================================
 function updateNotificationBar(payments) {
-  const bar = document.getElementById('notificationBar');
-  const content = document.getElementById('notificationContent');
-  if (payments.length === 0) { bar.style.display = 'none'; return; }
-  bar.style.display = 'block';
-  last5Payments = payments.slice(0, 5);
-  let html = '';
-  payments.forEach((p) => {
-    html += `<div class="notification-item" data-nama="${p.nama}"><strong>${p.nama}</strong> <span class="amount">${formatRupiah(p.jumlah)}</span> <span style="color: #86efac;">(${p.kubikasi} m³)</span> <span class="location"><i class="fas fa-${p.lokasi === 'Kantor' ? 'building' : 'mobile-alt'}"></i> ${p.lokasi}</span></div>`;
-  });
-  content.innerHTML = html + html;
-  updatePaymentVoiceButtons();
+const bar = document.getElementById('notificationBar');
+const content = document.getElementById('notificationContent');
+if (payments.length === 0) { bar.style.display = 'none'; return; }
+bar.style.display = 'block';
+last5Payments = payments.slice(0, 5);
+let html = '';
+payments.forEach((p) => {
+html += `<div class="notification-item" data-nama="${p.nama}"><strong>${p.nama}</strong> <span class="amount">${formatRupiah(p.jumlah)}</span> <span style="color: #86efac;">(${p.kubikasi} m³)</span> <span class="location"><i class="fas fa-${p.lokasi === 'Kantor' ? 'building' : 'mobile-alt'}"></i> ${p.lokasi}</span></div>`;
+});
+content.innerHTML = html + html;
+updatePaymentVoiceButtons();
 }
-
 function calculateRevenue() {
-  totalRevenue = 0; totalKubikasi = 0; let recent = [];
-  pelangganDataFromLaravel.forEach(p => {
-    const s = getPaymentStatus(p);
-    if (s.status !== 'Belum Bayar') {
-      totalRevenue += parseFloat(p.jumlah) || 0;
-      totalKubikasi += parseFloat(p.pakai) || 0;
-      if (s.tanggal) recent.push({ nama: p.nama || 'Pelanggan', jumlah: parseFloat(p.jumlah) || 0, kubikasi: parseFloat(p.pakai) || 0, lokasi: p.nama_wilayah || 'Tidak Diketahui', tanggal: s.tanggal, metode: s.metode });
-    }
-  });
-  recent.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
-  updateNotificationBar(recent.slice(0, 10));
+totalRevenue = 0; totalKubikasi = 0; let recent = [];
+pelangganDataFromLaravel.forEach(p => {
+const s = getPaymentStatus(p);
+if (s.status !== 'Belum Bayar') {
+totalRevenue += parseFloat(p.jumlah) || 0;
+totalKubikasi += parseFloat(p.pakai) || 0;
+if (s.tanggal) recent.push({ nama: p.nama || 'Pelanggan', jumlah: parseFloat(p.jumlah) || 0, kubikasi: parseFloat(p.pakai) || 0, lokasi: p.nama_wilayah || 'Tidak Diketahui', tanggal: s.tanggal, metode: s.metode });
 }
-
+});
+recent.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+updateNotificationBar(recent.slice(0, 10));
+}
 function initSidebarAutoScroll() {
-  const sb = document.getElementById('sidebarContent');
-  if (!sb) return;
-  const scrollSpeed = 50, scrollAmount = 1;
-  sidebarScrollInterval = setInterval(() => {
-    const idle = Date.now() - lastActivityTime;
-    if (idle > 30000 && sb.scrollHeight > sb.clientHeight + 50) {
-      isSidebarAutoScrolling = true;
-      sb.scrollTop += sidebarScrollDirection * scrollAmount;
-      if (sb.scrollTop >= sb.scrollHeight - sb.clientHeight - 5) sidebarScrollDirection = -1;
-      else if (sb.scrollTop <= 0) sidebarScrollDirection = 1;
-    } else { isSidebarAutoScrolling = false; }
-  }, scrollSpeed);
-  const resetIdle = () => { lastActivityTime = Date.now(); };
-  document.addEventListener('mousemove', resetIdle);
-  document.addEventListener('click', resetIdle);
-  document.addEventListener('keypress', resetIdle);
-  document.addEventListener('scroll', resetIdle, true);
-  if (sb) sb.addEventListener('scroll', resetIdle);
+const sb = document.getElementById('sidebarContent');
+if (!sb) return;
+const scrollSpeed = 50, scrollAmount = 1;
+sidebarScrollInterval = setInterval(() => {
+const idle = Date.now() - lastActivityTime;
+if (idle > 30000 && sb.scrollHeight > sb.clientHeight + 50) {
+isSidebarAutoScrolling = true;
+sb.scrollTop += sidebarScrollDirection * scrollAmount;
+if (sb.scrollTop >= sb.scrollHeight - sb.clientHeight - 5) sidebarScrollDirection = -1;
+else if (sb.scrollTop <= 0) sidebarScrollDirection = 1;
+} else { isSidebarAutoScrolling = false; }
+}, scrollSpeed);
+const resetIdle = () => { lastActivityTime = Date.now(); };
+document.addEventListener('mousemove', resetIdle);
+document.addEventListener('click', resetIdle);
+document.addEventListener('keypress', resetIdle);
+document.addEventListener('scroll', resetIdle, true);
+if (sb) sb.addEventListener('scroll', resetIdle);
 }
-
 // ============================================
 // LAYER CONTROL
 // ============================================
 function initBaseLayers() {
-  baseLayers = {
-    street: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }),
-    satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: '© Esri' }),
-    terrain: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, attribution: '© OpenTopoMap' }),
-    dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, attribution: '© CARTO' })
-  };
+baseLayers = {
+street: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }),
+satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: '© Esri' }),
+terrain: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, attribution: '© OpenTopoMap' }),
+dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, attribution: '© CARTO' })
+};
 }
-
 function switchLayer(name) {
-  if (!baseLayers[name]) return;
-  if (currentBaseLayer) map.removeLayer(currentBaseLayer);
-  currentBaseLayer = baseLayers[name];
-  currentBaseLayer.addTo(map);
-  currentLayer = name;
-  document.querySelectorAll('.layer-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.layer-btn[data-layer="${name}"]`).classList.add('active');
-  showNotification(`Beralih ke ${name}`, 'info');
+if (!baseLayers[name]) return;
+if (currentBaseLayer) map.removeLayer(currentBaseLayer);
+currentBaseLayer = baseLayers[name];
+currentBaseLayer.addTo(map);
+currentLayer = name;
+document.querySelectorAll('.layer-btn').forEach(b => b.classList.remove('active'));
+document.querySelector(`.layer-btn[data-layer="${name}"]`).classList.add('active');
+showNotification(`Beralih ke ${name}`, 'info');
 }
-
 // ============================================
 // MAP INITIALIZATION
 // ============================================
 function initMap() {
-  const bounds = L.latLngBounds(L.latLng(-6.98, 107.80), L.latLng(-6.80, 108.15));
-  map = L.map('map', { center: [-6.88, 107.97], zoom: 14, minZoom: 11, maxZoom: 18, maxBounds: bounds, maxBoundsViscosity: 0.8, zoomControl: false });
-  L.control.zoom({ position: 'topright' }).addTo(map);
-  initBaseLayers();
-  currentBaseLayer = baseLayers[currentLayer];
-  currentBaseLayer.addTo(map);
-  
-  const polygon = [[-6.9584, 108.0315], [-6.9421, 108.0242], [-6.9315, 108.0198], [-6.9202, 108.0211], [-6.9110, 108.0322], [-6.8985, 108.0410], [-6.8842, 108.0556], [-6.8810, 108.0695], [-6.8892, 108.0841], [-6.9011, 108.0920], [-6.9154, 108.0985], [-6.9320, 108.0950], [-6.9488, 108.0862], [-6.9595, 108.0711], [-6.9680, 108.0544], [-6.9642, 108.0398], [-6.9584, 108.0315]];
-  L.polygon(polygon, { color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.1, weight: 3, dashArray: '10, 5' }).addTo(map).bindPopup(`<div style="text-align:center; padding:10px;"><h6 style="color:#1e3c72; margin:0;"><i class="fas fa-map-marker-alt"></i> KECAMATAN DARMARAJA</h6><small>Kab. Sumedang, Jawa Barat</small></div>`);
-  
-  const center = L.polygon(polygon).getBounds().getCenter();
-  L.marker([center.lat, center.lng], { icon: L.divIcon({ className: 'custom-div-icon', html: `<div id="darmaraja-label" style="background: rgba(30, 60, 114, 0.9); color: white; padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 14px; letter-spacing: 2px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 3px solid white; white-space: nowrap; transition: opacity 0.3s;"><i class="fas fa-map-marker-alt"></i> DARMARAJA</div>`, iconSize: [200, 40], iconAnchor: [100, 20] }), interactive: false }).addTo(map);
-  
-  map.on('zoomend', () => {
-    const l = document.getElementById('darmaraja-label');
-    if (l) {
-      l.style.opacity = map.getZoom() >= 14 ? '0' : '1';
-      l.style.pointerEvents = map.getZoom() >= 14 ? 'none' : 'auto';
-    }
-  });
-  
-  loadJalurPipa(); loadBangunan(); loadGangguan(); loadTitikPenting(); loadPelanggan();
-  calculateRevenue();
-  loadUnpaidCustomerMarkers();
-  loadWilayahDanBlok();
-  updateTodayStatsDisplay();
-  updateRevenueProgress();
-  
-  if (gangguanData && gangguanData.length > 0) {
-    activeGangguanList = gangguanData.filter(g => g.status !== 'selesai');
-    if (activeGangguanList.length > 0) {
-      updateGangguanVoiceButtons();
-      updateGangguanVoiceStatus('idle', `${activeGangguanList.length} gangguan siap diputar`);
-    }
-  }
-  
-  initSidebarAutoScroll();
-  setScrollSpeed(60);
-  document.getElementById('searchResults').innerHTML = '<div class="search-empty">Ketik untuk mencari pelanggan</div>';
-  
-  // 🔥 START REAL-TIME POLLING
-  startRealtimePolling();
+const bounds = L.latLngBounds(L.latLng(-6.98, 107.80), L.latLng(-6.80, 108.15));
+map = L.map('map', { center: [-6.88, 107.97], zoom: 14, minZoom: 11, maxZoom: 18, maxBounds: bounds, maxBoundsViscosity: 0.8, zoomControl: false });
+L.control.zoom({ position: 'topright' }).addTo(map);
+initBaseLayers();
+currentBaseLayer = baseLayers[currentLayer];
+currentBaseLayer.addTo(map);
+const polygon = [[-6.9584, 108.0315], [-6.9421, 108.0242], [-6.9315, 108.0198], [-6.9202, 108.0211], [-6.9110, 108.0322], [-6.8985, 108.0410], [-6.8842, 108.0556], [-6.8810, 108.0695], [-6.8892, 108.0841], [-6.9011, 108.0920], [-6.9154, 108.0985], [-6.9320, 108.0950], [-6.9488, 108.0862], [-6.9595, 108.0711], [-6.9680, 108.0544], [-6.9642, 108.0398], [-6.9584, 108.0315]];
+L.polygon(polygon, { color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.1, weight: 3, dashArray: '10, 5' }).addTo(map).bindPopup(`<div style="text-align:center; padding:10px;"><h6 style="color:#1e3c72; margin:0;"><i class="fas fa-map-marker-alt"></i> KECAMATAN DARMARAJA</h6><small>Kab. Sumedang, Jawa Barat</small></div>`);
+const center = L.polygon(polygon).getBounds().getCenter();
+L.marker([center.lat, center.lng], { icon: L.divIcon({ className: 'custom-div-icon', html: `<div id="darmaraja-label" style="background: rgba(30, 60, 114, 0.9); color: white; padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 14px; letter-spacing: 2px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 3px solid white; white-space: nowrap; transition: opacity 0.3s;"><i class="fas fa-map-marker-alt"></i> DARMARAJA</div>`, iconSize: [200, 40], iconAnchor: [100, 20] }), interactive: false }).addTo(map);
+map.on('zoomend', () => {
+const l = document.getElementById('darmaraja-label');
+if (l) {
+l.style.opacity = map.getZoom() >= 14 ? '0' : '1';
+l.style.pointerEvents = map.getZoom() >= 14 ? 'none' : 'auto';
 }
-
+});
+loadJalurPipa(); loadBangunan(); loadGangguan(); loadTitikPenting(); loadPelanggan();
+calculateRevenue();
+loadUnpaidCustomerMarkers();
+loadWilayahDanBlok();
+updateTodayStatsDisplay();
+updateRevenueProgress();
+if (gangguanData && gangguanData.length > 0) {
+activeGangguanList = gangguanData.filter(g => g.status !== 'selesai');
+if (activeGangguanList.length > 0) {
+updateGangguanVoiceButtons();
+updateGangguanVoiceStatus('idle', `${activeGangguanList.length} gangguan siap diputar`);
+}
+}
+initSidebarAutoScroll();
+setScrollSpeed(60);
+document.getElementById('searchResults').innerHTML = '<div class="search-empty">Ketik untuk mencari pelanggan</div>';
+// 🔥 START REAL-TIME POLLING
+startRealtimePolling();
+}
 function loadJalurPipa() {
-  jalurPipaData.forEach(j => {
-    try {
-      const c = parseCoordinates(j.coordinates);
-      if (!c || c.length === 0 || !hasPointInArea(c)) return;
-      const pl = L.polyline(c, { color: j.warna, weight: parseInt(j.ketebalan) || 4, opacity: 0.85 }).addTo(map);
-      let d = 0; for (let i = 0; i < c.length - 1; i++) d += L.latLng(c[i]).distanceTo(L.latLng(c[i+1]));
-      pl.bindPopup(`<div style="min-width:250px;"><h6 style="background:${j.warna};color:white;padding:10px;border-radius:8px 8px 0 0;margin:0;"><i class="fas fa-route"></i> ${j.nama_jalur}</h6><div style="padding:12px; font-size:12px;"><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #e2e8f0;"><span style="color:#64748b;">Jenis:</span><strong>${j.jenis_jalur.toUpperCase()}</strong></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #e2e8f0;"><span style="color:#64748b;">Ukuran:</span><strong>${j.ukuran_pipa}</strong></div><div style="display:flex;justify-content:space-between;padding:6px 0;"><span style="color:#64748b;">Panjang:</span><strong style="color:#0369a1;">${(d/1000).toFixed(2)} km</strong></div>${j.keterangan ? `<div style="margin-top:8px;padding-top:8px;border-top:1px dashed #e2e8f0;color:#64748b;font-size:11px;"><i class="fas fa-info-circle"></i> ${j.keterangan}</div>` : ''}</div></div>`, { maxWidth: 300 });
-      jalurLayers[j.id] = pl;
-    } catch(e) { console.error(e); }
-  });
+jalurPipaData.forEach(j => {
+try {
+const c = parseCoordinates(j.coordinates);
+if (!c || c.length === 0 || !hasPointInArea(c)) return;
+const pl = L.polyline(c, { color: j.warna, weight: parseInt(j.ketebalan) || 4, opacity: 0.85 }).addTo(map);
+let d = 0; for (let i = 0; i < c.length - 1; i++) d += L.latLng(c[i]).distanceTo(L.latLng(c[i+1]));
+pl.bindPopup(`<div style="min-width:250px;"><h6 style="background:${j.warna};color:white;padding:10px;border-radius:8px 8px 0 0;margin:0;"><i class="fas fa-route"></i> ${j.nama_jalur}</h6><div style="padding:12px; font-size:12px;"><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #e2e8f0;"><span style="color:#64748b;">Jenis:</span><strong>${j.jenis_jalur.toUpperCase()}</strong></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #e2e8f0;"><span style="color:#64748b;">Ukuran:</span><strong>${j.ukuran_pipa}</strong></div><div style="display:flex;justify-content:space-between;padding:6px 0;"><span style="color:#64748b;">Panjang:</span><strong style="color:#0369a1;">${(d/1000).toFixed(2)} km</strong></div>${j.keterangan ? `<div style="margin-top:8px;padding-top:8px;border-top:1px dashed #e2e8f0;color:#64748b;font-size:11px;"><i class="fas fa-info-circle"></i> ${j.keterangan}</div>` : ''}</div></div>`, { maxWidth: 300 });
+jalurLayers[j.id] = pl;
+} catch(e) { console.error(e); }
+});
 }
-
 function loadBangunan() {
-  bangunanData.forEach(b => {
-    try {
-      const c = parseCoordinates(b.coordinates);
-      if (!c || c.length === 0 || !hasPointInArea(c)) return;
-      const poly = L.polygon(c, { color: b.warna, fillColor: b.warna, fillOpacity: 0.25, weight: 2 }).addTo(map);
-      const center = poly.getBounds().getCenter();
-      const icons = { 'reservoir': { i: 'fa-database', c: '#06b6d4' }, 'ipa': { i: 'fa-industry', c: '#8b5cf6' }, 'kantor': { i: 'fa-building', c: '#3b82f6' }, 'lainnya': { i: 'fa-building', c: '#6b7280' } };
-      const cfg = icons[b.jenis_bangunan] || icons['lainnya'];
-      const m = L.marker(center, { icon: L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-wrapper"><div class="marker-pin shape-square" style="background: ${cfg.c}; width: 34px; height: 34px;"><i class="fas ${cfg.i}"></i></div><div class="marker-label">${b.nama_bangunan}</div></div>`, iconSize: [34, 50], iconAnchor: [17, 17] }) }).addTo(map);
-      m.bindPopup(`<div style="min-width:220px;"><h6 style="background:${cfg.c};color:white;padding:10px;border-radius:8px 8px 0 0;margin:0;"><i class="fas ${cfg.i}"></i> ${b.nama_bangunan}</h6><div style="padding:12px; font-size:12px;"><div style="display:flex;justify-content:space-between;padding:6px 0;"><span style="color:#64748b;">Jenis:</span><strong>${b.jenis_bangunan.toUpperCase()}</strong></div>${b.keterangan ? `<div style="margin-top:8px;padding-top:8px;border-top:1px dashed #e2e8f0;color:#64748b;font-size:11px;"><i class="fas fa-info-circle"></i> ${b.keterangan}</div>` : ''}</div></div>`);
-      markerLayers[`bangunan_${b.id}`] = m;
-    } catch(e) { console.error(e); }
-  });
+bangunanData.forEach(b => {
+try {
+const c = parseCoordinates(b.coordinates);
+if (!c || c.length === 0 || !hasPointInArea(c)) return;
+const poly = L.polygon(c, { color: b.warna, fillColor: b.warna, fillOpacity: 0.25, weight: 2 }).addTo(map);
+const center = poly.getBounds().getCenter();
+const icons = { 'reservoir': { i: 'fa-database', c: '#06b6d4' }, 'ipa': { i: 'fa-industry', c: '#8b5cf6' }, 'kantor': { i: 'fa-building', c: '#3b82f6' }, 'lainnya': { i: 'fa-building', c: '#6b7280' } };
+const cfg = icons[b.jenis_bangunan] || icons['lainnya'];
+const m = L.marker(center, { icon: L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-wrapper"><div class="marker-pin shape-square" style="background: ${cfg.c}; width: 34px; height: 34px;"><i class="fas ${cfg.i}"></i></div><div class="marker-label">${b.nama_bangunan}</div></div>`, iconSize: [34, 50], iconAnchor: [17, 17] }) }).addTo(map);
+m.bindPopup(`<div style="min-width:220px;"><h6 style="background:${cfg.c};color:white;padding:10px;border-radius:8px 8px 0 0;margin:0;"><i class="fas ${cfg.i}"></i> ${b.nama_bangunan}</h6><div style="padding:12px; font-size:12px;"><div style="display:flex;justify-content:space-between;padding:6px 0;"><span style="color:#64748b;">Jenis:</span><strong>${b.jenis_bangunan.toUpperCase()}</strong></div>${b.keterangan ? `<div style="margin-top:8px;padding-top:8px;border-top:1px dashed #e2e8f0;color:#64748b;font-size:11px;"><i class="fas fa-info-circle"></i> ${b.keterangan}</div>` : ''}</div></div>`);
+markerLayers[`bangunan_${b.id}`] = m;
+} catch(e) { console.error(e); }
+});
 }
-
 function loadGangguan() {
-  gangguanData.forEach(g => {
-    try {
-      const lat = parseFloat(g.latitude), lng = parseFloat(g.longitude);
-      if (isNaN(lat) || isNaN(lng)) return;
-      const cfg = { 'menunggu': { c: '#ef4444', i: 'fa-clock', t: 'Menunggu', bg: '#fee2e2' }, 'dalam_proses': { c: '#f59e0b', i: 'fa-tools', t: 'Dalam Proses', bg: '#fef3c7' }, 'selesai': { c: '#10b981', i: 'fa-check', t: 'Selesai', bg: '#d1fae5' } }[g.status] || { c: '#ef4444', i: 'fa-clock', t: 'Menunggu', bg: '#fee2e2' };
-      const icons = { 'bocor': 'fa-tint', 'pecah': 'fa-bomb', 'mampet': 'fa-ban', 'rusak_ringan': 'fa-exclamation', 'rusak_berat': 'fa-exclamation-triangle', 'lainnya': 'fa-question' };
-      const di = icons[g.tipe_kerusakan] || 'fa-question';
-      const active = g.status !== 'selesai';
-      const html = `<div class="marker-wrapper">${active ? `<div class="marker-banner"><i class="fas fa-exclamation-triangle"></i> GANGGUAN AKTIF</div>` : ''}<div style="position: relative; width: 50px; height: 50px;">${active ? `<div class="pulse-ring" style="background: ${cfg.c}; color: ${cfg.c}; animation: pulse-red 1.5s infinite;"></div>` : ''}<div class="marker-pin shape-circle" style="background: ${cfg.c}; width: 50px; height: 50px; border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.4);"><i class="fas ${di}" style="font-size: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i></div><div style="position: absolute; top: -2px; right: -2px; background: white; color: ${cfg.c}; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; border: 3px solid ${cfg.c}; box-shadow: 0 2px 8px rgba(0,0,0,0.3); font-weight: 700;"><i class="fas ${cfg.i}"></i></div></div><div class="marker-label" style="background: ${cfg.c}; font-weight: 700; font-size: 10px; padding: 3px 8px;">${g.kode_laporan}</div></div>`;
-      const m = L.marker([lat, lng], { icon: L.divIcon({ className: 'custom-div-icon', html: html, iconSize: [110, 120], iconAnchor: [55, 60], popupAnchor: [0, -60] }) }).addTo(map);
-      m.bindPopup(`<div style="min-width:300px;"><div style="background:linear-gradient(135deg, ${cfg.c}, ${cfg.c}dd);color:white;padding:12px;text-align:center;"><div style="font-size:11px;opacity:0.9;margin-bottom:3px;"><i class="fas fa-info-circle"></i> INFORMASI PELAYANAN</div><div style="font-weight:700;font-size:13px;">${g.status === 'selesai' ? 'Gangguan Telah Selesai' : 'Mohon Maaf Pelayanan Terganggu'}</div></div><div style="padding:15px;"><h6 style="margin:0 0 12px 0; color:#1e293b; font-size:15px;">${g.kode_laporan}</h6><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;"><div style="background:${cfg.bg};padding:10px;border-radius:8px;text-align:center;"><div style="font-size:10px;color:#64748b;">STATUS</div><div style="font-weight:700;color:${cfg.c};font-size:12px;"><i class="fas fa-circle" style="font-size:8px;"></i> ${cfg.t}</div></div><div style="background:#f1f5f9;padding:10px;border-radius:8px;text-align:center;"><div style="font-size:10px;color:#64748b;">TIPE</div><div style="font-weight:700;color:#1e293b;font-size:12px;">${g.tipe_kerusakan ? g.tipe_kerusakan.toUpperCase() : '-'}</div></div></div><div style="margin-bottom:10px;"><div style="font-size:11px;color:#64748b;margin-bottom:3px;"><i class="fas fa-map-marker-alt"></i> Lokasi</div><div style="font-weight:600;color:#1e293b;">${g.lokasi || '-'}</div></div><div style="margin-bottom:10px;"><div style="font-size:11px;color:#64748b;margin-bottom:3px;"><i class="fas fa-users"></i> Wilayah Terdampak</div><div style="font-weight:600;color:#1e293b;">${g.wilayah_terdampak || '-'}</div></div>${g.deskripsi ? `<div style="background:#fef3c7;padding:10px;border-radius:8px;border-left:3px solid #f59e0b;margin-bottom:12px;"><div style="font-size:10px;color:#92400e;font-weight:600;"><i class="fas fa-info-circle"></i> DESKRIPSI</div><div style="font-size:12px;color:#78350f;margin-top:3px;">${g.deskripsi}</div></div>` : ''}<div style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);padding:12px;border-radius:8px;text-align:center;"><div style="font-size:11px;color:#065f46;margin-bottom:4px;"><i class="fas fa-calendar-check"></i> Estimasi Penyelesaian</div><div style="font-weight:700;color:#064e3b;font-size:14px;">${g.estimasi_selesai ? new Date(g.estimasi_selesai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}</div></div></div></div>`, { maxWidth: 350 });
-      markerLayers[`gangguan_${g.id}`] = m;
-    } catch(e) { console.error(e); }
-  });
+gangguanData.forEach(g => {
+try {
+const lat = parseFloat(g.latitude), lng = parseFloat(g.longitude);
+if (isNaN(lat) || isNaN(lng)) return;
+const cfg = { 'menunggu': { c: '#ef4444', i: 'fa-clock', t: 'Menunggu', bg: '#fee2e2' }, 'dalam_proses': { c: '#f59e0b', i: 'fa-tools', t: 'Dalam Proses', bg: '#fef3c7' }, 'selesai': { c: '#10b981', i: 'fa-check', t: 'Selesai', bg: '#d1fae5' } }[g.status] || { c: '#ef4444', i: 'fa-clock', t: 'Menunggu', bg: '#fee2e2' };
+const icons = { 'bocor': 'fa-tint', 'pecah': 'fa-bomb', 'mampet': 'fa-ban', 'rusak_ringan': 'fa-exclamation', 'rusak_berat': 'fa-exclamation-triangle', 'lainnya': 'fa-question' };
+const di = icons[g.tipe_kerusakan] || 'fa-question';
+const active = g.status !== 'selesai';
+const html = `<div class="marker-wrapper">${active ? `<div class="marker-banner"><i class="fas fa-exclamation-triangle"></i> GANGGUAN AKTIF</div>` : ''}<div style="position: relative; width: 50px; height: 50px;">${active ? `<div class="pulse-ring" style="background: ${cfg.c}; color: ${cfg.c}; animation: pulse-red 1.5s infinite;"></div>` : ''}<div class="marker-pin shape-circle" style="background: ${cfg.c}; width: 50px; height: 50px; border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.4);"><i class="fas ${di}" style="font-size: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i></div><div style="position: absolute; top: -2px; right: -2px; background: white; color: ${cfg.c}; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; border: 3px solid ${cfg.c}; box-shadow: 0 2px 8px rgba(0,0,0,0.3); font-weight: 700;"><i class="fas ${cfg.i}"></i></div></div><div class="marker-label" style="background: ${cfg.c}; font-weight: 700; font-size: 10px; padding: 3px 8px;">${g.kode_laporan}</div></div>`;
+const m = L.marker([lat, lng], { icon: L.divIcon({ className: 'custom-div-icon', html: html, iconSize: [110, 120], iconAnchor: [55, 60], popupAnchor: [0, -60] }) }).addTo(map);
+m.bindPopup(`<div style="min-width:300px;"><div style="background:linear-gradient(135deg, ${cfg.c}, ${cfg.c}dd);color:white;padding:12px;text-align:center;"><div style="font-size:11px;opacity:0.9;margin-bottom:3px;"><i class="fas fa-info-circle"></i> INFORMASI PELAYANAN</div><div style="font-weight:700;font-size:13px;">${g.status === 'selesai' ? 'Gangguan Telah Selesai' : 'Mohon Maaf Pelayanan Terganggu'}</div></div><div style="padding:15px;"><h6 style="margin:0 0 12px 0; color:#1e293b; font-size:15px;">${g.kode_laporan}</h6><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;"><div style="background:${cfg.bg};padding:10px;border-radius:8px;text-align:center;"><div style="font-size:10px;color:#64748b;">STATUS</div><div style="font-weight:700;color:${cfg.c};font-size:12px;"><i class="fas fa-circle" style="font-size:8px;"></i> ${cfg.t}</div></div><div style="background:#f1f5f9;padding:10px;border-radius:8px;text-align:center;"><div style="font-size:10px;color:#64748b;">TIPE</div><div style="font-weight:700;color:#1e293b;font-size:12px;">${g.tipe_kerusakan ? g.tipe_kerusakan.toUpperCase() : '-'}</div></div></div><div style="margin-bottom:10px;"><div style="font-size:11px;color:#64748b;margin-bottom:3px;"><i class="fas fa-map-marker-alt"></i> Lokasi</div><div style="font-weight:600;color:#1e293b;">${g.lokasi || '-'}</div></div><div style="margin-bottom:10px;"><div style="font-size:11px;color:#64748b;margin-bottom:3px;"><i class="fas fa-users"></i> Wilayah Terdampak</div><div style="font-weight:600;color:#1e293b;">${g.wilayah_terdampak || '-'}</div></div>${g.deskripsi ? `<div style="background:#fef3c7;padding:10px;border-radius:8px;border-left:3px solid #f59e0b;margin-bottom:12px;"><div style="font-size:10px;color:#92400e;font-weight:600;"><i class="fas fa-info-circle"></i> DESKRIPSI</div><div style="font-size:12px;color:#78350f;margin-top:3px;">${g.deskripsi}</div></div>` : ''}<div style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);padding:12px;border-radius:8px;text-align:center;"><div style="font-size:11px;color:#065f46;margin-bottom:4px;"><i class="fas fa-calendar-check"></i> Estimasi Penyelesaian</div><div style="font-weight:700;color:#064e3b;font-size:14px;">${g.estimasi_selesai ? new Date(g.estimasi_selesai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}</div></div></div></div>`, { maxWidth: 350 });
+markerLayers[`gangguan_${g.id}`] = m;
+} catch(e) { console.error(e); }
+});
 }
-
 function loadTitikPenting() {
-  const icons = { 'valve': { i: 'fa-toggle-on', c: '#ef4444' }, 'hydrant': { i: 'fa-fire', c: '#dc2626' }, 'meter': { i: 'fa-tachometer-alt', c: '#3b82f6' }, 'sambungan': { i: 'fa-link', c: '#8b5cf6' }, 'pompa': { i: 'fa-water', c: '#10b981' }, 'tandon': { i: 'fa-database', c: '#06b6d4' }, 'lainnya': { i: 'fa-map-pin', c: '#6b7280' } };
-  titikPentingData.forEach(t => {
-    try {
-      const lat = parseFloat(t.latitude), lng = parseFloat(t.longitude);
-      if (isNaN(lat) || isNaN(lng) || !isInArea(lat, lng)) return;
-      const c = icons[t.jenis_titik] || icons['lainnya'];
-      const m = L.marker([lat, lng], { icon: L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-wrapper"><div class="marker-pin shape-circle" style="background:${c.c};width:28px;height:28px;"><i class="fas ${c.i}"></i></div><div class="marker-label">${t.nama_titik}</div></div>`, iconSize: [28, 40], iconAnchor: [14, 14] }) }).addTo(map);
-      m.bindPopup(`<div style="min-width:200px;"><h6 style="background:${c.c};color:white;padding:10px;border-radius:8px 8px 0 0;margin:0;"><i class="fas ${c.i}"></i> ${t.nama_titik}</h6><div style="padding:12px;font-size:12px;"><div><strong>Jenis:</strong> ${t.jenis_titik}</div>${t.keterangan ? `<div style="margin-top:5px;"><strong>Ket:</strong> ${t.keterangan}</div>` : ''}</div></div>`);
-      markerLayers[`titik_${t.id}`] = m;
-    } catch(e) { console.error(e); }
-  });
+const icons = { 'valve': { i: 'fa-toggle-on', c: '#ef4444' }, 'hydrant': { i: 'fa-fire', c: '#dc2626' }, 'meter': { i: 'fa-tachometer-alt', c: '#3b82f6' }, 'sambungan': { i: 'fa-link', c: '#8b5cf6' }, 'pompa': { i: 'fa-water', c: '#10b981' }, 'tandon': { i: 'fa-database', c: '#06b6d4' }, 'lainnya': { i: 'fa-map-pin', c: '#6b7280' } };
+titikPentingData.forEach(t => {
+try {
+const lat = parseFloat(t.latitude), lng = parseFloat(t.longitude);
+if (isNaN(lat) || isNaN(lng) || !isInArea(lat, lng)) return;
+const c = icons[t.jenis_titik] || icons['lainnya'];
+const m = L.marker([lat, lng], { icon: L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-wrapper"><div class="marker-pin shape-circle" style="background:${c.c};width:28px;height:28px;"><i class="fas ${c.i}"></i></div><div class="marker-label">${t.nama_titik}</div></div>`, iconSize: [28, 40], iconAnchor: [14, 14] }) }).addTo(map);
+m.bindPopup(`<div style="min-width:200px;"><h6 style="background:${c.c};color:white;padding:10px;border-radius:8px 8px 0 0;margin:0;"><i class="fas ${c.i}"></i> ${t.nama_titik}</h6><div style="padding:12px;font-size:12px;"><div><strong>Jenis:</strong> ${t.jenis_titik}</div>${t.keterangan ? `<div style="margin-top:5px;"><strong>Ket:</strong> ${t.keterangan}</div>` : ''}</div></div>`);
+markerLayers[`titik_${t.id}`] = m;
+} catch(e) { console.error(e); }
+});
 }
-
 function loadPelanggan() {
-  if (!pelangganDataFromLaravel || pelangganDataFromLaravel.length === 0) return;
-  pelangganClusterGroup = L.markerClusterGroup({
-    maxClusterRadius: 50, spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true,
-    iconCreateFunction: function(cluster) {
-      const count = cluster.getChildCount();
-      let color = '#3b82f6', size = '24px';
-      if (count > 50) { color = '#ef4444'; size = '30px'; } else if (count > 20) { color = '#f59e0b'; size = '27px'; }
-      return L.divIcon({ html: `<div style="background:${color};color:white;width:${size};height:${size};border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);">${count}</div>`, className: 'marker-cluster-custom', iconSize: L.point(parseInt(size), parseInt(size)) });
-    }
-  });
-  
-  pelangganDataFromLaravel.forEach(p => {
-    const s = getPaymentStatus(p);
-    const gol = p.kode_gol_trf || 'Lainnya';
-    const w = p.nama_wilayah || 'Tidak Diketahui';
-    if (s.status === 'Belum Bayar') return;
-    const coords = parseKoordinator(p.koordinator);
-    if (!coords || !isInArea(coords[0], coords[1])) return;
-    const m = L.marker(coords, { icon: L.divIcon({ className: 'custom-div-icon', html: `<div class="pelanggan-marker-small" style="background: ${s.color};"><i class="fas ${s.icon}" style="color: white; font-size: 5px;"></i></div>`, iconSize: [10, 10], iconAnchor: [5, 5] }), zIndexOffset: 100 });
-    m.bindPopup(`<div style="min-width:220px; font-family: 'Inter', sans-serif; font-size: 11px;"><div style="background: ${s.color}; color: white; padding: 6px; border-radius: 6px 6px 0 0; font-weight: 700;"><i class="fas ${s.icon}"></i> ${p.nama || 'Tanpa Nama'}</div><div style="padding: 8px;"><div style="margin-bottom: 4px;"><strong>No:</strong> ${p.no_pelanggan}</div><div style="margin-bottom: 4px;"><strong>Golongan:</strong> ${gol}</div><div style="margin-bottom: 4px;"><strong>Wilayah:</strong> ${w}</div><div style="margin-bottom: 4px;"><strong>Status:</strong> <span style="color: ${s.color}; font-weight: 700;"><i class="fas ${s.icon}"></i> ${s.status}</span></div><div style="margin-bottom: 4px;"><strong>Pemakaian:</strong> ${parseFloat(p.pakai) || 0} m³</div>${s.tanggal ? `<div style="margin-bottom: 4px;"><strong>Tgl Bayar:</strong> ${formatDate(s.tanggal)}</div>` : ''}<div style="background: #fef3c7; padding: 5px; border-radius: 4px; margin-top: 6px;"><strong>Tagihan:</strong> ${formatRupiah(p.jumlah)}</div></div></div>`, { maxWidth: 250 });
-    pelangganClusterGroup.addLayer(m);
-    pelangganLayers[`pelanggan_${p.no_pelanggan}`] = { marker: m, coords: coords, golongan: gol, wilayah: w, paymentStatus: s.status };
-  });
-  
-  map.addLayer(pelangganClusterGroup);
+if (!pelangganDataFromLaravel || pelangganDataFromLaravel.length === 0) return;
+pelangganClusterGroup = L.markerClusterGroup({
+maxClusterRadius: 50, spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true,
+iconCreateFunction: function(cluster) {
+const count = cluster.getChildCount();
+let color = '#3b82f6', size = '24px';
+if (count > 50) { color = '#ef4444'; size = '30px'; } else if (count > 20) { color = '#f59e0b'; size = '27px'; }
+return L.divIcon({ html: `<div style="background:${color};color:white;width:${size};height:${size};border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);">${count}</div>`, className: 'marker-cluster-custom', iconSize: L.point(parseInt(size), parseInt(size)) });
 }
-
-function updatePelangganDataFromAPI(newData) {
-  // Mapping data dari API
-  const mappedData = newData.map(p => ({
-    no_pelanggan: p.no_pelanggan || '-',
-    nama: p.nama || 'Tanpa Nama',
-    jumlah: p.jumlah || '0',
-    pakai: p.pakai || '0',
-    kode_gol_trf: p.kode_gol_trf || '-',
-    nama_wilayah: p.nama_wilayah || p.cabang || 'Tidak Diketahui',
-    koordinator: p.koordinator || '',
-    tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null,
-    tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null,
-    status: p.status || 'Aktif',
-    alamat: p.alamat || ''
-  }));
-  
-  // Update data global (merge dengan data existing)
-  mappedData.forEach(newP => {
-    const idx = pelangganDataFromLaravel.findIndex(p => p.no_pelanggan === newP.no_pelanggan);
-    if (idx !== -1) {
-      pelangganDataFromLaravel[idx] = { ...pelangganDataFromLaravel[idx], ...newP };
-    } else {
-      pelangganDataFromLaravel.push(newP);
-    }
-  });
-  
-  // Update UI
-  updateRevenueProgress();
-  updateTodayStatsDisplay();
-  calculateRevenue();
-  loadUnpaidCustomerMarkers();
+});
+pelangganDataFromLaravel.forEach(p => {
+const s = getPaymentStatus(p);
+const gol = p.kode_gol_trf || 'Lainnya';
+const w = p.nama_wilayah || 'Tidak Diketahui';
+if (s.status === 'Belum Bayar') return;
+const coords = parseKoordinator(p.koordinator);
+if (!coords || !isInArea(coords[0], coords[1])) return;
+const m = L.marker(coords, { icon: L.divIcon({ className: 'custom-div-icon', html: `<div class="pelanggan-marker-small" style="background: ${s.color};"><i class="fas ${s.icon}" style="color: white; font-size: 5px;"></i></div>`, iconSize: [10, 10], iconAnchor: [5, 5] }), zIndexOffset: 100 });
+m.bindPopup(`<div style="min-width:220px; font-family: 'Inter', sans-serif; font-size: 11px;"><div style="background: ${s.color}; color: white; padding: 6px; border-radius: 6px 6px 0 0; font-weight: 700;"><i class="fas ${s.icon}"></i> ${p.nama || 'Tanpa Nama'}</div><div style="padding: 8px;"><div style="margin-bottom: 4px;"><strong>No:</strong> ${p.no_pelanggan}</div><div style="margin-bottom: 4px;"><strong>Golongan:</strong> ${gol}</div><div style="margin-bottom: 4px;"><strong>Wilayah:</strong> ${w}</div><div style="margin-bottom: 4px;"><strong>Status:</strong> <span style="color: ${s.color}; font-weight: 700;"><i class="fas ${s.icon}"></i> ${s.status}</span></div><div style="margin-bottom: 4px;"><strong>Pemakaian:</strong> ${parseFloat(p.pakai) || 0} m³</div>${s.tanggal ? `<div style="margin-bottom: 4px;"><strong>Tgl Bayar:</strong> ${formatDate(s.tanggal)}</div>` : ''}<div style="background: #fef3c7; padding: 5px; border-radius: 4px; margin-top: 6px;"><strong>Tagihan:</strong> ${formatRupiah(p.jumlah)}</div></div></div>`, { maxWidth: 250 });
+pelangganClusterGroup.addLayer(m);
+pelangganLayers[`pelanggan_${p.no_pelanggan}`] = { marker: m, coords: coords, golongan: gol, wilayah: w, paymentStatus: s.status };
+});
+map.addLayer(pelangganClusterGroup);
 }
 function loadWilayahDanBlok() {
-  const container = document.getElementById('wilayah-blok-container');
-  try {
-    const wilayahMap = {};
-    pelangganDataFromLaravel.forEach(p => {
-      const w = p.nama_wilayah || 'Tidak Diketahui';
-      if (!wilayahMap[w]) wilayahMap[w] = { count: 0, gol: {} };
-      wilayahMap[w].count++;
-      const gol = p.kode_gol_trf || 'Lainnya';
-      wilayahMap[w].gol[gol] = (wilayahMap[w].gol[gol] || 0) + 1;
-    });
-    
-    let html = '';
-    Object.entries(wilayahMap).sort((a, b) => b[1].count - a[1].count).forEach(([wilayah, data]) => {
-      html += `<div class="wilayah-card"><div class="wilayah-header"><span><i class="fas fa-map-marker-alt"></i> ${wilayah}</span><span style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 12px; font-size: 11px;">${data.count} Pelanggan</span></div><div class="wilayah-blok-list">`;
-      Object.entries(data.gol).forEach(([gol, count]) => {
-        html += `<div class="blok-item"><div style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-layer-group" style="color: #3b82f6; font-size: 10px;"></i><span style="font-weight: 600; color: #1e293b;">Gol ${gol}</span></div><div style="display: flex; align-items: center; gap: 6px;"><span style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 2px 8px; border-radius: 10px; font-weight: 700; font-size: 11px;">${count}</span><span style="color: #64748b; font-size: 10px;">pelanggan</span></div></div>`;
-      });
-      html += `</div></div>`;
-    });
-    container.innerHTML = html;
-  } catch (error) {
-    console.error('Error loading wilayah:', error);
-    container.innerHTML = `<div class="alert alert-danger" style="font-size: 12px;"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data wilayah</div>`;
-  }
+const container = document.getElementById('wilayah-blok-container');
+try {
+const wilayahMap = {};
+pelangganDataFromLaravel.forEach(p => {
+const w = p.nama_wilayah || 'Tidak Diketahui';
+if (!wilayahMap[w]) wilayahMap[w] = { count: 0, gol: {} };
+wilayahMap[w].count++;
+const gol = p.kode_gol_trf || 'Lainnya';
+wilayahMap[w].gol[gol] = (wilayahMap[w].gol[gol] || 0) + 1;
+});
+let html = '';
+Object.entries(wilayahMap).sort((a, b) => b[1].count - a[1].count).forEach(([wilayah, data]) => {
+html += `<div class="wilayah-card"><div class="wilayah-header"><span><i class="fas fa-map-marker-alt"></i> ${wilayah}</span><span style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 12px; font-size: 11px;">${data.count} Pelanggan</span></div><div class="wilayah-blok-list">`;
+Object.entries(data.gol).forEach(([gol, count]) => {
+html += `<div class="blok-item"><div style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-layer-group" style="color: #3b82f6; font-size: 10px;"></i><span style="font-weight: 600; color: #1e293b;">Gol ${gol}</span></div><div style="display: flex; align-items: center; gap: 6px;"><span style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 2px 8px; border-radius: 10px; font-weight: 700; font-size: 11px;">${count}</span><span style="color: #64748b; font-size: 10px;">pelanggan</span></div></div>`;
+});
+html += `</div></div>`;
+});
+container.innerHTML = html;
+} catch (error) {
+console.error('Error loading wilayah:', error);
+container.innerHTML = `<div class="alert alert-danger" style="font-size: 12px;"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data wilayah</div>`;
 }
-
+}
 // ============================================
 // SEARCH & FOCUS
 // ============================================
 function performSearch() {
-  const query = document.getElementById('searchInput').value.trim().toLowerCase();
-  const filter = document.getElementById('searchFilter').value;
-  const resultsContainer = document.getElementById('searchResults');
-  if (!query && filter === 'all') {
-    resultsContainer.innerHTML = '<div class="search-empty">Ketik untuk mencari pelanggan</div>';
-    return;
-  }
-  let results = pelangganDataFromLaravel.filter(p => {
-    const status = getPaymentStatus(p);
-    if (filter !== 'all' && status.status !== filter) return false;
-    if (!query) return true;
-    const noSamb = (p.no_pelanggan || '').toLowerCase();
-    const nama = (p.nama || '').toLowerCase();
-    const wilayah = (p.nama_wilayah || '').toLowerCase();
-    const alamat = (p.lokasi || p.alamat || '').toLowerCase();
-    return noSamb.includes(query) || nama.includes(query) || wilayah.includes(query) || alamat.includes(query);
-  });
-  if (results.length === 0) {
-    resultsContainer.innerHTML = '<div class="search-empty">Tidak ditemukan pelanggan</div>';
-    return;
-  }
-  results = results.slice(0, 20);
-  let html = '';
-  results.forEach(p => {
-    const status = getPaymentStatus(p);
-    html += `<div class="search-result-item" onclick="focusOnPelanggan('${p.no_pelanggan}')"><div><div class="sr-name"><i class="fas ${status.icon}" style="color: ${status.color};"></i> ${p.nama || 'Tanpa Nama'}</div><div class="sr-detail">No: ${p.no_pelanggan} • ${p.nama_wilayah || '-'}</div></div><div class="sr-badge" style="background: ${status.color};">${status.status}</div></div>`;
-  });
-  resultsContainer.innerHTML = html;
+const query = document.getElementById('searchInput').value.trim().toLowerCase();
+const filter = document.getElementById('searchFilter').value;
+const resultsContainer = document.getElementById('searchResults');
+if (!query && filter === 'all') {
+resultsContainer.innerHTML = '<div class="search-empty">Ketik untuk mencari pelanggan</div>';
+return;
 }
-
+let results = pelangganDataFromLaravel.filter(p => {
+const status = getPaymentStatus(p);
+if (filter !== 'all' && status.status !== filter) return false;
+if (!query) return true;
+const noSamb = (p.no_pelanggan || '').toLowerCase();
+const nama = (p.nama || '').toLowerCase();
+const wilayah = (p.nama_wilayah || '').toLowerCase();
+const alamat = (p.lokasi || p.alamat || '').toLowerCase();
+return noSamb.includes(query) || nama.includes(query) || wilayah.includes(query) || alamat.includes(query);
+});
+if (results.length === 0) {
+resultsContainer.innerHTML = '<div class="search-empty">Tidak ditemukan pelanggan</div>';
+return;
+}
+results = results.slice(0, 20);
+let html = '';
+results.forEach(p => {
+const status = getPaymentStatus(p);
+html += `<div class="search-result-item" onclick="focusOnPelanggan('${p.no_pelanggan}')"><div><div class="sr-name"><i class="fas ${status.icon}" style="color: ${status.color};"></i> ${p.nama || 'Tanpa Nama'}</div><div class="sr-detail">No: ${p.no_pelanggan} • ${p.nama_wilayah || '-'}</div></div><div class="sr-badge" style="background: ${status.color};">${status.status}</div></div>`;
+});
+resultsContainer.innerHTML = html;
+}
 function clearSearch() {
-  document.getElementById('searchInput').value = '';
-  document.getElementById('searchFilter').value = 'all';
-  document.getElementById('searchResults').innerHTML = '<div class="search-empty">Ketik untuk mencari pelanggan</div>';
+document.getElementById('searchInput').value = '';
+document.getElementById('searchFilter').value = 'all';
+document.getElementById('searchResults').innerHTML = '<div class="search-empty">Ketik untuk mencari pelanggan</div>';
 }
-
 function focusOnPelanggan(noPelanggan) {
-  if (isLiveDashboardActive) stopLiveCycle();
-  const data = pelangganLayers[`pelanggan_${noPelanggan}`];
-  if (data && data.coords) {
-    map.flyTo(data.coords, 18, { duration: 1 });
-    setTimeout(() => { data.marker.openPopup(); }, 1000);
-    showNotification(`📍 Menuju pelanggan: ${noPelanggan}`, 'info');
-  } else {
-    const unpaid = unpaidCustomerList.find(u => u.data.no_pelanggan === noPelanggan);
-    if (unpaid) {
-      map.flyTo(unpaid.coords, 18, { duration: 1 });
-      setTimeout(() => { unpaid.marker.openPopup(); }, 1000);
-      showNotification(`📍 Menuju pelanggan: ${noPelanggan}`, 'info');
-    } else {
-      showNotification('Koordinat pelanggan tidak ditemukan', 'warning');
-    }
-  }
+if (isLiveDashboardActive) stopLiveCycle();
+const data = pelangganLayers[`pelanggan_${noPelanggan}`];
+if (data && data.coords) {
+map.flyTo(data.coords, 18, { duration: 1 });
+setTimeout(() => { data.marker.openPopup(); }, 1000);
+showNotification(`📍 Menuju pelanggan: ${noPelanggan}`, 'info');
+} else {
+const unpaid = unpaidCustomerList.find(u => u.data.no_pelanggan === noPelanggan);
+if (unpaid) {
+map.flyTo(unpaid.coords, 18, { duration: 1 });
+setTimeout(() => { unpaid.marker.openPopup(); }, 1000);
+showNotification(`📍 Menuju pelanggan: ${noPelanggan}`, 'info');
+} else {
+showNotification('Koordinat pelanggan tidak ditemukan', 'warning');
 }
-
+}
+}
 function focusOnJalur(id) {
-  if (isLiveDashboardActive) stopLiveCycle();
-  if (jalurLayers[id]) { map.fitBounds(jalurLayers[id].getBounds(), { padding: [50, 50] }); jalurLayers[id].openPopup(); if (window.innerWidth < 768) toggleSidebar(); }
+if (isLiveDashboardActive) stopLiveCycle();
+if (jalurLayers[id]) { map.fitBounds(jalurLayers[id].getBounds(), { padding: [50, 50] }); jalurLayers[id].openPopup(); if (window.innerWidth < 768) toggleSidebar(); }
 }
-
 function focusOnBangunan(id) {
-  if (isLiveDashboardActive) stopLiveCycle();
-  const m = markerLayers[`bangunan_${id}`]; if (m) { map.setView(m.getLatLng(), 17); m.openPopup(); if (window.innerWidth < 768) toggleSidebar(); }
+if (isLiveDashboardActive) stopLiveCycle();
+const m = markerLayers[`bangunan_${id}`]; if (m) { map.setView(m.getLatLng(), 17); m.openPopup(); if (window.innerWidth < 768) toggleSidebar(); }
 }
-
 function focusOnGangguan(id) {
-  if (isLiveDashboardActive) stopLiveCycle();
-  document.querySelectorAll('.gangguan-card, .list-item').forEach(i => i.classList.remove('active'));
-  const t = document.querySelector(`.gangguan-card[data-id="${id}"]`);
-  if (t) { t.classList.add('active'); t.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
-  if (markerLayers[`gangguan_${id}`]) { const m = markerLayers[`gangguan_${id}`]; map.flyTo(m.getLatLng(), 17, { duration: 0.8 }); setTimeout(() => m.openPopup(), 800); }
-  if (window.innerWidth < 768) toggleSidebar();
+if (isLiveDashboardActive) stopLiveCycle();
+document.querySelectorAll('.gangguan-card, .list-item').forEach(i => i.classList.remove('active'));
+const t = document.querySelector(`.gangguan-card[data-id="${id}"]`);
+if (t) { t.classList.add('active'); t.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+if (markerLayers[`gangguan_${id}`]) { const m = markerLayers[`gangguan_${id}`]; map.flyTo(m.getLatLng(), 17, { duration: 0.8 }); setTimeout(() => m.openPopup(), 800); }
+if (window.innerWidth < 768) toggleSidebar();
 }
-
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-
 function toggleFullscreen() {
-  const w = document.getElementById('mainWrapper'), b = document.getElementById('expandBtn');
-  if (!isFullscreen) {
-    if (w.requestFullscreen) w.requestFullscreen(); else if (w.webkitRequestFullscreen) w.webkitRequestFullscreen();
-    w.classList.add('is-fullscreen'); isFullscreen = true;
-    b.classList.add('active'); b.innerHTML = '<i class="fas fa-compress"></i> <span>Keluar</span>';
-  } else {
-    if (document.exitFullscreen) document.exitFullscreen(); else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-    w.classList.remove('is-fullscreen'); isFullscreen = false;
-    b.classList.remove('active'); b.innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>';
-  }
-  setTimeout(() => { if (map) map.invalidateSize(); }, 300);
+const w = document.getElementById('mainWrapper'), b = document.getElementById('expandBtn');
+if (!isFullscreen) {
+if (w.requestFullscreen) w.requestFullscreen(); else if (w.webkitRequestFullscreen) w.webkitRequestFullscreen();
+w.classList.add('is-fullscreen'); isFullscreen = true;
+b.classList.add('active'); b.innerHTML = '<i class="fas fa-compress"></i> <span>Keluar</span>';
+} else {
+if (document.exitFullscreen) document.exitFullscreen(); else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+w.classList.remove('is-fullscreen'); isFullscreen = false;
+b.classList.remove('active'); b.innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>';
 }
-
+setTimeout(() => { if (map) map.invalidateSize(); }, 300);
+}
 document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && !document.webkitFullscreenElement) { document.getElementById('mainWrapper').classList.remove('is-fullscreen'); isFullscreen = false; document.getElementById('expandBtn').classList.remove('active'); document.getElementById('expandBtn').innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>'; setTimeout(() => { if (map) map.invalidateSize(); }, 300); } });
 document.addEventListener('keydown', e => { if (e.key === 'F11') { e.preventDefault(); toggleFullscreen(); } });
-
 let waQRGenerated = false;
 function showWAQR() {
-  new bootstrap.Modal(document.getElementById('waQRModal')).show();
-  if (!waQRGenerated) {
-    document.getElementById('wa-qrcode').innerHTML = '';
-    new QRCode(document.getElementById('wa-qrcode'), { text: 'https://wa.me/6288294979966?text=Halo%20PDAM%20Tirta%20Medal', width: 220, height: 220, colorDark: '#128C7E', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
-    waQRGenerated = true;
-  }
+new bootstrap.Modal(document.getElementById('waQRModal')).show();
+if (!waQRGenerated) {
+document.getElementById('wa-qrcode').innerHTML = '';
+new QRCode(document.getElementById('wa-qrcode'), { text: 'https://wa.me/6288294979966?text=Halo%20PDAM%20Tirta%20Medal', width: 220, height: 220, colorDark: '#128C7E', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+waQRGenerated = true;
 }
-
+}
 document.addEventListener('DOMContentLoaded', initMap);
-
 // 🔥 HENTIKAN POLLING SAAT HALAMAN DITUTUP
 window.addEventListener('beforeunload', () => {
-  stopRealtimePolling();
+stopRealtimePolling();
 });
 </script>
 </body>
