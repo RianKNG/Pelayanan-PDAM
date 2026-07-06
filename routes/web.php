@@ -51,12 +51,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('/gangguan/{gangguan}', [GangguanController::class, 'destroy'])->name('gangguan.destroy');
     
     // Drawing routes
-    Route::get('/drawing', [DrawingController::class, 'index'])->name('drawing.index');
-    Route::post('/drawing/jalur', [DrawingController::class, 'saveJalur'])->name('drawing.jalur');
-    Route::post('/drawing/bangunan', [DrawingController::class, 'saveBangunan'])->name('drawing.bangunan');
-    Route::post('/drawing/titik', [DrawingController::class, 'saveTitik'])->name('drawing.titik');
-    Route::delete('/drawing/jalur/{id}', [DrawingController::class, 'deleteJalur'])->name('drawing.jalur.delete');
-    Route::delete('/drawing/bangunan/{id}', [DrawingController::class, 'deleteBangunan'])->name('drawing.bangunan.delete');
-    Route::delete('/drawing/titik/{id}', [DrawingController::class, 'deleteTitik'])->name('drawing.titik.delete');
+Route::get('/drawing', [DrawingController::class, 'index'])->name('drawing.index');
+Route::post('/drawing/jalur', [DrawingController::class, 'saveJalur'])->name('drawing.jalur');
+Route::post('/drawing/bangunan', [DrawingController::class, 'saveBangunan'])->name('drawing.bangunan');
+Route::post('/drawing/titik', [DrawingController::class, 'saveTitik'])->name('drawing.titik');
+Route::post('/drawing/zona', [DrawingController::class, 'saveZona'])->name('drawing.zona'); // BARU
+Route::delete('/drawing/jalur/{id}', [DrawingController::class, 'deleteJalur'])->name('drawing.jalur.delete');
+Route::delete('/drawing/bangunan/{id}', [DrawingController::class, 'deleteBangunan'])->name('drawing.bangunan.delete');
+Route::delete('/drawing/titik/{id}', [DrawingController::class, 'deleteTitik'])->name('drawing.titik.delete');
+Route::delete('/drawing/zona/{id}', [DrawingController::class, 'deleteZona'])->name('drawing.zona.delete'); // BARU
     
 });

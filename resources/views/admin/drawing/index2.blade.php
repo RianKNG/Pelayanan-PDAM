@@ -21,6 +21,7 @@
         .main-container { display: flex; height: calc(100vh - 60px); }
         #map { flex: 1; height: 100%; }
         
+        /* Sidebar */
         .sidebar {
             width: 380px; background: #f8fafc;
             box-shadow: -2px 0 10px rgba(0,0,0,0.1);
@@ -40,14 +41,13 @@
             margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
         }
         
-        .stats-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 5px; }
-        .stat-box { color: white; padding: 10px 6px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .stats-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 5px; }
+        .stat-box { color: white; padding: 12px 8px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .stat-box.bg-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .stat-box.bg-success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
         .stat-box.bg-warning { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-        .stat-box.bg-info { background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%); }
-        .stat-number { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
-        .stat-label { font-size: 9px; opacity: 0.95; font-weight: 500; }
+        .stat-number { font-size: 22px; font-weight: 700; margin-bottom: 3px; }
+        .stat-label { font-size: 10px; opacity: 0.95; font-weight: 500; }
         
         .group-section { margin-bottom: 8px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
         .group-header {
@@ -105,7 +105,8 @@
         }
         .color-option:hover, .color-option.selected { border-color: #1e293b; transform: scale(1.1); }
         
-        .custom-popup { font-family: 'Segoe UI', sans-serif; min-width: 280px; }
+        /* Custom Popup */
+        .custom-popup { font-family: 'Segoe UI', sans-serif; min-width: 260px; }
         .popup-header {
             font-weight: 700; font-size: 14px; margin-bottom: 8px;
             color: #1e293b; padding-bottom: 6px; border-bottom: 2px solid #e2e8f0;
@@ -127,55 +128,6 @@
         .popup-stat-value { font-size: 16px; font-weight: 700; color: #1e3c72; }
         .popup-stat-label { font-size: 10px; color: #64748b; text-transform: uppercase; }
         
-        /* ELEVATION PROFILE CHART */
-        .elevation-profile {
-            background: linear-gradient(to bottom, #e0f2fe 0%, #fef3c7 100%);
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 10px;
-            border: 1px solid #e2e8f0;
-        }
-        .elevation-title {
-            font-size: 11px;
-            font-weight: 700;
-            color: #1e3c72;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .elevation-chart {
-            width: 100%;
-            height: 80px;
-            background: white;
-            border-radius: 6px;
-            position: relative;
-            overflow: hidden;
-        }
-        .elevation-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            margin-top: 8px;
-        }
-        .elevation-stat-item {
-            text-align: center;
-            padding: 4px;
-            background: white;
-            border-radius: 4px;
-            border: 1px solid #e2e8f0;
-        }
-        .elevation-stat-value {
-            font-size: 12px;
-            font-weight: 700;
-            color: #1e3c72;
-        }
-        .elevation-stat-label {
-            font-size: 9px;
-            color: #64748b;
-            text-transform: uppercase;
-        }
-        
         .leaflet-draw-toolbar a { border-radius: 8px !important; }
         .badge-count {
             background: #e2e8f0; color: #475569;
@@ -183,6 +135,9 @@
             font-size: 11px; font-weight: 600; margin-left: auto;
         }
         
+        /* ============================== */
+        /* CUSTOM MARKER STYLES           */
+        /* ============================== */
         .custom-div-icon { background: transparent !important; border: none !important; }
         
         .marker-wrapper {
@@ -214,6 +169,7 @@
         .shape-diamond { border-radius: 4px; transform: rotate(45deg); }
         .shape-diamond i { transform: rotate(-45deg); }
         
+        /* IMAGE MARKER STYLES */
         .marker-image-wrapper {
             position: relative;
             display: flex;
@@ -235,6 +191,7 @@
         
         .marker-image:hover { transform: scale(1.15); z-index: 10; }
         .marker-image-square { border-radius: 8px; }
+        .marker-image-pin { border-radius: 50% 50% 50% 0; transform: rotate(-45deg); }
         
         .marker-label {
             position: absolute;
@@ -266,34 +223,20 @@
         }
         
         @keyframes pulse-animation {
-            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-            70% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; box-shadow: 0 0 0 0 currentColor; }
+            70% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; box-shadow: 0 0 0 20px currentColor; }
             100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
         }
         
-        /* ZONE LABEL ON MAP */
-        .zone-label-icon {
-            background: rgba(255, 255, 255, 0.95);
-            border: 2px solid;
-            border-radius: 8px;
-            padding: 4px 10px;
-            font-weight: 700;
-            font-size: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
+        /* Legend Map */
         .map-legend {
             background: white;
             padding: 12px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             font-size: 11px;
-            max-width: 260px;
-            max-height: 500px;
+            max-width: 240px;
+            max-height: 450px;
             overflow-y: auto;
         }
         .legend-title { font-weight: 700; margin-bottom: 8px; color: #1e293b; font-size: 12px; }
@@ -318,19 +261,13 @@
         }
         .legend-marker img { width: 100%; height: 100%; object-fit: cover; }
         .legend-line { width: 20px; height: 4px; border-radius: 2px; flex-shrink: 0; }
-        .legend-area {
-            width: 20px; height: 14px;
-            border-radius: 3px;
-            flex-shrink: 0;
-            border: 2px solid;
-            opacity: 0.7;
-        }
         
+        /* Filter Tabs */
         .filter-tabs {
             position: absolute; top: 10px; right: 10px;
             background: white; padding: 8px; border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.15); z-index: 500;
-            display: flex; gap: 5px; flex-wrap: wrap; max-width: 420px;
+            display: flex; gap: 5px; flex-wrap: wrap; max-width: 320px;
         }
         .filter-tab {
             padding: 5px 10px; border-radius: 15px;
@@ -341,6 +278,9 @@
         .filter-tab:hover { background: #e2e8f0; }
         .filter-tab.active { background: #1e3c72; color: white; border-color: #1e3c72; }
         
+        /* ============================== */
+        /* MAP MODE SWITCHER (BARU!)      */
+        /* ============================== */
         .map-mode-switcher {
             position: absolute;
             top: 60px;
@@ -420,6 +360,7 @@
         .map-mode-icon-topo { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #92400e !important; }
         .map-mode-icon-dark { background: linear-gradient(135deg, #1f2937, #374151); color: #fbbf24 !important; }
         
+        /* Customize Button */
         .btn-customize {
             background: linear-gradient(135deg, #8b5cf6, #7c3aed);
             color: white;
@@ -441,13 +382,7 @@
             box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
         }
         
-        .btn-customize-zone {
-            background: linear-gradient(135deg, #f59e0b, #f97316);
-        }
-        .btn-customize-zone:hover {
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-        }
-        
+        /* Custom Type Item */
         .custom-type-item {
             display: flex;
             align-items: center;
@@ -498,6 +433,7 @@
             border-radius: 4px;
         }
         
+        /* Image Upload Area */
         .image-upload-area {
             border: 2px dashed #cbd5e1;
             border-radius: 10px;
@@ -553,6 +489,7 @@
             color: white;
         }
         
+        /* Mode Toggle */
         .mode-toggle {
             display: flex;
             gap: 8px;
@@ -585,27 +522,6 @@
         
         .mode-content { display: none; }
         .mode-content.active { display: block; }
-        
-        /* Elevation input styling */
-        .elevation-input-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .elevation-input-group input {
-            flex: 1;
-        }
-        .elevation-unit {
-            font-size: 12px;
-            font-weight: 600;
-            color: #64748b;
-            min-width: 30px;
-        }
-        .elevation-helper {
-            font-size: 10px;
-            color: #94a3b8;
-            margin-top: 4px;
-        }
     </style>
 </head>
 <body>
@@ -629,9 +545,6 @@
                 <div class="filter-tab active" data-layer="all" onclick="toggleLayer('all', this)">
                     <i class="fas fa-layer-group"></i> Semua
                 </div>
-                <div class="filter-tab active" data-layer="zona" onclick="toggleLayer('zona', this)">
-                    <i class="fas fa-map-marked-alt"></i> Zona
-                </div>
                 <div class="filter-tab active" data-layer="jalur" onclick="toggleLayer('jalur', this)">
                     <i class="fas fa-route"></i> Jalur
                 </div>
@@ -643,29 +556,39 @@
                 </div>
             </div>
             
-            <!-- MAP MODE SWITCHER -->
+            <!-- MAP MODE SWITCHER (BARU!) -->
             <div class="map-mode-switcher">
                 <div class="map-mode-title">
                     <i class="fas fa-map"></i> Mode Peta
                 </div>
                 <div class="map-mode-btn active" data-mode="street" onclick="switchMapMode('street', this)">
-                    <div class="map-mode-icon map-mode-icon-street"><i class="fas fa-road"></i></div>
+                    <div class="map-mode-icon map-mode-icon-street">
+                        <i class="fas fa-road"></i>
+                    </div>
                     <span>Jalan</span>
                 </div>
                 <div class="map-mode-btn" data-mode="satellite" onclick="switchMapMode('satellite', this)">
-                    <div class="map-mode-icon map-mode-icon-satellite"><i class="fas fa-satellite"></i></div>
+                    <div class="map-mode-icon map-mode-icon-satellite">
+                        <i class="fas fa-satellite"></i>
+                    </div>
                     <span>Satelit</span>
                 </div>
                 <div class="map-mode-btn" data-mode="hybrid" onclick="switchMapMode('hybrid', this)">
-                    <div class="map-mode-icon map-mode-icon-hybrid"><i class="fas fa-layer-group"></i></div>
+                    <div class="map-mode-icon map-mode-icon-hybrid">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
                     <span>Hybrid</span>
                 </div>
                 <div class="map-mode-btn" data-mode="topo" onclick="switchMapMode('topo', this)">
-                    <div class="map-mode-icon map-mode-icon-topo"><i class="fas fa-mountain"></i></div>
+                    <div class="map-mode-icon map-mode-icon-topo">
+                        <i class="fas fa-mountain"></i>
+                    </div>
                     <span>Topografi</span>
                 </div>
                 <div class="map-mode-btn" data-mode="dark" onclick="switchMapMode('dark', this)">
-                    <div class="map-mode-icon map-mode-icon-dark"><i class="fas fa-moon"></i></div>
+                    <div class="map-mode-icon map-mode-icon-dark">
+                        <i class="fas fa-moon"></i>
+                    </div>
                     <span>Gelap</span>
                 </div>
             </div>
@@ -679,10 +602,6 @@
                     <i class="fas fa-chart-pie text-primary"></i> Ringkasan Data
                 </div>
                 <div class="stats-summary">
-                    <div class="stat-box bg-info">
-                        <div class="stat-number">{{ $zonaList->count() ?? 0 }}</div>
-                        <div class="stat-label">Zona</div>
-                    </div>
                     <div class="stat-box bg-primary">
                         <div class="stat-number">{{ $jalurPipa->count() }}</div>
                         <div class="stat-label">Jalur Pipa</div>
@@ -696,72 +615,6 @@
                         <div class="stat-label">Titik Penting</div>
                     </div>
                 </div>
-            </div>
-
-            <!-- ============ ZONA (BARU!) ============ -->
-            <div class="sidebar-section">
-                <div class="sidebar-title">
-                    <i class="fas fa-map-marked-alt" style="color: #f59e0b;"></i>
-                    <span>Zona Wilayah</span>
-                    <span class="badge-count">{{ $zonaList->count() ?? 0 }}</span>
-                </div>
-                
-                <div id="zona-groups-container">
-                    @php
-                        $jenisZonaList = collect($zonaList ?? [])->pluck('jenis_zona')->unique()->filter()->sort();
-                    @endphp
-                    
-                    @foreach($jenisZonaList as $jenis)
-                    @php
-                        $zonaItems = collect($zonaList ?? [])->where('jenis_zona', $jenis);
-                        $zonaColor = $zonaItems->first()->warna ?? '#f59e0b';
-                    @endphp
-                    <div class="group-section">
-                        <div class="group-header" onclick="toggleGroup('zona-{{ Str::slug($jenis) }}', this)">
-                            <i class="fas fa-chevron-down"></i>
-                            <span class="color-dot" style="background: {{ $zonaColor }};"></span>
-                            <span>{{ $jenis }}</span>
-                            <span class="badge-count">{{ $zonaItems->count() }}</span>
-                        </div>
-                        <div id="zona-{{ Str::slug($jenis) }}" class="group-content">
-                            <div class="layer-list">
-                                @foreach($zonaItems as $z)
-                                <div class="layer-item" data-id="{{ $z->id }}" data-type="zona" onclick="focusOnZona({{ $z->id }})">
-                                    <div class="layer-info">
-                                        <div class="layer-name">
-                                            <span class="color-dot" style="background: {{ $z->warna }}"></span>
-                                            {{ $z->nama_zona }}
-                                        </div>
-                                        <div class="layer-meta">
-                                            <i class="fas fa-tag"></i> {{ $z->jenis_zona }}
-                                            @if($z->elevasi_min || $z->elevasi_max)
-                                            <span style="margin-left: 8px;">
-                                                <i class="fas fa-mountain"></i> 
-                                                {{ $z->elevasi_min ?? '?' }} - {{ $z->elevasi_max ?? '?' }} mdpl
-                                            </span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <button class="btn-delete" onclick="event.stopPropagation(); deleteZona({{ $z->id }})" title="Hapus">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-                    
-                    @if(($zonaList->count() ?? 0) === 0)
-                    <div class="empty-state">Belum ada data zona</div>
-                    @endif
-                </div>
-                
-                <button class="btn-customize btn-customize-zone" onclick="openCustomTypeModal('zona')">
-                    <i class="fas fa-plus-circle"></i> Tambah Jenis Zona
-                </button>
-                
-                <div id="custom-zona-types-list" style="margin-top: 10px;"></div>
             </div>
 
             <!-- Jalur Pipa -->
@@ -832,6 +685,7 @@
                     </div>
                 </div>
 
+                <!-- Jalur Tersier -->
                 <div class="group-section">
                     <div class="group-header" onclick="toggleGroup('jalur-tersier', this)">
                         <i class="fas fa-chevron-down"></i>
@@ -980,11 +834,6 @@
                                         </div>
                                         <div class="layer-meta">
                                             <i class="fas fa-tag"></i> {{ ucfirst($t->jenis_titik) }}
-                                            @if($t->elevasi)
-                                            <span style="margin-left: 8px;">
-                                                <i class="fas fa-mountain"></i> {{ $t->elevasi }} mdpl
-                                            </span>
-                                            @endif
                                         </div>
                                     </div>
                                     <button class="btn-delete" onclick="event.stopPropagation(); deleteTitik({{ $t->id }})" title="Hapus">
@@ -1132,7 +981,7 @@
         </div>
     </div>
 
-    <!-- Modal Form Titik (DENGAN ELEVASI!) -->
+    <!-- Modal Form Titik -->
     <div class="modal fade" id="modalTitik" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -1158,25 +1007,6 @@
                                 <option value="lainnya">Lainnya</option>
                             </select>
                         </div>
-                        <!-- ELEVASI BARU! -->
-                        <div class="mb-3">
-                            <label class="form-label">
-                                <i class="fas fa-mountain" style="color: #f59e0b;"></i> 
-                                Elevasi / Ketinggian
-                            </label>
-                            <div class="elevation-input-group">
-                                <input type="number" name="elevasi" class="form-control" 
-                                       placeholder="Contoh: 750" step="0.1" min="-500" max="9000">
-                                <span class="elevation-unit">mdpl</span>
-                            </div>
-                            <div class="elevation-helper">
-                                <i class="fas fa-info-circle"></i> 
-                                Meter di atas permukaan laut (opsional). 
-                                <a href="#" onclick="getElevationFromCoords(); return false;" style="color: #3b82f6;">
-                                    <i class="fas fa-crosshairs"></i> Ambil otomatis dari koordinat
-                                </a>
-                            </div>
-                        </div>
                         <div class="mb-3">
                             <label class="form-label">Keterangan</label>
                             <textarea name="keterangan" class="form-control" rows="2"></textarea>
@@ -1191,97 +1021,7 @@
         </div>
     </div>
 
-    <!-- Modal Form Zona (BARU!) -->
-    <div class="modal fade" id="modalZona" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header" style="background: linear-gradient(135deg, #f59e0b, #f97316); color: white;">
-                    <h5 class="modal-title"><i class="fas fa-map-marked-alt"></i> Simpan Zona Wilayah</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <form id="formZona">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Nama Zona *</label>
-                            <input type="text" name="nama_zona" class="form-control" 
-                                   placeholder="Contoh: Zona 1 Utara, DAS Cimanuk, dll" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Jenis Zona *</label>
-                            <select name="jenis_zona" id="selectJenisZona" class="form-control" required>
-                                <option value="Zona 1">Zona 1</option>
-                                <option value="Zona 2">Zona 2</option>
-                                <option value="Zona 3">Zona 3</option>
-                                <option value="Zona 4">Zona 4</option>
-                                <option value="Zona 5">Zona 5</option>
-                                <option value="DAS">DAS (Daerah Aliran Sungai)</option>
-                                <option value="Sub DAS">Sub DAS</option>
-                                <option value="Cekungan">Cekungan</option>
-                                <option value="Lainnya">Lainnya</option>
-                            </select>
-                            <small class="text-muted">Bisa tambah jenis baru via tombol "Tambah Jenis Zona"</small>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Warna Zona *</label>
-                            <div class="color-picker">
-                                <div class="color-option selected" style="background: #f59e0b" data-color="#f59e0b"></div>
-                                <div class="color-option" style="background: #ef4444" data-color="#ef4444"></div>
-                                <div class="color-option" style="background: #10b981" data-color="#10b981"></div>
-                                <div class="color-option" style="background: #3b82f6" data-color="#3b82f6"></div>
-                                <div class="color-option" style="background: #8b5cf6" data-color="#8b5cf6"></div>
-                                <div class="color-option" style="background: #06b6d4" data-color="#06b6d4"></div>
-                                <div class="color-option" style="background: #ec4899" data-color="#ec4899"></div>
-                                <div class="color-option" style="background: #84cc16" data-color="#84cc16"></div>
-                            </div>
-                            <input type="hidden" name="warna" value="#f59e0b">
-                        </div>
-                        <!-- ELEVASI ZONA -->
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="mb-3">
-                                    <label class="form-label">
-                                        <i class="fas fa-arrow-down" style="color: #10b981;"></i> 
-                                        Elevasi Min
-                                    </label>
-                                    <div class="elevation-input-group">
-                                        <input type="number" name="elevasi_min" class="form-control" 
-                                               placeholder="min" step="0.1">
-                                        <span class="elevation-unit">mdpl</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="mb-3">
-                                    <label class="form-label">
-                                        <i class="fas fa-arrow-up" style="color: #ef4444;"></i> 
-                                        Elevasi Max
-                                    </label>
-                                    <div class="elevation-input-group">
-                                        <input type="number" name="elevasi_max" class="form-control" 
-                                               placeholder="max" step="0.1">
-                                        <span class="elevation-unit">mdpl</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Keterangan</label>
-                            <textarea name="keterangan" class="form-control" rows="2" 
-                                      placeholder="Deskripsi zona, cakupan wilayah, dll"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-warning text-white">
-                            <i class="fas fa-save"></i> Simpan Zona
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Custom Type (untuk Titik, Bangunan, Zona) -->
+    <!-- Modal Custom Type -->
     <div class="modal fade" id="modalCustomType" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -1295,13 +1035,11 @@
                         
                         <div class="mb-3">
                             <label class="form-label">Nama Jenis *</label>
-                            <input type="text" id="customTypeName" class="form-control" 
-                                   placeholder="Contoh: Valve Utama, Gudang, Zona 6, DAS Cimanuk, dll" required>
+                            <input type="text" id="customTypeName" class="form-control" placeholder="Contoh: Valve Utama, Gudang, dll" required>
                             <small class="text-muted">Akan otomatis tersimpan untuk penggunaan berikutnya</small>
                         </div>
                         
-                        <!-- MODE TOGGLE (hanya untuk titik & bangunan) -->
-                        <div class="mb-3" id="markerModeSection">
+                        <div class="mb-3">
                             <label class="form-label">Mode Marker *</label>
                             <div class="mode-toggle">
                                 <div class="mode-toggle-btn active" data-mode="icon" onclick="switchMarkerMode('icon')">
@@ -1313,7 +1051,6 @@
                             </div>
                         </div>
                         
-                        <!-- MODE: ICON -->
                         <div class="mode-content active" id="mode-icon">
                             <div class="mb-3">
                                 <label class="form-label">Icon FontAwesome *</label>
@@ -1347,16 +1084,9 @@
                                         <option value="fa-store">🏪 Store</option>
                                         <option value="fa-church">⛪ Church</option>
                                     </optgroup>
-                                    <optgroup label="Geografi & Zona">
-                                        <option value="fa-mountain">⛰️ Mountain</option>
-                                        <option value="fa-hill-rockslide">🏔️ Hill</option>
-                                        <option value="fa-water">🌊 Water</option>
-                                        <option value="fa-tree">🌳 Tree</option>
-                                        <option value="fa-globe">🌍 Globe</option>
-                                        <option value="fa-map-marked-alt">🗺️ Map</option>
-                                    </optgroup>
                                     <optgroup label="Lainnya">
                                         <option value="fa-fire">🔥 Fire</option>
+                                        <option value="fa-tree">🌳 Tree</option>
                                         <option value="fa-car">🚗 Car</option>
                                         <option value="fa-truck">🚚 Truck</option>
                                         <option value="fa-bus">🚌 Bus</option>
@@ -1391,7 +1121,6 @@
                             </div>
                         </div>
                         
-                        <!-- MODE: IMAGE -->
                         <div class="mode-content" id="mode-image">
                             <div class="mb-3">
                                 <label class="form-label">Upload Gambar Marker *</label>
@@ -1457,7 +1186,6 @@
     const jalurData = @json($jalurPipa);
     const bangunanData = @json($bangunan);
     const titikData = @json($titikPenting);
-    const zonaData = @json($zonaList ?? []);
 
     let map, drawnItems;
     let tempLayer = null, tempType = null, tempCoords = null;
@@ -1465,18 +1193,16 @@
     let jalurLayers = {};
     let bangunanLayers = {};
     let titikLayers = {};
-    let zonaLayers = {};
     let activeHighlight = null;
     
     let layerGroups = {
-        zona: L.layerGroup(),
         jalur: L.layerGroup(),
         bangunan: L.layerGroup(),
         titik: L.layerGroup()
     };
 
     // ============================================
-    // BASE MAP MODES
+    // KONFIGURASI BASE MAP (MODE PETA) - BARU!
     // ============================================
     const baseMaps = {
         street: {
@@ -1490,15 +1216,24 @@
             name: 'Satelit',
             layer: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 maxZoom: 19,
-                attribution: 'Tiles © Esri'
+                attribution: 'Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
             })
         },
         hybrid: {
             name: 'Hybrid',
             layers: [
-                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 }),
-                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 }),
-                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 })
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 19,
+                    attribution: 'Tiles © Esri'
+                }),
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 19,
+                    attribution: 'Tiles © Esri'
+                }),
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 19,
+                    attribution: 'Tiles © Esri'
+                })
             ]
         },
         topo: {
@@ -1520,35 +1255,50 @@
     let currentBaseMap = 'street';
     let activeBaseLayers = [];
 
+    // ============================================
+    // FUNGSI SWITCH MODE PETA - BARU!
+    // ============================================
     function switchMapMode(mode, element) {
-        if (!baseMaps[mode]) return;
+        if (!baseMaps[mode]) {
+            console.error('Mode peta tidak ditemukan:', mode);
+            return;
+        }
 
+        // Update UI button
         document.querySelectorAll('.map-mode-btn').forEach(btn => btn.classList.remove('active'));
         if (element) element.classList.add('active');
 
+        // Hapus semua base layer yang aktif
         activeBaseLayers.forEach(layer => {
             if (map.hasLayer(layer)) map.removeLayer(layer);
         });
         activeBaseLayers = [];
 
+        // Tambahkan base layer baru
         const mapConfig = baseMaps[mode];
         
         if (mapConfig.layers) {
+            // Untuk hybrid (multi-layer)
             mapConfig.layers.forEach(layer => {
                 layer.addTo(map);
                 activeBaseLayers.push(layer);
             });
         } else {
+            // Untuk single layer
             mapConfig.layer.addTo(map);
             activeBaseLayers.push(mapConfig.layer);
         }
 
         currentBaseMap = mode;
+        
+        // Simpan preferensi user
         localStorage.setItem('preferredMapMode', mode);
+        
+        console.log('🗺️ Mode peta diubah ke:', mapConfig.name);
     }
 
     // ============================================
-    // DEFAULT CONFIG
+    // KONFIGURASI CUSTOM MARKER (DEFAULT)
     // ============================================
     const defaultTitikConfig = {
         'valve':      { mode: 'icon', icon: 'fa-toggle-on',      color: '#ef4444', shape: 'circle', label: 'Valve' },
@@ -1573,43 +1323,30 @@
         'lainnya':      { mode: 'icon', icon: 'fa-building',      color: '#6b7280', shape: 'square', label: 'Lainnya' }
     };
 
-    // Zona config (untuk custom types)
-    const defaultZonaConfig = {
-        'Zona 1':   { mode: 'icon', icon: 'fa-map-marked-alt', color: '#ef4444', shape: 'square', label: 'Zona 1' },
-        'Zona 2':   { mode: 'icon', icon: 'fa-map-marked-alt', color: '#3b82f6', shape: 'square', label: 'Zona 2' },
-        'Zona 3':   { mode: 'icon', icon: 'fa-map-marked-alt', color: '#10b981', shape: 'square', label: 'Zona 3' },
-        'Zona 4':   { mode: 'icon', icon: 'fa-map-marked-alt', color: '#f59e0b', shape: 'square', label: 'Zona 4' },
-        'DAS':      { mode: 'icon', icon: 'fa-water',          color: '#06b6d4', shape: 'diamond', label: 'DAS' },
-        'Sub DAS':  { mode: 'icon', icon: 'fa-water',          color: '#0891b2', shape: 'diamond', label: 'Sub DAS' },
-        'Cekungan': { mode: 'icon', icon: 'fa-mountain',       color: '#8b5cf6', shape: 'diamond', label: 'Cekungan' }
-    };
-
     // ============================================
-    // CUSTOM TYPE MANAGEMENT
+    // CUSTOM TYPE MANAGEMENT (localStorage)
     // ============================================
     let customTitikTypes = {};
     let customBangunanTypes = {};
-    let customZonaTypes = {};
     let titikConfig = {...defaultTitikConfig};
     let bangunanConfig = {...defaultBangunanConfig};
-    let zonaConfig = {...defaultZonaConfig};
     let currentMarkerMode = 'icon';
 
     function loadCustomTypes() {
         try {
             const savedTitik = localStorage.getItem('customTitikTypes');
             const savedBangunan = localStorage.getItem('customBangunanTypes');
-            const savedZona = localStorage.getItem('customZonaTypes');
             
             if (savedTitik) customTitikTypes = JSON.parse(savedTitik);
             if (savedBangunan) customBangunanTypes = JSON.parse(savedBangunan);
-            if (savedZona) customZonaTypes = JSON.parse(savedZona);
             
             titikConfig = {...defaultTitikConfig, ...customTitikTypes};
             bangunanConfig = {...defaultBangunanConfig, ...customBangunanTypes};
-            zonaConfig = {...defaultZonaConfig, ...customZonaTypes};
             
-            console.log('✅ Custom types loaded');
+            console.log('✅ Custom types loaded:', {
+                titik: Object.keys(customTitikTypes).length,
+                bangunan: Object.keys(customBangunanTypes).length
+            });
         } catch (e) {
             console.error('Error loading custom types:', e);
         }
@@ -1618,7 +1355,6 @@
     function saveCustomTypes() {
         localStorage.setItem('customTitikTypes', JSON.stringify(customTitikTypes));
         localStorage.setItem('customBangunanTypes', JSON.stringify(customBangunanTypes));
-        localStorage.setItem('customZonaTypes', JSON.stringify(customZonaTypes));
     }
 
     function addCustomType(category, key, config) {
@@ -1628,9 +1364,6 @@
         } else if (category === 'bangunan') {
             customBangunanTypes[key] = config;
             bangunanConfig[key] = config;
-        } else if (category === 'zona') {
-            customZonaTypes[key] = config;
-            zonaConfig[key] = config;
         }
         saveCustomTypes();
         updateDropdowns();
@@ -1639,7 +1372,9 @@
     }
 
     function deleteCustomType(category, key) {
-        if (!confirm(`Hapus jenis "${key}"?`)) return;
+        if (!confirm(`Hapus jenis "${key}"? Data yang sudah menggunakan jenis ini akan tetap ada tapi menggunakan icon default.`)) {
+            return;
+        }
         
         if (category === 'titik') {
             delete customTitikTypes[key];
@@ -1647,9 +1382,6 @@
         } else if (category === 'bangunan') {
             delete customBangunanTypes[key];
             delete bangunanConfig[key];
-        } else if (category === 'zona') {
-            delete customZonaTypes[key];
-            delete zonaConfig[key];
         }
         
         saveCustomTypes();
@@ -1682,100 +1414,75 @@
                 selectBangunan.appendChild(option);
             });
         }
-        
-        const selectZona = document.getElementById('selectJenisZona');
-        if (selectZona) {
-            selectZona.querySelectorAll('option[data-custom="true"]').forEach(opt => opt.remove());
-            Object.keys(customZonaTypes).forEach(key => {
-                const option = document.createElement('option');
-                option.value = key;
-                option.textContent = customZonaTypes[key].label || key;
-                option.setAttribute('data-custom', 'true');
-                selectZona.appendChild(option);
-            });
-        }
     }
 
     function renderCustomTypesList() {
-        // Render for titik & bangunan
         const container = document.getElementById('custom-types-list');
-        if (container) {
-            let html = '';
-            
-            Object.keys(customTitikTypes).forEach(key => {
-                const cfg = customTitikTypes[key];
-                let iconHtml = cfg.mode === 'image' && cfg.image ? 
-                    `<img src="${cfg.image}" alt="${cfg.label}">` : 
-                    `<i class="fas ${cfg.icon || 'fa-map-pin'}"></i>`;
-                const bgColor = cfg.mode === 'image' ? 'transparent' : (cfg.color || '#6b7280');
-                
-                html += `
-                    <div class="custom-type-item">
-                        <div class="type-info">
-                            <div class="type-icon" style="background: ${bgColor};">${iconHtml}</div>
-                            <div>
-                                <div style="font-weight: 600;">${cfg.label}</div>
-                                <div style="font-size: 10px; color: #64748b;">Titik • ${cfg.mode === 'image' ? '📷' : '🎨'}</div>
-                            </div>
-                        </div>
-                        <button class="btn-delete-type" onclick="deleteCustomType('titik', '${key}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-            });
-            
-            Object.keys(customBangunanTypes).forEach(key => {
-                const cfg = customBangunanTypes[key];
-                let iconHtml = cfg.mode === 'image' && cfg.image ? 
-                    `<img src="${cfg.image}" alt="${cfg.label}">` : 
-                    `<i class="fas ${cfg.icon || 'fa-building'}"></i>`;
-                const bgColor = cfg.mode === 'image' ? 'transparent' : (cfg.color || '#6b7280');
-                
-                html += `
-                    <div class="custom-type-item">
-                        <div class="type-info">
-                            <div class="type-icon" style="background: ${bgColor};">${iconHtml}</div>
-                            <div>
-                                <div style="font-weight: 600;">${cfg.label}</div>
-                                <div style="font-size: 10px; color: #64748b;">Bangunan • ${cfg.mode === 'image' ? '📷' : '🎨'}</div>
-                            </div>
-                        </div>
-                        <button class="btn-delete-type" onclick="deleteCustomType('bangunan', '${key}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
+        if (!container) return;
         
-        // Render for zona
-        const zonaContainer = document.getElementById('custom-zona-types-list');
-        if (zonaContainer) {
-            let html = '';
-            Object.keys(customZonaTypes).forEach(key => {
-                const cfg = customZonaTypes[key];
-                html += `
-                    <div class="custom-type-item">
-                        <div class="type-info">
-                            <div class="type-icon" style="background: ${cfg.color || '#f59e0b'};">
-                                <i class="fas ${cfg.icon || 'fa-map-marked-alt'}"></i>
-                            </div>
-                            <div>
-                                <div style="font-weight: 600;">${cfg.label}</div>
-                                <div style="font-size: 10px; color: #64748b;">Jenis Zona</div>
-                            </div>
+        let html = '';
+        
+        Object.keys(customTitikTypes).forEach(key => {
+            const cfg = customTitikTypes[key];
+            let iconHtml = '';
+            
+            if (cfg.mode === 'image' && cfg.image) {
+                iconHtml = `<img src="${cfg.image}" alt="${cfg.label}">`;
+            } else {
+                iconHtml = `<i class="fas ${cfg.icon || 'fa-map-pin'}"></i>`;
+            }
+            
+            const bgColor = cfg.mode === 'image' ? 'transparent' : (cfg.color || '#6b7280');
+            
+            html += `
+                <div class="custom-type-item">
+                    <div class="type-info">
+                        <div class="type-icon" style="background: ${bgColor};">
+                            ${iconHtml}
                         </div>
-                        <button class="btn-delete-type" onclick="deleteCustomType('zona', '${key}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <div>
+                            <div style="font-weight: 600;">${cfg.label}</div>
+                            <div style="font-size: 10px; color: #64748b;">Titik Penting • ${cfg.mode === 'image' ? '📷 Gambar' : '🎨 Icon'}</div>
+                        </div>
                     </div>
-                `;
-            });
-            zonaContainer.innerHTML = html;
-        }
+                    <button class="btn-delete-type" onclick="deleteCustomType('titik', '${key}')" title="Hapus">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+        });
+        
+        Object.keys(customBangunanTypes).forEach(key => {
+            const cfg = customBangunanTypes[key];
+            let iconHtml = '';
+            
+            if (cfg.mode === 'image' && cfg.image) {
+                iconHtml = `<img src="${cfg.image}" alt="${cfg.label}">`;
+            } else {
+                iconHtml = `<i class="fas ${cfg.icon || 'fa-building'}"></i>`;
+            }
+            
+            const bgColor = cfg.mode === 'image' ? 'transparent' : (cfg.color || '#6b7280');
+            
+            html += `
+                <div class="custom-type-item">
+                    <div class="type-info">
+                        <div class="type-icon" style="background: ${bgColor};">
+                            ${iconHtml}
+                        </div>
+                        <div>
+                            <div style="font-weight: 600;">${cfg.label}</div>
+                            <div style="font-size: 10px; color: #64748b;">Bangunan • ${cfg.mode === 'image' ? '📷 Gambar' : '🎨 Icon'}</div>
+                        </div>
+                    </div>
+                    <button class="btn-delete-type" onclick="deleteCustomType('bangunan', '${key}')" title="Hapus">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
     }
 
     function switchMarkerMode(mode) {
@@ -1784,7 +1491,7 @@
             btn.classList.remove('active');
             if (btn.dataset.mode === mode) btn.classList.add('active');
         });
-        document.querySelectorAll('.mode-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.mode-content').forEach(content => content.classList.remove('active'));
         document.getElementById('mode-' + mode).classList.add('active');
         updatePreview();
     }
@@ -1837,23 +1544,8 @@
 
     function openCustomTypeModal(category) {
         document.getElementById('customTypeCategory').value = category;
-        
-        const titles = {
-            'titik': 'Tambah Jenis Titik Penting',
-            'bangunan': 'Tambah Jenis Bangunan',
-            'zona': 'Tambah Jenis Zona'
-        };
-        document.getElementById('customTypeTitle').textContent = titles[category] || 'Tambah Jenis Baru';
-        
-        // Hide marker mode section for zona (zona uses polygon, not marker)
-        const markerModeSection = document.getElementById('markerModeSection');
-        if (category === 'zona') {
-            markerModeSection.style.display = 'none';
-            // Force icon mode for zona
-            switchMarkerMode('icon');
-        } else {
-            markerModeSection.style.display = 'block';
-        }
+        document.getElementById('customTypeTitle').textContent = 
+            category === 'titik' ? 'Tambah Jenis Titik Penting' : 'Tambah Jenis Bangunan';
         
         document.getElementById('customTypeName').value = '';
         document.getElementById('customTypeIcon').value = 'fa-map-pin';
@@ -1863,6 +1555,8 @@
         document.getElementById('customTypeImageShape').value = 'circle';
         document.getElementById('customTypeImageSize').value = 40;
         document.getElementById('imageSizeValue').textContent = '40';
+        
+        switchMarkerMode('icon');
         
         document.querySelectorAll('#customTypeColorPicker .color-option').forEach(o => o.classList.remove('selected'));
         document.querySelector('#customTypeColorPicker .color-option[data-color="#ef4444"]').classList.add('selected');
@@ -1876,9 +1570,8 @@
     function updatePreview() {
         const name = document.getElementById('customTypeName').value || 'Preview';
         const preview = document.getElementById('customTypePreview');
-        const category = document.getElementById('customTypeCategory').value;
         
-        if (currentMarkerMode === 'image' && category !== 'zona') {
+        if (currentMarkerMode === 'image') {
             const imageSrc = document.getElementById('customTypeImage').value;
             const imageShape = document.getElementById('customTypeImageShape').value;
             const imageSize = document.getElementById('customTypeImageSize').value;
@@ -1968,135 +1661,6 @@
         });
     }
 
-    // ============================================
-    // ELEVATION HELPERS
-    // ============================================
-    
-    // Ambil elevasi dari Open-Elevation API (gratis, tanpa API key)
-    async function getElevationFromCoords() {
-        if (!tempCoords || !tempCoords.lat || !tempCoords.lng) {
-            alert('Koordinat belum tersedia!');
-            return;
-        }
-        
-        const elevInput = document.querySelector('input[name="elevasi"]');
-        elevInput.value = 'Mengambil...';
-        elevInput.disabled = true;
-        
-        try {
-            const response = await fetch(
-                `https://api.open-elevation.com/api/v1/lookup?locations=${tempCoords.lat},${tempCoords.lng}`
-            );
-            const data = await response.json();
-            
-            if (data.results && data.results[0]) {
-                const elevation = data.results[0].elevation;
-                elevInput.value = Math.round(elevation);
-            } else {
-                elevInput.value = '';
-                alert('Gagal mengambil elevasi. Silakan isi manual.');
-            }
-        } catch (error) {
-            console.error('Error fetching elevation:', error);
-            elevInput.value = '';
-            alert('Gagal mengambil elevasi. Silakan isi manual.');
-        } finally {
-            elevInput.disabled = false;
-        }
-    }
-
-    // Generate elevation profile SVG dari koordinat jalur
-    function generateElevationProfileSVG(coords, warna) {
-        if (!coords || coords.length < 2) return '';
-        
-        // Sample points (max 20 points untuk performa)
-        const sampleStep = Math.max(1, Math.floor(coords.length / 20));
-        const sampledCoords = [];
-        for (let i = 0; i < coords.length; i += sampleStep) {
-            sampledCoords.push(coords[i]);
-        }
-        if (sampledCoords[sampledCoords.length - 1] !== coords[coords.length - 1]) {
-            sampledCoords.push(coords[coords.length - 1]);
-        }
-        
-        // Generate pseudo-elevation based on distance & position
-        // (In real app, fetch from server or Open-Elevation API)
-        const elevations = sampledCoords.map((c, i) => {
-            // Simple formula: base elevation + variation based on position
-            const baseElev = 700; // Darmaraja ~700mdpl
-            const variation = Math.sin(i * 0.5) * 50 + Math.cos(i * 0.3) * 30;
-            return baseElev + variation;
-        });
-        
-        const minElev = Math.min(...elevations);
-        const maxElev = Math.max(...elevations);
-        const elevRange = maxElev - minElev || 1;
-        
-        const svgWidth = 260;
-        const svgHeight = 70;
-        const padding = 5;
-        
-        // Build SVG path
-        let path = '';
-        let areaPath = `M ${padding},${svgHeight - padding} `;
-        
-        sampledCoords.forEach((c, i) => {
-            const x = padding + (i / (sampledCoords.length - 1)) * (svgWidth - 2 * padding);
-            const y = svgHeight - padding - ((elevations[i] - minElev) / elevRange) * (svgHeight - 2 * padding);
-            
-            if (i === 0) {
-                path += `M ${x},${y} `;
-                areaPath += `L ${x},${y} `;
-            } else {
-                path += `L ${x},${y} `;
-                areaPath += `L ${x},${y} `;
-            }
-        });
-        
-        const lastX = padding + (svgWidth - 2 * padding);
-        areaPath += `L ${lastX},${svgHeight - padding} Z`;
-        
-        return `
-            <div class="elevation-profile">
-                <div class="elevation-title">
-                    <i class="fas fa-chart-area"></i> Profil Elevasi Rute
-                </div>
-                <div class="elevation-chart">
-                    <svg width="100%" height="100%" viewBox="0 0 ${svgWidth} ${svgHeight}" preserveAspectRatio="none">
-                        <defs>
-                            <linearGradient id="elevGrad-${Date.now()}" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:${warna};stop-opacity:0.6" />
-                                <stop offset="100%" style="stop-color:${warna};stop-opacity:0.1" />
-                            </linearGradient>
-                        </defs>
-                        <path d="${areaPath}" fill="url(#elevGrad-${Date.now()})" />
-                        <path d="${path}" stroke="${warna}" stroke-width="2" fill="none" />
-                    </svg>
-                </div>
-                <div class="elevation-stats">
-                    <div class="elevation-stat-item">
-                        <div class="elevation-stat-value" style="color: #10b981;">
-                            <i class="fas fa-arrow-down"></i> ${Math.round(minElev)}m
-                        </div>
-                        <div class="elevation-stat-label">Min</div>
-                    </div>
-                    <div class="elevation-stat-item">
-                        <div class="elevation-stat-value" style="color: #f59e0b;">
-                            <i class="fas fa-arrows-alt-v"></i> ${Math.round((minElev + maxElev) / 2)}m
-                        </div>
-                        <div class="elevation-stat-label">Rata²</div>
-                    </div>
-                    <div class="elevation-stat-item">
-                        <div class="elevation-stat-value" style="color: #ef4444;">
-                            <i class="fas fa-arrow-up"></i> ${Math.round(maxElev)}m
-                        </div>
-                        <div class="elevation-stat-label">Max</div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
     function parseCoordinates(coordData) {
         try {
             if (!coordData) return null;
@@ -2140,7 +1704,10 @@
             maxBoundsViscosity: 1.0
         });
         
+        // Load preferensi mode peta yang terakhir digunakan
         const preferredMode = localStorage.getItem('preferredMapMode') || 'street';
+        
+        // Inisialisasi base map sesuai preferensi
         switchMapMode(preferredMode, document.querySelector(`.map-mode-btn[data-mode="${preferredMode}"]`));
 
         const darmarajaPolygon = [
@@ -2227,14 +1794,7 @@
             if (type === 'polyline') {
                 new bootstrap.Modal(document.getElementById('modalJalur')).show();
             } else if (type === 'polygon') {
-                // Detect if user wants to create Zona or Bangunan
-                // Default: Bangunan. User bisa pilih via dialog atau tombol khusus
-                const choice = confirm('Apakah ini ZONA WILAYAH?\n\nOK = Zona Wilayah\nCancel = Bangunan');
-                if (choice) {
-                    new bootstrap.Modal(document.getElementById('modalZona')).show();
-                } else {
-                    new bootstrap.Modal(document.getElementById('modalBangunan')).show();
-                }
+                new bootstrap.Modal(document.getElementById('modalBangunan')).show();
             } else if (type === 'marker') {
                 new bootstrap.Modal(document.getElementById('modalTitik')).show();
             }
@@ -2251,92 +1811,6 @@
     function loadExistingData() {
         console.log('📊 Loading data...');
         
-        // Load ZONA
-        zonaData.forEach(z => {
-            try {
-                const coords = parseCoordinates(z.coordinates);
-                if (!coords || coords.length === 0) return;
-                
-                const polygon = L.polygon(coords, {
-                    color: z.warna || '#f59e0b',
-                    fillColor: z.warna || '#f59e0b',
-                    fillOpacity: 0.25,
-                    weight: 3,
-                    dashArray: '5, 5'
-                });
-                
-                const center = polygon.getBounds().getCenter();
-                
-                // Label marker di tengah zona
-                const zoneLabel = L.marker(center, {
-                    icon: L.divIcon({
-                        className: 'custom-div-icon',
-                        html: `
-                            <div class="zone-label-icon" style="border-color: ${z.warna}; color: ${z.warna};">
-                                <i class="fas fa-map-marked-alt"></i>
-                                <span>${z.nama_zona}</span>
-                                ${z.elevasi_min && z.elevasi_max ? 
-                                    `<span style="font-size: 10px; color: #64748b; margin-left: 4px;">
-                                        (${z.elevasi_min}-${z.elevasi_max}m)
-                                    </span>` : ''}
-                            </div>
-                        `,
-                        iconSize: [200, 30],
-                        iconAnchor: [100, 15]
-                    })
-                });
-                
-                polygon.bindPopup(`
-                    <div class="custom-popup">
-                        <div class="popup-header">
-                            <i class="fas fa-map-marked-alt" style="color: ${z.warna}"></i> 
-                            ${z.nama_zona}
-                        </div>
-                        <div class="popup-content">
-                            <div class="popup-row">
-                                <span class="popup-label"><i class="fas fa-tag"></i> Jenis:</span>
-                                <span class="popup-value">${z.jenis_zona}</span>
-                            </div>
-                            ${z.elevasi_min || z.elevasi_max ? `
-                            <div class="popup-row">
-                                <span class="popup-label"><i class="fas fa-mountain"></i> Elevasi:</span>
-                                <span class="popup-value">
-                                    ${z.elevasi_min || '?'} - ${z.elevasi_max || '?'} mdpl
-                                </span>
-                            </div>` : ''}
-                            ${z.keterangan ? `
-                            <div class="popup-row">
-                                <span class="popup-label"><i class="fas fa-info-circle"></i> Ket:</span>
-                                <span class="popup-value">${z.keterangan}</span>
-                            </div>` : ''}
-                        </div>
-                        <div class="popup-stat">
-                            <div class="popup-stat-item">
-                                <div class="popup-stat-value">${coords.length}</div>
-                                <div class="popup-stat-label">Titik</div>
-                            </div>
-                            <div class="popup-stat-item">
-                                <div class="popup-stat-value" style="color: ${z.warna};">${z.jenis_zona}</div>
-                                <div class="popup-stat-label">Kategori</div>
-                            </div>
-                        </div>
-                    </div>
-                `, { maxWidth: 300 });
-                
-                polygon.on('click', function() {
-                    highlightSidebarItem('zona', z.id);
-                });
-                
-                layerGroups.zona.addLayer(polygon);
-                layerGroups.zona.addLayer(zoneLabel);
-                zonaLayers[z.id] = { polygon, label: zoneLabel };
-                
-            } catch (error) {
-                console.error(`❌ Error zona ${z.id}:`, error);
-            }
-        });
-        
-        // Load Jalur Pipa (dengan profil elevasi)
         jalurData.forEach(jalur => {
             try {
                 const coords = parseCoordinates(jalur.coordinates);
@@ -2350,9 +1824,6 @@
                 
                 const jarak = calculateDistance(coords);
                 const jarakKm = (jarak / 1000).toFixed(2);
-                
-                // Generate elevation profile
-                const elevationProfile = generateElevationProfileSVG(coords, jalur.warna);
                 
                 polyline.bindPopup(`
                     <div class="custom-popup">
@@ -2389,9 +1860,8 @@
                                 <div class="popup-stat-label">Panjang</div>
                             </div>
                         </div>
-                        ${elevationProfile}
                     </div>
-                `, { maxWidth: 320 });
+                `, { maxWidth: 300 });
                 
                 polyline.on('click', function() {
                     highlightSidebarItem('jalur', jalur.id);
@@ -2480,11 +1950,6 @@
                 
                 const config = titikConfig[t.jenis_titik] || titikConfig['lainnya'];
                 
-                // Label dengan elevasi jika ada
-                const label = t.elevasi ? 
-                    `${t.nama_titik} (${t.elevasi}m)` : 
-                    t.nama_titik;
-                
                 const marker = L.marker([lat, lng], {
                     icon: createCustomMarker({
                         mode: config.mode || 'icon',
@@ -2495,7 +1960,7 @@
                         imageShape: config.imageShape,
                         imageSize: config.imageSize || 32,
                         size: 32,
-                        label: label,
+                        label: t.nama_titik,
                         pulse: true
                     })
                 });
@@ -2518,13 +1983,6 @@
                                 <span class="popup-label"><i class="fas fa-crosshairs"></i> Koordinat:</span>
                                 <span class="popup-value">${lat.toFixed(6)}, ${lng.toFixed(6)}</span>
                             </div>
-                            ${t.elevasi ? `
-                            <div class="popup-row">
-                                <span class="popup-label"><i class="fas fa-mountain"></i> Elevasi:</span>
-                                <span class="popup-value" style="font-weight: 700; color: #f59e0b;">
-                                    ${t.elevasi} mdpl
-                                </span>
-                            </div>` : ''}
                             ${t.keterangan ? `
                             <div class="popup-row">
                                 <span class="popup-label"><i class="fas fa-info-circle"></i> Ket:</span>
@@ -2546,7 +2004,11 @@
             }
         });
         
-        console.log('✅ Data loaded');
+        console.log('✅ Data loaded:', {
+            jalur: Object.keys(jalurLayers).length,
+            bangunan: Object.keys(bangunanLayers).length,
+            titik: Object.keys(titikLayers).length
+        });
     }
 
     function addLegend() {
@@ -2557,35 +2019,37 @@
         legend.onAdd = function() {
             const div = L.DomUtil.create('div', 'map-legend');
             
-            // Zona legend
-            let zonaHtml = Object.entries(zonaConfig).map(([key, cfg]) => `
-                <div class="legend-item">
-                    <div class="legend-area" style="background: ${cfg.color}; border-color: ${cfg.color};"></div>
-                    <span>${cfg.label}</span>
-                </div>
-            `).join('');
-            
             let titikHtml = Object.entries(titikConfig).map(([key, cfg]) => {
-                let markerHtml = cfg.mode === 'image' && cfg.image ? 
-                    `<img src="${cfg.image}" alt="${cfg.label}">` : 
-                    `<i class="fas ${cfg.icon}"></i>`;
+                let markerHtml = '';
+                if (cfg.mode === 'image' && cfg.image) {
+                    markerHtml = `<img src="${cfg.image}" alt="${cfg.label}">`;
+                } else {
+                    markerHtml = `<i class="fas ${cfg.icon}"></i>`;
+                }
                 const bgColor = cfg.mode === 'image' ? 'transparent' : cfg.color;
                 return `
                     <div class="legend-item">
-                        <div class="legend-marker" style="background: ${bgColor};">${markerHtml}</div>
+                        <div class="legend-marker" style="background: ${bgColor};">
+                            ${markerHtml}
+                        </div>
                         <span>${cfg.label}</span>
                     </div>
                 `;
             }).join('');
             
             let bangunanHtml = Object.entries(bangunanConfig).map(([key, cfg]) => {
-                let markerHtml = cfg.mode === 'image' && cfg.image ? 
-                    `<img src="${cfg.image}" alt="${cfg.label}">` : 
-                    `<i class="fas ${cfg.icon}"></i>`;
+                let markerHtml = '';
+                if (cfg.mode === 'image' && cfg.image) {
+                    markerHtml = `<img src="${cfg.image}" alt="${cfg.label}">`;
+                } else {
+                    markerHtml = `<i class="fas ${cfg.icon}"></i>`;
+                }
                 const bgColor = cfg.mode === 'image' ? 'transparent' : cfg.color;
                 return `
                     <div class="legend-item">
-                        <div class="legend-marker" style="background: ${bgColor};">${markerHtml}</div>
+                        <div class="legend-marker" style="background: ${bgColor};">
+                            ${markerHtml}
+                        </div>
                         <span>${cfg.label}</span>
                     </div>
                 `;
@@ -2593,11 +2057,6 @@
             
             div.innerHTML = `
                 <div class="legend-title"><i class="fas fa-info-circle"></i> Legenda Peta</div>
-                
-                <div class="legend-group">
-                    <div class="legend-group-title">Zona Wilayah (${Object.keys(zonaConfig).length} jenis)</div>
-                    ${zonaHtml}
-                </div>
                 
                 <div class="legend-group">
                     <div class="legend-group-title">Titik Penting (${Object.keys(titikConfig).length} jenis)</div>
@@ -2622,14 +2081,6 @@
                     <div class="legend-item">
                         <div class="legend-line" style="background: #10b981;"></div>
                         <span>Tersier</span>
-                    </div>
-                </div>
-                
-                <div class="legend-group">
-                    <div class="legend-group-title">Elevasi</div>
-                    <div class="legend-item">
-                        <i class="fas fa-mountain" style="color: #f59e0b; width: 20px; text-align: center;"></i>
-                        <span>mdpl (meter di atas permukaan laut)</span>
                     </div>
                 </div>
             `;
@@ -2704,16 +2155,6 @@
         }).addTo(map);
     }
 
-    function focusOnZona(id) {
-        highlightSidebarItem('zona', id);
-        if (zonaLayers[id]) {
-            const { polygon } = zonaLayers[id];
-            map.flyToBounds(polygon.getBounds(), { padding: [80, 80], maxZoom: 16, duration: 0.8 });
-            createHighlight(polygon.getBounds().getCenter(), polygon.options.color);
-            setTimeout(() => polygon.openPopup(), 800);
-        }
-    }
-
     function focusOnJalur(id) {
         highlightSidebarItem('jalur', id);
         if (jalurLayers[id]) {
@@ -2744,7 +2185,6 @@
         }
     }
 
-    // Event listeners
     document.querySelectorAll('.color-option').forEach(option => {
         option.addEventListener('click', function() {
             this.parentElement.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
@@ -2767,7 +2207,6 @@
     document.getElementById('customTypeName').addEventListener('input', updatePreview);
     document.getElementById('customTypeImageShape').addEventListener('change', updatePreview);
 
-    // Save Jalur
     document.getElementById('formJalur').addEventListener('submit', function(e) {
         e.preventDefault();
         const formData = new FormData(this);
@@ -2781,7 +2220,6 @@
         }).catch(err => alert('Error: ' + err));
     });
 
-    // Save Bangunan
     document.getElementById('formBangunan').addEventListener('submit', function(e) {
         e.preventDefault();
         const formData = new FormData(this);
@@ -2795,7 +2233,6 @@
         }).catch(err => alert('Error: ' + err));
     });
 
-    // Save Titik (dengan elevasi)
     document.getElementById('formTitik').addEventListener('submit', function(e) {
         e.preventDefault();
         const formData = new FormData(this);
@@ -2817,23 +2254,6 @@
         }).catch(err => alert('Error: ' + err));
     });
 
-    // Save Zona (BARU!)
-    document.getElementById('formZona').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        formData.append('coordinates', JSON.stringify(tempCoords));
-        
-        // Gunakan endpoint zona yang harusnya ada di backend
-        fetch('{{ route("admin.drawing.zona") }}', {
-            method: 'POST', body: formData,
-            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
-        }).then(res => res.json()).then(data => {
-            if (data.success) location.reload();
-            else alert('Error: ' + JSON.stringify(data));
-        }).catch(err => alert('Error: ' + err));
-    });
-
-    // Save Custom Type
     document.getElementById('formCustomType').addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -2852,7 +2272,7 @@
             label: name
         };
         
-        if (currentMarkerMode === 'image' && category !== 'zona') {
+        if (currentMarkerMode === 'image') {
             const image = document.getElementById('customTypeImage').value;
             if (!image) {
                 alert('Silakan upload gambar untuk marker!');
@@ -2871,7 +2291,7 @@
         
         bootstrap.Modal.getInstance(document.getElementById('modalCustomType')).hide();
         
-        alert(`Jenis "${name}" berhasil ditambahkan!`);
+        alert(`Jenis "${name}" berhasil ditambahkan! Silakan refresh halaman untuk melihat perubahan di sidebar.`);
     });
 
     function deleteJalur(id) {
@@ -2895,15 +2315,6 @@
     function deleteTitik(id) {
         if (confirm('Yakin hapus titik ini?')) {
             fetch(`/admin/drawing/titik/${id}`, {
-                method: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
-            }).then(() => location.reload());
-        }
-    }
-
-    function deleteZona(id) {
-        if (confirm('Yakin hapus zona ini?')) {
-            fetch(`/admin/drawing/zona/${id}`, {
                 method: 'DELETE',
                 headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
             }).then(() => location.reload());

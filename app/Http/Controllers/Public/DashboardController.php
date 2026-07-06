@@ -7,8 +7,8 @@ use App\Models\Gangguan;
 use App\Models\JalurPipa;
 use App\Models\Bangunan;
 use App\Models\TitikPenting;
-use App\Models\DebitKebocoran;
-use Illuminate\Support\Facades\Http; // <-- Pastikan ini di-import
+use App\Models\Zona; // ← TAMBAHKAN INI
+use Illuminate\Support\Facades\Http;
 
 class DashboardController extends Controller
 {
@@ -19,9 +19,10 @@ class DashboardController extends Controller
         $jalurPipa = JalurPipa::all();
         $bangunan = Bangunan::all();
         $titikPenting = TitikPenting::all();
+        $zonaList = Zona::all(); // ← TAMBAHKAN INI
 
-        // 2. Ambil data pelanggan dari API PDAM Sumedang
-        $response = Http::withoutVerifying() // Gunakan ini jika ada masalah SSL/HTTPS pada lokal
+        // Ambil data pelanggan dari API PDAM Sumedang
+        $response = Http::withoutVerifying()
                         ->get('https://pdamsumedang.com/portal/dashboard_api/pelanggan.php?of_id=04');
         
         $pelanggan = [];
@@ -38,17 +39,22 @@ class DashboardController extends Controller
             'total_jalur' => $jalurPipa->count(),
             'total_bangunan' => $bangunan->count(),
             'total_titik' => $titikPenting->count(),
-            'total_pelanggan' => count($pelanggan), // Tambahan statistik jika diperlukan
+            'total_zona' => $zonaList->count(), // ← TAMBAHKAN INI
+            'total_pelanggan' => count($pelanggan),
         ];
         
+        // Gangguan aktif untuk alert
+        $gangguanAktif = $gangguan->where('status', '!=', 'selesai');
         
         return view('public.dashboard', compact(
             'gangguan', 
+            'gangguanAktif', // ← TAMBAHKAN INI
             'jalurPipa', 
             'bangunan', 
             'titikPenting', 
+            'zonaList', // ← TAMBAHKAN INI
             'stats',
-            'pelanggan' // <-- Variabel baru dimasukkan ke sini
+            'pelanggan'
         ));
     }
 
