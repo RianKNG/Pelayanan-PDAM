@@ -68,37 +68,49 @@ public function store(Request $request)
 
 
     public function edit(Gangguan $gangguan)
-    {
-        return view('admin.gangguan.edit', compact('gangguan'));
-    }
+{
+    return view('admin.gangguan.edit', compact('gangguan'));
+}
 
-    public function update(Request $request, Gangguan $gangguan)
-    {
-        $validated = $request->validate([
-            'jenis_gangguan' => 'required',
-            'sumber_jalur' => 'required',
-            'tipe_kerusakan' => 'required',
-            'ukuran_pipa' => 'required',
-            'lokasi' => 'required',
-            'wilayah_terdampak' => 'required',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
-            'pelapor' => 'required',
-            'no_hp_pelapor' => 'required',
-            'status' => 'required',
-            'tanggal_laporan' => 'required|date',
-            'estimasi_selesai' => 'nullable|date',
-        ]);
+public function update(Request $request, Gangguan $gangguan)
+{
+    // 1. Validasi
+    $validated = $request->validate([
+        'jenis_gangguan' => 'required',
+        'sumber_jalur' => 'required',
+        'tipe_kerusakan' => 'required',
+        'ukuran_pipa' => 'required',
+        'lokasi' => 'required',
+        'wilayah_terdampak' => 'required',
+        'latitude' => 'required|numeric',
+        'longitude' => 'required|numeric',
+        'pelapor' => 'required',
+        'no_hp_pelapor' => 'required',
+        'status' => 'required',
+        'tanggal_laporan' => 'required|date',
+        'estimasi_selesai' => 'nullable|date',
+    ]);
 
+    try {
+        // 2. Logic tambahan
         if ($request->status === 'selesai' && !$gangguan->selesai_diperbaiki) {
             $validated['selesai_diperbaiki'] = now();
         }
 
+        // 3. Update data
         $gangguan->update($validated);
 
+        // 4. Redirect sukses
         return redirect()->route('admin.gangguan.index')
-            ->with('success', 'Data berhasil diupdate');
+            ->with('success', 'Data berhasil diperbarui!');
+
+    } catch (\Exception $e) {
+        // 5. Redirect gagal
+        return redirect()->back()
+            ->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage())
+            ->withInput(); // Mengembalikan inputan sebelumnya agar user tidak perlu mengisi ulang
     }
+}
 
     public function destroy(Gangguan $gangguan)
     {
