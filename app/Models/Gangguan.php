@@ -26,7 +26,7 @@ class Gangguan extends Model
     {
         $date = now()->format('Ymd');
         $lastId = self::whereDate('created_at', now())->count() + 1;
-        return 'GRP/' . $date . '/' . str_pad($lastId, 3, '0', STR_PAD_LEFT);
+        return 'DRMJ/' . $date . '/' . str_pad($lastId, 3, '0', STR_PAD_LEFT);
     }
 
 }
