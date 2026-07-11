@@ -3037,34 +3037,29 @@ function setYouTubeVolume(v) {
     function updateUIAfterPayment(pelanggan) {
     const bar = document.getElementById('notificationBar');
     const content = document.getElementById('notificationContent');
-    
     if (bar && content) {
-        bar.style.display = 'block';
-        
-        let waktuDisplay = '';
-        if (pelanggan.statusInfo && pelanggan.statusInfo.tanggal) {
-            const tgl = new Date(pelanggan.statusInfo.tanggal);
-            waktuDisplay = `<span class="time" style="color: #fcd34d; font-size: 8px;"><i class="fas fa-clock"></i> ${tgl.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})} WIB</span>`;
-        }
-        
-        const itemHTML = `
-            <div class="notification-item new-payment">
-                <strong>${pelanggan.nama}</strong>
-                <span class="amount">${formatRupiah(pelanggan.jumlah)}</span>
-                ${waktuDisplay}
-                <span class="location"><i class="fas fa-${pelanggan.statusInfo.metode === 'PPOB' ? 'mobile-alt' : 'building'}"></i> ${pelanggan.statusInfo.metode}</span>
-            </div>
-        `;
-        
-        content.innerHTML = itemHTML + itemHTML;
-        content.style.animation = 'none';
-        content.offsetHeight;
-        content.style.animation = `scroll-left ${getComputedStyle(document.documentElement).getPropertyValue('--scroll-duration')} linear infinite`;
-        
-        if (typeof updateTodayStatsDisplay === 'function') updateTodayStatsDisplay();
-        if (typeof calculateRevenue === 'function') calculateRevenue();
+    bar.style.display = 'block';
+    let waktuDisplay = '';
+    if (pelanggan.statusInfo && pelanggan.statusInfo.tanggal) {
+    const tgl = new Date(pelanggan.statusInfo.tanggal);
+    waktuDisplay = `<span class="time" style="color: #fcd34d; font-size: 8px;"><i class="fas fa-clock"></i> ${tgl.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})} WIB</span>`;
     }
-}
+    const itemHTML = `
+    <div class="notification-item new-payment">
+    <strong>${pelanggan.nama}</strong>
+    <span class="amount">${formatRupiah(pelanggan.jumlah)}</span>
+    ${waktuDisplay}
+    <span class="location"><i class="fas fa-${pelanggan.statusInfo.metode === 'PPOB' ? 'mobile-alt' : 'building'}"></i> ${pelanggan.statusInfo.metode}</span>
+    </div>
+    `;
+    content.innerHTML = itemHTML + itemHTML;
+    content.style.animation = 'none';
+    content.offsetHeight;
+    content.style.animation = `scroll-left ${getComputedStyle(document.documentElement).getPropertyValue('--scroll-duration')} linear infinite`;
+    if (typeof updateTodayStatsDisplay === 'function') updateTodayStatsDisplay();
+    if (typeof calculateRevenue === 'function') calculateRevenue();
+    }
+    }
     function stopRealtimePolling() {
     if (realtimePollingInterval) {
     clearInterval(realtimePollingInterval);
@@ -3074,60 +3069,31 @@ function setYouTubeVolume(v) {
     // ============================================
     // 🔥 FUNGSI TERIMA KASIH SAAT PEMBAYARAN
     // ============================================
-    // ============================================
-// 🔥 FUNGSI TERIMA KASIH SAAT PEMBAYARAN
-// (TANPA NOMINAL & TANPA JAM)
-// ============================================
-function handlePaymentReceived(pelanggan) {
-    console.log('💰 Payment received:', pelanggan);
-    
-    // 🔥 TETAP TAMPILKAN NOTIFIKASI
+    function handlePaymentReceived(pelanggan) {
+    // 🔥 JIKA LIVE MUTED, JANGAN SUARA
+    if (isLiveMuted) {
     showNotification(`💰 Pembayaran dari ${pelanggan.nama} - Terima kasih!`, 'payment');
-    
-    // 🔥 JIKA LIVE MUTED, TETAP MAINKAN SUARA
-    // HAPUS: if (isLiveMuted) { return; }
-    
-    // 🔥 CEK SPEECH SYNTHESIS
-    if (typeof speechSynthesis === 'undefined') {
-        console.log('⚠️ Browser tidak support speechSynthesis');
-        return;
+    return;
     }
-    
-    // 🔥 CANCEL SUARA SEBELUMNYA
-    try {
-        speechSynthesis.cancel();
-    } catch (e) {
-        console.log('⚠️ Cancel error:', e);
-    }
-    
-    // 🔥 FORMAT PESAN
+    if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
     const namaNormal = formatNameForSpeech ? formatNameForSpeech(pelanggan.nama, 'female') : pelanggan.nama;
-    
     const thankYouMessages = [
-        "Terima kasih atas pembayaran Anda. Kepercayaan Anda adalah motivasi kami untuk terus memberikan pelayanan terbaik.",
-        "Pembayaran Anda telah kami terima. Terima kasih telah menjadi pelanggan setia PDAM Unit Pelaksana Darmaraja.",
-        "Terima kasih. Kontribusi Anda sangat berarti bagi kelangsungan pelayanan air bersih di wilayah Darmaraja."
+    "Terima kasih atas pembayaran Anda. Kepercayaan Anda adalah motivasi kami untuk terus memberikan pelayanan terbaik.",
+    "Pembayaran Anda telah kami terima. Terima kasih telah menjadi pelanggan setia PDAM Unit Pelaksana Darmaraja.",
+    "Terima kasih. Kontribusi Anda sangat berarti bagi kelangsungan pelayanan air bersih di wilayah Darmaraja."
     ];
     const thankYouMsg = thankYouMessages[Math.floor(Math.random() * thankYouMessages.length)];
-    
-    const metodeText = pelanggan.statusInfo && pelanggan.statusInfo.metode === 'PPOB' ? 'P. P. O. B.' : 'Kantor Unit Cabang';
-    
-    // 🔥 SUSUN PESAN (TANPA NOMINAL & TANPA JAM - SESUAI REQUEST)
-    const fullMessage = `${thankYouMsg} Atas nama ${namaNormal}, pembayaran telah kami terima melalui ${metodeText}.`;
-    
-    console.log('🔊 Playing message:', fullMessage);
-    
-    // 🔥 PUTAR SUARA
-    if (typeof speak === 'function') {
-        speak(fullMessage, 'female');
-    } else {
-        console.error('❌ Fungsi speak() tidak ditemukan!');
+    const metodeText = pelanggan.statusInfo.metode === 'PPOB' ? 'P. P. O. B.' : 'Kantor Unit Cabang';
+    let waktuText = '';
+    if (pelanggan.statusInfo && pelanggan.statusInfo.tanggal) {
+    const tgl = new Date(pelanggan.statusInfo.tanggal);
+    const jam = tgl.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    waktuText = ` pada pukul ${jam.replace(':', '.')} WIB`;
     }
-}
-   //  const fullMessage = `${thankYouMsg} Atas nama ${namaNormal}, pembayaran sebesar ${formatRupiah(pelanggan.jumlah)} telah kami terima melalui ${metodeText}${waktuText}.`;
-   //  if (typeof speak === 'function') speak(fullMessage, 'female');
-   //  showNotification(`💰 Pembayaran dari ${pelanggan.nama} - Terima kasih!`, 'payment');
-   //  }
+    const fullMessage = `${thankYouMsg} Atas nama ${namaNormal}, pembayaran sebesar ${formatRupiah(pelanggan.jumlah)} telah kami terima melalui ${metodeText}${waktuText}.`;
+    if (typeof speak === 'function') speak(fullMessage, 'female');
+    showNotification(`💰 Pembayaran dari ${pelanggan.nama} - Terima kasih!`, 'payment');
+    }
     // ============================================
     // 🔥 FUNGSI HITUNG PENDAPATAN BULANAN
     // ============================================
@@ -3231,37 +3197,27 @@ function handlePaymentReceived(pelanggan) {
     function updateTodayStatsDisplay() {
     const stats = calculateTodayStats();
     const now = new Date();
-    
-    // 🔥 VALIDASI: Cek apakah now valid
-    if (isNaN(now.getTime())) {
-        console.error('❌ Date object invalid!');
-        return;
-    }
-    
     const dateStr = now.toLocaleDateString('id-ID', {
         weekday: 'long',
         day: 'numeric',
         month: 'long',
         year: 'numeric'
     });
-    
     const timeStr = now.toLocaleTimeString('id-ID', {
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit',
-        hour12: false  // 🔥 PENTING: Gunakan 24 jam
+        second: '2-digit'
     });
-    
+    // 🔥 FORMAT: Pembayaran Hari Ini + Tanggal + Jam
     document.getElementById('today-date').innerHTML = `
         <div style="font-size: 9px; opacity: 0.85;">Pembayaran Hari Ini</div>
         <div style="font-size: 11px; font-weight: 700;">${dateStr}</div>
         <div style="font-size: 10px; opacity: 0.9;"><i class="fas fa-clock"></i> ${timeStr} WIB</div>
     `;
-    
     document.getElementById('today-amount').textContent = formatRupiah(stats.totalToday);
     document.getElementById('today-count').textContent = stats.countToday;
     document.getElementById('today-kubikasi').textContent = stats.kubikasiToday.toFixed(1);
-}
+    }
     // 🔥 UPDATE JAM SETIAP DETIK
     setInterval(() => {
     if (typeof updateTodayStatsDisplay === 'function') {
@@ -3375,111 +3331,37 @@ function handlePaymentReceived(pelanggan) {
     if (indonesianMaleVoices.length === 0) indonesianMaleVoices = [...indonesianVoices];
     }
     function speak(text, gender = 'female', callback) {
-    // 🔥 CEK KONDISI DASAR
-    if (!voiceSettings.enabled || !('speechSynthesis' in window)) {
-        console.log('⚠️ Voice disabled atau browser tidak support');
+    // 🔥 JIKA LIVE MUTED, SKIP SUARA
+    if (isLiveMuted || !voiceSettings.enabled || !('speechSynthesis' in window)) {
         if (callback) callback();
         return;
     }
-    
-    // ❌ HAPUS: if (isLiveMuted) { ... return; }
-    // ✅ isLiveMuted TIDAK BOLEH MUTE SUARA PEMBAYARAN!
-    
-    // 🔥 CANCEL DENGAN DELAY (Chrome bug fix)
-    try {
-        speechSynthesis.cancel();
-    } catch (e) {
-        console.log('⚠️ Cancel error:', e);
-    }
-    
-    // 🔥 SIMPAN STATE MUSIK
+    speechSynthesis.cancel();
     const audioEl = document.getElementById('backgroundMusic');
     const wasPlaying = isMusicPlaying && !isMusicPaused;
     const originalVolume = audioEl ? audioEl.volume : 0.3;
-    if (wasPlaying && audioEl) {
-        audioEl.volume = Math.max(0.05, originalVolume * 0.3);
-    }
-    
-    // 🔥 TUNGGU VOICES LOAD
-    const trySpeak = (retry = 0) => {
-        if (availableVoices.length === 0 && retry < 10) {
-            console.log(`⏳ Voices belum load, retry ${retry + 1}/10...`);
-            setTimeout(() => trySpeak(retry + 1), 200);
-            return;
-        }
-        
-        setTimeout(() => {
-            try {
-                const u = new SpeechSynthesisUtterance(text);
-                u.lang = 'id-ID';
-                
-                const idx = gender === 'female' ? voiceSettings.paymentVoiceIndex : voiceSettings.gangguanVoiceIndex;
-                const voicePool = gender === 'female' ? indonesianFemaleVoices : indonesianMaleVoices;
-                
-                // 🔥 PILIH VOICE
-                if (voicePool.length > 0) {
-                    u.voice = voicePool[idx % voicePool.length] || voicePool[0];
-                } else if (indonesianVoices.length > 0) {
-                    u.voice = indonesianVoices[0];
-                } else if (availableVoices.length > 0) {
-                    const idVoice = availableVoices.find(v => 
-                        (v.lang || '').toLowerCase().includes('id') || 
-                        (v.name || '').toLowerCase().includes('indonesia')
-                    );
-                    if (idVoice) u.voice = idVoice;
-                }
-                
-                const p = voiceProfiles[idx] || voiceProfiles[0] || { pitch: 1, rate: 1 };
-                u.pitch = p.pitch;
-                u.rate = p.rate;
-                u.volume = voiceSettings.volume;
-                
-                if (u.voice && u.voice.lang && !u.voice.lang.startsWith('id')) {
-                    u.lang = 'id-ID';
-                }
-                
-                u.onend = () => {
-                    console.log('✅ Speech selesai');
-                    if (wasPlaying && audioEl) audioEl.volume = originalVolume;
-                    if (callback) callback();
-                };
-                
-                u.onerror = (e) => {
-                    console.error('❌ Speech error:', e);
-                    if (wasPlaying && audioEl) audioEl.volume = originalVolume;
-                    if (callback) callback();
-                };
-                
-                // 🔥 SPEAK
-                setTimeout(() => {
-                    try {
-                        speechSynthesis.speak(u);
-                        console.log('🔊 Speech dimulai');
-                        
-                        // 🔥 WORKAROUND: Chrome bug
-                        setTimeout(() => {
-                            if (!speechSynthesis.speaking) {
-                                console.log('⚠️ Retry speak...');
-                                speechSynthesis.speak(u);
-                            }
-                        }, 100);
-                        
-                    } catch (error) {
-                        console.error('❌ Error saat speak:', error);
-                        if (callback) callback();
-                    }
-                }, 50);
-                
-            } catch (error) {
-                console.error('❌ Error creating utterance:', error);
-                if (wasPlaying && audioEl) audioEl.volume = originalVolume;
-                if (callback) callback();
-            }
-        }, 50);
+    if (wasPlaying && audioEl) audioEl.volume = Math.max(0.05, originalVolume * 0.3);
+    setTimeout(() => {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'id-ID';
+    const idx = gender === 'female' ? voiceSettings.paymentVoiceIndex : voiceSettings.gangguanVoiceIndex;
+    const voicePool = gender === 'female' ? indonesianFemaleVoices : indonesianMaleVoices;
+    if (voicePool.length > 0) u.voice = voicePool[idx % voicePool.length] || voicePool[0];
+    else if (indonesianVoices.length > 0) u.voice = indonesianVoices[0];
+    const p = voiceProfiles[idx] || voiceProfiles[0] || { pitch: 1, rate: 1 };
+    u.pitch = p.pitch; u.rate = p.rate; u.volume = voiceSettings.volume;
+    if (u.voice && u.voice.lang && !u.voice.lang.startsWith('id')) u.lang = 'id-ID';
+    u.onend = () => {
+    if (wasPlaying && audioEl) audioEl.volume = originalVolume;
+    if (callback) callback();
     };
-    
-    trySpeak();
-}
+    u.onerror = (e) => {
+    if (wasPlaying && audioEl) audioEl.volume = originalVolume;
+    if (callback) callback();
+    };
+    speechSynthesis.speak(u);
+    }, 100);
+    }
     function updateGangguanGender() { voiceSettings.gangguanGender = document.getElementById('gangguanGenderSelect').value; }
     function updatePaymentGender() { voiceSettings.paymentGender = document.getElementById('paymentGenderSelect').value; }
     function updateVoiceIndex() {
@@ -4522,63 +4404,6 @@ function handlePaymentReceived(pelanggan) {
     waQRGenerated = true;
     }
     }
-    // ============================================
-//  FUNGSI TEST NOTIFIKASI PEMBAYARAN KANTOR
-// ============================================
-function testPaymentNotification() {
-    console.log(' Testing payment notification...');
-    
-    const dummyPelanggan = {
-        no_pelanggan: '0301001001',
-        nama: 'DR. HERMAN',
-        jumlah: '604800',
-        pakai: '71',
-        kode_gol_trf: 'RT.D',
-        nama_wilayah: 'WILAYAH I',
-        koordinator: '-6.9170766,108.0685615',
-        statusInfo: {
-            status: 'Kantor',
-            color: '#10b981',
-            icon: 'fa-building',
-            tanggal: new Date().toISOString(),
-            metode: 'Kantor'
-        }
-    };
-    
-    handlePaymentReceived(dummyPelanggan);
-    updateUIAfterPayment(dummyPelanggan);
-    
-    console.log('✅ Test payment notification triggered!');
-}
-
-// ============================================
-// 🔥 FUNGSI TEST PEMBAYARAN PPOB
-// ============================================
-function testPaymentPPOB() {
-    console.log('🧪 Testing PPOB payment notification...');
-    
-    const dummyPelanggan = {
-        no_pelanggan: '0301007155',
-        nama: 'H. ACENG SUHANDI',
-        jumlah: '418600',
-        pakai: '52',
-        kode_gol_trf: 'RT.D',
-        nama_wilayah: 'WILAYAH I',
-        koordinator: '-6.9152425,108.0678316',
-        statusInfo: {
-            status: 'PPOB',
-            color: '#f59e0b',
-            icon: 'fa-mobile-alt',
-            tanggal: new Date().toISOString(),
-            metode: 'PPOB'
-        }
-    };
-    
-    handlePaymentReceived(dummyPelanggan);
-    updateUIAfterPayment(dummyPelanggan);
-    
-    console.log('✅ Test PPOB payment notification triggered!');
-}
     document.addEventListener('DOMContentLoaded', initMap);
     window.addEventListener('beforeunload', () => {
     stopRealtimePolling();
