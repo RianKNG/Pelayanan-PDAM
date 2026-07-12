@@ -233,6 +233,10 @@ body { font-family: 'Inter', sans-serif; background: #f8fafc; overflow-x: hidden
 .control-buttons { top: auto; bottom: 20px; right: 10px; flex-direction: row; }
 .voice-panel { right: 10px; top: auto; bottom: 80px; width: calc(100% - 20px); max-width: 420px; }
 .custom-layer-control { top: 10px; left: 10px; max-width: 180px; }
+.foto-slideshow-nav:hover {
+    background: rgba(0,0,0,0.9) !important;
+    transform: translateY(-50%) scale(1.1);
+}
 }
 </style>
 </head>
@@ -474,6 +478,46 @@ $totalAktif = $gangguanAktif->count();
 @if($gang->deskripsi)
 <div style="margin-top: 10px; padding: 8px; background: #f1f5f9; border-radius: 6px;"><div style="font-size: 9px; color: #64748b; font-weight: 600; margin-bottom: 2px;"><i class="fas fa-info-circle"></i> DESKRIPSI</div><div style="font-size: 11px; color: #475569;">{{ Str::limit($gang->deskripsi, 80) }}</div></div>
 @endif
+{{-- 🔥 SECTION FOTO GANGGUAN --}}
+@php
+    $fotos = isset($gangguanFotosData[$gang->id]) ? $gangguanFotosData[$gang->id] : [];
+@endphp
+
+@if(count($fotos) > 0)
+<div style="margin-top: 8px; padding: 8px; background: linear-gradient(135deg, #e0e7ff, #c7d2fe); border-radius: 6px; border: 1px solid #818cf8;">
+    <div style="font-size: 8px; color: #3730a3; font-weight: 700; margin-bottom: 5px;">
+        <i class="fas fa-images"></i> DOKUMENTASI ({{ count($fotos) }} foto)
+    </div>
+    
+    {{-- Thumbnail Preview --}}
+    <div style="display: flex; gap: 4px; overflow-x: auto; margin-bottom: 6px;">
+        @foreach(array_slice($fotos, 0, 4) as $foto)
+        <img src="{{ $foto['url'] }}" 
+             style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 2px solid white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+             onclick="event.stopPropagation(); showFotoGangguan({{ $gang->id }})"
+             title="Klik untuk lihat slideshow">
+        @endforeach
+        @if(count($fotos) > 4)
+        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; cursor: pointer;"
+             onclick="event.stopPropagation(); showFotoGangguan({{ $gang->id }})">
+            +{{ count($fotos) - 4 }}
+        </div>
+        @endif
+    </div>
+    
+    {{-- Tombol Lihat Semua Foto --}}
+    <button onclick="event.stopPropagation(); showFotoGangguan({{ $gang->id }})" 
+            style="width: 100%; background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; border: none; padding: 6px; border-radius: 6px; font-size: 9px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+        <i class="fas fa-images"></i> LIHAT SEMUA FOTO ({{ count($fotos) }})
+    </button>
+</div>
+@else
+<div style="margin-top: 8px; padding: 6px; background: #f1f5f9; border-radius: 5px; text-align: center;">
+    <div style="font-size: 8px; color: #94a3b8;">
+        <i class="fas fa-camera"></i> Belum ada foto
+    </div>
+</div>
+@endif
 </div>
 </div>
 @endif
@@ -511,6 +555,40 @@ $totalAktif = $gangguanAktif->count();
 <div class="legend-pelanggan-item"><div class="legend-pelanggan-marker" style="background: #ef4444;"><i class="fas fa-times"></i></div><span>Belum Bayar</span></div>
 <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e2e8f0; font-size: 10px; color: #64748b;"><i class="fas fa-info-circle"></i> Klik kartu statistik untuk filter</div>
 </div>
+</div>
+<!-- 🔥 MODAL SLIDESHOW FOTO GANGGUAN -->
+<div class="modal fade" id="fotoGangguanModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #1e3c72, #2a5298); color: white;">
+                <h5 class="modal-title">
+                    <i class="fas fa-images"></i> 
+                    Foto Gangguan - <span id="modalKodeLaporan"></span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-3">
+                <div style="position: relative; width: 100%; height: 400px; background: #000; border-radius: 8px; overflow: hidden;">
+                    <img id="mainSlideshowImg" src="" alt="Foto Gangguan" style="width: 100%; height: 100%; object-fit: contain;">
+                    <button class="foto-slideshow-nav prev" onclick="changeSlideshow(-1)" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.6); color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; font-size: 16px;">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="foto-slideshow-nav next" onclick="changeSlideshow(1)" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.6); color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; font-size: 16px;">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div id="slideshowCounter" style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;">
+                        1 / 1
+                    </div>
+                </div>
+                
+                <div id="thumbnailContainer" style="display: flex; gap: 6px; margin-top: 10px; overflow-x: auto; padding: 5px 0;"></div>
+                
+                <div id="fotoInfo" style="margin-top: 10px; padding: 10px; background: #f1f5f9; border-radius: 6px; font-size: 11px;">
+                    <strong id="fotoLokasi"></strong>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="modal fade" id="waQRModal" tabindex="-1" aria-hidden="true">
@@ -1925,7 +2003,72 @@ function checkPassword() {
         showNotification('Password salah!', 'warning');
     }
 }
+// ============================================
+// 🔥 SLIDESHOW FOTO GANGGUAN
+// ============================================
+let currentSlideshowIndex = 0;
+let currentSlideshowPhotos = [];
 
+function showFotoGangguan(gangguanId) {
+    console.log('📸 Menampilkan foto gangguan ID:', gangguanId);
+    const fotos = gangguanFotosData[gangguanId] || [];
+    
+    if (fotos.length === 0) {
+        alert('Tidak ada foto untuk gangguan ini');
+        return;
+    }
+    
+    const gangguan = gangguanData.find(g => g.id == gangguanId);
+    currentSlideshowPhotos = fotos.sort((a, b) => a.urutan - b.urutan);
+    currentSlideshowIndex = 0;
+    
+    document.getElementById('modalKodeLaporan').textContent = gangguan ? gangguan.kode_laporan : '-';
+    document.getElementById('fotoLokasi').textContent = gangguan ? `📍 ${gangguan.lokasi} | ${gangguan.wilayah_terdampak}` : '-';
+    
+    updateSlideshow();
+    new bootstrap.Modal(document.getElementById('fotoGangguanModal')).show();
+}
+
+function updateSlideshow() {
+    if (currentSlideshowPhotos.length === 0) return;
+    
+    document.getElementById('mainSlideshowImg').src = currentSlideshowPhotos[currentSlideshowIndex].url;
+    document.getElementById('slideshowCounter').textContent = `${currentSlideshowIndex + 1} / ${currentSlideshowPhotos.length}`;
+    
+    const thumbnailContainer = document.getElementById('thumbnailContainer');
+    thumbnailContainer.innerHTML = currentSlideshowPhotos.map((foto, index) => `
+        <img src="${foto.url}" 
+             onclick="goToSlide(${index})"
+             style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; cursor: pointer; 
+                    border: 2px solid ${index === currentSlideshowIndex ? '#3b82f6' : 'transparent'}; 
+                    transition: all 0.2s;">
+    `).join('');
+}
+
+function changeSlideshow(direction) {
+    currentSlideshowIndex += direction;
+    if (currentSlideshowIndex < 0) currentSlideshowIndex = currentSlideshowPhotos.length - 1;
+    if (currentSlideshowIndex >= currentSlideshowPhotos.length) currentSlideshowIndex = 0;
+    updateSlideshow();
+}
+
+function goToSlide(index) {
+    currentSlideshowIndex = index;
+    updateSlideshow();
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+    const modal = document.getElementById('fotoGangguanModal');
+    if (modal && modal.classList.contains('show')) {
+        if (e.key === 'ArrowLeft') changeSlideshow(-1);
+        if (e.key === 'ArrowRight') changeSlideshow(1);
+        if (e.key === 'Escape') {
+            const bsModal = bootstrap.Modal.getInstance(modal);
+            if (bsModal) bsModal.hide();
+        }
+    }
+});
 document.addEventListener('DOMContentLoaded', initMap);
 </script>
 </body>

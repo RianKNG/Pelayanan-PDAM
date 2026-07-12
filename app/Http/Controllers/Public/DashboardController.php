@@ -7,19 +7,19 @@ use App\Models\Gangguan;
 use App\Models\JalurPipa;
 use App\Models\Bangunan;
 use App\Models\TitikPenting;
-use App\Models\Zona; // ← TAMBAHKAN INI
+use App\Models\Zona;
 use Illuminate\Support\Facades\Http;
 
 class DashboardController extends Controller
 {
-    public function index()
+        public function index()
     {
-        // Ambil semua data untuk peta jaringan
-        $gangguan = Gangguan::orderBy('created_at', 'desc')->get();
+        // 🔥 PENTING: Load data gangguan beserta relasi 'fotos'
+        $gangguan = Gangguan::with('fotos')->orderBy('created_at', 'desc')->get();
         $jalurPipa = JalurPipa::all();
         $bangunan = Bangunan::all();
         $titikPenting = TitikPenting::all();
-        $zonaList = Zona::all(); // ← TAMBAHKAN INI
+        $zonaList = Zona::all();
 
         // Ambil data pelanggan dari API PDAM Sumedang
         $response = Http::withoutVerifying()
@@ -39,28 +39,52 @@ class DashboardController extends Controller
             'total_jalur' => $jalurPipa->count(),
             'total_bangunan' => $bangunan->count(),
             'total_titik' => $titikPenting->count(),
-            'total_zona' => $zonaList->count(), // ← TAMBAHKAN INI
+            'total_zona' => $zonaList->count(),
             'total_pelanggan' => count($pelanggan),
         ];
         
         // Gangguan aktif untuk alert
         $gangguanAktif = $gangguan->where('status', '!=', 'selesai');
         
+        // ============================================
+        // 🔥 PERBAIKAN: HAPUS pemanggilan getAllFotos()
+        // Gunakan relasi 'fotos' langsung dengan fallback ke kolom 'foto' utama
+        // ============================================
+        $gangguanFotosData = [];
+        foreach ($gangguan as $g) {
+            // 1. Cek jika ada foto dari relasi tabel gangguan_fotos (Multiple Foto)
+            if ($g->fotos && $g->fotos->count() > 0) {
+                $gangguanFotosData[$g->id] = $g->fotos->map(function($foto) {
+                    return [
+                        'id' => $foto->id,
+                        'url' => asset('storage/' . $foto->foto_path),
+                        'urutan' => $foto->urutan,
+                    ];
+                })->toArray();
+            } 
+            // 2. Fallback: Jika tidak ada foto di tabel gangguan_fotos, cek kolom 'foto' utama (Single Foto)
+            elseif (!empty($g->foto)) {
+                $gangguanFotosData[$g->id] = [
+                    [
+                        'id' => 'main_' . $g->id,
+                        'url' => asset('storage/' . $g->foto),
+                        'urutan' => 0,
+                    ]
+                ];
+            }
+        }
+        
+        // ✅ PASTIKAN gangguanFotosData MASUK KE COMPACT
         return view('public.dashboard', compact(
             'gangguan', 
-            'gangguanAktif', // ← TAMBAHKAN INI
+            'gangguanAktif',
             'jalurPipa', 
             'bangunan', 
             'titikPenting', 
-            'zonaList', // ← TAMBAHKAN INI
+            'zonaList',
             'stats',
-            'pelanggan'
+            'pelanggan',
+            'gangguanFotosData' // ← INI HARUS ADA!
         ));
-    }
-
-    public function detail($kode)
-    {
-        $gangguan = Gangguan::where('kode_laporan', $kode)->firstOrFail();
-        return view('public.detail', compact('gangguan'));
     }
 }

@@ -2551,42 +2551,6 @@
       </div>
     </div>
   </div>
-  <!-- 🔥 MODAL SLIDESHOW FOTO GANGGUAN -->
-<!-- 🔥 MODAL SLIDESHOW FOTO GANGGUAN -->
-<div class="modal fade" id="fotoGangguanModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(135deg, #1e3c72, #2a5298); color: white;">
-                <h5 class="modal-title">
-                    <i class="fas fa-images"></i> 
-                    Foto Gangguan - <span id="modalKodeLaporan"></span>
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-3">
-                <div style="position: relative; width: 100%; height: 400px; background: #000; border-radius: 8px; overflow: hidden;">
-                    <img id="mainSlideshowImg" src="" alt="Foto Gangguan" style="width: 100%; height: 100%; object-fit: contain;">
-                    <button class="foto-slideshow-nav prev" onclick="changeSlideshow(-1)" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.6); color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; font-size: 16px;">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button class="foto-slideshow-nav next" onclick="changeSlideshow(1)" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.6); color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; font-size: 16px;">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                    <div id="slideshowCounter" style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;">
-                        1 / 1
-                    </div>
-                </div>
-                
-                <div id="thumbnailContainer" style="display: flex; gap: 6px; margin-top: 10px; overflow-x: auto; padding: 5px 0;"></div>
-                
-                <div id="fotoInfo" style="margin-top: 10px; padding: 10px; background: #f1f5f9; border-radius: 6px; font-size: 11px;">
-                    <strong id="fotoLokasi"></strong>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -2603,9 +2567,6 @@
     const zonaData = @json($zonaList ?? []); // 🔥 ZONA DATA
     const API_REALTIME_URL = '/api/pelanggan/realtime';
     const POLLING_INTERVAL = 10000;
-    // 🔥 TAMBAHKAN INI: Data foto untuk slideshow
-const gangguanFotosData = @json($gangguanFotosData ?? []);
-console.log('📸 Data Foto Gangguan Loaded:', gangguanFotosData);
     
     
     // ============================================
@@ -4121,87 +4082,11 @@ function handlePaymentReceived(pelanggan) {
     const active = g.status !== 'selesai';
     const html = `<div class="marker-wrapper">${active ? `<div class="marker-banner"><i class="fas fa-exclamation-triangle"></i> GANGGUAN AKTIF</div>` : ''}<div style="position: relative; width: 50px; height: 50px;">${active ? `<div class="pulse-ring" style="background: ${cfg.c}; color: ${cfg.c}; animation: pulse-red 1.5s infinite;"></div>` : ''}<div class="marker-pin shape-circle" style="background: ${cfg.c}; width: 50px; height: 50px; border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.4);"><i class="fas ${di}" style="font-size: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i></div><div style="position: absolute; top: -2px; right: -2px; background: white; color: ${cfg.c}; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; border: 3px solid ${cfg.c}; box-shadow: 0 2px 8px rgba(0,0,0,0.3); font-weight: 700;"><i class="fas ${cfg.i}"></i></div></div><div class="marker-label" style="background: ${cfg.c}; font-weight: 700; font-size: 10px; padding: 3px 8px;">${g.kode_laporan}</div></div>`;
     const m = L.marker([lat, lng], { icon: L.divIcon({ className: 'custom-div-icon', html: html, iconSize: [110, 120], iconAnchor: [55, 60], popupAnchor: [0, -60] }) }).addTo(map);
-    // 🔥 CEK APAKAH ADA FOTO
-const fotoCount = gangguanFotosData[g.id] ? gangguanFotosData[g.id].length : 0;
-const fotoButton = fotoCount > 0 ? `
-    <div style="margin-top: 12px; padding: 10px; background: linear-gradient(135deg, #e0e7ff, #c7d2fe); border-radius: 8px; border: 1px solid #818cf8;">
-        <div style="font-size: 9px; color: #3730a3; font-weight: 700; margin-bottom: 6px;">
-            <i class="fas fa-images"></i> DOKUMENTASI (${fotoCount} foto)
-        </div>
-        <div style="display: flex; gap: 4px; overflow-x: auto; margin-bottom: 8px;">
-            ${gangguanFotosData[g.id].slice(0, 3).map(f => `
-                <img src="${f.url}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 2px solid white; cursor: pointer;" onclick="showFotoGangguan(${g.id})">
-            `).join('')}
-            ${fotoCount > 3 ? `
-                <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700;">
-                    +${fotoCount - 3}
-                </div>
-            ` : ''}
-        </div>
-        <button onclick="showFotoGangguan(${g.id})" style="width: 100%; background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; border: none; padding: 6px; border-radius: 6px; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
-            <i class="fas fa-images"></i> LIHAT SEMUA FOTO (${fotoCount})
-        </button>
-    </div>
-` : '';
-
-m.bindPopup(`
-    <div style="min-width:300px;">
-        <div style="background:linear-gradient(135deg, ${cfg.c}, ${cfg.c}dd);color:white;padding:12px;text-align:center;">
-            <div style="font-size:11px;opacity:0.9;margin-bottom:3px;">
-                <i class="fas fa-info-circle"></i> INFORMASI PELAYANAN
-            </div>
-            <div style="font-weight:700;font-size:13px;">
-                ${g.status === 'selesai' ? 'Gangguan Telah Selesai' : 'Mohon Maaf Pelayanan Terganggu'}
-            </div>
-        </div>
-        <div style="padding:15px;">
-            <h6 style="margin:0 0 12px 0; color:#1e293b; font-size:15px;">${g.kode_laporan}</h6>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
-                <div style="background:${cfg.bg};padding:10px;border-radius:8px;text-align:center;">
-                    <div style="font-size:10px;color:#64748b;">STATUS</div>
-                    <div style="font-weight:700;color:${cfg.c};font-size:12px;">
-                        <i class="fas fa-circle" style="font-size:8px;"></i> ${cfg.t}
-                    </div>
-                </div>
-                <div style="background:#f1f5f9;padding:10px;border-radius:8px;text-align:center;">
-                    <div style="font-size:10px;color:#64748b;">TIPE</div>
-                    <div style="font-weight:700;color:#1e293b;font-size:12px;">
-                        ${g.tipe_kerusakan ? g.tipe_kerusakan.toUpperCase() : '-'}
-                    </div>
-                </div>
-            </div>
-            <div style="margin-bottom:10px;">
-                <div style="font-size:11px;color:#64748b;margin-bottom:3px;">
-                    <i class="fas fa-map-marker-alt"></i> Lokasi
-                </div>
-                <div style="font-weight:600;color:#1e293b;">${g.lokasi || '-'}</div>
-            </div>
-            <div style="margin-bottom:10px;">
-                <div style="font-size:11px;color:#64748b;margin-bottom:3px;">
-                    <i class="fas fa-users"></i> Wilayah Terdampak
-                </div>
-                <div style="font-weight:600;color:#1e293b;">${g.wilayah_terdampak || '-'}</div>
-            </div>
-            ${g.deskripsi ? `
-            <div style="background:#fef3c7;padding:10px;border-radius:8px;border-left:3px solid #f59e0b;margin-bottom:12px;">
-                <div style="font-size:10px;color:#92400e;font-weight:600;">
-                    <i class="fas fa-info-circle"></i> DESKRIPSI
-                </div>
-                <div style="font-size:12px;color:#78350f;margin-top:3px;">${g.deskripsi}</div>
-            </div>
-            ` : ''}
-            ${fotoButton}
-            <div style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);padding:12px;border-radius:8px;text-align:center;margin-top:12px;">
-                <div style="font-size:11px;color:#065f46;margin-bottom:4px;">
-                    <i class="fas fa-calendar-check"></i> Estimasi Penyelesaian
-                </div>
-                <div style="font-weight:700;color:#064e3b;font-size:14px;">
-                    ${g.estimasi_selesai ? new Date(g.estimasi_selesai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}
-                </div>
-            </div>
-        </div>
-    </div>
-`, { maxWidth: 350 });
+    m.bindPopup(`<div style="min-width:300px;"><div style="background:linear-gradient(135deg, ${cfg.c}, ${cfg.c}dd);color:white;padding:12px;text-align:center;"><div style="font-size:11px;opacity:0.9;margin-bottom:3px;"><i class="fas fa-info-circle"></i> INFORMASI PELAYANAN</div><div style="font-weight:700;font-size:13px;">${g.status === 'selesai' ? 'Gangguan Telah Selesai' : 'Mohon Maaf Pelayanan Terganggu'}</div></div><div style="padding:15px;"><h6 style="margin:0 0 12px 0; color:#1e293b; font-size:15px;">${g.kode_laporan}</h6><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;"><div style="background:${cfg.bg};padding:10px;border-radius:8px;text-align:center;"><div style="font-size:10px;color:#64748b;">STATUS</div><div style="font-weight:700;color:${cfg.c};font-size:12px;"><i class="fas fa-circle" style="font-size:8px;"></i> ${cfg.t}</div></div><div style="background:#f1f5f9;padding:10px;border-radius:8px;text-align:center;"><div style="font-size:10px;color:#64748b;">TIPE</div><div style="font-weight:700;color:#1e293b;font-size:12px;">${g.tipe_kerusakan ? g.tipe_kerusakan.toUpperCase() : '-'}</div></div></div><div style="margin-bottom:10px;"><div style="font-size:11px;color:#64748b;margin-bottom:3px;"><i class="fas fa-map-marker-alt"></i> Lokasi</div><div style="font-weight:600;color:#1e293b;">${g.lokasi || '-'}</div></div><div style="margin-bottom:10px;"><div style="font-size:11px;color:#64748b;margin-bottom:3px;"><i class="fas fa-users"></i> Wilayah Terdampak</div><div style="font-weight:600;color:#1e293b;">${g.wilayah_terdampak || '-'}</div></div>${g.deskripsi ? `<div style="background:#fef3c7;padding:10px;border-radius:8px;border-left:3px solid #f59e0b;margin-bottom:12px;"><div style="font-size:10px;color:#92400e;font-weight:600;"><i class="fas fa-info-circle"></i> DESKRIPSI</div><div style="font-size:12px;color:#78350f;margin-top:3px;">${g.deskripsi}</div></div>` : ''}<div style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);padding:12px;border-radius:8px;text-align:center;"><div style="font-size:11px;color:#065f46;margin-bottom:4px;"><i class="fas fa-calendar-check"></i> Estimasi Penyelesaian</div><div style="font-weight:700;color:#064e3b;font-size:14px;">${g.estimasi_selesai ? new Date(g.estimasi_selesai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}</div></div></div></div>`, { maxWidth: 350 });
+    markerLayers[`gangguan_${g.id}`] = m;
+    } catch(e) { console.error(e); }
+    });
+    }
     function loadTitikPenting() {
     const icons = { 'valve': { i: 'fa-toggle-on', c: '#ef4444' }, 'hydrant': { i: 'fa-fire', c: '#dc2626' }, 'meter': { i: 'fa-tachometer-alt', c: '#3b82f6' }, 'sambungan': { i: 'fa-link', c: '#8b5cf6' }, 'pompa': { i: 'fa-water', c: '#10b981' }, 'tandon': { i: 'fa-database', c: '#06b6d4' }, 'lainnya': { i: 'fa-map-pin', c: '#6b7280' } };
     titikPentingData.forEach(t => {
@@ -4694,10 +4579,6 @@ function testPaymentPPOB() {
     
     console.log('✅ Test PPOB payment notification triggered!');
 }
-// ============================================
-// 🔥 SLIDESHOW FOTO GANGGUAN
-// ============================================
-
     document.addEventListener('DOMContentLoaded', initMap);
     window.addEventListener('beforeunload', () => {
     stopRealtimePolling();
