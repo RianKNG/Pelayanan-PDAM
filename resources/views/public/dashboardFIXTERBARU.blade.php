@@ -3146,29 +3146,27 @@ function handlePaymentReceived(pelanggan) {
         // ============================================
     // 🔥 10 KALIMAT RANDOM: PROFESIONAL, HANGAT, & PENUH PENGHARGAAN
     // ============================================
-    // 🔥 10 KALIMAT RANDOM: VARIASI SALAM & APRESIASI HANGAT
-// =========================================================================
-const thankYouMessages = [
-    `Halo ${namaNormal}, kabar baik! Pembayaran tagihan air Anda untuk periode ini telah kami terima dengan sukses. Terima kasih banyak atas kepercayaan Anda. Kehadiran pelanggan seperti Anda adalah motivasi bagi kami di PDAM Darmaraja untuk terus memberikan layanan terbaik setiap hari.`,
-
-    `Yth. ${namaNormal}, terima kasih telah menyelesaikan kewajiban pembayaran Anda hari ini. Kami sangat menghargai kedisiplinan Anda. Semoga layanan air bersih kami dapat selalu memberikan kenyamanan dan keberkahan bagi aktivitas Anda serta keluarga di rumah.`,
-
-    `Salam hangat untuk ${namaNormal}. Notifikasi pembayaran Anda baru saja masuk ke sistem kami. Kami ingin mengucapkan terima kasih setulus hati atas dukungan Anda. Bersama Anda, kami berkomitmen untuk menjaga aliran air di Darmaraja tetap terjaga kualitas dan kelancarannya.`,
-
-    `Selamat beraktivitas, ${namaNormal}. Pembayaran Anda telah kami verifikasi dengan sukses. Dedikasi Anda dalam melakukan pembayaran tepat waktu sangat berarti bagi kami. Kami akan terus berupaya maksimal untuk memberikan pelayanan yang lebih baik dan istimewa untuk Anda.`,
-
-    `Hai ${namaNormal}, senang sekali menerima kabar pembayaran Anda hari ini. Terima kasih telah menjadi mitra setia kami. Layanan air bersih yang andal adalah prioritas kami, dan kepercayaan Anda adalah energi bagi kami untuk terus berinovasi demi kenyamanan pelanggan.`,
-
-    `Salam hormat kami kepada ${namaNormal}, pembayaran Anda sudah tercatat dengan rapi di sistem kami. Terima kasih banyak atas kemitraan yang baik ini. Semoga hari Anda menyenangkan, dan jangan ragu untuk menghubungi kami jika Anda membutuhkan bantuan terkait layanan air bersih.`,
-
-    `Kabar gembira, ${namaNormal}! Pembayaran Anda telah berhasil kami proses. Terima kasih telah menjadi pelanggan yang sangat kooperatif. Dukungan Anda sangat membantu kami dalam menjaga keberlangsungan operasional dan peningkatan mutu air bersih di wilayah Darmaraja.`,
-
-    `Kepada Yth. Bapak/Ibu ${namaNormal}, kami telah menerima pembayaran Anda dengan baik. Terima kasih atas apresiasi dan kepercayaan yang terus Anda berikan kepada PDAM Darmaraja. Kami berkomitmen untuk selalu hadir memberikan pelayanan yang sigap, ramah, dan profesional bagi Anda.`,
-
-    `Terima kasih ${namaNormal}, transaksi pembayaran Anda telah kami konfirmasi secara sukses. Kami merasa sangat terhormat dapat melayani kebutuhan air Anda. Semoga kemudahan selalu menyertai setiap urusan Anda, sebagaimana kemudahan yang Anda berikan kepada kami hari ini.`,
-
-    `Salam sejahtera, ${namaNormal}. Pembayaran Anda telah berhasil kami terima. Kami mengucapkan terima kasih banyak atas kontribusi Anda dalam mendukung pelayanan kami. Semoga air yang mengalir di rumah Anda selalu memberikan manfaat dan kenyamanan bagi seluruh keluarga.`
-];
+    const thankYouMessages = [
+        `Yang Terhormat, ${namaNormal}. Baru saja, pembayaran Anda kami terima. Dari keluarga besar PDAM Darmaraja, kami ucapkan terima kasih yang tulus. Semoga rezeki Anda selalu berlimpah dan berkah.`,
+        
+        `Kepada Yang Terhormat, ${namaNormal}. Tepat saat ini, pembayaran Anda telah kami konfirmasi. Terima kasih atas loyalitas Anda. Kebanggaan kami dapat melayani pelanggan sebaik Anda di Darmaraja.`,
+        
+        `Yang Terhormat, ${namaNormal}. Kabar baik, transaksi Anda baru saja berhasil. Terima kasih telah mendukung pelayanan air bersih. Bersama Anda, Darmaraja terus mengalir dengan lebih baik.`,
+        
+        `Salam hormat untuk, ${namaNormal}. Pembayaran Anda, baru saja kami terima dengan senang hati. Kami sangat menghargai kedisiplinan dan tanggung jawab Anda. Semoga Anda dan keluarga selalu sehat.`,
+        
+        `Yang kami muliakan, ${namaNormal}. Live update dari kami, pembayaran Anda telah lunas. Terima kasih atas kepercayaan Anda. Melayani Anda, adalah kehormatan dan komitmen utama kami di Unit Darmaraja.`,
+        
+        `Yang Terhormat, ${namaNormal}. Baru saja, notifikasi pembayaran Anda masuk. Terima kasih banyak. Kepercayaan Anda, adalah motivasi terbesar kami untuk terus memberikan pelayanan terbaik.`,
+        
+        `Kepada Yang Terhormat, ${namaNormal}. Pembayaran Anda, telah kami proses dengan sukses. Sikap tanggung jawab Anda, sangat menginspirasi kami. Terima kasih telah menjadi mitra sejati PDAM Darmaraja.`,
+        
+        `Yang Terhormat, ${namaNormal}. Pemberitahuan terkini, pembayaran Anda telah tercatat. Kami sangat bahagia dapat melayani Anda. Dedikasi Anda, adalah alasan kami terus berinovasi.`,
+        
+        `Yang Terhormat, ${namaNormal}. Tepat saat ini, kami telah menerima pembayaran dari Anda. Apresiasi setinggi-tingginya untuk Anda. Kami akan senantiasa berupaya memberikan pelayanan yang istimewa untuk Anda.`,
+        
+        `Salam hangat untuk, ${namaNormal}. Baru saja, pembayaran Anda kami konfirmasi. Terima kasih telah mempercayakan kebutuhan air Anda kepada kami. Kami akan selalu berusaha memberikan yang terbaik untuk Anda.`
+    ];
     // ============================================
     // ============================================
 
@@ -3432,21 +3430,25 @@ const thankYouMessages = [
     if (indonesianFemaleVoices.length === 0) indonesianFemaleVoices = [...indonesianVoices];
     if (indonesianMaleVoices.length === 0) indonesianMaleVoices = [...indonesianVoices];
     }
-   function speak(text, gender = 'female', callback) {
-    // 1. CEK KONDISI DASAR
+    function speak(text, gender = 'female', callback) {
+    // 🔥 CEK KONDISI DASAR
     if (!voiceSettings.enabled || !('speechSynthesis' in window)) {
+        console.log('⚠️ Voice disabled atau browser tidak support');
         if (callback) callback();
         return;
     }
     
-    // 2. CANCEL SUARA SEBELUMNYA SECARA LANGSUNG (Tanpa delay)
+    // ❌ HAPUS: if (isLiveMuted) { ... return; }
+    // ✅ isLiveMuted TIDAK BOLEH MUTE SUARA PEMBAYARAN!
+    
+    // 🔥 CANCEL DENGAN DELAY (Chrome bug fix)
     try {
         speechSynthesis.cancel();
     } catch (e) {
-        // Abaikan error cancel
+        console.log('⚠️ Cancel error:', e);
     }
     
-    // 3. SIMPAN STATE MUSIK (Ducking)
+    // 🔥 SIMPAN STATE MUSIK
     const audioEl = document.getElementById('backgroundMusic');
     const wasPlaying = isMusicPlaying && !isMusicPaused;
     const originalVolume = audioEl ? audioEl.volume : 0.3;
@@ -3454,59 +3456,85 @@ const thankYouMessages = [
         audioEl.volume = Math.max(0.05, originalVolume * 0.3);
     }
     
-    try {
-        // 4. BUAT UTTERANCE LANGSUNG (INSTAN)
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'id-ID';
-        
-        // 5. AMBIL VOICES YANG SUDAH TERSEDIA SAAT INI
-        const voices = speechSynthesis.getVoices();
-        const idx = gender === 'female' ? (voiceSettings.paymentVoiceIndex || 0) : (voiceSettings.gangguanVoiceIndex || 0);
-        
-        // Filter suara Bahasa Indonesia
-        const idVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('id'));
-        
-        if (idVoices.length > 0) {
-            // Prioritaskan suara Google atau Female agar terdengar natural
-            const preferredVoice = idVoices.find(v => 
-                v.name.includes('Google') || v.name.includes('Female') || v.name.includes('Damayanti')
-            );
-            u.voice = preferredVoice || idVoices[idx % idVoices.length];
-        } else if (voices.length > 0) {
-            u.voice = voices[0]; // Fallback ke voice default browser
+    // 🔥 TUNGGU VOICES LOAD
+    const trySpeak = (retry = 0) => {
+        if (availableVoices.length === 0 && retry < 10) {
+            console.log(`⏳ Voices belum load, retry ${retry + 1}/10...`);
+            setTimeout(() => trySpeak(retry + 1), 200);
+            return;
         }
         
-        // 6. ATUR PARAMETER SUARA
-        const p = voiceProfiles[idx] || voiceProfiles[0] || { pitch: 1, rate: 1 };
-        u.pitch = p.pitch;
-        u.rate = p.rate; // Pastikan rate 1 (normal), jangan terlalu lambat
-        u.volume = voiceSettings.volume || 1;
-        
-        // 7. EVENT HANDLERS
-        u.onend = () => {
-            console.log('✅ Speech selesai');
-            if (wasPlaying && audioEl) audioEl.volume = originalVolume;
-            if (callback) callback();
-        };
-        
-        u.onerror = (e) => {
-            // Abaikan error 'interrupted' karena itu normal saat ada notifikasi baru
-            if (e.error !== 'interrupted') {
-                console.error('❌ Speech error:', e.error);
+        setTimeout(() => {
+            try {
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'id-ID';
+                
+                const idx = gender === 'female' ? voiceSettings.paymentVoiceIndex : voiceSettings.gangguanVoiceIndex;
+                const voicePool = gender === 'female' ? indonesianFemaleVoices : indonesianMaleVoices;
+                
+                // 🔥 PILIH VOICE
+                if (voicePool.length > 0) {
+                    u.voice = voicePool[idx % voicePool.length] || voicePool[0];
+                } else if (indonesianVoices.length > 0) {
+                    u.voice = indonesianVoices[0];
+                } else if (availableVoices.length > 0) {
+                    const idVoice = availableVoices.find(v => 
+                        (v.lang || '').toLowerCase().includes('id') || 
+                        (v.name || '').toLowerCase().includes('indonesia')
+                    );
+                    if (idVoice) u.voice = idVoice;
+                }
+                
+                const p = voiceProfiles[idx] || voiceProfiles[0] || { pitch: 1, rate: 1 };
+                u.pitch = p.pitch;
+                u.rate = p.rate;
+                u.volume = voiceSettings.volume;
+                
+                if (u.voice && u.voice.lang && !u.voice.lang.startsWith('id')) {
+                    u.lang = 'id-ID';
+                }
+                
+                u.onend = () => {
+                    console.log('✅ Speech selesai');
+                    if (wasPlaying && audioEl) audioEl.volume = originalVolume;
+                    if (callback) callback();
+                };
+                
+                u.onerror = (e) => {
+                    console.error('❌ Speech error:', e);
+                    if (wasPlaying && audioEl) audioEl.volume = originalVolume;
+                    if (callback) callback();
+                };
+                
+                // 🔥 SPEAK
+                setTimeout(() => {
+                    try {
+                        speechSynthesis.speak(u);
+                        console.log('🔊 Speech dimulai');
+                        
+                        // 🔥 WORKAROUND: Chrome bug
+                        setTimeout(() => {
+                            if (!speechSynthesis.speaking) {
+                                console.log('⚠️ Retry speak...');
+                                speechSynthesis.speak(u);
+                            }
+                        }, 100);
+                        
+                    } catch (error) {
+                        console.error('❌ Error saat speak:', error);
+                        if (callback) callback();
+                    }
+                }, 50);
+                
+            } catch (error) {
+                console.error('❌ Error creating utterance:', error);
+                if (wasPlaying && audioEl) audioEl.volume = originalVolume;
+                if (callback) callback();
             }
-            if (wasPlaying && audioEl) audioEl.volume = originalVolume;
-            if (callback) callback();
-        };
-        
-        // 8. EKSEKUSI LANGSUNG TANPA SETTIMEOUT (INSTAN!)
-        speechSynthesis.speak(u);
-        console.log('🔊 Speech dimulai secara instan');
-        
-    } catch (error) {
-        console.error('❌ Error creating/speaking utterance:', error);
-        if (wasPlaying && audioEl) audioEl.volume = originalVolume;
-        if (callback) callback();
-    }
+        }, 50);
+    };
+    
+    trySpeak();
 }
     function updateGangguanGender() { voiceSettings.gangguanGender = document.getElementById('gangguanGenderSelect').value; }
     function updatePaymentGender() { voiceSettings.paymentGender = document.getElementById('paymentGenderSelect').value; }
