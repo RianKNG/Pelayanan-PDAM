@@ -2595,7 +2595,7 @@
     const pelangganDataFromLaravel = @json($pelanggan ?? []);
     const zonaData = @json($zonaList ?? []); // 🔥 ZONA DATA
     const API_REALTIME_URL = '/api/pelanggan/realtime';
-    const POLLING_INTERVAL = 10000;
+    const POLLING_INTERVAL = 5000;
     // 🔥 TAMBAHKAN INI: Data foto untuk slideshow
 const gangguanFotosData = @json($gangguanFotosData ?? []);
 console.log('📸 Data Foto Gangguan Loaded:', gangguanFotosData);
@@ -2650,6 +2650,16 @@ console.log('📸 Data Foto Gangguan Loaded:', gangguanFotosData);
     let isYoutubeReady = false;
     // 🔥 VARIABEL MUTE LIVE
     let isLiveMuted = false;
+    // 🔥 DEBOUNCE untuk cegah panggilan berulang
+let revenueCalcTimeout;
+function debouncedCalculateRevenue() {
+    clearTimeout(revenueCalcTimeout);
+    revenueCalcTimeout = setTimeout(() => {
+        if (typeof calculateRevenue === 'function') calculateRevenue();
+        if (typeof updateRevenueProgress === 'function') updateRevenueProgress();
+        if (typeof updateTodayStatsDisplay === 'function') updateTodayStatsDisplay();
+    }, 500);
+}
     
     // ============================================
     // 🔥 YOUTUBE API CALLBACK
@@ -3024,49 +3034,63 @@ function setYouTubeVolume(v) {
     if (newPayments.length > 0 && !isFirstLoad) {
     const realNewPayments = newPayments.filter(p => p.isNewPayment);
     if (realNewPayments.length > 0) {
-    realNewPayments.forEach((p, idx) => {
-    setTimeout(() => {
-    handlePaymentReceived(p);
-    updateUIAfterPayment(p);
-    }, idx * 3000);
+    // 🔥 PEMBAYARAN PERTAMA LANGSUNG BUNYI
+handlePaymentReceived(realNewPayments[0]);
+updateUIAfterPayment(realNewPayments[0]);
+
+// 🔥 Sisanya queue tanpa delay lama
+if (realNewPayments.length > 1) {
+    realNewPayments.slice(1).forEach((p, idx) => {
+        setTimeout(() => {
+            updateUIAfterPayment(p);
+        }, (idx + 1) * 800);
     });
+}
     }
     }
     } catch (error) {
     console.error('❌ Error polling:', error);
     }
     }
-    function updatePelangganDataFromAPI(newData) {
-    const mappedData = newData.map(p => ({
-    no_pelanggan: p.no_pelanggan,
-    nama: p.nama,
-    jumlah: p.jumlah || '0',
-    pakai: p.pakai || '0',
-    kode_gol_trf: p.kode_gol_trf,
-    nama_wilayah: p.nama_wilayah || p.cabang,
-    koordinator: p.koordinator,
-    tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null,
-    tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null,
-    status: p.status,
-    alamat: p.alamat
-    }));
-    mappedData.forEach(newP => {
-    const idx = pelangganDataFromLaravel.findIndex(p => p.no_pelanggan === newP.no_pelanggan);
-    if (idx !== -1) {
-    pelangganDataFromLaravel[idx] = newP;
-    } else {
-    pelangganDataFromLaravel.push(newP);
-    }
+   function updatePelangganDataFromAPI(newData) {
+    // 1. Update data array secepat mungkin (Lightweight loop)
+    newData.forEach(p => {
+        const idx = pelangganDataFromLaravel.findIndex(x => x.no_pelanggan === p.no_pelanggan);
+        const mapped = {
+            no_pelanggan: p.no_pelanggan,
+            nama: p.nama,
+            jumlah: p.jumlah || '0',
+            pakai: p.pakai || '0',
+            kode_gol_trf: p.kode_gol_trf,
+            nama_wilayah: p.nama_wilayah || p.cabang,
+            koordinator: p.koordinator,
+            tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null,
+            tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null,
+            status: p.status,
+            alamat: p.alamat
+        };
+        
+        if (idx !== -1) {
+            pelangganDataFromLaravel[idx] = mapped;
+        } else {
+            pelangganDataFromLaravel.push(mapped);
+        }
     });
+
+    // 2. Update statistik ringan langsung (Instant, tidak berat)
     updateRevenueProgress();
     updateTodayStatsDisplay();
     calculateRevenue();
-    // 🔥 PENTING: Reload marker unpaid agar yang sudah bayar hilang
-    loadUnpaidCustomerMarkers();
-    // 🔥 Reload wilayah & blok
-    loadWilayahDanBlok();
-    }
-    function updateUIAfterPayment(pelanggan) {
+
+    // 3. 🔥 KUNCI KECEPATAN: Tunda operasi berat (Map & DOM) 
+    // agar tidak memblokir thread utama saat notifikasi/suara muncul
+    setTimeout(() => {
+        loadUnpaidCustomerMarkers();
+        loadWilayahDanBlok();
+    }, 150); // Delay 150ms agar browser selesai memproses suara/notif dulu
+}
+
+function updateUIAfterPayment(pelanggan) {
     const bar = document.getElementById('notificationBar');
     const content = document.getElementById('notificationContent');
     
@@ -3079,7 +3103,6 @@ function setYouTubeVolume(v) {
             waktuDisplay = `<span class="time" style="color: #fcd34d; font-size: 8px;"><i class="fas fa-clock"></i> ${tgl.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})} WIB</span>`;
         }
         
-        // 🔥 DETEKSI SUMBER UNTUK TAMPILAN VISUAL
         const metode = pelanggan.statusInfo && pelanggan.statusInfo.metode ? pelanggan.statusInfo.metode : 'Kantor';
         const sumberText = metode === 'PPOB' ? 'PPOB' : 'Kantor Unit Darmaraja';
         const iconSumber = metode === 'PPOB' ? 'fa-mobile-alt' : 'fa-building';
@@ -3095,11 +3118,26 @@ function setYouTubeVolume(v) {
         
         content.innerHTML = itemHTML + itemHTML;
         content.style.animation = 'none';
-        content.offsetHeight;
+        content.offsetHeight; // Trigger reflow
         content.style.animation = `scroll-left ${getComputedStyle(document.documentElement).getPropertyValue('--scroll-duration')} linear infinite`;
-        
-        if (typeof updateTodayStatsDisplay === 'function') updateTodayStatsDisplay();
+
+        // 🔥 KUNCI PERBAIKAN LABEL: Hapus HANYA marker yang baru bayar
+        const idx = unpaidCustomerList.findIndex(u => u.data.no_pelanggan === pelanggan.no_pelanggan);
+        if (idx !== -1) {
+            // 1. Hapus dari peta Leaflet
+            map.removeLayer(unpaidCustomerList[idx].marker);
+            // 2. Hapus dari array JavaScript
+            unpaidCustomerList.splice(idx, 1);
+            // 3. Update counter live di layar
+            const counter = document.getElementById('liveCounterTotal');
+            if (counter) counter.textContent = unpaidCustomerList.length;
+            
+            console.log(`✅ Marker ${pelanggan.no_pelanggan} dihapus instan. Label marker lain TETAP AMAN.`);
+        }
+
+        // Update revenue tanpa delay
         if (typeof calculateRevenue === 'function') calculateRevenue();
+        if (typeof updateTodayStatsDisplay === 'function') updateTodayStatsDisplay();
     }
 }
     function stopRealtimePolling() {
@@ -3118,7 +3156,6 @@ function setYouTubeVolume(v) {
 function handlePaymentReceived(pelanggan) {
     console.log('💰 Payment received:', pelanggan);
     
-    // 🔥 TETAP TAMPILKAN NOTIFIKASI VISUAL
     if (typeof showNotification === 'function') {
         showNotification(`💰 Pembayaran dari ${pelanggan.nama} - Terima kasih!`, 'payment');
     }
@@ -3130,56 +3167,94 @@ function handlePaymentReceived(pelanggan) {
     
     try { speechSynthesis.cancel(); } catch (e) {}
     
+    // Identitas Pelanggan
     const namaNormal = typeof formatNameForSpeech === 'function' ? formatNameForSpeech(pelanggan.nama, 'female') : pelanggan.nama;
+    const noPelanggan = pelanggan.no_pelanggan;
     
-    // 🔥 DETEKSI SUMBER PEMBAYARAN (PPOB vs KANTOR)
+    // 🔥 DETEKSI SUMBER PEMBAYARAN
     const metode = pelanggan.statusInfo && pelanggan.statusInfo.metode ? pelanggan.statusInfo.metode : 'Kantor';
-    // Untuk suara, kita gunakan "PPOB" dan "Kantor Unit Darmaraja"
-    const sumberText = metode === 'PPOB' ? 'PPOB' : 'Kantor Unit Darmaraja';
     
-    // ============================================
-    // 🔥 10 KALIMAT RANDOM: HANGAT, DEKAT, & MENYANJUNG
-    // ============================================
-        // ============================================
-    // 🔥 10 KALIMAT RANDOM: PENUH KASIH SAYANG & KEHANGATAN
-    // ============================================
-        // ============================================
-    // 🔥 10 KALIMAT RANDOM: PROFESIONAL, HANGAT, & PENUH PENGHARGAAN
-    // ============================================
-    // 🔥 10 KALIMAT RANDOM: VARIASI SALAM & APRESIASI HANGAT
-// =========================================================================
-const thankYouMessages = [
-    `Halo ${namaNormal}, kabar baik! Pembayaran tagihan air Anda untuk periode ini telah kami terima dengan sukses. Terima kasih banyak atas kepercayaan Anda. Kehadiran pelanggan seperti Anda adalah motivasi bagi kami di PDAM Darmaraja untuk terus memberikan layanan terbaik setiap hari.`,
-
-    `Yth. ${namaNormal}, terima kasih telah menyelesaikan kewajiban pembayaran Anda hari ini. Kami sangat menghargai kedisiplinan Anda. Semoga layanan air bersih kami dapat selalu memberikan kenyamanan dan keberkahan bagi aktivitas Anda serta keluarga di rumah.`,
-
-    `Salam hangat untuk ${namaNormal}. Notifikasi pembayaran Anda baru saja masuk ke sistem kami. Kami ingin mengucapkan terima kasih setulus hati atas dukungan Anda. Bersama Anda, kami berkomitmen untuk menjaga aliran air di Darmaraja tetap terjaga kualitas dan kelancarannya.`,
-
-    `Selamat beraktivitas, ${namaNormal}. Pembayaran Anda telah kami verifikasi dengan sukses. Dedikasi Anda dalam melakukan pembayaran tepat waktu sangat berarti bagi kami. Kami akan terus berupaya maksimal untuk memberikan pelayanan yang lebih baik dan istimewa untuk Anda.`,
-
-    `Hai ${namaNormal}, senang sekali menerima kabar pembayaran Anda hari ini. Terima kasih telah menjadi mitra setia kami. Layanan air bersih yang andal adalah prioritas kami, dan kepercayaan Anda adalah energi bagi kami untuk terus berinovasi demi kenyamanan pelanggan.`,
-
-    `Salam hormat kami kepada ${namaNormal}, pembayaran Anda sudah tercatat dengan rapi di sistem kami. Terima kasih banyak atas kemitraan yang baik ini. Semoga hari Anda menyenangkan, dan jangan ragu untuk menghubungi kami jika Anda membutuhkan bantuan terkait layanan air bersih.`,
-
-    `Kabar gembira, ${namaNormal}! Pembayaran Anda telah berhasil kami proses. Terima kasih telah menjadi pelanggan yang sangat kooperatif. Dukungan Anda sangat membantu kami dalam menjaga keberlangsungan operasional dan peningkatan mutu air bersih di wilayah Darmaraja.`,
-
-    `Kepada Yth. Bapak/Ibu ${namaNormal}, kami telah menerima pembayaran Anda dengan baik. Terima kasih atas apresiasi dan kepercayaan yang terus Anda berikan kepada PDAM Darmaraja. Kami berkomitmen untuk selalu hadir memberikan pelayanan yang sigap, ramah, dan profesional bagi Anda.`,
-
-    `Terima kasih ${namaNormal}, transaksi pembayaran Anda telah kami konfirmasi secara sukses. Kami merasa sangat terhormat dapat melayani kebutuhan air Anda. Semoga kemudahan selalu menyertai setiap urusan Anda, sebagaimana kemudahan yang Anda berikan kepada kami hari ini.`,
-
-    `Salam sejahtera, ${namaNormal}. Pembayaran Anda telah berhasil kami terima. Kami mengucapkan terima kasih banyak atas kontribusi Anda dalam mendukung pelayanan kami. Semoga air yang mengalir di rumah Anda selalu memberikan manfaat dan kenyamanan bagi seluruh keluarga.`
+    // 🔥 PESAN PPOB (Langsung melaporkan transaksi yang baru saja terjadi)
+   const pesanPPOB = [
+    `Mohon perhatian rekan-rekan di kantor, baru saja kita menerima kabar baik, ada transaksi PPOB yang masuk dari ${namaNormal} dengan nomor pelanggan ${noPelanggan}. Senang sekali rasanya melihat pelanggan kita begitu tertib, semoga hal ini menjadi semangat untuk kita semua dalam memberikan pelayanan yang terbaik.`,
+    `Halo rekan-rekan sekalian, ada informasi transaksi masuk via PPOB atas nama ${namaNormal} dengan nomor pelanggan ${noPelanggan}. Mari kita syukuri kemudahan yang diberikan pelanggan kepada kita, semoga beliau sekeluarga selalu dilimpahkan keberkahan dan kesehatan yang luar biasa.`,
+    `Panggilan untuk seluruh tim di kantor, ${namaNormal} dengan nomor pelanggan ${noPelanggan} baru saja menyelesaikan pembayaran melalui mitra PPOB. Kepercayaan yang beliau berikan sangat berarti bagi kita, semoga kerja keras kita hari ini dibalas dengan kebahagiaan yang melimpah untuk kita semua.`,
+    `Mohon perhatiannya rekan-rekan, saat ini telah masuk notifikasi pembayaran PPOB dari ${namaNormal} dengan nomor pelanggan ${noPelanggan}. Luar biasa sekali kedisiplinan pelanggan kita ini, semoga beliau senantiasa dalam lindungan Alloh dan dimudahkan segala urusannya.`,
+    `Update untuk tim kantor, transaksi PPOB baru saja sukses dilakukan oleh ${namaNormal} dengan nomor pelanggan ${noPelanggan}. Terima kasih kepada pelanggan setia kita yang selalu tepat waktu, mari kita jaga semangat pelayanan ini agar terus memberikan dampak positif bagi banyak orang.`,
+    `Rekan-rekan di kantor, ada kabar sukses dari transaksi ${namaNormal} dengan nomor pelanggan ${noPelanggan} via PPOB. Senang sekali rasanya bisa terus melayani beliau dengan baik, semoga hari ini menjadi hari yang berkah bagi pelanggan kita dan bagi kita semua yang bertugas di sini.`,
+    `Mohon perhatian seluruh rekan, baru saja masuk pembayaran PPOB dari ${namaNormal} nomor pelanggan ${noPelanggan}. Kehadiran transaksi dari pelanggan yang tertib selalu membawa suasana positif, semoga beliau sekeluarga selalu diliputi kebahagiaan dan diberikan kelapangan rezeki yang tidak disangka-sangka.`,
+    `Perhatian untuk semua rekan kerja, ${namaNormal} dengan nomor pelanggan ${noPelanggan} telah berhasil melakukan pembayaran lewat mitra PPOB. Terima kasih atas dukungan nyata dari pelanggan kita, semoga setiap langkah yang kita ambil hari ini senantiasa diridhoi oleh Alloh SWT.`,
+    `Informasi hangat untuk tim di kantor, transaksi PPOB dari ${namaNormal} dengan nomor pelanggan ${noPelanggan} sudah sukses tercatat. Mari kita terus jaga antusiasme dan keramahan kita dalam melayani, karena pelanggan seperti beliau adalah bagian dari keluarga besar kita.`,
+    `Halo rekan-rekan, ada info pembayaran PPOB dari ${namaNormal} nomor pelanggan ${noPelanggan} yang baru saja masuk. Luar biasa sekali dukungan beliau kepada kita, semoga Alloh membalas kebaikan hati beliau dengan kesehatan yang paripurna dan kedamaian di rumah tangga beliau.`,
+    `Mohon perhatian rekan-rekan sekalian, ada transaksi PPOB yang sukses dilakukan oleh ${namaNormal} dengan nomor pelanggan ${noPelanggan}. Terima kasih banyak atas kepercayaan yang terus diberikan, mari kita jadikan ini motivasi untuk terus bekerja dengan hati dan penuh dedikasi.`,
+    `Update terbaru untuk kita semua di kantor, pelanggan ${namaNormal} dengan nomor pelanggan ${noPelanggan} baru saja membayar via PPOB. Apresiasi setinggi-tingginya untuk beliau, semoga beliau sekeluarga selalu dalam naungan keberkahan dan sukses dalam setiap usaha yang dijalani.`,
+    `Rekan-rekan, mohon disimak, ${namaNormal} dengan nomor pelanggan ${noPelanggan} baru saja memberi kabar pembayaran via PPOB. Sinergi yang baik antara kita dan pelanggan adalah kunci kebahagiaan bersama, semoga beliau selalu sehat dan dilancarkan segala urusan dunia maupun akhiratnya.`,
+    `Mohon perhatian seluruh tim, transaksi PPOB atas nama ${namaNormal} dengan nomor pelanggan ${noPelanggan} sudah berhasil masuk. Terima kasih untuk ketertiban pelanggan kita yang luar biasa, semoga Alloh senantiasa menjaga beliau dalam ikatan keluarga yang penuh cinta dan kasih sayang.`,
+    `Halo tim kantor, ada pembayaran PPOB dari ${namaNormal} dengan nomor pelanggan ${noPelanggan} yang baru saja tercatat. Semoga transaksi yang lancar ini menjadi pembuka pintu rezeki yang lebih luas bagi beliau dan juga bagi kita semua yang selalu memberikan pelayanan terbaik.`
 ];
-    // ============================================
-    // ============================================
 
-    // 🔥 GABUNGKAN UCAPAN DENGAN SUMBER PEMBAYARAN
-    const randomUcapan = thankYouMessages[Math.floor(Math.random() * thankYouMessages.length)];
-    const fullMessage = `${randomUcapan} Transaksi ini tercatat melalui ${sumberText}.`;
+    // 🔥 PESAN KANTOR
+    const pesanKantor = [
+    `Selamat datang yang sehangat-hangatnya kami haturkan kepada Bapak/Ibu ${namaNormal} di Kantor Unit Darmaraja. Sebuah kehormatan bagi kami dapat menyambut Bapak/Ibu secara langsung hari ini. Terima kasih telah meluangkan waktu berharga; semoga setiap langkah kaki Bapak/Ibu menuju kantor kami dicatat sebagai kebaikan, serta semoga Bapak/Ibu sekeluarga selalu dalam perlindungan dan limpahan rahmat Alloh SWT.`,
+    `Assalamu'alaikum, selamat datang Bapak/Ibu ${namaNormal}. Senang sekali melihat Bapak/Ibu kembali hadir. Terima kasih atas kesetiaan dan kedisiplinan yang luar biasa dalam melakukan pembayaran secara tatap muka. Kedatangan Bapak/Ibu adalah silaturahmi yang sangat berharga bagi kami. Semoga hari Bapak/Ibu penuh dengan keberkahan, kesehatan yang paripurna, dan kebahagiaan yang senantiasa tumbuh di dalam rumah tangga.`,
+    `Dengan penuh rasa hormat, selamat datang kepada Bapak/Ibu ${namaNormal}. Kami sangat mengapresiasi keputusan Bapak/Ibu untuk berkunjung ke Kantor Unit Darmaraja. Kepercayaan yang Bapak/Ibu berikan adalah amanah yang besar, dan kami berkomitmen memberikan pelayanan terbaik demi kenyamanan Anda. Semoga Alloh melipatgandakan rezeki Bapak/Ibu dan memberikan kemudahan dalam segala urusan yang Bapak/Ibu hadapi saat ini.`,
+    `Selamat datang kembali di Kantor Unit Darmaraja, Bapak/Ibu ${namaNormal}. Terima kasih atas dedikasi Bapak/Ibu sebagai pelanggan setia. Melihat wajah Bapak/Ibu memberikan semangat tersendiri bagi kami untuk bekerja lebih giat. Kami mendoakan agar Bapak/Ibu beserta keluarga tercinta selalu diberikan kesehatan yang tiada putus, serta kedamaian hati yang senantiasa menyelimuti kehidupan Bapak/Ibu setiap waktu.`,
+    `Salam hangat untuk Bapak/Ibu ${namaNormal} yang baru saja tiba. Kami sangat berterima kasih karena Bapak/Ibu telah memilih tetap setia bertransaksi secara langsung. Keramahan Bapak/Ibu hari ini menjadi energi positif bagi suasana kantor kami. Semoga hari ini indah bagi Bapak/Ibu, dan semoga Alloh mencurahkan keberkahan rezeki yang berlimpah serta kesuksesan dalam setiap langkah usaha Bapak/Ibu.`,
+    `Selamat datang, Bapak/Ibu ${namaNormal}. Kami merasa sangat bersyukur dapat melayani Bapak/Ibu hari ini. Kehadiran Bapak/Ibu adalah dukungan nyata bagi kelancaran operasional kami di Unit Darmaraja. Semoga pelayanan kami memberikan rasa puas di hati Bapak/Ibu, dan semoga Alloh membalas kebaikan Bapak/Ibu dengan balasan yang jauh lebih baik serta menjaga keluarga Bapak/Ibu dalam keharmonisan abadi.`,
+    `Selamat datang Bapak/Ibu ${namaNormal} di Kantor Unit Darmaraja. Kami merasa sangat tersanjung dengan kunjungan Bapak/Ibu. Terima kasih telah menjadi teladan pelanggan yang sangat taat dan disiplin. Kami akan melayani Bapak/Ibu dengan hati yang tulus. Semoga kesehatan, perlindungan, dan kesuksesan selalu menyertai Bapak/Ibu dan seluruh anggota keluarga di rumah tanpa terkecuali.`,
+    `Apa kabar Bapak/Ibu ${namaNormal}? Selamat datang di Kantor Unit Darmaraja. Senang sekali bisa melihat Bapak/Ibu kembali. Terima kasih atas loyalitas tanpa batas yang Bapak/Ibu berikan; kepercayaan Bapak/Ibu adalah pilar utama kami. Semoga hari Bapak/Ibu penuh dengan keajaiban, dan semoga segala doa serta harapan mulia Bapak/Ibu segera dikabulkan oleh Alloh SWT.`,
+    `Selamat datang kembali, Bapak/Ibu ${namaNormal}. Kehadiran Bapak/Ibu sungguh membuat kami merasa sangat dihargai. Terima kasih karena telah meluangkan waktu di tengah padatnya aktivitas untuk mampir ke sini. Semoga kunjungan ini membawa ketenangan hati, dan semoga Alloh senantiasa melimpahkan berkah serta rahmat-Nya dalam setiap detak kehidupan Bapak/Ibu dan keluarga tercinta.`,
+    `Terima kasih yang sebesar-besarnya kami haturkan kepada Bapak/Ibu ${namaNormal} atas kesediaan Bapak/Ibu berkunjung ke Kantor Unit Darmaraja. Kami menyadari waktu Bapak/Ibu sangat berharga, dan kami sangat menghormati kunjungan ini. Semoga pelayanan kami memberikan kesan yang mendalam. Semoga Bapak/Ibu sekeluarga selalu dalam keadaan sehat walafiat serta dimudahkan dalam meraih segala kebahagiaan dunia akhirat.`,
+    `Selamat datang Bapak/Ibu ${namaNormal}, senang sekali melihat Bapak/Ibu di Kantor Unit Darmaraja. Kami sangat menghargai setiap kunjungan yang selalu membawa kesan positif. Terima kasih karena selalu menjaga kedisiplinan, hal ini sangat membantu kami. Semoga Bapak/Ibu selalu diberikan kesehatan yang prima, kebahagiaan yang melimpah, dan semoga rumah tangga Bapak/Ibu dipenuhi keberkahan dari Yang Maha Kuasa.`,
+    `Kehadiran Bapak/Ibu ${namaNormal} di Kantor Unit Darmaraja adalah kebahagiaan bagi kami semua. Terima kasih atas ketulusan dan kepercayaan Bapak/Ibu kepada layanan kami. Kami berharap kunjungan hari ini membawa suasana ramah dan hangat. Semoga Alloh senantiasa memberikan perlindungan bagi Bapak/Ibu dari segala kesulitan, serta memberikan kelapangan rezeki yang berlipat ganda untuk kebutuhan keluarga.`,
+    `Selamat datang di Kantor Unit Darmaraja, Bapak/Ibu ${namaNormal}. Terima kasih banyak telah datang langsung ke sini. Keberadaan Bapak/Ibu sebagai pelanggan kami adalah sebuah kebanggaan tak ternilai. Kami berkomitmen menghargai Bapak/Ibu dengan pelayanan yang paling ramah. Semoga Bapak/Ibu sekeluarga diberikan umur yang penuh berkah, dijauhkan dari segala marabahaya, serta selalu diliputi rasa syukur dan kebahagiaan abadi.`,
+    `Apa kabar Bapak/Ibu ${namaNormal}? Selamat datang kembali di rumah kedua Bapak/Ibu di Kantor Unit Darmaraja. Terima kasih telah menjadi bagian dari keluarga besar pelanggan kami yang sangat berharga. Kami berusaha meningkatkan kualitas pelayanan agar Bapak/Ibu merasa nyaman setiap kali berkunjung. Semoga hari ini penuh keberuntungan, dan semoga Alloh memberikan perlindungan serta kesehatan paripurna bagi Bapak/Ibu sekeluarga.`,
+    `Selamat datang di Kantor Unit Darmaraja, Bapak/Ibu ${namaNormal}. Kedatangan Bapak/Ibu hari ini sungguh menyejukkan hati kami. Terima kasih atas kebaikan dan keramahan yang Bapak/Ibu tunjukkan kepada seluruh staf. Kami sangat menghormati kesetiaan Anda. Semoga Alloh membalas ketulusan Bapak/Ibu dengan hidup yang berkah, penuh kedamaian, dan selalu dijauhkan dari segala kesedihan yang memberatkan langkah Bapak/Ibu.`,
+    `Selamat datang Bapak/Ibu ${namaNormal}. Senang sekali melihat Bapak/Ibu hadir kembali di sini. Setiap kunjungan Bapak/Ibu adalah motivasi bagi kami untuk terus berbenah. Terima kasih karena telah percaya kepada kami selama ini. Semoga Alloh menjadikan Bapak/Ibu sebagai pribadi yang selalu dilimpahi kemudahan, kesehatan yang tidak pernah surut, serta keluarga yang senantiasa kompak dan penuh kasih sayang dalam segala situasi.`,
+    `Selamat datang di Kantor Unit Darmaraja, Bapak/Ibu ${namaNormal}. Kehadiran Bapak/Ibu di sini memberikan warna yang sangat positif bagi kantor kami hari ini. Terima kasih atas kerelaan Bapak/Ibu untuk datang secara langsung dan menyelesaikan urusan dengan penuh ketertiban. Semoga Alloh mencurahkan kasih sayang-Nya bagi Bapak/Ibu, serta menjadikan hari-hari Bapak/Ibu dipenuhi dengan keajaiban yang menyenangkan dan kabar yang menggembirakan.`,
+    `Terima kasih telah hadir, Bapak/Ibu ${namaNormal}. Kantor Unit Darmaraja terasa jauh lebih hangat dengan kehadiran Bapak/Ibu hari ini. Kami sadar bahwa pelayanan adalah ibadah, dan melayani Bapak/Ibu adalah sebuah kehormatan bagi kami. Semoga Bapak/Ibu selalu dikaruniai kesehatan fisik dan mental yang luar biasa, serta semoga keberhasilan selalu menyertai setiap usaha yang sedang Bapak/Ibu jalani saat ini.`,
+    `Selamat datang Bapak/Ibu ${namaNormal}. Kami sangat senang melihat wajah yang familiar dan ramah seperti Bapak/Ibu kembali mengunjungi kantor kami. Terima kasih atas dukungan nyata yang terus menerus diberikan. Kepercayaan Bapak/Ibu adalah bahan bakar semangat kami. Semoga Alloh selalu memberikan petunjuk dan kemudahan dalam setiap urusan Bapak/Ibu, dan semoga keluarga Bapak/Ibu senantiasa harmonis serta penuh kehangatan.`,
+    `Selamat datang di Kantor Unit Darmaraja, Bapak/Ibu ${namaNormal}. Merupakan sebuah kegembiraan bagi tim kami dapat menyambut Bapak/Ibu dengan tangan terbuka hari ini. Terima kasih karena telah memilih kami sebagai mitra pelayanan Bapak/Ibu. Semoga Bapak/Ibu sekeluarga selalu dalam lindungan Alloh SWT, diberikan kecukupan rezeki yang berkah, serta kebahagiaan yang melimpah ruah dalam setiap langkah kehidupan Bapak/Ibu.`,
+    `Selamat datang kembali, Bapak/Ibu ${namaNormal}. Kehadiran Bapak/Ibu hari ini sangat berarti bagi kami di Kantor Unit Darmaraja. Terima kasih atas waktu dan perhatian yang Bapak/Ibu berikan dengan datang langsung ke sini. Kami sangat menghargai pelanggan seperti Bapak/Ibu. Semoga Alloh senantiasa menjaga Bapak/Ibu dari marabahaya, serta memberikan kejernihan pikiran dan kedamaian hati dalam menjalani aktivitas sehari-hari.`,
+    `Selamat datang Bapak/Ibu ${namaNormal}. Senang sekali bisa melayani Bapak/Ibu kembali di kantor kami. Terima kasih telah menjaga silaturahmi dengan baik melalui kunjungan rutin Bapak/Ibu. Semoga pelayanan kami memberikan kenyamanan yang maksimal untuk Anda. Semoga hidup Bapak/Ibu selalu dibimbing menuju kebaikan, dan semoga setiap usaha Bapak/Ibu mendapatkan hasil yang sangat memuaskan di masa depan.`,
+    `Terima kasih telah hadir Bapak/Ibu ${namaNormal}. Kami di Kantor Unit Darmaraja merasa sangat beruntung memiliki pelanggan yang sangat disiplin dan penuh pengertian seperti Bapak/Ibu. Selamat datang kembali, semoga kunjungan Bapak/Ibu kali ini memberikan pengalaman yang menyenangkan. Kami berdoa semoga Alloh selalu memberikan keberkahan yang berlipat ganda bagi Bapak/Ibu sekeluarga, serta kebahagiaan yang tak pernah putus.`,
+    `Selamat datang Bapak/Ibu ${namaNormal} di Kantor Unit Darmaraja. Kehadiran Bapak/Ibu hari ini benar-benar membuat suasana kantor kami menjadi lebih ceria. Terima kasih telah meluangkan waktu berharga Bapak/Ibu untuk datang. Kami mendoakan agar Bapak/Ibu selalu diberikan kekuatan untuk menghadapi setiap tantangan, serta diberikan kebahagiaan yang mendalam bersama keluarga tercinta di rumah.`,
+    `Salam hangat untuk Bapak/Ibu ${namaNormal}. Selamat datang di Kantor Unit Darmaraja. Kami sangat menghargai kunjungan Bapak/Ibu yang penuh dengan sopan santun. Terima kasih telah menjadi pelanggan yang luar biasa. Semoga hari Bapak/Ibu selalu dipenuhi dengan keberhasilan, dan semoga Alloh senantiasa membimbing Bapak/Ibu menuju jalan yang lurus serta penuh dengan kebaikan yang abadi.`,
+    `Selamat datang Bapak/Ibu ${namaNormal}. Senang sekali melihat Bapak/Ibu kembali berkunjung ke Kantor Unit Darmaraja hari ini. Terima kasih karena selalu mengandalkan kami. Kami akan terus berusaha memberikan yang terbaik untuk Bapak/Ibu. Semoga kesehatan dan rezeki yang melimpah selalu menjadi teman setia Bapak/Ibu dalam menjalani hari-hari yang indah bersama keluarga.`,
+    `Terima kasih banyak atas kehadiran Bapak/Ibu ${namaNormal} di Kantor Unit Darmaraja. Selamat datang! Kami sangat bersyukur bisa melayani pelanggan yang sangat menghargai kami seperti Bapak/Ibu. Kehadiran Bapak/Ibu adalah energi bagi kami. Semoga Bapak/Ibu senantiasa diberikan kemudahan dalam segala urusan, dan semoga setiap lelah Bapak/Ibu hari ini diganti dengan kebahagiaan yang luar biasa.`,
+    `Selamat datang Bapak/Ibu ${namaNormal}. Kami sangat senang menyambut Bapak/Ibu kembali. Terima kasih telah menjaga kedisiplinan dan kesetiaan sebagai pelanggan kami. Kami mendoakan semoga Bapak/Ibu selalu diberikan kesehatan yang prima, kebahagiaan di dunia maupun akhirat, serta rumah tangga yang penuh dengan cinta kasih dan keberkahan dari Alloh SWT.`,
+    `Selamat datang kembali di Kantor Unit Darmaraja, Bapak/Ibu ${namaNormal}. Kehadiran Bapak/Ibu selalu kami nantikan dan selalu memberikan kebahagiaan tersendiri bagi kami. Terima kasih atas kunjungan Bapak/Ibu hari ini. Semoga Alloh senantiasa menjaga Bapak/Ibu sekeluarga dalam kebahagiaan, memberikan keberkahan pada rezeki Bapak/Ibu, dan mempermudah segala jalan kesuksesan Bapak/Ibu.`,
+    `Selamat datang Bapak/Ibu ${namaNormal} di Kantor Unit Darmaraja. Kami sangat terhormat atas kunjungan Bapak/Ibu yang sangat berarti. Terima kasih atas kepercayaan yang tak pernah putus. Semoga setiap pelayanan kami hari ini memuaskan Bapak/Ibu. Semoga Bapak/Ibu selalu diberikan kedamaian, kesehatan yang sempurna, dan kesuksesan dalam setiap cita-cita yang Bapak/Ibu impikan.`,
+    `Selamat datang Bapak/Ibu ${namaNormal}. Senang sekali bisa bertemu dengan Bapak/Ibu kembali. Terima kasih telah meluangkan waktu untuk hadir langsung di sini. Kami akan melayani Bapak/Ibu dengan sepenuh hati. Semoga hari-hari Bapak/Ibu selalu diliputi oleh kebahagiaan yang nyata, serta diberikan perlindungan Alloh dari segala kesulitan hidup yang mungkin menghadang.`,
+    `Selamat datang kembali, Bapak/Ibu ${namaNormal}. Terima kasih banyak telah berkunjung ke Kantor Unit Darmaraja. Kehadiran Bapak/Ibu selalu membawa suasana positif bagi kami. Kami berkomitmen untuk terus menjaga kepercayaan Bapak/Ibu. Semoga Bapak/Ibu selalu diberikan kesehatan yang baik, rezeki yang berkah, dan kebahagiaan yang senantiasa tumbuh subur di dalam keluarga Bapak/Ibu.`,
+    `Selamat datang Bapak/Ibu ${namaNormal}. Senang sekali bisa menyapa Bapak/Ibu kembali di kantor kami. Terima kasih telah menunjukkan dukungan luar biasa dengan hadir langsung di sini. Semoga Bapak/Ibu selalu diberikan ketenangan jiwa, kesehatan yang selalu terjaga, serta keberhasilan yang gemilang dalam setiap aspek kehidupan yang Bapak/Ibu jalani saat ini.`,
+    `Selamat datang di Kantor Unit Darmaraja, Bapak/Ibu ${namaNormal}. Kunjungan Bapak/Ibu hari ini sangat kami hargai. Terima kasih karena telah meluangkan waktu untuk hadir. Kami senantiasa mendoakan yang terbaik untuk Bapak/Ibu sekeluarga. Semoga Alloh selalu memberikan perlindungan, keberkahan hidup, serta kebahagiaan yang tidak ada habisnya bagi Bapak/Ibu setiap waktu.`,
+    `Apa kabar Bapak/Ibu ${namaNormal}? Selamat datang kembali. Senang sekali bisa melayani Bapak/Ibu lagi di kantor kami. Terima kasih atas kedisiplinan dan kepercayaan Bapak/Ibu kepada kami. Semoga Bapak/Ibu selalu dalam keadaan sehat walafiat, dimudahkan dalam segala urusan rezeki, dan selalu diberikan kebahagiaan oleh Alloh SWT di manapun Bapak/Ibu berada.`,
+    `Selamat datang Bapak/Ibu ${namaNormal}. Kami sangat bahagia Bapak/Ibu menyempatkan diri untuk berkunjung ke Kantor Unit Darmaraja hari ini. Terima kasih telah menjadi pelanggan yang sangat kami hormati. Semoga kunjungan Bapak/Ibu membawa manfaat bagi kita semua. Semoga Bapak/Ibu selalu diberikan keberkahan, kesuksesan, serta perlindungan dalam setiap langkah dan tindakan Bapak/Ibu sekeluarga.`,
+    `Selamat datang kembali di Kantor Unit Darmaraja, Bapak/Ibu ${namaNormal}. Kehadiran Bapak/Ibu selalu membuat kami bersemangat. Terima kasih atas kunjungan dan keramahan yang Bapak/Ibu tunjukkan selama ini. Semoga Bapak/Ibu senantiasa sehat, dimudahkan segala hajat hidupnya, dan selalu berada dalam lindungan serta kasih sayang Alloh SWT setiap saat.`,
+    `Terima kasih telah datang langsung, Bapak/Ibu ${namaNormal}. Selamat datang di Kantor Unit Darmaraja. Kami sangat menghargai setiap momen saat Bapak/Ibu berada di kantor kami. Semoga pelayanan kami hari ini memberikan kepuasan yang maksimal bagi Bapak/Ibu. Kami mendoakan agar Bapak/Ibu selalu sehat, bahagia, dan diberikan umur yang penuh dengan keberkahan yang nyata.`,
+    `Selamat datang Bapak/Ibu ${namaNormal}. Kami sangat bersyukur bisa melayani pelanggan yang sangat baik hati seperti Bapak/Ibu hari ini. Terima kasih karena selalu menjaga kedisiplinan. Semoga hari Bapak/Ibu selalu cerah dan dipenuhi oleh kabar yang menggembirakan. Kami mendoakan Bapak/Ibu sekeluarga selalu dalam keadaan harmonis dan penuh cinta kasih.`,
+    `Selamat datang di Kantor Unit Darmaraja, Bapak/Ibu ${namaNormal}. Senang sekali bisa bertemu dengan Bapak/Ibu lagi. Terima kasih telah meluangkan waktu berharga Bapak/Ibu untuk hadir. Kami selalu siap melayani Bapak/Ibu. Semoga Alloh selalu memberikan kesehatan yang luar biasa bagi Bapak/Ibu, serta rezeki yang datang dengan cara yang tidak disangka-sangka.`,
+    `Selamat datang kembali, Bapak/Ibu ${namaNormal}. Kehadiran Bapak/Ibu di Kantor Unit Darmaraja selalu kami tunggu dan sangat kami syukuri. Terima kasih karena selalu setia menjadi pelanggan kami. Semoga setiap urusan Bapak/Ibu hari ini lancar tanpa hambatan, dan semoga Bapak/Ibu selalu diberikan perlindungan serta keselamatan oleh Alloh SWT dalam setiap perjalanan hidup Bapak/Ibu.`,
+    `Selamat datang Bapak/Ibu ${namaNormal}. Terima kasih telah berkenan hadir di kantor kami hari ini. Kami sangat bangga memiliki pelanggan yang sangat kooperatif seperti Bapak/Ibu. Semoga layanan kami senantiasa memenuhi harapan Bapak/Ibu. Semoga hidup Bapak/Ibu selalu dipenuhi dengan keberkahan, kedamaian hati, dan kesehatan yang selalu terjaga sampai kapanpun.`,
+    `Selamat datang kembali, Bapak/Ibu ${namaNormal}. Senang sekali rasanya melihat Bapak/Ibu lagi di Kantor Unit Darmaraja. Terima kasih atas kunjungan Bapak/Ibu hari ini yang membuat suasana kantor kami menjadi lebih hidup. Semoga Bapak/Ibu sekeluarga selalu sehat, bahagia, dan diberikan kesuksesan yang berlimpah oleh Alloh SWT dalam setiap langkah hidup Bapak/Ibu.`,
+    `Terima kasih banyak telah hadir Bapak/Ibu ${namaNormal}. Selamat datang di Kantor Unit Darmaraja. Kami berkomitmen untuk selalu menghargai kehadiran Bapak/Ibu dengan pelayanan yang terbaik. Semoga kunjungan ini membawa berkah bagi kita semua. Kami senantiasa mendoakan agar Bapak/Ibu selalu dilimpahi kesehatan yang prima dan kebahagiaan yang senantiasa menanti di depan mata.`,
+    `Selamat datang Bapak/Ibu ${namaNormal}. Kami sangat menghargai keputusan Bapak/Ibu untuk berkunjung kembali ke kantor kami. Terima kasih atas dedikasi dan kesetiaan yang Bapak/Ibu tunjukkan sebagai pelanggan kami. Semoga Bapak/Ibu selalu diberikan kemudahan dalam setiap urusan, serta perlindungan Alloh dalam setiap langkah kaki Bapak/Ibu menuju kebaikan.`,
+    `Selamat datang di Kantor Unit Darmaraja, Bapak/Ibu ${namaNormal}. Kehadiran Bapak/Ibu hari ini sangat berarti bagi kami semua. Terima kasih telah menjadi bagian dari keluarga besar kami. Kami berharap pelayanan kami memberikan rasa nyaman bagi Bapak/Ibu. Semoga hari-hari Bapak/Ibu selalu dipenuhi dengan keberkahan, keberhasilan yang nyata, dan kesehatan yang tiada putus.`,
+    `Apa kabar Bapak/Ibu ${namaNormal}? Selamat datang di Kantor Unit Darmaraja. Kami selalu senang menyambut kedatangan Bapak/Ibu secara langsung. Terima kasih atas kepercayaan yang selalu diberikan kepada kami. Semoga Bapak/Ibu selalu diberikan kelapangan rezeki, kedamaian hidup, serta perlindungan dari Alloh dalam menjalani hari-hari Bapak/Ibu sekeluarga.`,
+    `Selamat datang kembali Bapak/Ibu ${namaNormal}. Kami sangat berterima kasih atas kunjungan Bapak/Ibu hari ini. Kedisiplinan dan keramahan Bapak/Ibu adalah contoh nyata bagi pelanggan lainnya. Semoga kebaikan selalu memayungi Bapak/Ibu, serta semoga kesehatan yang paripurna senantiasa melekat pada seluruh anggota keluarga Bapak/Ibu tercinta.`,
+    `Terima kasih telah datang Bapak/Ibu ${namaNormal}. Selamat datang di Kantor Unit Darmaraja. Kami sangat bersyukur dapat melayani Bapak/Ibu hari ini dengan sepenuh hati. Semoga Bapak/Ibu selalu diberikan keberuntungan, kebahagiaan yang melimpah, dan semoga setiap usaha Bapak/Ibu diberkahi oleh Alloh SWT dengan hasil yang luar biasa.`,
+    `Selamat datang Bapak/Ibu ${namaNormal}. Kami senantiasa merasa terhormat atas kehadiran Bapak/Ibu di kantor kami. Terima kasih telah setia menjadi pelanggan kami. Semoga hari Bapak/Ibu penuh dengan keceriaan, kesehatan yang selalu terjaga, serta semoga Bapak/Ibu sekeluarga selalu dalam lindungan Alloh SWT di manapun Bapak/Ibu berada.`
+];
+
+    // 🔥 PILIH PESAN
+    const pilihanPesan = (metode === 'PPOB') ? pesanPPOB : pesanKantor;
+    const randomUcapan = pilihanPesan[Math.floor(Math.random() * pilihanPesan.length)];
     
-    console.log('🔊 Playing message:', fullMessage);
+    console.log('🔊 Playing message:', randomUcapan);
     
     if (typeof speak === 'function') {
-        speak(fullMessage, 'female');
+        speak(randomUcapan, 'female');
     }
 }
    //  const fullMessage = `${thankYouMsg} Atas nama ${namaNormal}, pembayaran sebesar ${formatRupiah(pelanggan.jumlah)} telah kami terima melalui ${metodeText}${waktuText}.`;
@@ -3321,11 +3396,26 @@ const thankYouMessages = [
     document.getElementById('today-kubikasi').textContent = stats.kubikasiToday.toFixed(1);
 }
     // 🔥 UPDATE JAM SETIAP DETIK
-    setInterval(() => {
-    if (typeof updateTodayStatsDisplay === 'function') {
-        updateTodayStatsDisplay();
+    let lastStatsUpdate = 0;
+setInterval(() => {
+    // 🔥 HANYA UPDATE JAM (TIDAK LOOP PELANGGAN!)
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('id-ID', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+    });
+    const timeEl = document.querySelector('#today-date div:last-child');
+    if (timeEl) {
+        timeEl.innerHTML = `<i class="fas fa-clock"></i> ${timeStr} WIB`;
     }
-    }, 1000);
+    
+    // Hitung statistik hanya setiap 30 detik
+    if (Date.now() - lastStatsUpdate > 30000) {
+        if (typeof updateTodayStatsDisplay === 'function') {
+            updateTodayStatsDisplay();
+        }
+        lastStatsUpdate = Date.now();
+    }
+}, 1000);
     function getPaymentStatus(p) {
     const hasLoket = p.tanggal_pembayaran_loket && p.tanggal_pembayaran_loket !== '-' && p.tanggal_pembayaran_loket !== '.' && p.tanggal_pembayaran_loket !== null;
     const hasPPOB = p.tanggal_pembayaran_ppob && p.tanggal_pembayaran_ppob !== '-' && p.tanggal_pembayaran_ppob !== '.' && p.tanggal_pembayaran_ppob !== null;
@@ -3994,7 +4084,7 @@ const thankYouMessages = [
     function initSidebarAutoScroll() {
     const sb = document.getElementById('sidebarContent');
     if (!sb) return;
-    const scrollSpeed = 50, scrollAmount = 1;
+    const scrollSpeed = 200, scrollAmount = 2;
     sidebarScrollInterval = setInterval(() => {
     const idle = Date.now() - lastActivityTime;
     if (idle > 30000 && sb.scrollHeight > sb.clientHeight + 50) {
