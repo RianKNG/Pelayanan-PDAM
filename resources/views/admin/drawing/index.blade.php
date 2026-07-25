@@ -624,6 +624,49 @@
     <div class="main-container">
         <!-- Map -->
         <div id="map" style="position: relative;">
+            <!-- Tombol Input Manual -->
+<div style="position: absolute; top: 380px; right: 10px; z-index: 500;">
+    <button class="btn btn-sm btn-warning text-white shadow" onclick="new bootstrap.Modal(document.getElementById('modalManualCoord')).show()" style="border-radius: 10px; font-size: 11px; font-weight: 600;">
+        <i class="fas fa-keyboard"></i> Input Koordinat Manual
+    </button>
+</div>
+
+<!-- Modal Input Koordinat Manual -->
+<div class="modal fade" id="modalManualCoord" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #f59e0b, #f97316); color: white;">
+                <h5 class="modal-title" style="font-size: 14px;"><i class="fas fa-keyboard"></i> Input Manual</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formManualCoord">
+    <div class="modal-body">
+        <div class="mb-3">
+            <label class="form-label">Latitude *</label>
+            <!-- GANTI type="number" MENJADI type="text" + inputmode="decimal" -->
+            <input type="text" inputmode="decimal" name="manual_lat" 
+                   class="form-control form-control-sm" required 
+                   placeholder="-6.9158" autocomplete="off">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Longitude *</label>
+            <!-- GANTI type="number" MENJADI type="text" + inputmode="decimal" -->
+            <input type="text" inputmode="decimal" name="manual_lng" 
+                   class="form-control form-control-sm" required 
+                   placeholder="108.0753" autocomplete="off">
+        </div>
+        <div class="alert alert-info py-2" style="font-size: 11px; margin-bottom: 0;">
+            <i class="fas fa-info-circle"></i> Sekarang bisa Copy-Paste (Ctrl+V) dari GPS/Google Maps!
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-arrow-right"></i> Lanjut Form</button>
+    </div>
+</form>
+        </div>
+    </div>
+</div>
             <!-- Filter Tabs -->
             <div class="filter-tabs">
                 <div class="filter-tab active" data-layer="all" onclick="toggleLayer('all', this)">
@@ -2909,6 +2952,58 @@
             }).then(() => location.reload());
         }
     }
+    // ============================================
+// HANDLE INPUT MANUAL KOORDINAT
+// ============================================
+document.getElementById('formManualCoord').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Ambil value dan ganti koma (,) menjadi titik (.) jika ada
+    const latStr = this.manual_lat.value.trim().replace(',', '.');
+    const lngStr = this.manual_lng.value.trim().replace(',', '.');
+    
+    const lat = parseFloat(latStr);
+    const lng = parseFloat(lngStr);
+
+    // Validasi apakah benar-benar angka
+    if (isNaN(lat) || isNaN(lng)) {
+        alert('Format koordinat tidak valid! Pastikan hanya berisi angka dan titik.');
+        return;
+    }
+
+    // 1. Set tempCoords agar terbaca oleh formTitik
+    tempCoords = { lat: lat, lng: lng };
+
+    // 2. Tambahkan marker sementara (merah) di peta
+    if (window.tempManualMarker) map.removeLayer(window.tempManualMarker);
+    
+    window.tempManualMarker = L.marker([lat, lng], {
+        icon: L.divIcon({
+            className: 'custom-div-icon',
+            html: '<div style="background:#ef4444; width:16px; height:16px; border-radius:50%; border:3px solid white; box-shadow:0 0 10px rgba(0,0,0,0.5);"></div>',
+            iconSize: [16, 16],
+            iconAnchor: [8, 8]
+        })
+    }).addTo(map).bindPopup('<b>Lokasi Input Manual</b><br>Koordinat terkunci.').openPopup();
+
+    // 3. Zoom peta ke lokasi
+    map.flyTo([lat, lng], 17, { duration: 1 });
+
+    // 4. Tutup modal manual
+    bootstrap.Modal.getInstance(document.getElementById('modalManualCoord')).hide();
+
+    // 5. Buka Modal Form Titik Penting
+    setTimeout(() => {
+        new bootstrap.Modal(document.getElementById('modalTitik')).show();
+    }, 500);
+});
+// Hapus marker manual jika user membatalkan form titik
+document.querySelector('#modalTitik .btn-close').addEventListener('click', function() {
+    if (window.tempManualMarker) {
+        map.removeLayer(window.tempManualMarker);
+        window.tempManualMarker = null;
+    }
+});
 
     document.addEventListener('DOMContentLoaded', initMap);
     </script>

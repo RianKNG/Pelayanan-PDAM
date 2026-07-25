@@ -229,90 +229,20 @@
        align-items: center;
        gap: 16px;
     }
-    .unit-image-wrapper,
-/* 🔥 SLIDESHOW FOTO - PASTIKAN TERLIHAT & TIDAK TERTUTUP */
-.unit-image-wrapper,
-#topSlideshowWrapper {
-    width: 150px !important;
-    height: 100px !important;
-    border-radius: 10px;
-    overflow: visible !important;  /* ← UBAH: dari hidden ke visible */
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    position: relative !important;
-    z-index: 1001 !important;  /* ← TAMBAH: z-index tinggi */
-    display: block !important;
-    background: #1e293b;
-}
-
-#topSlideshowImg {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover;
-    transition: opacity 0.5s ease-in-out;
-    position: relative !important;  /* ← TAMBAH */
-    z-index: 1002 !important;  /* ← TAMBAH: lebih tinggi dari wrapper */
-}
-
-#topSlideshowBadge {
-    position: absolute !important;
-    bottom: 8px !important;
-    right: 8px !important;
-    background: rgba(239, 68, 68, 0.9) !important;
-    color: white !important;
-    padding: 4px 10px !important;
-    border-radius: 10px !important;
-    font-size: 10px !important;
-    font-weight: 700 !important;
-    z-index: 10 !important;
-    display: none;
-    animation: pulse-badge 2s infinite;
-}
-
-/* 🔥 FULLSCREEN: Pastikan slideshow tetap di atas */
-/*  SLIDESHOW SANGAT BESAR */
-.main-wrapper.is-fullscreen .unit-image-wrapper,
-.main-wrapper.is-fullscreen #topSlideshowWrapper {
-    width: 380px !important;    /* Sangat besar */
-    height: 260px !important;
-    display: block !important;
-    position: fixed !important;
-    top: 70px !important;
-    left: 10px !important;
-    z-index: 9999999 !important;
-    border-radius: 14px !important;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6) !important;
-    border: 3px solid rgba(255, 255, 255, 0.25) !important;
-}
-
-.unit-image-wrapper img,
-#topSlideshowImg {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover;
-    transition: opacity 0.5s ease-in-out;
-}
-
-#topSlideshowBadge {
-    position: absolute !important;
-    bottom: 4px !important;
-    right: 4px !important;
-    background: rgba(239, 68, 68, 0.9) !important;
-    color: white !important;
-    padding: 2px 6px !important;
-    border-radius: 8px !important;
-    font-size: 8px !important;
-    font-weight: 700 !important;
-    z-index: 10 !important;
-    display: none;
-    animation: pulse-badge 2s infinite;
-}
-
-@keyframes pulse-badge {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
+    .unit-image-wrapper {
+       width: 80px;
+       height: 60px;
+       border-radius: 10px;
+       overflow: hidden;
+       flex-shrink: 0;
+       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+       border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    .unit-image-wrapper img {
+       width: 100%;
+       height: 100%;
+       object-fit: cover;
+    }
     .unit-info {
        flex-shrink: 0;
        color: white;
@@ -1696,7 +1626,26 @@
        font-size: 10px;
        font-style: italic;
     }
-  
+    .main-wrapper.is-fullscreen {
+       position: fixed !important;
+       top: 0 !important;
+       left: 0 !important;
+       width: 100vw !important;
+       height: 100vh !important;
+       z-index: 99999 !important;
+       background: white;
+       margin-right: 0 !important;
+    }
+    .main-wrapper.is-fullscreen #map {
+       height: 100vh !important;
+    }
+    .main-wrapper.is-fullscreen .top-navbar,
+    .main-wrapper.is-fullscreen .unit-progress-bar,
+    .main-wrapper.is-fullscreen .sidebar,
+    .main-wrapper.is-fullscreen .control-buttons,
+    .main-wrapper.is-fullscreen .custom-layer-control {
+       display: none !important;
+    }
     @media (max-width: 768px) {
        .top-navbar-container {
           flex-direction: column;
@@ -1759,291 +1708,8 @@
        .revenue-progress-details {
           grid-template-columns: repeat(2, 1fr);
        }
-       /*  SLIDESHOW KIRI ATAS - Tetap di posisi & tidak melebar */
-/* GANTI DARI: */
-/* .unit-image-wrapper {
-    width: 80px;
-    height: 60px;
-    ...
-} */
-
-/* MENJADI: */
-.unit-image-wrapper {
-    width: 150px !important;        /* Lebih besar */
-    height: 100px !important;       /* Lebih tinggi */
-    flex-shrink: 0;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-}
-
-#topSlideshowImg {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover;
-    transition: opacity 0.5s ease-in-out;
-}
-#topSlideshowImg {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover;
-    transition: opacity 0.5s ease-in-out;
-}
-
-@keyframes pulse-dot {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-}
-/* Slideshow Foto Gangguan - Top Left */
-#topSlideshowWrapper {
-    position: relative;
-    width: 80px !important;
-    height: 60px !important;
-    flex-shrink: 0;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-}
-
-#topSlideshowImg {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover;
-    transition: opacity 0.5s ease-in-out;
-}
-
-@keyframes pulse-badge {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
-
-/* ============================================
-   🔥 SLIDESHOW FOTO GANGGUAN - KIRI ATAS (UKURAN BESAR)
-   ============================================ */
-.unit-image-wrapper,
-#topSlideshowWrapper {
-    width: 150px !important;        /* Ukuran lebih besar */
-    height: 100px !important;       /* Ukuran lebih tinggi */
-    border-radius: 10px;
-    overflow: hidden;
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    position: relative !important;
-}
-
-.unit-image-wrapper img,
-#topSlideshowImg {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover;
-    transition: opacity 0.5s ease-in-out;
-}
-
-#topSlideshowBadge {
-    position: absolute !important;
-    bottom: 4px !important;
-    right: 4px !important;
-    background: rgba(239, 68, 68, 0.9) !important;
-    color: white !important;
-    padding: 2px 6px !important;
-    border-radius: 8px !important;
-    font-size: 8px !important;
-    font-weight: 700 !important;
-    z-index: 10 !important;
-    display: none;
-    animation: pulse-badge 2s infinite;
-}
-
-@keyframes pulse-badge {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
-
-/* ============================================
-   🔥 FULLSCREEN OVERRIDES (Agar Tetap Muncul)
-   ============================================ */
-/* ============================================
-   🔥 FULLSCREEN - SLIDESHOW TETAP MUNCUL BESAR
-/* ============================================
-   🔥 SLIDESHOW FOTO GANGGUAN - UKURAN BESAR
-   ============================================ */
-/* ============================================
-   🔥 SLIDESHOW & FULLSCREEN - VERSI BERSIH
-   ============================================ */
-.unit-image-wrapper,
-#topSlideshowWrapper {
-    width: 150px !important;
-    height: 100px !important;
-    border-radius: 10px;
-    overflow: hidden;
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    position: relative !important;
-    display: block !important;
-}
-
-/* ✅ HANYA sidebar, control, layer yang hilang saat fullscreen */
-.main-wrapper.is-fullscreen .sidebar,
-.main-wrapper.is-fullscreen .control-buttons,
-.main-wrapper.is-fullscreen .custom-layer-control {
-    display: none !important;
-}
-
-/* ✅ Navbar & Progress Bar TETAP MUNCUL */
-.main-wrapper.is-fullscreen .top-navbar {
-    display: flex !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 9999998 !important;
-}
-
-.main-wrapper.is-fullscreen .unit-progress-bar {
-    display: flex !important;
-    position: fixed !important;
-    top: 50px !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 9999997 !important;
-}
-
-/* ✅ Map menyesuaikan ruang */
-.main-wrapper.is-fullscreen #map {
-    height: 100vh !important;
-    margin-top: 110px !important;
-}
-/* 🔥 SLIDESHOW HARUS MUNCUL */
-.unit-image-wrapper,
-#topSlideshowWrapper {
-    width: 150px !important;
-    height: 100px !important;
-    display: block !important;
-    position: relative !important;
-    z-index: 1001 !important;
-    flex-shrink: 0;
-}
-
-/* Saat fullscreen tetap muncul */
-.main-wrapper.is-fullscreen .unit-image-wrapper,
-.main-wrapper.is-fullscreen #topSlideshowWrapper {
-    display: block !important;
-    width: 150px !important;
-    height: 100px !important;
-    position: fixed !important;
-    top: 60px !important;
-    left: 10px !important;
-    z-index: 9999999 !important;
-}
-
-.main-wrapper.is-fullscreen .top-navbar {
-    display: flex !important;
-}
-
-.main-wrapper.is-fullscreen .unit-progress-bar {
-    display: flex !important;
-}
-/* ✅ Ukuran foto slideshow */
-.unit-image-wrapper,
-#topSlideshowWrapper {
-    width: 150px !important;
-    height: 100px !important;
-}
-/* 🔥 PASTIKAN SLIDESHOW SELALU MUNCUL */
-#fixedSlideshow {
-    display: block !important;
-    z-index: 99999999 !important;
-    position: fixed !important;
-    top: 80px !important;
-    left: 20px !important;
-    width: 180px !important;
-    height: 120px !important;
-    border-radius: 10px !important;
-    overflow: hidden !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
-    border: 3px solid rgba(255, 255, 255, 0.3) !important;
-    background: #1e293b !important;
-}
-/* ✅ Ukuran foto slideshow */
-.unit-image-wrapper,
-/* #topSlideshowWrapper {
-    width: 150px !important;
-    height: 100px !important;
-} */
-    /* 🔥 SLIDESHOW DI DALAM PETA LEAFLET */
-.leaflet-control-foto-slideshow {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    margin: 10px !important;
-    z-index: 1000 !important;
-}
-
-.foto-slideshow-container {
-    position: relative;
-    width: 180px !important;
-    height: 120px !important;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    background: #1e293b;
-    transition: all 0.3s ease;
-}
-
-.foto-slideshow-container:hover {
-    border-color: rgba(255, 255, 255, 0.6);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.7) !important;
-}
-
-.foto-slideshow-container img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover;
-    transition: opacity 0.5s ease-in-out;
-}
-
-.foto-slideshow-badge {
-    position: absolute;
-    bottom: 6px;
-    right: 6px;
-    background: rgba(239, 68, 68, 0.9);
-    color: white;
-    padding: 3px 8px;
-    border-radius: 10px;
-    font-size: 9px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    animation: pulse-badge 2s infinite;
-}
-
-.foto-slideshow-caption {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(transparent, rgba(0,0,0,0.85));
-    color: white;
-    padding: 6px 8px;
-    font-size: 9px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-@keyframes pulse-badge {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-}
     }
-    </style>
+  </style>
 </head>
 <body>
   <audio id="backgroundMusic" loop preload="auto"></audio>
@@ -2112,24 +1778,18 @@
       </div>
     </div>
   </div>
-
-</div>
   <div class="unit-progress-bar">
-   <div class="unit-progress-container">
-    <!-- 🔥 SLIDESHOW FOTO GANGGUAN - WAJIB ADA -->
-<div class="unit-image-wrapper">
-    <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=200&h=150&fit=crop" 
-         alt="Unit PDAM Darmaraja" fs
-         onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2260%22%3E%3Crect fill=%22%231e3c72%22 width=%2280%22 height=%2260%22/%3E%3Ctext x=%2240%22 y=%2230%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2210%22%3EPDAM%3C/text%3E%3C/svg%3E'" />
-</div>
-    
-    <div class="unit-info">
+    <div class="unit-progress-container">
+      <div class="unit-image-wrapper">
+        <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=200&h=150&fit=crop" alt="Unit PDAM Darmaraja" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2260%22%3E%3Crect fill=%22%231e3c72%22 width=%2280%22 height=%2260%22/%3E%3Ctext x=%2240%22 y=%2230%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2210%22%3EPDAM%3C/text%3E%3C/svg%3E'" />
+      </div>
+      <div class="unit-info">
         <h3><i class="fas fa-building"></i> Unit Cabang Darmaraja</h3>
         <p>Kec. Darmaraja, Kab. Sumedang</p>
         <button class="unit-narrate-btn" onclick="narrateUnitProfile()">
-            <i class="fas fa-volume-up"></i> Dengarkan Profil
+          <i class="fas fa-volume-up"></i> Dengarkan Profil
         </button>
-    </div>
+      </div>
       <div class="revenue-progress-section">
         <div class="revenue-progress-header">
           <div class="revenue-progress-title">
@@ -2191,9 +1851,6 @@
       </div>
     </div>
   </div>
-  <!-- 🔥 FOTO SLIDESHOW TERPISAH - SELALU MUNCUL SAAT FULLSCREEN -->
-
-</div>
   <div class="main-wrapper" id="mainWrapper">
     <div id="map"></div>
     <div class="live-info-panel" id="liveInfoPanel" style="display: none">
@@ -2938,7 +2595,7 @@
     const pelangganDataFromLaravel = @json($pelanggan ?? []);
     const zonaData = @json($zonaList ?? []); // 🔥 ZONA DATA
     const API_REALTIME_URL = '/api/pelanggan/realtime';
-    const POLLING_INTERVAL = 10000;
+    const POLLING_INTERVAL = 5000;
     // 🔥 TAMBAHKAN INI: Data foto untuk slideshow
 const gangguanFotosData = @json($gangguanFotosData ?? []);
 console.log('📸 Data Foto Gangguan Loaded:', gangguanFotosData);
@@ -2993,6 +2650,16 @@ console.log('📸 Data Foto Gangguan Loaded:', gangguanFotosData);
     let isYoutubeReady = false;
     // 🔥 VARIABEL MUTE LIVE
     let isLiveMuted = false;
+    // 🔥 DEBOUNCE untuk cegah panggilan berulang
+let revenueCalcTimeout;
+function debouncedCalculateRevenue() {
+    clearTimeout(revenueCalcTimeout);
+    revenueCalcTimeout = setTimeout(() => {
+        if (typeof calculateRevenue === 'function') calculateRevenue();
+        if (typeof updateRevenueProgress === 'function') updateRevenueProgress();
+        if (typeof updateTodayStatsDisplay === 'function') updateTodayStatsDisplay();
+    }, 500);
+}
     
     // ============================================
     // 🔥 YOUTUBE API CALLBACK
@@ -3313,7 +2980,6 @@ function setYouTubeVolume(v) {
     realtimePollingInterval = setInterval(checkNewPayments, POLLING_INTERVAL);
     setTimeout(checkNewPayments, 3000);
     }
-    
     function initializePaymentTimestamps() {
     if (typeof pelangganDataFromLaravel !== 'undefined') {
     pelangganDataFromLaravel.forEach(p => {
@@ -3347,7 +3013,11 @@ function setYouTubeVolume(v) {
     koordinator: p.koordinator || '',
     tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null,
     tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null,
-    status: p.status_sl || p.status || 'Aktif'
+     status: p.status_sl || p.status || 'Aktif',
+            
+            // 🔥 TAMBAHKAN 2 BARIS INI AGAR ALAMAT TIDAK HILANG
+            alamat: p.alamat || '-',
+            nama_blok: p.nama_blok || '-'
     };
     const s = getPaymentStatus(pelangganMapped);
     if (s.tanggal) {
@@ -3368,49 +3038,65 @@ function setYouTubeVolume(v) {
     if (newPayments.length > 0 && !isFirstLoad) {
     const realNewPayments = newPayments.filter(p => p.isNewPayment);
     if (realNewPayments.length > 0) {
-    realNewPayments.forEach((p, idx) => {
-    setTimeout(() => {
-    handlePaymentReceived(p);
-    updateUIAfterPayment(p);
-    }, idx * 3000);
+    // 🔥 PEMBAYARAN PERTAMA LANGSUNG BUNYI
+handlePaymentReceived(realNewPayments[0]);
+updateUIAfterPayment(realNewPayments[0]);
+
+// 🔥 Sisanya queue tanpa delay lama
+if (realNewPayments.length > 1) {
+    realNewPayments.slice(1).forEach((p, idx) => {
+        setTimeout(() => {
+            updateUIAfterPayment(p);
+        }, (idx + 1) * 800);
     });
+}
     }
     }
     } catch (error) {
     console.error('❌ Error polling:', error);
     }
     }
-    function updatePelangganDataFromAPI(newData) {
-    const mappedData = newData.map(p => ({
-    no_pelanggan: p.no_pelanggan,
-    nama: p.nama,
-    jumlah: p.jumlah || '0',
-    pakai: p.pakai || '0',
-    kode_gol_trf: p.kode_gol_trf,
-    nama_wilayah: p.nama_wilayah || p.cabang,
-    koordinator: p.koordinator,
-    tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null,
-    tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null,
-    status: p.status,
-    alamat: p.alamat
-    }));
-    mappedData.forEach(newP => {
-    const idx = pelangganDataFromLaravel.findIndex(p => p.no_pelanggan === newP.no_pelanggan);
-    if (idx !== -1) {
-    pelangganDataFromLaravel[idx] = newP;
-    } else {
-    pelangganDataFromLaravel.push(newP);
-    }
+   function updatePelangganDataFromAPI(newData) {
+    // 1. Update data array secepat mungkin (Lightweight loop)
+    newData.forEach(p => {
+        const idx = pelangganDataFromLaravel.findIndex(x => x.no_pelanggan === p.no_pelanggan);
+        const mapped = {
+            no_pelanggan: p.no_pelanggan,
+            nama: p.nama,
+            jumlah: p.jumlah || '0',
+            pakai: p.pakai || '0',
+            kode_gol_trf: p.kode_gol_trf,
+            nama_wilayah: p.nama_wilayah || p.cabang,
+            koordinator: p.koordinator,
+            tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null,
+            tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null,
+            status: p.status,
+              // 🔥 PERBAIKAN: Prioritaskan nama_blok, lalu alamat
+            nama_blok: p.nama_blok || '-',
+            alamat: p.alamat || '-'
+        };
+        
+        if (idx !== -1) {
+            pelangganDataFromLaravel[idx] = mapped;
+        } else {
+            pelangganDataFromLaravel.push(mapped);
+        }
     });
+
+    // 2. Update statistik ringan langsung (Instant, tidak berat)
     updateRevenueProgress();
     updateTodayStatsDisplay();
     calculateRevenue();
-    // 🔥 PENTING: Reload marker unpaid agar yang sudah bayar hilang
-    loadUnpaidCustomerMarkers();
-    // 🔥 Reload wilayah & blok
-    loadWilayahDanBlok();
-    }
-    function updateUIAfterPayment(pelanggan) {
+
+    // 3. 🔥 KUNCI KECEPATAN: Tunda operasi berat (Map & DOM) 
+    // agar tidak memblokir thread utama saat notifikasi/suara muncul
+    setTimeout(() => {
+        loadUnpaidCustomerMarkers();
+        loadWilayahDanBlok();
+    }, 150); // Delay 150ms agar browser selesai memproses suara/notif dulu
+}
+
+function updateUIAfterPayment(pelanggan) {
     const bar = document.getElementById('notificationBar');
     const content = document.getElementById('notificationContent');
     
@@ -3423,7 +3109,6 @@ function setYouTubeVolume(v) {
             waktuDisplay = `<span class="time" style="color: #fcd34d; font-size: 8px;"><i class="fas fa-clock"></i> ${tgl.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})} WIB</span>`;
         }
         
-        // 🔥 DETEKSI SUMBER UNTUK TAMPILAN VISUAL
         const metode = pelanggan.statusInfo && pelanggan.statusInfo.metode ? pelanggan.statusInfo.metode : 'Kantor';
         const sumberText = metode === 'PPOB' ? 'PPOB' : 'Kantor Unit Darmaraja';
         const iconSumber = metode === 'PPOB' ? 'fa-mobile-alt' : 'fa-building';
@@ -3439,11 +3124,26 @@ function setYouTubeVolume(v) {
         
         content.innerHTML = itemHTML + itemHTML;
         content.style.animation = 'none';
-        content.offsetHeight;
+        content.offsetHeight; // Trigger reflow
         content.style.animation = `scroll-left ${getComputedStyle(document.documentElement).getPropertyValue('--scroll-duration')} linear infinite`;
-        
-        if (typeof updateTodayStatsDisplay === 'function') updateTodayStatsDisplay();
+
+        // 🔥 KUNCI PERBAIKAN LABEL: Hapus HANYA marker yang baru bayar
+        const idx = unpaidCustomerList.findIndex(u => u.data.no_pelanggan === pelanggan.no_pelanggan);
+        if (idx !== -1) {
+            // 1. Hapus dari peta Leaflet
+            map.removeLayer(unpaidCustomerList[idx].marker);
+            // 2. Hapus dari array JavaScript
+            unpaidCustomerList.splice(idx, 1);
+            // 3. Update counter live di layar
+            const counter = document.getElementById('liveCounterTotal');
+            if (counter) counter.textContent = unpaidCustomerList.length;
+            
+            console.log(`✅ Marker ${pelanggan.no_pelanggan} dihapus instan. Label marker lain TETAP AMAN.`);
+        }
+
+        // Update revenue tanpa delay
         if (typeof calculateRevenue === 'function') calculateRevenue();
+        if (typeof updateTodayStatsDisplay === 'function') updateTodayStatsDisplay();
     }
 }
     function stopRealtimePolling() {
@@ -3462,7 +3162,6 @@ function setYouTubeVolume(v) {
 function handlePaymentReceived(pelanggan) {
     console.log('💰 Payment received:', pelanggan);
     
-    // 🔥 TETAP TAMPILKAN NOTIFIKASI VISUAL
     if (typeof showNotification === 'function') {
         showNotification(`💰 Pembayaran dari ${pelanggan.nama} - Terima kasih!`, 'payment');
     }
@@ -3474,54 +3173,69 @@ function handlePaymentReceived(pelanggan) {
     
     try { speechSynthesis.cancel(); } catch (e) {}
     
+    // Identitas Pelanggan
     const namaNormal = typeof formatNameForSpeech === 'function' ? formatNameForSpeech(pelanggan.nama, 'female') : pelanggan.nama;
+    // 🔥 PERBAIKAN: Ambil alamat dengan prioritas (nama_blok > alamat > nama_wilayah)
+    let rawAlamat = (pelanggan.nama_blok && pelanggan.nama_blok !== '-') ? pelanggan.nama_blok : 
+                    ((pelanggan.alamat && pelanggan.alamat !== '-') ? pelanggan.alamat : 
+                    (pelanggan.nama_wilayah || 'lokasi yang tidak terdaftar'));
     
-    // 🔥 DETEKSI SUMBER PEMBAYARAN (PPOB vs KANTOR)
+    // 🔥 GANTI tanda "/" menjadi spasi agar suara robot tidak membaca "garis miring"
+    const alamatPelanggan = rawAlamat.replace(/\//g, ' ');
+    
+    // 🔥 DETEKSI SUMBER PEMBAYARAN
     const metode = pelanggan.statusInfo && pelanggan.statusInfo.metode ? pelanggan.statusInfo.metode : 'Kantor';
-    // Untuk suara, kita gunakan "PPOB" dan "Kantor Unit Darmaraja"
-    const sumberText = metode === 'PPOB' ? 'PPOB' : 'Kantor Unit Darmaraja';
     
-    // ============================================
-    // 🔥 10 KALIMAT RANDOM: HANGAT, DEKAT, & MENYANJUNG
-    // ============================================
-        // ============================================
-    // 🔥 10 KALIMAT RANDOM: PENUH KASIH SAYANG & KEHANGATAN
-    // ============================================
-        // ============================================
-    // 🔥 10 KALIMAT RANDOM: PROFESIONAL, HANGAT, & PENUH PENGHARGAAN
-    // ============================================
-    const thankYouMessages = [
-        `Yang Terhormat, ${namaNormal}. Baru saja, pembayaran Anda kami terima. Dari keluarga besar PDAM Darmaraja, kami ucapkan terima kasih yang tulus. Semoga rezeki Anda selalu berlimpah dan berkah.`,
-        
-        `Kepada Yang Terhormat, ${namaNormal}. Tepat saat ini, pembayaran Anda telah kami konfirmasi. Terima kasih atas loyalitas Anda. Kebanggaan kami dapat melayani pelanggan sebaik Anda di Darmaraja.`,
-        
-        `Yang Terhormat, ${namaNormal}. Kabar baik, transaksi Anda baru saja berhasil. Terima kasih telah mendukung pelayanan air bersih. Bersama Anda, Darmaraja terus mengalir dengan lebih baik.`,
-        
-        `Salam hormat untuk, ${namaNormal}. Pembayaran Anda, baru saja kami terima dengan senang hati. Kami sangat menghargai kedisiplinan dan tanggung jawab Anda. Semoga Anda dan keluarga selalu sehat.`,
-        
-        `Yang kami muliakan, ${namaNormal}. Live update dari kami, pembayaran Anda telah lunas. Terima kasih atas kepercayaan Anda. Melayani Anda, adalah kehormatan dan komitmen utama kami di Unit Darmaraja.`,
-        
-        `Yang Terhormat, ${namaNormal}. Baru saja, notifikasi pembayaran Anda masuk. Terima kasih banyak. Kepercayaan Anda, adalah motivasi terbesar kami untuk terus memberikan pelayanan terbaik.`,
-        
-        `Kepada Yang Terhormat, ${namaNormal}. Pembayaran Anda, telah kami proses dengan sukses. Sikap tanggung jawab Anda, sangat menginspirasi kami. Terima kasih telah menjadi mitra sejati PDAM Darmaraja.`,
-        
-        `Yang Terhormat, ${namaNormal}. Pemberitahuan terkini, pembayaran Anda telah tercatat. Kami sangat bahagia dapat melayani Anda. Dedikasi Anda, adalah alasan kami terus berinovasi.`,
-        
-        `Yang Terhormat, ${namaNormal}. Tepat saat ini, kami telah menerima pembayaran dari Anda. Apresiasi setinggi-tingginya untuk Anda. Kami akan senantiasa berupaya memberikan pelayanan yang istimewa untuk Anda.`,
-        
-        `Salam hangat untuk, ${namaNormal}. Baru saja, pembayaran Anda kami konfirmasi. Terima kasih telah mempercayakan kebutuhan air Anda kepada kami. Kami akan selalu berusaha memberikan yang terbaik untuk Anda.`
-    ];
-    // ============================================
-    // ============================================
+    // 🔥 PESAN PPOB (Langsung melaporkan transaksi yang baru saja terjadi)
+   // Pastikan variabel alamatPelanggan sudah terdefinisi di atas
 
-    // 🔥 GABUNGKAN UCAPAN DENGAN SUMBER PEMBAYARAN
-    const randomUcapan = thankYouMessages[Math.floor(Math.random() * thankYouMessages.length)];
-    const fullMessage = `${randomUcapan} Transaksi ini tercatat melalui ${sumberText}.`;
+
+// 🔥 PESAN PPOB
+const pesanPPOB = [
+    `Mohon perhatian rekan-rekan. Baru saja, Bapak/Ibu ${namaNormal} yang beralamat di ${alamatPelanggan}, telah sukses melakukan pembayaran melalui mitra PPOB. Terima kasih atas kedisiplinan pelanggan kita yang satu ini.`,
     
-    console.log('🔊 Playing message:', fullMessage);
+    `Informasi terbaru. Tepat saat ini, telah masuk transaksi pembayaran dari Bapak/Ibu ${namaNormal} yang beralamat di ${alamatPelanggan}. Terima kasih atas kerjasamanya.`,
+    
+    `Halo rekan-rekan. Ada pembayaran yang baru saja terkonfirmasi masuk dari Bapak/Ibu ${namaNormal} yang beralamat di ${alamatPelanggan}. Tetap semangat melayani pelanggan kita.`,
+    
+    `Update transaksi PPOB terkini. Bapak/Ibu ${namaNormal} yang beralamat di ${alamatPelanggan}, baru saja menyelesaikan transaksi pembayaran. Terima kasih atas loyalitasnya.`,
+    
+    `Pemberitahuan real-time. Baru saja terjadi pembayaran atas nama Bapak/Ibu ${namaNormal} yang beralamat di ${alamatPelanggan}. Mari kita tingkatkan terus pelayanan untuk pelanggan kita.`
+];
+
+    // 🔥 PESAN KANTOR
+    const pesanKantor = [
+    `Selamat datang, Bapak ,Ibu , ${namaNormal} di Kantor Unit Darmaraja. Senang sekali bisa melayani Anda hari ini.`,
+    `Selamat datang kembali, Bapak ,Ibu , ${namaNormal}. Terima kasih telah meluangkan waktu untuk hadir langsung. Kami siap membantu keperluan Anda.`,
+    `Halo, Bapak ,Ibu , ${namaNormal}, selamat datang di kantor kami. Senang bertemu kembali, mari silakan duduk, kami akan segera melayani Anda.`,
+    `Selamat datang, Bapak ,Ibu , ${namaNormal}. Terima kasih atas kunjungan Anda ke Unit Darmaraja. Kami berkomitmen memberikan pelayanan terbaik bagi Anda.`,
+    `Selamat datang, Bapak ,Ibu , ${namaNormal}. Sebuah kehormatan bagi kami bisa menyambut Anda hari ini. Ada yang bisa kami bantu dengan senang hati?`,
+    `Apa kabar, Bapak ,Ibu , ${namaNormal}? Selamat datang di kantor kami. Terima kasih telah mempercayakan urusan Anda kepada kami.`,
+    `Selamat datang kembali Bapak ,Ibu , ${namaNormal}. Kami sangat menghargai kehadiran Anda. Silakan sampaikan apa yang bisa kami bantu hari ini.`,
+    `Halo Bapak ,Ibu , ${namaNormal}, selamat datang di Kantor Unit Darmaraja. Terima kasih atas kepercayaan Anda, kami siap melayani dengan sepenuh hati.`,
+    `Selamat datang, Bapak ,Ibu , ${namaNormal}. Kunjungan Anda sangat berarti bagi kami. Mari kita selesaikan urusan Anda dengan cepat dan nyaman.`,
+    `Selamat datang, Bapak ,Ibu , ${namaNormal}. Senang sekali bisa membantu Anda hari ini. Silakan sampaikan kebutuhan Anda kepada kami.`,
+    `Selamat datang, di Unit Darmaraja, Bapak ,Ibu , ${namaNormal}. Kami selalu senang menyambut kehadiran Anda. Ada yang bisa kami bantu?`,
+    `Salam hangat, Bapak ,Ibu , ${namaNormal}. Terima kasih telah datang langsung hari ini. Pelayanan terbaik adalah prioritas kami untuk Anda.`,
+    `Selamat datang kembali, Bapak ,Ibu , ${namaNormal}. Senang melihat Anda sehat hari ini. Apa yang bisa kami bantu untuk Anda?`,
+    `Selamat datang, Bapak ,Ibu , ${namaNormal}. Kehadiran Anda hari ini sangat kami hargai. Silakan, kami siap membantu urusan Anda.`,
+    `Halo Bapak ,Ibu , ${namaNormal}, selamat datang di kantor kami. Kami sangat senang bisa bertemu dan membantu Anda hari ini.`,
+    `Selamat datang, Bapak ,Ibu , ${namaNormal}. Terima kasih telah menyempatkan diri berkunjung. Semoga hari Anda menyenangkan bersama kami.`,
+    `Selamat datang, Bapak ,Ibu , ${namaNormal}. Kami senang sekali bisa melayani Anda kembali. Ada yang bisa kami bantu hari ini?`,
+    `Selamat datang kembali, Bapak ,Ibu , ${namaNormal}. Terima kasih atas kesetiaan Anda. Kami akan memberikan pelayanan yang paling nyaman untuk Anda.`,
+    `Halo Bapak ,Ibu , ${namaNormal}, selamat datang. Senang sekali bisa membantu kebutuhan Anda hari ini di Unit Darmaraja.`,
+    `Selamat datang, Bapak ,Ibu , ${namaNormal}. Kepercayaan Anda adalah motivasi kami untuk terus memberikan pelayanan terbaik bagi Anda.`
+    // (Tambahkan hingga 50 dengan pola serupa)
+];
+
+    // 🔥 PILIH PESAN
+    const pilihanPesan = (metode === 'PPOB') ? pesanPPOB : pesanKantor;
+    const randomUcapan = pilihanPesan[Math.floor(Math.random() * pilihanPesan.length)];
+    
+    console.log('🔊 Playing message:', randomUcapan);
     
     if (typeof speak === 'function') {
-        speak(fullMessage, 'female');
+        speak(randomUcapan, 'female');
     }
 }
    //  const fullMessage = `${thankYouMsg} Atas nama ${namaNormal}, pembayaran sebesar ${formatRupiah(pelanggan.jumlah)} telah kami terima melalui ${metodeText}${waktuText}.`;
@@ -3663,11 +3377,26 @@ function handlePaymentReceived(pelanggan) {
     document.getElementById('today-kubikasi').textContent = stats.kubikasiToday.toFixed(1);
 }
     // 🔥 UPDATE JAM SETIAP DETIK
-    setInterval(() => {
-    if (typeof updateTodayStatsDisplay === 'function') {
-        updateTodayStatsDisplay();
+    let lastStatsUpdate = 0;
+setInterval(() => {
+    // 🔥 HANYA UPDATE JAM (TIDAK LOOP PELANGGAN!)
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('id-ID', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+    });
+    const timeEl = document.querySelector('#today-date div:last-child');
+    if (timeEl) {
+        timeEl.innerHTML = `<i class="fas fa-clock"></i> ${timeStr} WIB`;
     }
-    }, 1000);
+    
+    // Hitung statistik hanya setiap 30 detik
+    if (Date.now() - lastStatsUpdate > 30000) {
+        if (typeof updateTodayStatsDisplay === 'function') {
+            updateTodayStatsDisplay();
+        }
+        lastStatsUpdate = Date.now();
+    }
+}, 1000);
     function getPaymentStatus(p) {
     const hasLoket = p.tanggal_pembayaran_loket && p.tanggal_pembayaran_loket !== '-' && p.tanggal_pembayaran_loket !== '.' && p.tanggal_pembayaran_loket !== null;
     const hasPPOB = p.tanggal_pembayaran_ppob && p.tanggal_pembayaran_ppob !== '-' && p.tanggal_pembayaran_ppob !== '.' && p.tanggal_pembayaran_ppob !== null;
@@ -3774,25 +3503,21 @@ function handlePaymentReceived(pelanggan) {
     if (indonesianFemaleVoices.length === 0) indonesianFemaleVoices = [...indonesianVoices];
     if (indonesianMaleVoices.length === 0) indonesianMaleVoices = [...indonesianVoices];
     }
-    function speak(text, gender = 'female', callback) {
-    // 🔥 CEK KONDISI DASAR
+   function speak(text, gender = 'female', callback) {
+    // 1. CEK KONDISI DASAR
     if (!voiceSettings.enabled || !('speechSynthesis' in window)) {
-        console.log('⚠️ Voice disabled atau browser tidak support');
         if (callback) callback();
         return;
     }
     
-    // ❌ HAPUS: if (isLiveMuted) { ... return; }
-    // ✅ isLiveMuted TIDAK BOLEH MUTE SUARA PEMBAYARAN!
-    
-    // 🔥 CANCEL DENGAN DELAY (Chrome bug fix)
+    // 2. CANCEL SUARA SEBELUMNYA SECARA LANGSUNG (Tanpa delay)
     try {
         speechSynthesis.cancel();
     } catch (e) {
-        console.log('⚠️ Cancel error:', e);
+        // Abaikan error cancel
     }
     
-    // 🔥 SIMPAN STATE MUSIK
+    // 3. SIMPAN STATE MUSIK (Ducking)
     const audioEl = document.getElementById('backgroundMusic');
     const wasPlaying = isMusicPlaying && !isMusicPaused;
     const originalVolume = audioEl ? audioEl.volume : 0.3;
@@ -3800,85 +3525,59 @@ function handlePaymentReceived(pelanggan) {
         audioEl.volume = Math.max(0.05, originalVolume * 0.3);
     }
     
-    // 🔥 TUNGGU VOICES LOAD
-    const trySpeak = (retry = 0) => {
-        if (availableVoices.length === 0 && retry < 10) {
-            console.log(`⏳ Voices belum load, retry ${retry + 1}/10...`);
-            setTimeout(() => trySpeak(retry + 1), 200);
-            return;
+    try {
+        // 4. BUAT UTTERANCE LANGSUNG (INSTAN)
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'id-ID';
+        
+        // 5. AMBIL VOICES YANG SUDAH TERSEDIA SAAT INI
+        const voices = speechSynthesis.getVoices();
+        const idx = gender === 'female' ? (voiceSettings.paymentVoiceIndex || 0) : (voiceSettings.gangguanVoiceIndex || 0);
+        
+        // Filter suara Bahasa Indonesia
+        const idVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('id'));
+        
+        if (idVoices.length > 0) {
+            // Prioritaskan suara Google atau Female agar terdengar natural
+            const preferredVoice = idVoices.find(v => 
+                v.name.includes('Google') || v.name.includes('Female') || v.name.includes('Damayanti')
+            );
+            u.voice = preferredVoice || idVoices[idx % idVoices.length];
+        } else if (voices.length > 0) {
+            u.voice = voices[0]; // Fallback ke voice default browser
         }
         
-        setTimeout(() => {
-            try {
-                const u = new SpeechSynthesisUtterance(text);
-                u.lang = 'id-ID';
-                
-                const idx = gender === 'female' ? voiceSettings.paymentVoiceIndex : voiceSettings.gangguanVoiceIndex;
-                const voicePool = gender === 'female' ? indonesianFemaleVoices : indonesianMaleVoices;
-                
-                // 🔥 PILIH VOICE
-                if (voicePool.length > 0) {
-                    u.voice = voicePool[idx % voicePool.length] || voicePool[0];
-                } else if (indonesianVoices.length > 0) {
-                    u.voice = indonesianVoices[0];
-                } else if (availableVoices.length > 0) {
-                    const idVoice = availableVoices.find(v => 
-                        (v.lang || '').toLowerCase().includes('id') || 
-                        (v.name || '').toLowerCase().includes('indonesia')
-                    );
-                    if (idVoice) u.voice = idVoice;
-                }
-                
-                const p = voiceProfiles[idx] || voiceProfiles[0] || { pitch: 1, rate: 1 };
-                u.pitch = p.pitch;
-                u.rate = p.rate;
-                u.volume = voiceSettings.volume;
-                
-                if (u.voice && u.voice.lang && !u.voice.lang.startsWith('id')) {
-                    u.lang = 'id-ID';
-                }
-                
-                u.onend = () => {
-                    console.log('✅ Speech selesai');
-                    if (wasPlaying && audioEl) audioEl.volume = originalVolume;
-                    if (callback) callback();
-                };
-                
-                u.onerror = (e) => {
-                    console.error('❌ Speech error:', e);
-                    if (wasPlaying && audioEl) audioEl.volume = originalVolume;
-                    if (callback) callback();
-                };
-                
-                // 🔥 SPEAK
-                setTimeout(() => {
-                    try {
-                        speechSynthesis.speak(u);
-                        console.log('🔊 Speech dimulai');
-                        
-                        // 🔥 WORKAROUND: Chrome bug
-                        setTimeout(() => {
-                            if (!speechSynthesis.speaking) {
-                                console.log('⚠️ Retry speak...');
-                                speechSynthesis.speak(u);
-                            }
-                        }, 100);
-                        
-                    } catch (error) {
-                        console.error('❌ Error saat speak:', error);
-                        if (callback) callback();
-                    }
-                }, 50);
-                
-            } catch (error) {
-                console.error('❌ Error creating utterance:', error);
-                if (wasPlaying && audioEl) audioEl.volume = originalVolume;
-                if (callback) callback();
+        // 6. ATUR PARAMETER SUARA
+        const p = voiceProfiles[idx] || voiceProfiles[0] || { pitch: 1, rate: 1 };
+        u.pitch = p.pitch;
+        u.rate = p.rate; // Pastikan rate 1 (normal), jangan terlalu lambat
+        u.volume = voiceSettings.volume || 1;
+        
+        // 7. EVENT HANDLERS
+        u.onend = () => {
+            console.log('✅ Speech selesai');
+            if (wasPlaying && audioEl) audioEl.volume = originalVolume;
+            if (callback) callback();
+        };
+        
+        u.onerror = (e) => {
+            // Abaikan error 'interrupted' karena itu normal saat ada notifikasi baru
+            if (e.error !== 'interrupted') {
+                console.error('❌ Speech error:', e.error);
             }
-        }, 50);
-    };
-    
-    trySpeak();
+            if (wasPlaying && audioEl) audioEl.volume = originalVolume;
+            if (callback) callback();
+        };
+        
+        // 8. EKSEKUSI LANGSUNG TANPA SETTIMEOUT (INSTAN!)
+        speechSynthesis.speak(u);
+        console.log('🔊 Speech dimulai secara instan');
+        
+    } catch (error) {
+        console.error('❌ Error creating/speaking utterance:', error);
+        if (wasPlaying && audioEl) audioEl.volume = originalVolume;
+        if (callback) callback();
+    }
 }
     function updateGangguanGender() { voiceSettings.gangguanGender = document.getElementById('gangguanGenderSelect').value; }
     function updatePaymentGender() { voiceSettings.paymentGender = document.getElementById('paymentGenderSelect').value; }
@@ -4366,7 +4065,7 @@ function handlePaymentReceived(pelanggan) {
     function initSidebarAutoScroll() {
     const sb = document.getElementById('sidebarContent');
     if (!sb) return;
-    const scrollSpeed = 50, scrollAmount = 1;
+    const scrollSpeed = 200, scrollAmount = 2;
     sidebarScrollInterval = setInterval(() => {
     const idle = Date.now() - lastActivityTime;
     if (idle > 30000 && sb.scrollHeight > sb.clientHeight + 50) {
@@ -4408,128 +4107,6 @@ function handlePaymentReceived(pelanggan) {
     // MAP INITIALIZATION
     // ============================================
     function initMap() {
-      // ============================================
-// 🔥 CUSTOM CONTROL LEAFLET: SLIDESHOW FOTO GANGGUAN
-// ============================================
-L.Control.FotoSlideshow = L.Control.extend({
-    options: { position: 'topleft' },
-    onAdd: function(map) {
-        const container = L.DomUtil.create('div', 'leaflet-control-foto-slideshow');
-        container.style.margin = '15px'; // Margin sedikit diperbesar
-        container.style.zIndex = '999999'; // Pastikan selalu di atas
-        
-        container.innerHTML = `
-            <div class="foto-slideshow-container" style="
-                width: 250px; height: 180px; border-radius: 12px; overflow: hidden;
-                box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6); border: 4px solid rgba(255, 255, 255, 0.4);
-                background: #1e293b; position: relative;
-            ">
-                <img id="petaSlideshowImg" src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400&h=300&fit=crop" 
-                     style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease;">
-                <div id="petaSlideshowBadge" style="
-                    position: absolute; bottom: 8px; right: 8px;
-                    background: rgba(239, 68, 68, 0.95); color: white;
-                    padding: 4px 10px; border-radius: 10px;
-                    font-size: 10px; font-weight: 700;
-                    display: none;
-                    animation: pulse-badge 2s infinite;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                "><i class="fas fa-circle" style="font-size: 7px;"></i> LIVE</div>
-                <div id="petaSlideshowCaption" style="
-                    position: absolute; bottom: 0; left: 0; right: 0;
-                    background: linear-gradient(transparent, rgba(0,0,0,0.85));
-                    color: white; padding: 6px 10px;
-                    font-size: 10px; font-weight: 600;
-                    display: none;
-                    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-                ">
-                <img id="petaSlideshowImg" src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400&h=300&fit=crop" 
-                     style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease;">
-                <div id="petaSlideshowBadge" style="
-                    position: absolute; bottom: 6px; right: 6px; background: rgba(239, 68, 68, 0.9); color: white;
-                    padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700; display: none;
-                    animation: pulse-badge 2s infinite;
-                "><i class="fas fa-circle" style="font-size: 6px;"></i> LIVE</div>
-                <div id="petaSlideshowCaption" style="
-                    position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85));
-                    color: white; padding: 4px 8px; font-size: 9px; font-weight: 600; display: none;
-                    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-                "></div>
-            </div>
-        `;
-        
-        // Mencegah klik pada control mengaktifkan zoom/pan peta
-        L.DomEvent.disableClickPropagation(container);
-        L.DomEvent.disableScrollPropagation(container);
-        return container;
-    }
-});
-
-let petaSlideshowPhotos = [];
-let petaSlideshowIndex = 0;
-let petaSlideshowInterval = null;
-
-function startPetaSlideshow() {
-    petaSlideshowPhotos = [];
-    if (typeof gangguanFotosData !== 'undefined') {
-        Object.keys(gangguanFotosData).forEach(gid => {
-            const fotos = gangguanFotosData[gid] || [];
-            const g = gangguanData.find(x => x.id == gid);
-            fotos.forEach(f => {
-                petaSlideshowPhotos.push({
-                    url: f.url,
-                    kode: g ? g.kode_laporan : '-',
-                    lokasi: g ? g.lokasi : '-',
-                    gangguanId: gid
-                });
-            });
-        });
-    }
-    
-    // Shuffle random agar tidak urut
-    petaSlideshowPhotos.sort(() => Math.random() - 0.5);
-    console.log(`📸 Peta slideshow: ${petaSlideshowPhotos.length} foto`);
-    
-    if (petaSlideshowPhotos.length === 0) return;
-    
-    showNextPetaPhoto();
-    petaSlideshowInterval = setInterval(showNextPetaPhoto, 4000); // Ganti setiap 4 detik
-}
-
-function showNextPetaPhoto() {
-    if (petaSlideshowPhotos.length === 0) return;
-    
-    const img = document.getElementById('petaSlideshowImg');
-    const badge = document.getElementById('petaSlideshowBadge');
-    const caption = document.getElementById('petaSlideshowCaption');
-    
-    if (!img) return;
-    
-    const photo = petaSlideshowPhotos[petaSlideshowIndex];
-    
-    // Efek fade
-    img.style.opacity = '0';
-    setTimeout(() => {
-        img.src = photo.url;
-        img.style.opacity = '1';
-        
-        if (badge) badge.style.display = 'block';
-        if (caption) {
-            caption.style.display = 'block';
-            caption.textContent = `${photo.kode} • ${photo.lokasi}`;
-        }
-        
-        // Klik foto untuk membuka modal detail gangguan
-        img.onclick = function() {
-            if (typeof showFotoGangguan === 'function' && photo.gangguanId) {
-                showFotoGangguan(photo.gangguanId);
-            }
-        };
-        img.style.cursor = 'pointer';
-    }, 300);
-    
-    petaSlideshowIndex = (petaSlideshowIndex + 1) % petaSlideshowPhotos.length;
-}
     const bounds = L.latLngBounds(L.latLng(-6.98, 107.80), L.latLng(-6.80, 108.15));
     map = L.map('map', { center: [-6.918,108.074], zoom: 16, minZoom: 11, maxZoom: 18, maxBounds: bounds, maxBoundsViscosity: 0.8, zoomControl: false });
     L.control.zoom({ position: 'topright' }).addTo(map);
@@ -4554,12 +4131,6 @@ function showNextPetaPhoto() {
     loadWilayahDanBlok();
     updateTodayStatsDisplay();
     updateRevenueProgress();
-     // 🔥 TAMBAHKAN BAGIAN INI DI SINI (Paling Bawah initMap):
-    if (typeof gangguanFotosData !== 'undefined' && Object.keys(gangguanFotosData).length > 0) {
-        const slideshowControl = new L.Control.FotoSlideshow({ position: 'topleft' });
-        slideshowControl.addTo(map);
-        setTimeout(() => startPetaSlideshow(), 1500);
-    }
     if (gangguanData && gangguanData.length > 0) {
     activeGangguanList = gangguanData.filter(g => g.status !== 'selesai');
     if (activeGangguanList.length > 0) {
@@ -5028,68 +4599,19 @@ function showNextPetaPhoto() {
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
     function toggleFullscreen() {
     const w = document.getElementById('mainWrapper'), b = document.getElementById('expandBtn');
-    const fsSlideshow = document.getElementById('fullscreenSlideshow');
-    
     if (!isFullscreen) {
-        if (w.requestFullscreen) w.requestFullscreen(); 
-        else if (w.webkitRequestFullscreen) w.webkitRequestFullscreen();
-        w.classList.add('is-fullscreen'); 
-        isFullscreen = true;
-        b.classList.add('active'); 
-        b.innerHTML = '<i class="fas fa-compress"></i> <span>Keluar</span>';
-        
-        // 🔥 TAMPILKAN FOTO SLIDESHOW SAAT FULLSCREEN
-        if (fsSlideshow) {
-            fsSlideshow.style.display = 'block';
-            // Mulai slideshow untuk elemen ini
-            startFullscreenSlideshow();
-        }
+    if (w.requestFullscreen) w.requestFullscreen(); else if (w.webkitRequestFullscreen) w.webkitRequestFullscreen();
+    w.classList.add('is-fullscreen'); isFullscreen = true;
+    b.classList.add('active'); b.innerHTML = '<i class="fas fa-compress"></i> <span>Keluar</span>';
     } else {
-        if (document.exitFullscreen) document.exitFullscreen(); 
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        w.classList.remove('is-fullscreen'); 
-        isFullscreen = false;
-        b.classList.remove('active'); 
-        b.innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>';
-        
-        // 🔥 SEMBUNYIKAN FOTO SLIDESHOW SAAT KELUAR FULLSCREEN
-        if (fsSlideshow) {
-            fsSlideshow.style.display = 'none';
-        }
+    if (document.exitFullscreen) document.exitFullscreen(); else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    w.classList.remove('is-fullscreen'); isFullscreen = false;
+    b.classList.remove('active'); b.innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>';
     }
     setTimeout(() => { if (map) map.invalidateSize(); }, 300);
-}
-    document.addEventListener('fullscreenchange', () => {
-    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-        document.getElementById('mainWrapper').classList.remove('is-fullscreen');
-        isFullscreen = false;
-        document.getElementById('expandBtn').classList.remove('active');
-        document.getElementById('expandBtn').innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>';
-        
-        // Pastikan navbar kembali ke posisi normal
-        const navbar = document.querySelector('.top-navbar');
-        if (navbar) {
-            navbar.style.display = '';
-            navbar.style.position = '';
-            navbar.style.top = '';
-            navbar.style.left = '';
-            navbar.style.right = '';
-            navbar.style.zIndex = '';
-        }
-    } else {
-        // Saat masuk fullscreen, paksa navbar tampil
-        const navbar = document.querySelector('.top-navbar');
-        if (navbar) {
-            navbar.style.display = 'flex';
-            navbar.style.position = 'fixed';
-            navbar.style.top = '0';
-            navbar.style.left = '0';
-            navbar.style.right = '0';
-            navbar.style.zIndex = '9999998';
-        }
     }
-    setTimeout(() => { if (map) map.invalidateSize(); }, 300);
-});
+    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && !document.webkitFullscreenElement) { document.getElementById('mainWrapper').classList.remove('is-fullscreen'); isFullscreen = false; document.getElementById('expandBtn').classList.remove('active'); document.getElementById('expandBtn').innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>'; setTimeout(() => { if (map) map.invalidateSize(); }, 300); } });
+    document.addEventListener('keydown', e => { if (e.key === 'F11') { e.preventDefault(); toggleFullscreen(); } });
     let waQRGenerated = false;
     function showWAQR() {
     new bootstrap.Modal(document.getElementById('waQRModal')).show();
@@ -5110,6 +4632,7 @@ function testPaymentNotification() {
         nama: 'DR. HERMAN',
         jumlah: '604800',
         pakai: '71',
+        alamat:'ancol',
         kode_gol_trf: 'RT.D',
         nama_wilayah: 'WILAYAH I',
         koordinator: '-6.9170766,108.0685615',
@@ -5139,6 +4662,7 @@ function testPaymentPPOB() {
         nama: 'H. ACENG SUHANDI',
         jumlah: '418600',
         pakai: '52',
+        alamat:'ancol',
         kode_gol_trf: 'RT.D',
         nama_wilayah: 'WILAYAH I',
         koordinator: '-6.9152425,108.0678316',
@@ -5156,10 +4680,6 @@ function testPaymentPPOB() {
     
     console.log('✅ Test PPOB payment notification triggered!');
 }
-// ============================================
-// 🔥 SLIDESHOW FOTO GANGGUAN - KIRI ATAS
-// ============================================
-
 // ============================================
 // 🔥 SLIDESHOW FOTO GANGGUAN
 // ============================================
@@ -5211,207 +4731,10 @@ function goToSlide(index) {
     currentSlideshowIndex = index;
     updateSlideshow();
 }
-// ============================================
-// 🔥 SLIDESHOW FOTO GANGGUAN - DI DALAM PETA LEAFLET
-// ============================================
-let petaSlideshowPhotos = [];
-let petaSlideshowIndex = 0;
-let petaSlideshowInterval = null;
-let fotoSlideshowControl = null;
-
-// 🔥 Custom Control Leaflet untuk Slideshow
-L.Control.FotoSlideshow = L.Control.extend({
-    options: {
-        position: 'topleft'
-    },
-    
-    onAdd: function(map) {
-        const container = L.DomUtil.create('div', 'leaflet-control-foto-slideshow');
-        container.innerHTML = `
-            <div class="foto-slideshow-container" id="petaSlideshowContainer">
-                <img id="petaSlideshowImg" src="" alt="Foto Gangguan" 
-                     style="width: 100%; height: 100%; object-fit: cover;">
-                <div class="foto-slideshow-badge" id="petaSlideshowBadge" style="display: none;">
-                    <i class="fas fa-circle" style="font-size: 6px;"></i> LIVE
-                </div>
-                <div class="foto-slideshow-caption" id="petaSlideshowCaption" style="display: none;"></div>
-            </div>
-        `;
-        
-        // Cegah klik pada control mengaktifkan zoom/pan peta
-        L.DomEvent.disableClickPropagation(container);
-        L.DomEvent.disableScrollPropagation(container);
-        
-        return container;
-    },
-    
-    onRemove: function(map) {
-        // Cleanup
-    }
-});
-
-// 🔥 Kumpulkan foto dari database
-function collectPetaSlideshowPhotos() {
-    petaSlideshowPhotos = [];
-    if (typeof gangguanFotosData !== 'undefined' && gangguanFotosData) {
-        Object.keys(gangguanFotosData).forEach(gid => {
-            const fotos = gangguanFotosData[gid] || [];
-            const g = gangguanData.find(x => x.id == gid);
-            fotos.forEach(f => {
-                petaSlideshowPhotos.push({
-                    url: f.url,
-                    kode: g ? g.kode_laporan : '-',
-                    lokasi: g ? g.lokasi : '-',
-                    gangguanId: gid
-                });
-            });
-        });
-    }
-    // Shuffle random
-    petaSlideshowPhotos.sort(() => Math.random() - 0.5);
-    console.log(`📸 Peta slideshow: ${petaSlideshowPhotos.length} foto`);
-}
-
-// 🔥 Tampilkan foto berikutnya
-function showNextPetaPhoto() {
-    if (petaSlideshowPhotos.length === 0) {
-        collectPetaSlideshowPhotos();
-        if (petaSlideshowPhotos.length === 0) return;
-    }
-    
-    const img = document.getElementById('petaSlideshowImg');
-    const badge = document.getElementById('petaSlideshowBadge');
-    const caption = document.getElementById('petaSlideshowCaption');
-    
-    if (!img) return;
-    
-    const photo = petaSlideshowPhotos[petaSlideshowIndex];
-    
-    // Fade effect
-    img.style.opacity = '0';
-    
-    setTimeout(() => {
-        img.src = photo.url;
-        img.style.opacity = '1';
-        
-        if (badge) badge.style.display = 'flex';
-        if (caption) {
-            caption.style.display = 'block';
-            caption.textContent = `${photo.kode} • ${photo.lokasi}`;
-        }
-        
-        // Klik foto untuk membuka detail gangguan
-        img.onclick = function() {
-            if (typeof showFotoGangguan === 'function' && photo.gangguanId) {
-                showFotoGangguan(photo.gangguanId);
-            }
-        };
-        img.style.cursor = 'pointer';
-    }, 300);
-    
-    // Next index (loop)
-    petaSlideshowIndex = (petaSlideshowIndex + 1) % petaSlideshowPhotos.length;
-}
-
-// 🔥 Mulai slideshow
-function startPetaSlideshow() {
-    collectPetaSlideshowPhotos();
-    
-    if (petaSlideshowPhotos.length === 0) {
-        console.log('️ Tidak ada foto untuk slideshow');
-        return;
-    }
-    
-    // Tampilkan foto pertama
-    showNextPetaPhoto();
-    
-    // Ganti setiap 4 detik
-    if (petaSlideshowInterval) clearInterval(petaSlideshowInterval);
-    petaSlideshowInterval = setInterval(showNextPetaPhoto, 4000);
-    
-    console.log('🎬 Peta slideshow dimulai');
-}
     document.addEventListener('DOMContentLoaded', initMap);
     window.addEventListener('beforeunload', () => {
     stopRealtimePolling();
     });
-    // ============================================
-// 🔥 SLIDESHOW KHUSUS FULLSCREEN
-// ============================================
-// ============================================
-// 🔥 SLIDESHOW FOTO GANGGUAN - FIXED POSITION
-// ============================================
-let fsSlideshowPhotos = [];
-let fsSlideshowIndex = 0;
-let fsSlideshowInterval = null;
-
-function startFixedSlideshow() {
-    // Kumpulkan foto
-    fsSlideshowPhotos = [];
-    if (typeof gangguanFotosData !== 'undefined') {
-        Object.keys(gangguanFotosData).forEach(gid => {
-            const fotos = gangguanFotosData[gid] || [];
-            const g = gangguanData.find(x => x.id == gid);
-            fotos.forEach(f => {
-                fsSlideshowPhotos.push({
-                    url: f.url,
-                    kode: g ? g.kode_laporan : '-',
-                    lokasi: g ? g.lokasi : '-'
-                });
-            });
-        });
-    }
-    
-    // Shuffle random
-    fsSlideshowPhotos.sort(() => Math.random() - 0.5);
-    
-    console.log(`📸 Fixed slideshow: ${fsSlideshowPhotos.length} foto`);
-    
-    if (fsSlideshowPhotos.length === 0) {
-        // Fallback
-        const img = document.getElementById('fsSlideshowImg');
-        if (img) img.src = 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400&h=300&fit=crop';
-        return;
-    }
-    
-    // Tampilkan foto pertama
-    showNextFsPhoto();
-    
-    // Ganti setiap 4 detik
-    fsSlideshowInterval = setInterval(showNextFsPhoto, 4000);
-}
-
-function showNextFsPhoto() {
-    if (fsSlideshowPhotos.length === 0) return;
-    
-    const img = document.getElementById('fsSlideshowImg');
-    const badge = document.getElementById('fsSlideshowBadge');
-    
-    if (!img) return;
-    
-    const photo = fsSlideshowPhotos[fsSlideshowIndex];
-    
-    // Fade effect
-    img.style.opacity = '0';
-    setTimeout(() => {
-        img.src = photo.url;
-        img.style.opacity = '1';
-        
-        if (badge) {
-            badge.style.display = 'block';
-            badge.innerHTML = `<i class="fas fa-circle" style="font-size: 6px;"></i> ${photo.kode}`;
-        }
-    }, 200);
-    
-    // Next
-    fsSlideshowIndex = (fsSlideshowIndex + 1) % fsSlideshowPhotos.length;
-}
-
-// Mulai saat halaman load
-setTimeout(() => {
-    startFixedSlideshow();
-}, 1500);
-    
   </script>
   <script src="https://www.youtube.com/iframe_api"></script>
 </body>

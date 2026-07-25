@@ -10,17 +10,35 @@ use Illuminate\Support\Facades\Storage;
 
 class GangguanController extends Controller
 {
-    public function index()
-    {
-        $gangguan = Gangguan::with('fotos')->latest()->paginate(10);
-        $stats = [
-            'total' => Gangguan::count(),
-            'menunggu' => Gangguan::where('status', 'menunggu')->count(),
-            'dalam_proses' => Gangguan::where('status', 'dalam_proses')->count(),
-            'selesai' => Gangguan::where('status', 'selesai')->count(),
-        ];
-        return view('admin.gangguan.index', compact('gangguan', 'stats'));
+    
+public function index()
+{
+    $gangguan = Gangguan::with('fotos')->latest()->paginate(10);
+    
+    //  TAMBAHKAN INI - Kumpulkan semua foto gangguan
+    $gangguanFotosData = [];
+    $allGangguan = Gangguan::with('fotos')->get();
+    foreach ($allGangguan as $g) {
+        if ($g->fotos->count() > 0) {
+            $gangguanFotosData[$g->id] = $g->fotos->map(function($foto) {
+                return [
+                    'url' => asset('storage/' . $foto->foto_path),
+                    'urutan' => $foto->urutan ?? 0
+                ];
+            })->toArray();
+        }
     }
+    
+    $stats = [
+        'total' => Gangguan::count(),
+        'menunggu' => Gangguan::where('status', 'menunggu')->count(),
+        'dalam_proses' => Gangguan::where('status', 'dalam_proses')->count(),
+        'selesai' => Gangguan::where('status', 'selesai')->count(),
+    ];
+    
+    // 🔥 TAMBAHKAN $gangguanFotosData di compact
+    return view('admin.gangguan.index', compact('gangguan', 'stats', 'gangguanFotosData'));
+}
 
     public function create()
     {
