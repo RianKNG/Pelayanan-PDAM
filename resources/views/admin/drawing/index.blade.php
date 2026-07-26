@@ -606,6 +606,33 @@
             color: #94a3b8;
             margin-top: 4px;
         }
+        /* Styling untuk popup drawing */
+.leaflet-popup-content-wrapper {
+    border-radius: 10px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+}
+
+.leaflet-popup-content {
+    margin: 12px !important;
+}
+
+.popup-color-opt {
+    transition: all 0.2s !important;
+}
+
+.popup-color-opt:hover {
+    transform: scale(1.15);
+}
+
+#popupFormContainer .form-control-sm {
+    font-size: 12px;
+    padding: 4px 8px;
+}
+
+#popupFormContainer label {
+    display: block;
+    margin-bottom: 3px;
+}
     </style>
 </head>
 <body>
@@ -1003,13 +1030,13 @@
                                     $iconMap = [
                                         'valve' => 'fa-toggle-on', 'hydrant' => 'fa-fire',
                                         'meter' => 'fa-tachometer-alt', 'sambungan' => 'fa-link',
-                                        'pompa' => 'fa-water', 'tandon' => 'fa-database',
+                                        'pompa' => 'fa-water', 'tandon' => 'fa-database', 'manometer' => 'fa-database',
                                         'lainnya' => 'fa-map-pin'
                                     ];
                                     $colorMap = [
                                         'valve' => '#ef4444', 'hydrant' => '#dc2626',
                                         'meter' => '#3b82f6', 'sambungan' => '#8b5cf6',
-                                        'pompa' => '#10b981', 'tandon' => '#06b6d4',
+                                        'pompa' => '#10b981', 'tandon' => '#06b6d4','manometer' => '#06b6d4',
                                         'lainnya' => '#6b7280'
                                     ];
                                     $icon = $iconMap[$t->jenis_titik] ?? 'fa-map-pin';
@@ -1198,6 +1225,7 @@
                                 <option value="sambungan">Sambungan</option>
                                 <option value="pompa">Pompa</option>
                                 <option value="tandon">Tandon</option>
+                                <option value="manometer">Manometer</option>
                                 <option value="lainnya">Lainnya</option>
                             </select>
                         </div>
@@ -1525,36 +1553,38 @@
         street: {
             name: 'Jalan',
             layer: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
+                maxZoom: 24,
+                 maxNativeZoom: 20, // Google Satellite punya data lebih dalam dibanding OSM,
                 attribution: '© OpenStreetMap contributors'
             })
         },
         satellite: {
             name: 'Satelit',
             layer: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                maxZoom: 19,
+                maxZoom: 22,
+                 maxNativeZoom: 20, // Google Satellite punya data lebih dalam dibanding OSM,
                 attribution: 'Tiles © Esri'
             })
         },
         hybrid: {
             name: 'Hybrid',
             layers: [
-                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 }),
-                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 }),
-                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 })
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 22 }),
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom: 22 }),
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', { maxZoom: 22 })
             ]
         },
         topo: {
             name: 'Topografi',
             layer: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-                maxZoom: 17,
+                maxZoom: 22,
                 attribution: '© OpenTopoMap (CC-BY-SA)'
             })
         },
         dark: {
             name: 'Gelap',
             layer: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                maxZoom: 19,
+                maxZoom: 22,
                 attribution: '© OpenStreetMap contributors © CARTO'
             })
         }
@@ -1600,6 +1630,7 @@
         'sambungan':  { mode: 'icon', icon: 'fa-link',           color: '#8b5cf6', shape: 'diamond', label: 'Sambungan' },
         'pompa':      { mode: 'icon', icon: 'fa-water',          color: '#10b981', shape: 'pin', label: 'Pompa' },
         'tandon':     { mode: 'icon', icon: 'fa-database',       color: '#06b6d4', shape: 'square', label: 'Tandon' },
+        'manometer':     { mode: 'icon', icon: 'fa-database',       color: '#94309d', shape: 'square', label: 'Manometer' },
         'lainnya':    { mode: 'icon', icon: 'fa-map-pin',        color: '#6b7280', shape: 'circle', label: 'Lainnya' }
     };
     
@@ -2178,7 +2209,7 @@
             center: [-6.9240, 108.0673],
             zoom: 13,
             minZoom: 12,
-            maxZoom: 18,
+            maxZoom: 22,
             maxBounds: darmarajaBounds,
             maxBoundsViscosity: 1.0
         });
@@ -2254,34 +2285,29 @@
         map.addControl(drawControl);
 
         map.on(L.Draw.Event.CREATED, function (e) {
-            var layer = e.layer;
-            var type = e.layerType;
-
-            drawnItems.addLayer(layer);
-            tempLayer = layer;
-            tempType = type;
-            
-            if (type === 'marker') {
-                tempCoords = layer.getLatLng();
-            } else {
-                tempCoords = layer.getLatLngs();
-            }
-
-            if (type === 'polyline') {
-                new bootstrap.Modal(document.getElementById('modalJalur')).show();
-            } else if (type === 'polygon') {
-                // Detect if user wants to create Zona or Bangunan
-                // Default: Bangunan. User bisa pilih via dialog atau tombol khusus
-                const choice = confirm('Apakah ini ZONA WILAYAH?\n\nOK = Zona Wilayah\nCancel = Bangunan');
-                if (choice) {
-                    new bootstrap.Modal(document.getElementById('modalZona')).show();
-                } else {
-                    new bootstrap.Modal(document.getElementById('modalBangunan')).show();
-                }
-            } else if (type === 'marker') {
-                new bootstrap.Modal(document.getElementById('modalTitik')).show();
-            }
-        });
+    var layer = e.layer;
+    var type = e.layerType;
+    drawnItems.addLayer(layer);
+    tempLayer = layer;
+    tempType = type;
+    if (type === 'marker') {
+        tempCoords = layer.getLatLng();
+    } else {
+        tempCoords = layer.getLatLngs();
+    }
+    if (type === 'polyline') {
+        new bootstrap.Modal(document.getElementById('modalJalur')).show();
+    } else if (type === 'polygon') {
+        const choice = confirm('Apakah ini ZONA WILAYAH?\nOK = Zona Wilayah\nCancel = Bangunan');
+        if (choice) {
+            new bootstrap.Modal(document.getElementById('modalZona')).show();
+        } else {
+            new bootstrap.Modal(document.getElementById('modalBangunan')).show();
+        }
+    } else if (type === 'marker') {
+        new bootstrap.Modal(document.getElementById('modalTitik')).show();
+    }
+});
         
         loadCustomTypes();
         updateDropdowns();
@@ -2751,7 +2777,7 @@
         highlightSidebarItem('zona', id);
         if (zonaLayers[id]) {
             const { polygon } = zonaLayers[id];
-            map.flyToBounds(polygon.getBounds(), { padding: [80, 80], maxZoom: 16, duration: 0.8 });
+            map.flyToBounds(polygon.getBounds(), { padding: [80, 80], maxZoom: 22, duration: 0.8 });
             createHighlight(polygon.getBounds().getCenter(), polygon.options.color);
             setTimeout(() => polygon.openPopup(), 800);
         }
@@ -2761,7 +2787,7 @@
         highlightSidebarItem('jalur', id);
         if (jalurLayers[id]) {
             const layer = jalurLayers[id];
-            map.flyToBounds(layer.getBounds(), { padding: [80, 80], maxZoom: 16, duration: 0.8 });
+            map.flyToBounds(layer.getBounds(), { padding: [80, 80], maxZoom: 22, duration: 0.8 });
             createHighlight(layer.getBounds().getCenter(), layer.options.color);
             setTimeout(() => layer.openPopup(), 800);
         }
@@ -2771,7 +2797,7 @@
         highlightSidebarItem('bangunan', id);
         if (bangunanLayers[id]) {
             const { polygon, marker } = bangunanLayers[id];
-            map.flyToBounds(polygon.getBounds(), { padding: [80, 80], maxZoom: 17, duration: 0.8 });
+            map.flyToBounds(polygon.getBounds(), { padding: [80, 80], maxZoom: 22, duration: 0.8 });
             createHighlight(polygon.getBounds().getCenter(), polygon.options.color);
             setTimeout(() => marker.openPopup(), 800);
         }
@@ -2953,57 +2979,187 @@
         }
     }
     // ============================================
-// HANDLE INPUT MANUAL KOORDINAT
 // ============================================
+// HANDLE INPUT MANUAL KOORDINAT (DRAGGABLE)
+// ============================================
+let tempManualMarker = null;
+let tempManualMarkerId = 'manual_' + Date.now();
+
 document.getElementById('formManualCoord').addEventListener('submit', function(e) {
     e.preventDefault();
     
     // Ambil value dan ganti koma (,) menjadi titik (.) jika ada
     const latStr = this.manual_lat.value.trim().replace(',', '.');
     const lngStr = this.manual_lng.value.trim().replace(',', '.');
-    
     const lat = parseFloat(latStr);
     const lng = parseFloat(lngStr);
 
-    // Validasi apakah benar-benar angka
+    // Validasi
     if (isNaN(lat) || isNaN(lng)) {
         alert('Format koordinat tidak valid! Pastikan hanya berisi angka dan titik.');
         return;
     }
 
-    // 1. Set tempCoords agar terbaca oleh formTitik
+    // 1. Set tempCoords
     tempCoords = { lat: lat, lng: lng };
 
-    // 2. Tambahkan marker sementara (merah) di peta
-    if (window.tempManualMarker) map.removeLayer(window.tempManualMarker);
-    
-    window.tempManualMarker = L.marker([lat, lng], {
+    // 2. Hapus marker sementara sebelumnya jika ada
+    if (tempManualMarker) {
+        map.removeLayer(tempManualMarker);
+        tempManualMarker = null;
+    }
+
+    // 3. Buat marker sementara yang BISA DI-DRAG
+    tempManualMarker = L.marker([lat, lng], {
+        draggable: true,  // ← INI KUNCINYA: bisa dipindahkan
         icon: L.divIcon({
             className: 'custom-div-icon',
-            html: '<div style="background:#ef4444; width:16px; height:16px; border-radius:50%; border:3px solid white; box-shadow:0 0 10px rgba(0,0,0,0.5);"></div>',
-            iconSize: [16, 16],
-            iconAnchor: [8, 8]
+            html: `
+                <div style="
+                    background: #ef4444; 
+                    width: 20px; 
+                    height: 20px; 
+                    border-radius: 50%; 
+                    border: 3px solid white; 
+                    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+                    animation: pulse-animation 1.5s infinite;
+                "></div>
+            `,
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
         })
-    }).addTo(map).bindPopup('<b>Lokasi Input Manual</b><br>Koordinat terkunci.').openPopup();
+    }).addTo(map);
 
-    // 3. Zoom peta ke lokasi
+    // 4. Popup dengan info + tombol hapus
+    tempManualMarker.bindPopup(`
+        <div style="min-width: 200px; font-family: 'Segoe UI', sans-serif;">
+            <div style="font-weight: 700; color: #ef4444; margin-bottom: 6px; font-size: 13px;">
+                <i class="fas fa-map-pin"></i> Titik Sementara
+            </div>
+            <div style="background: #f0f9ff; padding: 8px; border-radius: 6px; margin-bottom: 8px; font-family: monospace; font-size: 11px;">
+                <strong>Koordinat:</strong><br>
+                Lat: <span id="popupLat">${lat.toFixed(6)}</span><br>
+                Lng: <span id="popupLng">${lng.toFixed(6)}</span>
+            </div>
+            <div style="font-size: 11px; color: #64748b; margin-bottom: 8px;">
+                <i class="fas fa-hand-pointer"></i> <b>Tarik marker</b> untuk memindahkan posisi
+            </div>
+            <div style="display: flex; gap: 6px;">
+                <button onclick="openFormTitikFromManual()" 
+                        style="flex:1; background: #3b82f6; color: white; border: none; padding: 6px; border-radius: 6px; font-size: 11px; cursor: pointer;">
+                    <i class="fas fa-edit"></i> Isi Detail
+                </button>
+                <button onclick="hapusMarkerSementara()" 
+                        style="background: #fee2e2; color: #dc2626; border: none; padding: 6px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    `, { maxWidth: 260 });
+
+    // 5. EVENT DRAG: update tempCoords real-time
+    tempManualMarker.on('drag', function(e) {
+        const pos = e.target.getLatLng();
+        tempCoords = { lat: pos.lat, lng: pos.lng };
+        
+        // Update popup jika terbuka
+        const popupLat = document.getElementById('popupLat');
+        const popupLng = document.getElementById('popupLng');
+        if (popupLat) popupLat.textContent = pos.lat.toFixed(6);
+        if (popupLng) popupLng.textContent = pos.lng.toFixed(6);
+    });
+
+    // 6. EVENT DRAG END: update popup content
+    tempManualMarker.on('dragend', function(e) {
+        const pos = e.target.getLatLng();
+        tempCoords = { lat: pos.lat, lng: pos.lng };
+        tempManualMarker.setPopupContent(`
+            <div style="min-width: 200px; font-family: 'Segoe UI', sans-serif;">
+                <div style="font-weight: 700; color: #ef4444; margin-bottom: 6px; font-size: 13px;">
+                    <i class="fas fa-map-pin"></i> Titik Sementara
+                </div>
+                <div style="background: #f0f9ff; padding: 8px; border-radius: 6px; margin-bottom: 8px; font-family: monospace; font-size: 11px;">
+                    <strong>Koordinat Baru:</strong><br>
+                    Lat: <span id="popupLat">${pos.lat.toFixed(6)}</span><br>
+                    Lng: <span id="popupLng">${pos.lng.toFixed(6)}</span>
+                </div>
+                <div style="font-size: 11px; color: #10b981; margin-bottom: 8px;">
+                    <i class="fas fa-check-circle"></i> Posisi diperbarui!
+                </div>
+                <div style="display: flex; gap: 6px;">
+                    <button onclick="openFormTitikFromManual()" 
+                            style="flex:1; background: #3b82f6; color: white; border: none; padding: 6px; border-radius: 6px; font-size: 11px; cursor: pointer;">
+                        <i class="fas fa-edit"></i> Isi Detail
+                    </button>
+                    <button onclick="hapusMarkerSementara()" 
+                            style="background: #fee2e2; color: #dc2626; border: none; padding: 6px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `);
+        tempManualMarker.openPopup();
+    });
+
+    // 7. Zoom peta ke lokasi
     map.flyTo([lat, lng], 17, { duration: 1 });
 
-    // 4. Tutup modal manual
+    // 8. Tutup modal manual
     bootstrap.Modal.getInstance(document.getElementById('modalManualCoord')).hide();
 
-    // 5. Buka Modal Form Titik Penting
+    // 9. Buka popup marker sementara
     setTimeout(() => {
-        new bootstrap.Modal(document.getElementById('modalTitik')).show();
+        tempManualMarker.openPopup();
     }, 500);
 });
-// Hapus marker manual jika user membatalkan form titik
+
+// Fungsi: Buka Form Titik dari Marker Sementara
+function openFormTitikFromManual() {
+    if (!tempManualMarker) {
+        alert('Marker sementara tidak ditemukan!');
+        return;
+    }
+    // Pastikan tempCoords sudah update dari posisi marker
+    const pos = tempManualMarker.getLatLng();
+    tempCoords = { lat: pos.lat, lng: pos.lng };
+    
+    // Tutup popup
+    tempManualMarker.closePopup();
+    
+    // Buka modal form titik
+    new bootstrap.Modal(document.getElementById('modalTitik')).show();
+}
+
+// Fungsi: Hapus Marker Sementara
+function hapusMarkerSementara() {
+    if (tempManualMarker) {
+        map.removeLayer(tempManualMarker);
+        tempManualMarker = null;
+        tempCoords = null;
+    }
+}
+
+// Hapus marker sementara jika user menutup form titik (batal)
 document.querySelector('#modalTitik .btn-close').addEventListener('click', function() {
-    if (window.tempManualMarker) {
-        map.removeLayer(window.tempManualMarker);
-        window.tempManualMarker = null;
+    if (tempManualMarker) {
+        // Tanya user apakah mau simpan marker sementara
+        const simpan = confirm('Form dibatalkan. Apakah marker sementara tetap ditampilkan di peta?');
+        if (!simpan) {
+            hapusMarkerSementara();
+        } else {
+            // Buka kembali popup marker
+            setTimeout(() => tempManualMarker.openPopup(), 300);
+        }
     }
 });
+
+// Hapus marker sementara setelah form titik berhasil disimpan
+// (Modifikasi event submit formTitik yang sudah ada)
+const originalFormTitikSubmit = document.getElementById('formTitik').onsubmit;
+document.getElementById('formTitik').addEventListener('submit', function(e) {
+    // Setelah fetch berhasil, hapus marker sementara
+    // Kita hook di dalam promise .then()
+}, true);
 
     document.addEventListener('DOMContentLoaded', initMap);
     </script>

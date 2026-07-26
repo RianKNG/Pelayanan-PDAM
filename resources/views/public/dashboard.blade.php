@@ -1012,7 +1012,8 @@
     .payment-voice-control,
     .music-control,
     .scroll-control,
-    .youtube-control,
+    .
+    ,
     .mute-control {
        margin-top: 10px;
        padding: 10px;
@@ -1917,64 +1918,7 @@
     height: 100vh !important;
     margin-top: 110px !important;
 }
-/* 🔥 SLIDESHOW HARUS MUNCUL */
-.unit-image-wrapper,
-#topSlideshowWrapper {
-    width: 150px !important;
-    height: 100px !important;
-    display: block !important;
-    position: relative !important;
-    z-index: 1001 !important;
-    flex-shrink: 0;
-}
-
-/* Saat fullscreen tetap muncul */
-.main-wrapper.is-fullscreen .unit-image-wrapper,
-.main-wrapper.is-fullscreen #topSlideshowWrapper {
-    display: block !important;
-    width: 150px !important;
-    height: 100px !important;
-    position: fixed !important;
-    top: 60px !important;
-    left: 10px !important;
-    z-index: 9999999 !important;
-}
-
-.main-wrapper.is-fullscreen .top-navbar {
-    display: flex !important;
-}
-
-.main-wrapper.is-fullscreen .unit-progress-bar {
-    display: flex !important;
-}
-/* ✅ Ukuran foto slideshow */
-.unit-image-wrapper,
-#topSlideshowWrapper {
-    width: 150px !important;
-    height: 100px !important;
-}
-/* 🔥 PASTIKAN SLIDESHOW SELALU MUNCUL */
-#fixedSlideshow {
-    display: block !important;
-    z-index: 99999999 !important;
-    position: fixed !important;
-    top: 80px !important;
-    left: 20px !important;
-    width: 180px !important;
-    height: 120px !important;
-    border-radius: 10px !important;
-    overflow: hidden !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
-    border: 3px solid rgba(255, 255, 255, 0.3) !important;
-    background: #1e293b !important;
-}
-/* ✅ Ukuran foto slideshow */
-.unit-image-wrapper,
-/* #topSlideshowWrapper {
-    width: 150px !important;
-    height: 100px !important;
-} */
-    /* 🔥 SLIDESHOW DI DALAM PETA LEAFLET */
+/* 🔥 SLIDESHOW CONTAINER (UKURAN NORMAL) */
 .leaflet-control-foto-slideshow {
     background: transparent !important;
     border: none !important;
@@ -1983,67 +1927,261 @@
     z-index: 1000 !important;
 }
 
-.foto-slideshow-container {
-    position: relative;
-    width: 180px !important;
-    height: 120px !important;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    background: #1e293b;
-    transition: all 0.3s ease;
+.foto-slideshow-container,
+#fixedSlideshow,
+.unit-image-wrapper,
+#topSlideshowWrapper {
+    width: 380px !important; /* Ukuran diperbesar */
+    height: 250px !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6) !important;
+    border: 4px solid rgba(255, 255, 255, 0.4) !important;
+    background: #1e293b !important;
+    position: relative !important;
+    transition: all 0.3s ease-in-out !important;
 }
 
+/* Hover Effect */
 .foto-slideshow-container:hover {
-    border-color: rgba(255, 255, 255, 0.6);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.7) !important;
+    border-color: rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8) !important;
 }
 
 .foto-slideshow-container img {
     width: 100% !important;
     height: 100% !important;
-    object-fit: cover;
-    transition: opacity 0.5s ease-in-out;
+    object-fit: cover !important;
+    transition: opacity 0.5s ease-in-out !important;
 }
 
+/* Badge & Caption Adjustments */
 .foto-slideshow-badge {
-    position: absolute;
-    bottom: 6px;
-    right: 6px;
-    background: rgba(239, 68, 68, 0.9);
-    color: white;
-    padding: 3px 8px;
-    border-radius: 10px;
-    font-size: 9px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    animation: pulse-badge 2s infinite;
+    position: absolute !important;
+    bottom: 8px !important;
+    right: 8px !important;
+    background: rgba(239, 68, 68, 0.95) !important;
+    color: white !important;
+    padding: 4px 10px !important;
+    border-radius: 10px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    animation: pulse-badge 2s infinite !important;
+    z-index: 2 !important;
 }
 
 .foto-slideshow-caption {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(transparent, rgba(0,0,0,0.85));
-    color: white;
-    padding: 6px 8px;
-    font-size: 9px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85)) !important;
+    color: white !important;
+    padding: 8px 12px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    z-index: 2 !important;
 }
 
 @keyframes pulse-badge {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.6; }
 }
+
+/* 🚀 UKURAN MAKIN BESAR SAAT FULLSCREEN MODE */
+/* 🚀 UKURAN PROPORSIONAL SAAT FULLSCREEN MODE (Tidaks Terlalu Panjang Kebawah) */
+/* 🔥 PAKSA GESER SLIDESHOW MENJAUH DARI TOMBOL MENU */
+div.foto-slideshow-container,
+#petaSlideshowContainer {
+    position: fixed !important;
+    top: 20px !important;       /* Jarak dari atas layar */
+    left: 170px !important;     /* 👈 DIPAKSA GESER 170px KE KANAN */
+    width: 260px !important;    /* Ukuran disesuaikan */
+    height: 160px !important;
+    z-index: 9999999 !important; /* Agar tidak tertutup elemen lain */
+    margin: 0 !important;
+}
+
+/* Saat Fullscreen Mode */
+:fullscreen div.foto-slideshow-container,
+:-webkit-full-screen div.foto-slideshow-container,
+.main-wrapper.is-fullscreen div.foto-slideshow-container {
+    top: 30px !important;
+    left: 200px !important;     /* Geser sedikit lebih kanan saat fullscreen */
+    width: 320px !important;
+    height: 200px !important;
+}
+/* 🎨 CONTAINER SLIDESHOW KEREN (GLASSMORPHISM & GLOW) */
+.foto-slideshow-container {
+    position: relative;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    /* Efek Kaca Transparan & Shadow Mewah */
+    background: rgba(15, 23, 42, 0.75) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5),
+                0 0 15px rgba(59, 130, 246, 0.3) !important; /* Blue glow halus */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Hover Effect: Saat diarahkan kursor */
+.foto-slideshow-container:hover {
+    transform: translateY(-3px) scale(1.02);
+    border-color: rgba(96, 165, 250, 0.6) !important;
+    box-shadow: 0 25px 35px -10px rgba(0, 0, 0, 0.7),
+                0 0 25px rgba(96, 165, 250, 0.5) !important;
+}
+
+/* 🖼️ GAMBAR & TRANSISI PERGANTIAN SLOW-MOTION */
+.foto-slideshow-container img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    /* Transisi diperlambat menjadi 1.2 detik agar pergantian gambar sangat mulus */
+    transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* 🔴 BADGE LIVE MODERN */
+.foto-slideshow-badge {
+    position: absolute !important;
+    bottom: 10px !important;
+    right: 10px !important;
+    background: rgba(225, 29, 72, 0.85) !important;
+    backdrop-filter: blur(4px) !important;
+    color: #ffffff !important;
+    padding: 4px 10px !important;
+    border-radius: 20px !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.5px !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.4) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    animation: live-pulse 2.5s infinite ease-in-out !important;
+}
+
+/* 📝 CAPTION TEXT ELEGANKAN GRADIENT */
+.foto-slideshow-caption {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.95) 80%) !important;
+    color: #f8fafc !important;
+    padding: 12px 12px 8px 12px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* Animasi Pulse Badge Live yang Lebih Soft */
+@keyframes live-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(0.95); opacity: 0.75; }
+}
+/* 🖼️ GAMBAR SLIDE DENGAN TRANSISI SLOW-MOTION HASIL HALUS */
+/* ========================================================= */
+/* 🔥 CSS PERBAIKAN TOTAL - MENCEGAH FOTO SEJAJAR 2 BIJI 🔥 */
+/* ========================================================= */
+
+/* 1. Kunci Wadah Utama */
+#petaSlideshowContainer {
+    position: relative !important;
+    width: 260px !important;    /* Atur lebar fixed sesuai keinginan */
+    height: 180px !important;   /* Atur tinggi fixed */
+    border-radius: 12px !important;
+    overflow: hidden !important; /* WAJIB: Memotong foto ke-2 yang di luar layar */
+    background: #0f172a !important;
+}
+
+/* 2. Track Pembungkus */
+#petaSlideshowTrack,
+.slideshow-track {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
+/* ========================================================= */
+/* 🔥 TRANSISI SLIDE PELAN & ENAN DILIHAT 🔥 */
+/* ========================================================= */
+/* ========================================================= */
+/* 🔥 ANIMASI SLIDE PELAN & HALUS VIA CSS KEYFRAMES 🔥 */
+/* ========================================================= */
+
+/* 1. Base Image Styling */
+.slide-img {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    will-change: transform, opacity;
+}
+
+/* 🟢 FOTO MASUK (Meluncur dari Kanan ke Tengah) */
+.slide-img.active {
+    z-index: 2 !important;
+    animation: slideInSoft 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+/* 🔴 FOTO KELUAR (Meluncur Pelan dari Tengah ke Kiri & Memudar) */
+.slide-img.slide-out {
+    z-index: 1 !important;
+    animation: slideOutSoft 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+/* 🔵 FOTO BERIKUTNYA (Menunggu di Luar Layar Kanan) */
+.slide-img.next {
+    transform: translateX(100%) !important;
+    opacity: 0 !important;
+    z-index: 1 !important;
+}
+
+/* ========================================================= */
+/* 🚀 GERAKAN ANIMASI (KEYFRAMES) */
+/* ========================================================= */
+
+/* Gerakan Foto Keluar Ke Kiri */
+@keyframes slideOutSoft {
+    0% {
+        transform: translateX(0) scale(1);
+        opacity: 1;
     }
-    </style>
+    100% {
+        transform: translateX(-100%) scale(0.92);
+        opacity: 0;
+    }
+}
+
+/* Gerakan Foto Baru Masuk Dari Kanan */
+@keyframes slideInSoft {
+    0% {
+        transform: translateX(100%) scale(1.05);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+}
+    }
+</style>
 </head>
 <body>
   <audio id="backgroundMusic" loop preload="auto"></audio>
@@ -4411,70 +4549,55 @@ function handlePaymentReceived(pelanggan) {
       // ============================================
 // 🔥 CUSTOM CONTROL LEAFLET: SLIDESHOW FOTO GANGGUAN
 // ============================================
+// ============================================
+// 🔥 CUSTOM CONTROL LEAFLET: SLIDESHOW FOTO GANGGUAN (DAPAT MEMBESAR SAAT FULLSCREEN)
+// ============================================
 L.Control.FotoSlideshow = L.Control.extend({
-    options: { position: 'topleft' },
-    onAdd: function(map) {
-        const container = L.DomUtil.create('div', 'leaflet-control-foto-slideshow');
-        container.style.margin = '15px'; // Margin sedikit diperbesar
-        container.style.zIndex = '999999'; // Pastikan selalu di atas
-        
-        container.innerHTML = `
-            <div class="foto-slideshow-container" style="
-                width: 250px; height: 180px; border-radius: 12px; overflow: hidden;
-                box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6); border: 4px solid rgba(255, 255, 255, 0.4);
-                background: #1e293b; position: relative;
-            ">
-                <img id="petaSlideshowImg" src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400&h=300&fit=crop" 
-                     style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease;">
-                <div id="petaSlideshowBadge" style="
-                    position: absolute; bottom: 8px; right: 8px;
-                    background: rgba(239, 68, 68, 0.95); color: white;
-                    padding: 4px 10px; border-radius: 10px;
-                    font-size: 10px; font-weight: 700;
-                    display: none;
-                    animation: pulse-badge 2s infinite;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                "><i class="fas fa-circle" style="font-size: 7px;"></i> LIVE</div>
-                <div id="petaSlideshowCaption" style="
-                    position: absolute; bottom: 0; left: 0; right: 0;
-                    background: linear-gradient(transparent, rgba(0,0,0,0.85));
-                    color: white; padding: 6px 10px;
-                    font-size: 10px; font-weight: 600;
-                    display: none;
-                    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-                ">
-                <img id="petaSlideshowImg" src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400&h=300&fit=crop" 
-                     style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease;">
-                <div id="petaSlideshowBadge" style="
-                    position: absolute; bottom: 6px; right: 6px; background: rgba(239, 68, 68, 0.9); color: white;
-                    padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 700; display: none;
-                    animation: pulse-badge 2s infinite;
-                "><i class="fas fa-circle" style="font-size: 6px;"></i> LIVE</div>
-                <div id="petaSlideshowCaption" style="
-                    position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85));
-                    color: white; padding: 4px 8px; font-size: 9px; font-weight: 600; display: none;
-                    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-                "></div>
+   options: { position: 'bottomleft' },
+   onAdd: function(map) {
+    const container = L.DomUtil.create('div', 'leaflet-control-foto-slideshow');
+    container.style.margin = '15px 15px 15px 160px'; // Geser kanan agar tidak menutupi menu
+    container.style.zIndex = '999999';
+    
+    container.innerHTML = `
+        <!-- 🔴 RASIO DISESUAIKAN: Lebar 200px & Tinggi 300px (Proporsional untuk foto HP/Portrait) -->
+        <div class="foto-slideshow-container" id="petaSlideshowContainer" 
+             style="position: relative !important; width: 200px !important; height: 300px !important; border-radius: 28px !important; overflow: hidden !important; box-shadow: 0 12px 30px rgba(0,0,0,0.6); border: 2px solid rgba(255,255,255,0.25); background: #0f172a;">
+            
+            <div id="petaSlideshowTrack" 
+                 style="position: relative !important; width: 100% !important; height: 100% !important; overflow: hidden !important;">
+                
+                <img id="petaSlideshowImg1" class="slide-img active" src="" alt="Slide 1" 
+                     style="position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; object-fit: cover !important;">
+                
+                <img id="petaSlideshowImg2" class="slide-img next" src="" alt="Slide 2" 
+                     style="position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; object-fit: cover !important;">
             </div>
-        `;
-        
-        // Mencegah klik pada control mengaktifkan zoom/pan peta
-        L.DomEvent.disableClickPropagation(container);
-        L.DomEvent.disableScrollPropagation(container);
-        return container;
-    }
-});
 
+            <!-- BADGE & CAPTION DENGAN GRADIENT OVERLAY AGAR TERBACA JELAS -->
+            <div id="petaSlideshowBadge" class="foto-slideshow-badge" style="display: none;">
+                <i class="fas fa-circle" style="font-size: 7px;"></i> LIVE
+            </div>
+            <div id="petaSlideshowCaption" class="foto-slideshow-caption" style="display: none; position: absolute; bottom: 0; left: 0; right: 0; padding: 25px 12px 10px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: #fff; font-size: 11px; font-weight: 600; text-align: center; z-index: 5;"></div>
+        </div>
+    `;
+
+    L.DomEvent.disableClickPropagation(container);
+    L.DomEvent.disableScrollPropagation(container);
+    return container;
+}
+});
 let petaSlideshowPhotos = [];
 let petaSlideshowIndex = 0;
 let petaSlideshowInterval = null;
+let currentImgSlot = 1; // Penanda slot gambar aktif (1 atau 2)
 
 function startPetaSlideshow() {
     petaSlideshowPhotos = [];
     if (typeof gangguanFotosData !== 'undefined') {
         Object.keys(gangguanFotosData).forEach(gid => {
             const fotos = gangguanFotosData[gid] || [];
-            const g = gangguanData.find(x => x.id == gid);
+            const g = (typeof gangguanData !== 'undefined') ? gangguanData.find(x => x.id == gid) : null;
             fotos.forEach(f => {
                 petaSlideshowPhotos.push({
                     url: f.url,
@@ -4486,48 +4609,83 @@ function startPetaSlideshow() {
         });
     }
     
-    // Shuffle random agar tidak urut
+    // Acak urutan foto
     petaSlideshowPhotos.sort(() => Math.random() - 0.5);
-    console.log(`📸 Peta slideshow: ${petaSlideshowPhotos.length} foto`);
-    
     if (petaSlideshowPhotos.length === 0) return;
     
-    showNextPetaPhoto();
-    petaSlideshowInterval = setInterval(showNextPetaPhoto, 4000); // Ganti setiap 4 detik
+    // 🚀 Inisialisasi Foto Pertama di Slot 1
+    const img1 = document.getElementById('petaSlideshowImg1');
+    const img2 = document.getElementById('petaSlideshowImg2');
+    const badge = document.getElementById('petaSlideshowBadge');
+    const caption = document.getElementById('petaSlideshowCaption');
+
+    if (img1 && img2) {
+        petaSlideshowIndex = 0;
+        currentImgSlot = 1;
+
+        img1.src = petaSlideshowPhotos[0].url;
+        img1.className = 'slide-img active';
+        img2.className = 'slide-img next';
+
+        if (badge) badge.style.display = 'flex';
+        if (caption) {
+            caption.style.display = 'block';
+            caption.textContent = `${petaSlideshowPhotos[0].kode} • ${petaSlideshowPhotos[0].lokasi}`;
+        }
+
+        img1.onclick = function() {
+            if (typeof showFotoGangguan === 'function' && petaSlideshowPhotos[0].gangguanId) {
+                showFotoGangguan(petaSlideshowPhotos[0].gangguanId);
+            }
+        };
+        img1.style.cursor = 'pointer';
+
+        petaSlideshowIndex = (petaSlideshowIndex + 1) % petaSlideshowPhotos.length;
+    }
+
+    // Mulai animasi slide meluncur setiap 6 detik
+    if (petaSlideshowInterval) clearInterval(petaSlideshowInterval);
+    petaSlideshowInterval = setInterval(showNextPetaPhoto, 6000); 
 }
 
 function showNextPetaPhoto() {
-    if (petaSlideshowPhotos.length === 0) return;
+    if (!petaSlideshowPhotos || petaSlideshowPhotos.length === 0) return;
     
-    const img = document.getElementById('petaSlideshowImg');
+    const photo = petaSlideshowPhotos[petaSlideshowIndex];
     const badge = document.getElementById('petaSlideshowBadge');
     const caption = document.getElementById('petaSlideshowCaption');
     
-    if (!img) return;
+    const img1 = document.getElementById('petaSlideshowImg1');
+    const img2 = document.getElementById('petaSlideshowImg2');
     
-    const photo = petaSlideshowPhotos[petaSlideshowIndex];
-    
-    // Efek fade
-    img.style.opacity = '0';
-    setTimeout(() => {
-        img.src = photo.url;
-        img.style.opacity = '1';
-        
-        if (badge) badge.style.display = 'block';
-        if (caption) {
-            caption.style.display = 'block';
-            caption.textContent = `${photo.kode} • ${photo.lokasi}`;
+    if (!img1 || !img2) return;
+
+    let activeImg = (currentImgSlot === 1) ? img1 : img2;
+    let nextImg   = (currentImgSlot === 1) ? img2 : img1;
+
+    // Set sumber gambar baru
+    nextImg.src = photo.url;
+
+    // 🔥 Cukup ubah class, CSS Keyframes akan otomatis menjalankan gerakannya
+    activeImg.className = 'slide-img slide-out';
+    nextImg.className   = 'slide-img active';
+
+    // Update Badge & Caption
+    if (badge) badge.style.display = 'flex';
+    if (caption) {
+        caption.style.display = 'block';
+        caption.textContent = `${photo.kode} • ${photo.lokasi}`;
+    }
+
+    nextImg.onclick = function() {
+        if (typeof showFotoGangguan === 'function' && photo.gangguanId) {
+            showFotoGangguan(photo.gangguanId);
         }
-        
-        // Klik foto untuk membuka modal detail gangguan
-        img.onclick = function() {
-            if (typeof showFotoGangguan === 'function' && photo.gangguanId) {
-                showFotoGangguan(photo.gangguanId);
-            }
-        };
-        img.style.cursor = 'pointer';
-    }, 300);
-    
+    };
+    nextImg.style.cursor = 'pointer';
+
+    // Rotasi slot
+    currentImgSlot = (currentImgSlot === 1) ? 2 : 1;
     petaSlideshowIndex = (petaSlideshowIndex + 1) % petaSlideshowPhotos.length;
 }
     const bounds = L.latLngBounds(L.latLng(-6.98, 107.80), L.latLng(-6.80, 108.15));
@@ -4554,18 +4712,42 @@ function showNextPetaPhoto() {
     loadWilayahDanBlok();
     updateTodayStatsDisplay();
     updateRevenueProgress();
-     // 🔥 TAMBAHKAN BAGIAN INI DI SINI (Paling Bawah initMap):
-    if (typeof gangguanFotosData !== 'undefined' && Object.keys(gangguanFotosData).length > 0) {
-        const slideshowControl = new L.Control.FotoSlideshow({ position: 'topleft' });
-        slideshowControl.addTo(map);
-        setTimeout(() => startPetaSlideshow(), 1500);
+     // ==========================================
+// 🔥 GANTI BAGIAN TERSEBUT DENGAN KODE INI 🔥
+// ==========================================
+
+// Tambahkan variabel penampung di luar/di atas initMap jika belum ada:
+// let petaSlideshowControlInstance = null;
+
+if (typeof gangguanFotosData !== 'undefined' && Object.keys(gangguanFotosData).length > 0) {
+    // 1. HAPUS CONTROL LAMA jika initMap dipanggil ulang (Mencegah 2 Box)
+    if (typeof petaSlideshowControlInstance !== 'undefined' && petaSlideshowControlInstance !== null) {
+        map.removeControl(petaSlideshowControlInstance);
+        petaSlideshowControlInstance = null;
     }
-    if (gangguanData && gangguanData.length > 0) {
+
+    // 2. HAPUS ELEMENT DUPLIKAT DI DOM (Pembersih Tambahan)
+    document.querySelectorAll('.leaflet-control-foto-slideshow').forEach(el => el.remove());
+
+    // 3. BUAT CONTROL BARU
+    petaSlideshowControlInstance = new L.Control.FotoSlideshow({ position: 'topleft' });
+    petaSlideshowControlInstance.addTo(map);
+
+    // 4. HENTIKAN TIMER LAMA DULU SEBELUM START BARU
+    if (typeof petaSlideshowInterval !== 'undefined' && petaSlideshowInterval) {
+        clearInterval(petaSlideshowInterval);
+    }
+
+    setTimeout(() => startPetaSlideshow(), 1500);
+}
+
+if (gangguanData && gangguanData.length > 0) {
     activeGangguanList = gangguanData.filter(g => g.status !== 'selesai');
     if (activeGangguanList.length > 0) {
-    updateGangguanVoiceButtons();
-    updateGangguanVoiceStatus('idle', `${activeGangguanList.length} gangguan siap diputar`);
+        updateGangguanVoiceButtons();
+        updateGangguanVoiceStatus('idle', `${activeGangguanList.length} gangguan siap diputar`);
     }
+
     }
     initSidebarAutoScroll();
     setScrollSpeed(60);
@@ -4616,7 +4798,7 @@ function showNextPetaPhoto() {
     });
     }
     function loadTitikPenting() {
-    const icons = { 'valve': { i: 'fa-toggle-on', c: '#ef4444' }, 'hydrant': { i: 'fa-fire', c: '#dc2626' }, 'meter': { i: 'fa-tachometer-alt', c: '#3b82f6' }, 'sambungan': { i: 'fa-link', c: '#8b5cf6' }, 'pompa': { i: 'fa-water', c: '#10b981' }, 'tandon': { i: 'fa-database', c: '#06b6d4' }, 'lainnya': { i: 'fa-map-pin', c: '#6b7280' } };
+    const icons = { 'valve': { i: 'fa-toggle-on', c: '#ef4444' }, 'hydrant': { i: 'fa-fire', c: '#dc2626' }, 'meter': { i: 'fa-tachometer-alt', c: '#3b82f6' }, 'sambungan': { i: 'fa-link', c: '#8b5cf6' }, 'pompa': { i: 'fa-water', c: '#10b981' }, 'tandon': { i: 'fa-database', c: '#06b6d4' }, 'lainnya': { i: 'fa-map-pin', c: '#9abc3d' } };
     titikPentingData.forEach(t => {
     try {
     const lat = parseFloat(t.latitude), lng = parseFloat(t.longitude);
@@ -5027,37 +5209,82 @@ function showNextPetaPhoto() {
     }
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
     function toggleFullscreen() {
-    const w = document.getElementById('mainWrapper'), b = document.getElementById('expandBtn');
+    const w = document.getElementById('mainWrapper');
+    const b = document.getElementById('expandBtn');
     const fsSlideshow = document.getElementById('fullscreenSlideshow');
-    
-    if (!isFullscreen) {
-        if (w.requestFullscreen) w.requestFullscreen(); 
-        else if (w.webkitRequestFullscreen) w.webkitRequestFullscreen();
-        w.classList.add('is-fullscreen'); 
+    const progressHeader = document.querySelector('.progres-pendapatan-wrapper') || document.querySelector('.top-navbar');
+
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        // --- MASUK FULLSCREEN ---
+        if (w.requestFullscreen) {
+            w.requestFullscreen();
+        } else if (w.webkitRequestFullscreen) {
+            w.webkitRequestFullscreen();
+        }
+
+        w.classList.add('is-fullscreen');
         isFullscreen = true;
-        b.classList.add('active'); 
-        b.innerHTML = '<i class="fas fa-compress"></i> <span>Keluar</span>';
-        
-        // 🔥 TAMPILKAN FOTO SLIDESHOW SAAT FULLSCREEN
+
+        if (b) {
+            b.classList.add('active');
+            b.innerHTML = '<i class="fas fa-compress"></i> <span>Keluar</span>';
+        }
+
+        // 🔥 1. TAMPILKAN SLIDESHOW FULLSCREEN
         if (fsSlideshow) {
             fsSlideshow.style.display = 'block';
-            // Mulai slideshow untuk elemen ini
-            startFullscreenSlideshow();
+            if (typeof startFullscreenSlideshow === 'function') {
+                startFullscreenSlideshow();
+            }
         }
+
+        // 🔥 2. PAKSA HEADER / PROGRES PENDAPATAN MUNCUL DI ATAS PETA
+        if (progressHeader) {
+            progressHeader.style.display = 'flex';
+            progressHeader.style.position = 'fixed';
+            progressHeader.style.top = '0';
+            progressHeader.style.left = '0';
+            progressHeader.style.right = '0';
+            progressHeader.style.zIndex = '999999'; // Pastikan di atas layer Leaflet
+        }
+
     } else {
-        if (document.exitFullscreen) document.exitFullscreen(); 
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        w.classList.remove('is-fullscreen'); 
+        // --- KELUAR FULLSCREEN ---
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+
+        w.classList.remove('is-fullscreen');
         isFullscreen = false;
-        b.classList.remove('active'); 
-        b.innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>';
-        
-        // 🔥 SEMBUNYIKAN FOTO SLIDESHOW SAAT KELUAR FULLSCREEN
+
+        if (b) {
+            b.classList.remove('active');
+            b.innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>';
+        }
+
+        // 🛑 1. SEMBUNYIKAN SLIDESHOW FULLSCREEN
         if (fsSlideshow) {
             fsSlideshow.style.display = 'none';
         }
+
+        // 🛑 2. KEMBALIKAN HEADER / PROGRES PENDAPATAN KE POSISI NORMAL
+        if (progressHeader) {
+            progressHeader.style.position = '';
+            progressHeader.style.top = '';
+            progressHeader.style.left = '';
+            progressHeader.style.right = '';
+            progressHeader.style.zIndex = '';
+        }
     }
-    setTimeout(() => { if (map) map.invalidateSize(); }, 300);
+
+    // Adjust ukuran peta Leaflet setelah animasi fullscreen selesai
+    setTimeout(() => { 
+        if (typeof map !== 'undefined' && map) {
+            map.invalidateSize(); 
+        }
+    }, 300);
 }
     document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement && !document.webkitFullscreenElement) {
@@ -5220,35 +5447,35 @@ let petaSlideshowInterval = null;
 let fotoSlideshowControl = null;
 
 // 🔥 Custom Control Leaflet untuk Slideshow
-L.Control.FotoSlideshow = L.Control.extend({
-    options: {
-        position: 'topleft'
-    },
+// L.Control.FotoSlideshow = L.Control.extend({
+//     options: {
+//         position: 'topleft'
+//     },
     
-    onAdd: function(map) {
-        const container = L.DomUtil.create('div', 'leaflet-control-foto-slideshow');
-        container.innerHTML = `
-            <div class="foto-slideshow-container" id="petaSlideshowContainer">
-                <img id="petaSlideshowImg" src="" alt="Foto Gangguan" 
-                     style="width: 100%; height: 100%; object-fit: cover;">
-                <div class="foto-slideshow-badge" id="petaSlideshowBadge" style="display: none;">
-                    <i class="fas fa-circle" style="font-size: 6px;"></i> LIVE
-                </div>
-                <div class="foto-slideshow-caption" id="petaSlideshowCaption" style="display: none;"></div>
-            </div>
-        `;
-        
-        // Cegah klik pada control mengaktifkan zoom/pan peta
-        L.DomEvent.disableClickPropagation(container);
-        L.DomEvent.disableScrollPropagation(container);
-        
-        return container;
-    },
+//     onAdd: function(map) {
+//     const container = L.DomUtil.create('div', 'leaflet-control-foto-slideshow');
+//     container.innerHTML = `
+//         <div class="foto-slideshow-container" id="petaSlideshowContainer" 
+//              style="width: 380px !important; height: 250px !important; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 25px rgba(0,0,0,0.6); border: 4px solid rgba(255,255,255,0.4); background: #1e293b; position: relative;">
+//             <img id="petaSlideshowImg" src="" alt="Foto Gangguan" 
+//                  style="width: 100% !important; height: 100% !important; object-fit: cover; transition: opacity 0.5s; cursor: pointer;">
+//             <div class="foto-slideshow-badge" id="petaSlideshowBadge" style="display: none;">
+//                 <i class="fas fa-circle" style="font-size: 6px;"></i> LIVE
+//             </div>
+//             <div class="foto-slideshow-caption" id="petaSlideshowCaption" style="display: none;"></div>
+//         </div>
+//     `;
     
-    onRemove: function(map) {
-        // Cleanup
-    }
-});
+//     L.DomEvent.disableClickPropagation(container);
+//     L.DomEvent.disableScrollPropagation(container);
+    
+//     return container;
+// },
+    
+//     onRemove: function(map) {
+//         // Cleanup
+//     }
+// });
 
 // 🔥 Kumpulkan foto dari database
 function collectPetaSlideshowPhotos() {
@@ -5273,64 +5500,64 @@ function collectPetaSlideshowPhotos() {
 }
 
 // 🔥 Tampilkan foto berikutnya
-function showNextPetaPhoto() {
-    if (petaSlideshowPhotos.length === 0) {
-        collectPetaSlideshowPhotos();
-        if (petaSlideshowPhotos.length === 0) return;
-    }
+// function showNextPetaPhoto() {
+//     if (petaSlideshowPhotos.length === 0) {
+//         collectPetaSlideshowPhotos();
+//         if (petaSlideshowPhotos.length === 0) return;
+//     }
     
-    const img = document.getElementById('petaSlideshowImg');
-    const badge = document.getElementById('petaSlideshowBadge');
-    const caption = document.getElementById('petaSlideshowCaption');
+//     const img = document.getElementById('petaSlideshowImg');
+//     const badge = document.getElementById('petaSlideshowBadge');
+//     const caption = document.getElementById('petaSlideshowCaption');
     
-    if (!img) return;
+//     if (!img) return;
     
-    const photo = petaSlideshowPhotos[petaSlideshowIndex];
+//     const photo = petaSlideshowPhotos[petaSlideshowIndex];
     
-    // Fade effect
-    img.style.opacity = '0';
+//     // Fade effect
+//     img.style.opacity = '0';
     
-    setTimeout(() => {
-        img.src = photo.url;
-        img.style.opacity = '1';
+//     setTimeout(() => {
+//         img.src = photo.url;
+//         img.style.opacity = '1';
         
-        if (badge) badge.style.display = 'flex';
-        if (caption) {
-            caption.style.display = 'block';
-            caption.textContent = `${photo.kode} • ${photo.lokasi}`;
-        }
+//         if (badge) badge.style.display = 'flex';
+//         if (caption) {
+//             caption.style.display = 'block';
+//             caption.textContent = `${photo.kode} • ${photo.lokasi}`;
+//         }
         
-        // Klik foto untuk membuka detail gangguan
-        img.onclick = function() {
-            if (typeof showFotoGangguan === 'function' && photo.gangguanId) {
-                showFotoGangguan(photo.gangguanId);
-            }
-        };
-        img.style.cursor = 'pointer';
-    }, 300);
+//         // Klik foto untuk membuka detail gangguan
+//         img.onclick = function() {
+//             if (typeof showFotoGangguan === 'function' && photo.gangguanId) {
+//                 showFotoGangguan(photo.gangguanId);
+//             }
+//         };
+//         img.style.cursor = 'pointer';
+//     }, 300);
     
-    // Next index (loop)
-    petaSlideshowIndex = (petaSlideshowIndex + 1) % petaSlideshowPhotos.length;
-}
+//     // Next index (loop)
+//     petaSlideshowIndex = (petaSlideshowIndex + 1) % petaSlideshowPhotos.length;
+// }
 
-// 🔥 Mulai slideshow
-function startPetaSlideshow() {
-    collectPetaSlideshowPhotos();
+// // 🔥 Mulai slideshow
+// function startPetaSlideshow() {
+//     collectPetaSlideshowPhotos();
     
-    if (petaSlideshowPhotos.length === 0) {
-        console.log('️ Tidak ada foto untuk slideshow');
-        return;
-    }
+//     if (petaSlideshowPhotos.length === 0) {
+//         console.log('️ Tidak ada foto untuk slideshow');
+//         return;
+//     }
     
-    // Tampilkan foto pertama
-    showNextPetaPhoto();
+//     // Tampilkan foto pertama
+//     showNextPetaPhoto();
     
-    // Ganti setiap 4 detik
-    if (petaSlideshowInterval) clearInterval(petaSlideshowInterval);
-    petaSlideshowInterval = setInterval(showNextPetaPhoto, 4000);
+//     // Ganti setiap 4 detik
+//     if (petaSlideshowInterval) clearInterval(petaSlideshowInterval);
+//     petaSlideshowInterval = setInterval(showNextPetaPhoto, 4000);
     
-    console.log('🎬 Peta slideshow dimulai');
-}
+//     console.log('🎬 Peta slideshow dimulai');
+// }
     document.addEventListener('DOMContentLoaded', initMap);
     window.addEventListener('beforeunload', () => {
     stopRealtimePolling();
@@ -5341,76 +5568,76 @@ function startPetaSlideshow() {
 // ============================================
 // 🔥 SLIDESHOW FOTO GANGGUAN - FIXED POSITION
 // ============================================
-let fsSlideshowPhotos = [];
-let fsSlideshowIndex = 0;
-let fsSlideshowInterval = null;
+// let fsSlideshowPhotos = [];
+// let fsSlideshowIndex = 0;
+// let fsSlideshowInterval = null;
 
-function startFixedSlideshow() {
-    // Kumpulkan foto
-    fsSlideshowPhotos = [];
-    if (typeof gangguanFotosData !== 'undefined') {
-        Object.keys(gangguanFotosData).forEach(gid => {
-            const fotos = gangguanFotosData[gid] || [];
-            const g = gangguanData.find(x => x.id == gid);
-            fotos.forEach(f => {
-                fsSlideshowPhotos.push({
-                    url: f.url,
-                    kode: g ? g.kode_laporan : '-',
-                    lokasi: g ? g.lokasi : '-'
-                });
-            });
-        });
-    }
+// function startFixedSlideshow() {
+//     // Kumpulkan foto
+//     fsSlideshowPhotos = [];
+//     if (typeof gangguanFotosData !== 'undefined') {
+//         Object.keys(gangguanFotosData).forEach(gid => {
+//             const fotos = gangguanFotosData[gid] || [];
+//             const g = gangguanData.find(x => x.id == gid);
+//             fotos.forEach(f => {
+//                 fsSlideshowPhotos.push({
+//                     url: f.url,
+//                     kode: g ? g.kode_laporan : '-',
+//                     lokasi: g ? g.lokasi : '-'
+//                 });
+//             });
+//         });
+//     }
     
-    // Shuffle random
-    fsSlideshowPhotos.sort(() => Math.random() - 0.5);
+//     // Shuffle random
+//     fsSlideshowPhotos.sort(() => Math.random() - 0.5);
     
-    console.log(`📸 Fixed slideshow: ${fsSlideshowPhotos.length} foto`);
+//     console.log(`📸 Fixed slideshow: ${fsSlideshowPhotos.length} foto`);
     
-    if (fsSlideshowPhotos.length === 0) {
-        // Fallback
-        const img = document.getElementById('fsSlideshowImg');
-        if (img) img.src = 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400&h=300&fit=crop';
-        return;
-    }
+//     if (fsSlideshowPhotos.length === 0) {
+//         // Fallback
+//         const img = document.getElementById('fsSlideshowImg');
+//         if (img) img.src = 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400&h=300&fit=crop';
+//         return;
+//     }
     
-    // Tampilkan foto pertama
-    showNextFsPhoto();
+//     // Tampilkan foto pertama
+//     showNextFsPhoto();
     
-    // Ganti setiap 4 detik
-    fsSlideshowInterval = setInterval(showNextFsPhoto, 4000);
-}
+//     // Ganti setiap 4 detik
+//     fsSlideshowInterval = setInterval(showNextFsPhoto, 4000);
+// }
 
-function showNextFsPhoto() {
-    if (fsSlideshowPhotos.length === 0) return;
+// function showNextFsPhoto() {
+//     if (fsSlideshowPhotos.length === 0) return;
     
-    const img = document.getElementById('fsSlideshowImg');
-    const badge = document.getElementById('fsSlideshowBadge');
+//     const img = document.getElementById('fsSlideshowImg');
+//     const badge = document.getElementById('fsSlideshowBadge');
     
-    if (!img) return;
+//     if (!img) return;
     
-    const photo = fsSlideshowPhotos[fsSlideshowIndex];
+//     const photo = fsSlideshowPhotos[fsSlideshowIndex];
     
-    // Fade effect
-    img.style.opacity = '0';
-    setTimeout(() => {
-        img.src = photo.url;
-        img.style.opacity = '1';
+//     // Fade effect
+//     img.style.opacity = '0';
+//     setTimeout(() => {
+//         img.src = photo.url;
+//         img.style.opacity = '1';
         
-        if (badge) {
-            badge.style.display = 'block';
-            badge.innerHTML = `<i class="fas fa-circle" style="font-size: 6px;"></i> ${photo.kode}`;
-        }
-    }, 200);
+//         if (badge) {
+//             badge.style.display = 'block';
+//             badge.innerHTML = `<i class="fas fa-circle" style="font-size: 6px;"></i> ${photo.kode}`;
+//         }
+//     }, 200);
     
-    // Next
-    fsSlideshowIndex = (fsSlideshowIndex + 1) % fsSlideshowPhotos.length;
-}
+//     // Next
+//     fsSlideshowIndex = (fsSlideshowIndex + 1) % fsSlideshowPhotos.length;
+// }
 
-// Mulai saat halaman load
-setTimeout(() => {
-    startFixedSlideshow();
-}, 1500);
+// // Mulai saat halaman load
+// setTimeout(() => {
+//     startFixedSlideshow();
+// }, 1500);
     
   </script>
   <script src="https://www.youtube.com/iframe_api"></script>
