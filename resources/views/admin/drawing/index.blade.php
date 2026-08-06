@@ -1002,7 +1002,40 @@
                     <i class="fas fa-plus-circle"></i> Tambah Jenis Bangunan
                 </button>
             </div>
-
+{{-- PANEL DATA PELANGGAN API --}}
+<div class="mt-4 p-3 bg-white rounded-lg shadow-sm border border-gray-200">
+    <h6 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+        <i class="fas fa-users text-blue-500"></i> Data Pelanggan per Zona
+    </h6>
+    
+    @if($pelangganStats)
+        <div class="space-y-2 text-sm max-h-72 overflow-y-auto pr-1">
+            @foreach($pelangganStats as $zona => $data)
+                @if($data['sr'] > 0 || $zona !== 'Lainnya')
+                <div class="p-2 bg-gray-50 rounded border-l-4 
+                    @if($zona == 'Zona 1') border-blue-500
+                    @elseif($zona == 'Zona 2') border-green-500
+                    @elseif($zona == 'Zona 3') border-yellow-500
+                    @elseif($zona == 'Zona 4') border-red-500
+                    @elseif($zona == 'Zona 5') border-purple-500
+                    @else border-gray-400 @endif">
+                    
+                    <div class="flex justify-between items-center">
+                        <span class="font-semibold text-gray-700">{{ $zona }}</span>
+                        <span class="text-xs font-bold text-gray-800">{{ $data['sr'] }} SR</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>Vol: {{ number_format($data['pakai']) }} m³</span>
+                        <span class="font-semibold text-blue-600">Rp {{ number_format($data['jumlah'], 0, ',', '.') }}</span>
+                    </div>
+                </div>
+                @endif
+            @endforeach
+        </div>
+    @else
+        <p class="text-xs text-red-500 text-center py-2">⚠️ Gagal memuat data API.</p>
+    @endif
+</div>
             <!-- Titik Penting -->
             <div class="sidebar-section">
                 <div class="sidebar-title">
@@ -1248,6 +1281,18 @@
                                 </a>
                             </div>
                         </div>
+                        <div class="mb-3">
+    <label for="ukuran" class="form-label">Ukuran Pipa</label>
+    <select name="ukuran" id="ukuran" class="form-select" required>
+        <option value="">-- Pilih Ukuran --</option>
+        @php $sizes = ['12 inch', '10 inch', '8 inch', '6 inch', '4 inch', '3 inch', '2 inch', '1.5 inch', '1 inch']; @endphp
+        @foreach($sizes as $size)
+            <option value="{{ $size }}" {{ old('ukuran', $titik->ukuran ?? '') == $size ? 'selected' : '' }}>
+                {{ $size }}
+            </option>
+        @endforeach
+    </select>
+</div>
                         <div class="mb-3">
                             <label class="form-label">Keterangan</label>
                             <textarea name="keterangan" class="form-control" rows="2"></textarea>

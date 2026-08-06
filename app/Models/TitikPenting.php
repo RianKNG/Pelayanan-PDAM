@@ -14,6 +14,7 @@ protected $fillable = [
     'latitude',
     'longitude',
     'elevasi', // BARU
+    'ukuran', // <-- TAMBAHKAN INI
     'keterangan',
 ];
 
@@ -21,5 +22,6 @@ protected $casts = [
     'latitude' => 'decimal:8',
     'longitude' => 'decimal:8',
     'elevasi' => 'decimal:2', // BARU
+    
 ];
 }
