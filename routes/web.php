@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\GangguanController;
 use App\Http\Controllers\Public\DashboardController;
 use App\Http\Controllers\Admin\DrawingController;
+use App\Http\Controllers\Admin\EvaluasiController;
+use App\Http\Controllers\Admin\GolonganMonitoringController;
+use App\Http\Controllers\Admin\RekapController;
 
 // ============================================
 // 🔥 API ROUTES (TANPA PREFIX ADMIN)
@@ -188,4 +191,39 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('/drawing/bangunan/{id}', [DrawingController::class, 'deleteBangunan'])->name('drawing.bangunan.delete');
     Route::delete('/drawing/titik/{id}', [DrawingController::class, 'deleteTitik'])->name('drawing.titik.delete');
     Route::delete('/drawing/zona/{id}', [DrawingController::class, 'deleteZona'])->name('drawing.zona.delete');
+});
+
+
+// Evaluasi Tagihan
+Route::prefix('evaluasi')->name('evaluasi.')->group(function () {
+    Route::get('/', [EvaluasiController::class, 'index'])->name('index');
+    Route::post('/upload', [EvaluasiController::class, 'upload'])->name('upload');
+    Route::get('/evaluasi', [EvaluasiController::class, 'evaluasi'])->name('evaluasi');
+    Route::get('/cari', [EvaluasiController::class, 'cari'])->name('cari');
+    Route::get('/cetak-pdf', [EvaluasiController::class, 'cetakPdf'])->name('cetakPdf');
+});
+
+// Monitoring Golongan
+Route::prefix('golongan')->name('golongan.')->group(function () {
+    Route::get('/', [GolonganMonitoringController::class, 'index'])->name('index');
+    Route::get('/detail/{noSambungan}', [GolonganMonitoringController::class, 'detail'])->name('detail');
+    Route::post('/catat-perubahan', [GolonganMonitoringController::class, 'catatPerubahan'])->name('catat');
+    Route::get('/export-pdf', [GolonganMonitoringController::class, 'exportPdf'])->name('export');
+});
+
+
+// Tambahkan route ini
+
+
+// Rekapitulasi Bulanan
+// Route untuk Rekapitulasi
+Route::prefix('rekap')->name('rekap.')->group(function () {
+    Route::get('/', [RekapController::class, 'index'])->name('index');
+    Route::post('/upload', [RekapController::class, 'upload'])->name('upload');
+    Route::get('/bulanan', [RekapController::class, 'rekapBulanan'])->name('bulanan');
+    Route::post('/bulanan/proses', [RekapController::class, 'prosesRekap'])->name('bulanan.proses');
+    Route::get('/bulanan/pdf', [RekapController::class, 'downloadPdf'])->name('bulanan.pdf');
+    Route::get('/tiga-bulan-nol', [RekapController::class, 'cariTigaBulanNol'])->name('tigaBulanNol');
+    Route::get('/tiga-bulan-nol/pdf', [RekapController::class, 'downloadPdfTigaBulanNol'])->name('tigaBulanNol.pdf');
+    
 });

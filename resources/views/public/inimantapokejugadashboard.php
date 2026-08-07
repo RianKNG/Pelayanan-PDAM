@@ -5387,6 +5387,64 @@ function testPaymentPPOB() {
 // 🔥 SLIDESHOW FOTO GANGGUAN - KIRI ATAS
 // ============================================
 
+// ============================================
+// 🔥 SLIDESHOW FOTO GANGGUAN
+// ============================================
+let currentSlideshowIndex = 0;
+let currentSlideshowPhotos = [];
+
+function showFotoGangguan(gangguanId) {
+    console.log('📸 Menampilkan foto gangguan ID:', gangguanId);
+    const fotos = gangguanFotosData[gangguanId] || [];
+    
+    if (fotos.length === 0) {
+        if(typeof showNotification === 'function') showNotification('❌ Tidak ada foto untuk gangguan ini', 'warning');
+        else alert('Tidak ada foto');
+        return;
+    }
+    
+    const gangguan = gangguanData.find(g => g.id == gangguanId);
+    currentSlideshowPhotos = fotos.sort((a, b) => a.urutan - b.urutan);
+    currentSlideshowIndex = 0;
+    
+    document.getElementById('modalKodeLaporan').textContent = gangguan ? gangguan.kode_laporan : '-';
+    document.getElementById('fotoLokasi').textContent = gangguan ? `📍 ${gangguan.lokasi} | ${gangguan.wilayah_terdampak}` : '-';
+    
+    updateSlideshow();
+    new bootstrap.Modal(document.getElementById('fotoGangguanModal')).show();
+}
+
+function updateSlideshow() {
+    if (currentSlideshowPhotos.length === 0) return;
+    document.getElementById('mainSlideshowImg').src = currentSlideshowPhotos[currentSlideshowIndex].url;
+    document.getElementById('slideshowCounter').textContent = `${currentSlideshowIndex + 1} / ${currentSlideshowPhotos.length}`;
+    
+    const thumbnailContainer = document.getElementById('thumbnailContainer');
+    thumbnailContainer.innerHTML = currentSlideshowPhotos.map((foto, index) => `
+        <img src="${foto.url}" onclick="goToSlide(${index})"
+             style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; cursor: pointer; 
+                    border: 2px solid ${index === currentSlideshowIndex ? '#3b82f6' : 'transparent'}; transition: all 0.2s;">
+    `).join('');
+}
+
+function changeSlideshow(direction) {
+    currentSlideshowIndex += direction;
+    if (currentSlideshowIndex < 0) currentSlideshowIndex = currentSlideshowPhotos.length - 1;
+    if (currentSlideshowIndex >= currentSlideshowPhotos.length) currentSlideshowIndex = 0;
+    updateSlideshow();
+}
+
+function goToSlide(index) {
+    currentSlideshowIndex = index;
+    updateSlideshow();
+}
+// ============================================
+// 🔥 SLIDESHOW FOTO GANGGUAN - DI DALAM PETA LEAFLET
+// ============================================
+let petaSlideshowPhotos = [];
+let petaSlideshowIndex = 0;
+let petaSlideshowInterval = null;
+let fotoSlideshowControl = null;
 
 // 🔥 Custom Control Leaflet untuk Slideshow
 // L.Control.FotoSlideshow = L.Control.extend({
@@ -5419,12 +5477,167 @@ function testPaymentPPOB() {
 //     }
 // });
 
+// 🔥 Kumpulkan foto dari database
+function collectPetaSlideshowPhotos() {
+    petaSlideshowPhotos = [];
+    if (typeof gangguanFotosData !== 'undefined' && gangguanFotosData) {
+        Object.keys(gangguanFotosData).forEach(gid => {
+            const fotos = gangguanFotosData[gid] || [];
+            const g = gangguanData.find(x => x.id == gid);
+            fotos.forEach(f => {
+                petaSlideshowPhotos.push({
+                    url: f.url,
+                    kode: g ? g.kode_laporan : '-',
+                    lokasi: g ? g.lokasi : '-',
+                    gangguanId: gid
+                });
+            });
+        });
+    }
+    // Shuffle random
+    petaSlideshowPhotos.sort(() => Math.random() - 0.5);
+    console.log(`📸 Peta slideshow: ${petaSlideshowPhotos.length} foto`);
+}
 
+// 🔥 Tampilkan foto berikutnya
+// function showNextPetaPhoto() {
+//     if (petaSlideshowPhotos.length === 0) {
+//         collectPetaSlideshowPhotos();
+//         if (petaSlideshowPhotos.length === 0) return;
+//     }
+    
+//     const img = document.getElementById('petaSlideshowImg');
+//     const badge = document.getElementById('petaSlideshowBadge');
+//     const caption = document.getElementById('petaSlideshowCaption');
+    
+//     if (!img) return;
+    
+//     const photo = petaSlideshowPhotos[petaSlideshowIndex];
+    
+//     // Fade effect
+//     img.style.opacity = '0';
+    
+//     setTimeout(() => {
+//         img.src = photo.url;
+//         img.style.opacity = '1';
+        
+//         if (badge) badge.style.display = 'flex';
+//         if (caption) {
+//             caption.style.display = 'block';
+//             caption.textContent = `${photo.kode} • ${photo.lokasi}`;
+//         }
+        
+//         // Klik foto untuk membuka detail gangguan
+//         img.onclick = function() {
+//             if (typeof showFotoGangguan === 'function' && photo.gangguanId) {
+//                 showFotoGangguan(photo.gangguanId);
+//             }
+//         };
+//         img.style.cursor = 'pointer';
+//     }, 300);
+    
+//     // Next index (loop)
+//     petaSlideshowIndex = (petaSlideshowIndex + 1) % petaSlideshowPhotos.length;
+// }
+
+// // 🔥 Mulai slideshow
+// function startPetaSlideshow() {
+//     collectPetaSlideshowPhotos();
+    
+//     if (petaSlideshowPhotos.length === 0) {
+//         console.log('️ Tidak ada foto untuk slideshow');
+//         return;
+//     }
+    
+//     // Tampilkan foto pertama
+//     showNextPetaPhoto();
+    
+//     // Ganti setiap 4 detik
+//     if (petaSlideshowInterval) clearInterval(petaSlideshowInterval);
+//     petaSlideshowInterval = setInterval(showNextPetaPhoto, 4000);
+    
+//     console.log('🎬 Peta slideshow dimulai');
+// }
     document.addEventListener('DOMContentLoaded', initMap);
     window.addEventListener('beforeunload', () => {
     stopRealtimePolling();
     });
+    // ============================================
+// 🔥 SLIDESHOW KHUSUS FULLSCREEN
+// ============================================
+// ============================================
+// 🔥 SLIDESHOW FOTO GANGGUAN - FIXED POSITION
+// ============================================
+// let fsSlideshowPhotos = [];
+// let fsSlideshowIndex = 0;
+// let fsSlideshowInterval = null;
 
+// function startFixedSlideshow() {
+//     // Kumpulkan foto
+//     fsSlideshowPhotos = [];
+//     if (typeof gangguanFotosData !== 'undefined') {
+//         Object.keys(gangguanFotosData).forEach(gid => {
+//             const fotos = gangguanFotosData[gid] || [];
+//             const g = gangguanData.find(x => x.id == gid);
+//             fotos.forEach(f => {
+//                 fsSlideshowPhotos.push({
+//                     url: f.url,
+//                     kode: g ? g.kode_laporan : '-',
+//                     lokasi: g ? g.lokasi : '-'
+//                 });
+//             });
+//         });
+//     }
+    
+//     // Shuffle random
+//     fsSlideshowPhotos.sort(() => Math.random() - 0.5);
+    
+//     console.log(`📸 Fixed slideshow: ${fsSlideshowPhotos.length} foto`);
+    
+//     if (fsSlideshowPhotos.length === 0) {
+//         // Fallback
+//         const img = document.getElementById('fsSlideshowImg');
+//         if (img) img.src = 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400&h=300&fit=crop';
+//         return;
+//     }
+    
+//     // Tampilkan foto pertama
+//     showNextFsPhoto();
+    
+//     // Ganti setiap 4 detik
+//     fsSlideshowInterval = setInterval(showNextFsPhoto, 4000);
+// }
+
+// function showNextFsPhoto() {
+//     if (fsSlideshowPhotos.length === 0) return;
+    
+//     const img = document.getElementById('fsSlideshowImg');
+//     const badge = document.getElementById('fsSlideshowBadge');
+    
+//     if (!img) return;
+    
+//     const photo = fsSlideshowPhotos[fsSlideshowIndex];
+    
+//     // Fade effect
+//     img.style.opacity = '0';
+//     setTimeout(() => {
+//         img.src = photo.url;
+//         img.style.opacity = '1';
+        
+//         if (badge) {
+//             badge.style.display = 'block';
+//             badge.innerHTML = `<i class="fas fa-circle" style="font-size: 6px;"></i> ${photo.kode}`;
+//         }
+//     }, 200);
+    
+//     // Next
+//     fsSlideshowIndex = (fsSlideshowIndex + 1) % fsSlideshowPhotos.length;
+// }
+
+// // Mulai saat halaman load
+// setTimeout(() => {
+//     startFixedSlideshow();
+// }, 1500);
     
   </script>
   <script src="https://www.youtube.com/iframe_api"></script>
