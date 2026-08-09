@@ -187,19 +187,19 @@
 
 <!-- Kategori 1 - 14 m3 (BARU) -->
 <tr>
-    <td><span class="badge bg-primary">Pemakaian 1 - 14 m³</span></td>
-    <td>{{ $pelanggan1_14->total() }}</td>
+    <td><span class="badge bg-primary">Pemakaian 1 - 10 m³</span></td>
+    <td>{{ $pelanggan1_10->total() }}</td>
     <td>
-        <a href="{{ route('evaluasi.index', ['bulan'=>$bulan, 'tahun'=>$tahun, 'filter_mode'=>'pemakaian', 'detail_type'=>'kategori', 'detail_value'=>'1_14']) }}" class="btn btn-sm btn-info">Lihat List</a>
+        <a href="{{ route('evaluasi.index', ['bulan'=>$bulan, 'tahun'=>$tahun, 'filter_mode'=>'pemakaian', 'detail_type'=>'kategori', 'detail_value'=>'1_10']) }}" class="btn btn-sm btn-info">Lihat List</a>
     </td>
 </tr>
 
 <!-- Kategori 15 - 30 m3 -->
 <tr>
-    <td><span class="badge bg-warning text-dark">Pemakaian 15 - 30 m³</span></td>
-    <td>{{ $pelanggan15_30->total() }}</td>
+    <td><span class="badge bg-warning text-dark">Pemakaian 11 - 30 m³</span></td>
+    <td>{{ $pelanggan11_30->total() }}</td>
     <td>
-        <a href="{{ route('evaluasi.index', ['bulan'=>$bulan, 'tahun'=>$tahun, 'filter_mode'=>'pemakaian', 'detail_type'=>'kategori', 'detail_value'=>'15_30']) }}" class="btn btn-sm btn-info">Lihat List</a>
+        <a href="{{ route('evaluasi.index', ['bulan'=>$bulan, 'tahun'=>$tahun, 'filter_mode'=>'pemakaian', 'detail_type'=>'kategori', 'detail_value'=>'11_30']) }}" class="btn btn-sm btn-info">Lihat List</a>
     </td>
 </tr>
 

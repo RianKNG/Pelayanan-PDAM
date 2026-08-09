@@ -78,8 +78,8 @@ class EvaluasiController extends Controller
         
         // Mode Pemakaian (Lengkap seluruh spektrum agar total pas)
         $pelanggan0       = (clone $queryBase)->where('pakai', 0)->paginate(10, ['*'], 'p_0');
-        $pelanggan1_14    = (clone $queryBase)->whereBetween('pakai', [1, 14])->paginate(10, ['*'], 'p_1_14');
-        $pelanggan15_30   = (clone $queryBase)->whereBetween('pakai', [15, 30])->paginate(10, ['*'], 'p_15_30');
+        $pelanggan1_10    = (clone $queryBase)->whereBetween('pakai', [1, 10])->paginate(10, ['*'], 'p_1_10');
+        $pelanggan11_30   = (clone $queryBase)->whereBetween('pakai', [11, 30])->paginate(10, ['*'], 'p_11_30');
         $pelangganAbove30 = (clone $queryBase)->where('pakai', '>', 30)->paginate(10, ['*'], 'p_above30');
 
         // Mode Wilayah (SQL Group By 6 Digit Pertama No Sambungan)
@@ -185,11 +185,11 @@ class EvaluasiController extends Controller
             $chartData   = $dataPerGolongan->pluck('jumlah_pelanggan')->toArray();
         } else {
             // Pemakaian (Semua Kategori)
-            $chartLabels = ['0 m³', '1 - 14 m³', '15 - 30 m³', '> 30 m³'];
+            $chartLabels = ['0 m³', '1 - 10 m³', '11 - 30 m³', '> 30 m³'];
             $chartData   = [
                 $pelanggan0->total(),
-                $pelanggan1_14->total(),
-                $pelanggan15_30->total(),
+                $pelanggan1_10->total(),
+                $pelanggan11_30->total(),
                 $pelangganAbove30->total()
             ];
         }
@@ -202,8 +202,8 @@ class EvaluasiController extends Controller
             'dataPerWilayah', 
             'dataPerGolongan', 
             'pelanggan0', 
-            'pelanggan1_14', 
-            'pelanggan15_30', 
+            'pelanggan1_10', 
+            'pelanggan11_30', 
             'pelangganAbove30', 
             'detailData', 
             'detailType', 

@@ -221,7 +221,11 @@ Route::prefix('rekap')->name('rekap.')->group(function () {
     Route::get('/', [RekapController::class, 'index'])->name('index');
     Route::post('/upload', [RekapController::class, 'upload'])->name('upload');
     Route::get('/bulanan', [RekapController::class, 'rekapBulanan'])->name('bulanan');
-    Route::post('/bulanan/proses', [RekapController::class, 'prosesRekap'])->name('bulanan.proses');
+   // UBAH DARI:
+// Route::post('/bulanan/proses', [RekapController::class, 'prosesRekap'])->name('bulanan.proses');
+
+// MENJADI:
+Route::match(['get', 'post'], '/bulanan/proses', [RekapController::class, 'prosesRekap'])->name('bulanan.proses');
     Route::get('/bulanan/pdf', [RekapController::class, 'downloadPdf'])->name('bulanan.pdf');
     Route::get('/tiga-bulan-nol', [RekapController::class, 'cariTigaBulanNol'])->name('tigaBulanNol');
     Route::get('/tiga-bulan-nol/pdf', [RekapController::class, 'downloadPdfTigaBulanNol'])->name('tigaBulanNol.pdf');
