@@ -112,24 +112,42 @@
                     @endif
 
                     <div class="col-md-3">
-                        <label class="form-label fw-bold"><i class="fas fa-map-marker-alt text-success"></i> Wilayah (6 digit)</label>
-                        <select name="filter_wilayah" class="form-select">
-                            <option value="">-- Semua Wilayah --</option>
-                            @foreach($wilayahList as $wil)
-                                <option value="{{ $wil }}" {{ ($filterWilayah ?? '') === (string)$wil ? 'selected' : '' }}>Wilayah {{ $wil }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+    <label class="form-label fw-bold"><i class="fas fa-map-marker-alt text-success"></i> Wilayah</label>
+    <select name="filter_wilayah" class="form-select">
+        <option value="">-- Semua Wilayah --</option>
+        @foreach($wilayahList as $wil)
+            @php
+                // Ambil nama dari masterWilayah, jika tidak ada fallback ke Kode
+                $namaWilayah = $masterWilayah[$wil] ?? 'Wilayah ' . $wil;
+            @endphp
+            <option value="{{ $wil }}" {{ (string)($filterWilayah ?? '') === (string)$wil ? 'selected' : '' }}>
+                {{ $namaWilayah }} ({{ $wil }})
+            </option>
+        @endforeach
+    </select>
+</div>
                     
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold"><i class="fas fa-layer-group text-primary"></i> Golongan</label>
-                        <select name="filter_golongan" class="form-select">
-                            <option value="">-- Semua Golongan --</option>
-                            @foreach($golonganList as $gol)
-                                <option value="{{ $gol }}" {{ ($filterGolongan ?? '') === (string)$gol ? 'selected' : '' }}>Golongan {{ $gol }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                   <div class="col-md-3">
+    <label class="form-label fw-bold"><i class="fas fa-layer-group text-primary"></i> Golongan</label>
+    <select name="filter_golongan" class="form-select">
+        <option value="">-- Semua Golongan --</option>
+        @php
+            $master = $masterGolongan ?? [
+                '12' => 'Sosial',
+                '23' => 'Pemerintah',
+                '28' => 'RT C',
+                '29' => 'RT D',
+                '31' => 'Niaga Besar',
+            ];
+        @endphp
+
+        @foreach($master as $kode => $nama)
+            <option value="{{ $kode }}" {{ (string)($filterGolongan ?? '') === (string)$kode ? 'selected' : '' }}>
+                {{ $nama }} ({{ $kode }})
+            </option>
+        @endforeach
+    </select>
+</div>
 
                     <div class="col-md-3">
                         <label class="form-label fw-bold"><i class="fas fa-tachometer-alt text-danger"></i> Kategori Pemakaian</label>

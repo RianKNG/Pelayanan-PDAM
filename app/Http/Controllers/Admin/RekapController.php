@@ -11,7 +11,40 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 
 class RekapController extends Controller
-{
+{       // ============================================================
+    // 📌 MASTER DATA GOLONGAN & WILAYAH
+    // ============================================================
+    private function getMasterGolongan()
+    {
+        return [
+            '12' => 'Sosial',
+            '23' => 'Pemerintah',
+            '28' => 'RT C',
+            '29' => 'RT D',
+            '31' => 'Niaga Besar',
+        ];
+    }
+
+    private function getMasterWilayah()
+    {
+        return [
+            '304001' => 'Karang Pakuan',
+            '301001' => 'Jl. Raya Darmaraja/Blok I',
+            '301002' => 'Jl. Kaum Kaler/Blok II',
+            '301003' => 'Jl. Raya DMJ/Blok III',
+            '301004' => 'Jl. Karang Tanjung/Blok IV',
+            '301005' => 'Jl. Kaum Kidul/Blok V',
+            '301006' => 'Jl. Desa Darmaraja/Blok VI',
+            '301007' => 'Jl. Kamenteng Girang',
+            '302001' => 'Jl. Sirnaraga/Blok I',
+            '302002' => 'Jl. Cipicung/Blok II',
+            '303001' => 'Jl. Dusun Pasar/Blok I',
+            '303002' => 'Jl. Dusun Pasar/Blok II',
+            '303003' => 'Jl. Dusun Pasar/Blok III',
+            '303004' => 'Jl. Dusu Pasar/Blok IV',
+            '304002' => 'JLN CINANGSI'
+        ];
+    }
     public function index()
     {
         $periodeTersedia = Tagihan::select('bulan', 'tahun')->distinct()->orderBy('tahun', 'desc')->orderBy('bulan', 'desc')->get();

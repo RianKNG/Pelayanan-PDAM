@@ -50,7 +50,7 @@
             </a>
             <a href="{{ route('evaluasi.index', ['filter_mode' => 'wilayah', 'bulan' => $bulan, 'tahun' => $tahun]) }}" 
                class="btn btn-sm {{ $filterMode === 'wilayah' ? 'btn-primary fw-bold' : 'btn-outline-secondary' }}">
-                📍 Wilayah (6 Digit)
+                📍Blok
             </a>
             <a href="{{ route('evaluasi.index', ['filter_mode' => 'golongan', 'bulan' => $bulan, 'tahun' => $tahun]) }}" 
                class="btn btn-sm {{ $filterMode === 'golongan' ? 'btn-primary fw-bold' : 'btn-outline-secondary' }}">

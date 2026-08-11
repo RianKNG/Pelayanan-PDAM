@@ -29,27 +29,21 @@ class EvaluasiController extends Controller
     private function getMasterWilayah()
     {
         return [
-            '301001' => 'Jl. Raya Darmaraja I',
-            '303001' => 'Jl. Raya Darmaraja I',
-            
-            '301002' => 'Kaum Kaler',
-            '302002' => 'Kaum Kaler',
-
-            '301003' => 'Jl. Darmaraja III & Cikiray',
-            '301004' => 'Jl. Darmaraja IV & Karangtanjung',
-            '301005' => 'Kaum Kidul',
-            '301006' => 'Desa Darmaraja I',
-            '301007' => 'Kamenteng',
-
-            '302001' => 'Sinaraga',
-
-            '303002' => 'Dsn Pasar II',
-            '303003' => 'Dsn Pasar III',
-            '303004' => 'Dsn Pasar Blok IV',
-
-            '304001' => 'Karangpakuan & Ancol',
-            '304002' => 'Cinangsi & Cipicung',
-            '030400' => 'Darmaraja I',
+            '304001' => 'Karang Pakuan',
+            '301001' => 'Jl. Raya Darmaraja/Blok I',
+            '301002' => 'Jl. Kaum Kaler/Blok II',
+            '301003' => 'Jl. Raya DMJ/Blok III',
+            '301004' => 'Jl. Karang Tanjung/Blok IV',
+            '301005' => 'Jl. Kaum Kidul/Blok V',
+            '301006' => 'Jl. Desa Darmaraja/Blok VI',
+            '301007' => 'Jl. Kamenteng Girang',
+            '302001' => 'Jl. Sirnaraga/Blok I',
+            '302002' => 'Jl. Cipicung/Blok II',
+            '303001' => 'Jl. Dusun Pasar/Blok I',
+            '303002' => 'Jl. Dusun Pasar/Blok II',
+            '303003' => 'Jl. Dusun Pasar/Blok III',
+            '303004' => 'Jl. Dusu Pasar/Blok IV',
+            '304002' => 'JLN CINANGSI'
         ];
     }
 
@@ -76,23 +70,23 @@ class EvaluasiController extends Controller
         // 2. DATA UNTUK TABEL RINGKASAN & PEMAKAIAN
         // -------------------------------------------------------------
         
-        // Mode Pemakaian (Lengkap seluruh spektrum agar total pas)
+        // Mode Pemakaian
         $pelanggan0       = (clone $queryBase)->where('pakai', 0)->paginate(10, ['*'], 'p_0');
         $pelanggan1_10    = (clone $queryBase)->whereBetween('pakai', [1, 10])->paginate(10, ['*'], 'p_1_10');
         $pelanggan11_30   = (clone $queryBase)->whereBetween('pakai', [11, 30])->paginate(10, ['*'], 'p_11_30');
         $pelangganAbove30 = (clone $queryBase)->where('pakai', '>', 30)->paginate(10, ['*'], 'p_above30');
 
-        // Mode Wilayah (SQL Group By 6 Digit Pertama No Sambungan)
+        // Mode Wilayah: Hapus angka '0' di depan dengan TRIM LEADING MySQL
         $rawWilayah = DB::table('tagihans')
             ->where('bulan', $bulan)
             ->where('tahun', $tahun)
             ->select(
-                DB::raw('SUBSTRING(no_sambungan, 1, 6) as kode_wilayah'),
+                DB::raw("LEFT(TRIM(LEADING '0' FROM no_sambungan), 6) as kode_wilayah"),
                 DB::raw('COUNT(DISTINCT no_sambungan) as jumlah_pelanggan'),
                 DB::raw('SUM(pakai) as total_pakai'),
                 DB::raw('SUM(total_rekening) as total_revenue')
             )
-            ->groupBy(DB::raw('SUBSTRING(no_sambungan, 1, 6)'))
+            ->groupBy(DB::raw("LEFT(TRIM(LEADING '0' FROM no_sambungan), 6)"))
             ->get();
 
         // Grouping Ulang di PHP (Menggabungkan nama wilayah yang sama)
@@ -121,7 +115,7 @@ class EvaluasiController extends Controller
             $group->avg_pakai = $group->jumlah_pelanggan > 0 
                 ? round($group->total_pakai / $group->jumlah_pelanggan, 1) 
                 : 0;
-            $group->kode_wilayah_param = implode(',', $group->kode_wilayah_list);
+            $group->kode_wilayah_param = implode(',', array_unique($group->kode_wilayah_list));
         }
 
         $dataPerWilayah = collect(array_values($groupedWilayah));
@@ -141,7 +135,6 @@ class EvaluasiController extends Controller
         // -------------------------------------------------------------
         // 3. LOGIC DETAIL LIST PELANGGAN
         // -------------------------------------------------------------
-        // Inisialisasi awal agar tidak undefined di compact()
         $detailData = null;
 
         if ($detailType && !is_null($detailValue)) {
@@ -158,7 +151,8 @@ class EvaluasiController extends Controller
             } elseif ($detailType === 'wilayah') {
                 $kodeList = explode(',', $detailValue);
                 $detailData = (clone $queryBase)
-                    ->whereIn(DB::raw('SUBSTRING(no_sambungan, 1, 6)'), $kodeList)
+                    // Disamakan menggunakan TRIM LEADING MySQL
+                    ->whereIn(DB::raw("LEFT(TRIM(LEADING '0' FROM no_sambungan), 6)"), $kodeList)
                     ->orderBy('nama_pelanggan')
                     ->paginate(50);
             } elseif ($detailType === 'golongan') {
@@ -215,7 +209,9 @@ class EvaluasiController extends Controller
         ));
     }
 
-    // ✅ METHOD EVALUASI
+    // ============================================================
+    // 📌 METHOD EVALUASI
+    // ============================================================
     public function evaluasi(Request $request)
     {
         $request->validate(['bulan' => 'required', 'tahun' => 'required']);

@@ -121,26 +121,21 @@ private function determineZone(string $kode, string $alamat): string
     // Mapping utama berdasarkan kode_blok
     $map = [
         // Zona 1
-        '0304001' => 'Zona 1',
-        '0304002' => 'Zona 1',
+      '304001 ' => 'Karang Pakuan',
+'301001' => 'Jl. Raya Darmaraja\/Blok I',
+'301002' => 'Jl. Kaum Kaler\/Blok II',
+'301003' => 'Jl. Raya DMJ\/Blok III',
+'301004' => 'Jl. Karang Tanjung\/Blok IV',
+'301005' => 'Jl. Kaum Kidul\/Blok V',
+'301006' => 'Jl. Desa Darmaraja\/Blok VI',
+'301007' => 'Jl. Kamenteng Girang',
+'302001' => 'Jl. Sirnaraga\/Blok I',
+'302002' => 'Jl. Cipicung\/Blok II',
+'303002' => 'Jl. Dusun Pasar\/Blok II',
+'303004' => 'Jl. Dusu Pasar\/Blok IV',
+'304001' => 'Karang Pakuan',
+'304002' => 'JLN CINANGSI',
 
-        // Zona 2
-        '0301001' => 'Zona 2',
-        '0301007' => 'Zona 2',
-
-        // Zona 3
-        '0301002' => 'Zona 3',
-        '0301006' => 'Zona 3',
-        '0303001' => 'Zona 3',
-        '0303002' => 'Zona 3',
-        '0303003' => 'Zona 3',
-        '0303004' => 'Zona 3',
-
-        // Zona 5
-        '0301004' => 'Zona 5',
-        '0301005' => 'Zona 5',
-        '0302001' => 'Zona 5',
-        '0302002' => 'Zona 5',
     ];
 
     // Khusus 0301003: punya beberapa zona

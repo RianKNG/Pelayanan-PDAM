@@ -11,7 +11,7 @@
 <nav class="navbar navbar-dark bg-primary mb-4">
     <div class="container">
         <a class="navbar-brand" href="{{ route('rekap.bulanan') }}"><i class="fas fa-arrow-left"></i> Kembali ke Pilih Periode</a>
-        <a href="{{ route('rekap.bulanan.pdf', ['bulan_dari' => $bulanDari, 'bulan_sampai' => $bulanSampai, 'tahun' => $tahun, 'filter' => $filterKategori]) }}" class="btn btn-danger btn-sm">
+        <a href="{{ route('rekap.bulanan.pdf', ['bulan_dari' => $bulanDari, 'bulan_sampai' => $bulanSampai, 'tahun' => $tahun, 'filter' => $filterKategori, 'filter_golongan' => $filterGolongan, 'filter_wilayah' => $filterWilayah]) }}" class="btn btn-danger btn-sm">
             <i class="fas fa-file-pdf"></i> Download PDF
         </a>
     </div>
@@ -46,8 +46,20 @@
                         <label class="form-label fw-bold"><i class="fas fa-layer-group text-primary"></i> Golongan</label>
                         <select name="filter_golongan" class="form-select">
                             <option value="">-- Semua Golongan --</option>
-                            @foreach($golonganList as $gol)
-                                <option value="{{ $gol }}" {{ $filterGolongan == $gol ? 'selected' : '' }}>Golongan {{ $gol }}</option>
+                            @php
+                                $masterGol = $masterGolongan ?? [
+                                    '12' => 'Sosial',
+                                    '23' => 'Pemerintah',
+                                    '28' => 'RT C',
+                                    '29' => 'RT D',
+                                    '31' => 'Niaga Besar',
+                                ];
+                            @endphp
+
+                            @foreach($masterGol as $kode => $nama)
+                                <option value="{{ $kode }}" {{ (string)($filterGolongan ?? '') === (string)$kode ? 'selected' : '' }}>
+                                    {{ $nama }} ({{ $kode }})
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -57,7 +69,12 @@
                         <select name="filter_wilayah" class="form-select">
                             <option value="">-- Semua Wilayah --</option>
                             @foreach($wilayahList as $wil)
-                                <option value="{{ $wil }}" {{ $filterWilayah == $wil ? 'selected' : '' }}>Wilayah {{ $wil }}</option>
+                                @php
+                                    $namaWil = $masterWilayah[$wil] ?? 'Wilayah ' . $wil;
+                                @endphp
+                                <option value="{{ $wil }}" {{ (string)($filterWilayah ?? '') === (string)$wil ? 'selected' : '' }}>
+                                    {{ $namaWil }} ({{ $wil }})
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -102,7 +119,7 @@
                                 <th rowspan="2">No Sambungan</th>
                                 <th rowspan="2" class="text-start">Nama Pelanggan</th>
                                 <th rowspan="2" class="text-start">Alamat</th>
-                                <th rowspan="2">Gol</th>
+                                <th rowspan="2">Golongan</th> {{-- Header Kolom Golongan --}}
                                 <th colspan="{{ count($listBulan) }}">Pemakaian per Bulan (m³)</th>
                                 <th rowspan="2">Total</th>
                                 <th rowspan="2">Rata-rata</th>
@@ -116,12 +133,23 @@
                         </thead>
                         <tbody>
                             @foreach($tabelData as $index => $row)
+                            @php
+                                $kodeGol = $row['kode_gol'];
+                                $namaGol = $masterGolongan[$kodeGol] ?? $masterGol[$kodeGol] ?? 'Golongan ' . $kodeGol;
+                            @endphp
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td>{{ $row['no_sambungan'] }}</td>
+                                <td><code>{{ $row['no_sambungan'] }}</code></td>
                                 <td class="text-start fw-semibold">{{ $row['nama_pelanggan'] }}</td>
                                 <td class="text-start">{{ $row['alamat'] }}</td>
-                                <td><span class="badge bg-secondary">{{ $row['kode_gol'] }}</span></td>
+                                
+                                {{-- ✅ PERBAIKAN: Menampilkan Nama Golongan + Kode --}}
+                                <td>
+                                    <span class="badge bg-secondary" title="Kode: {{ $kodeGol }}">
+                                        {{ $namaGol }} ({{ $kodeGol }})
+                                    </span>
+                                </td>
+                                
                                 @foreach($listBulan as $bulan)
                                     <td>
                                         @if($row['data_per_bulan'][$bulan] == 0)
@@ -155,7 +183,7 @@
                                 @endforeach
                                 <td>{{ array_sum(array_column($tabelData, 'total_pakai')) }}</td>
                                 <td>{{ number_format(array_sum(array_column($tabelData, 'rata_pakai')) / max(count($tabelData), 1), 1) }}</td>
-                                <td colspan="2"></td>
+                                <td></td>
                             </tr>
                         </tfoot>
                     </table>
