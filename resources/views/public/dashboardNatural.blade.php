@@ -145,81 +145,55 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .unit-narrate-btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(139,92,246,0.4); }
 
 /* ============================================
-   🔥 CIRCULAR PROGRESS - ANIMASI & WARNA TAJAM
+   🔥 CIRCULAR PROGRESS BAR (PENGGANTI LINEAR)
    ============================================ */
 .revenue-progress-section { flex: 1; color: white; display: flex; align-items: center; gap: 16px; }
 
-.circular-progress-wrapper { position: relative; width: 110px; height: 110px; flex-shrink: 0; }
+.circular-progress-wrapper {
+  position: relative; width: 110px; height: 110px; flex-shrink: 0;
+}
 .circular-progress-svg { transform: rotate(-90deg); }
-.circular-track { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 8; }
+.circular-track { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 8; }
 .circular-fill {
   fill: none; stroke: url(#progressGradient); stroke-width: 8;
   stroke-linecap: round; stroke-dasharray: 283; stroke-dashoffset: 283;
-  transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: ringGlow 2.5s ease-in-out infinite;
+  transition: stroke-dashoffset 1.5s ease-in-out;
+  filter: drop-shadow(0 0 6px rgba(16,185,129,0.6));
 }
-@keyframes ringGlow {
-  0%, 100% { filter: drop-shadow(0 0 4px rgba(52,211,153,0.5)); }
-  50%      { filter: drop-shadow(0 0 12px rgba(52,211,153,0.95)); }
-}
-
-/* 🔥 TITIK COMET di ujung busur */
-.circular-dot {
-  position: absolute; top: 50%; left: 50%;
-  width: 10px; height: 10px; margin: -5px 0 0 -5px;
-  border-radius: 50%; background: #a7f3d0;
-  box-shadow: 0 0 8px #34d399, 0 0 18px rgba(52,211,153,0.7);
-  transform: rotate(0deg) translateY(-49px);
-  transition: transform 2s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 3; pointer-events: none;
-}
-
-/* 🔥 PERSENTASE: GRADIENT TAJAM + GLOW */
 .circular-percentage {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%); text-align: center;
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-size: 20px; font-weight: 800; color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
-.circular-percentage span {
-  display: block;
-  font-size: 22px;
-  font-weight: 900;
-  letter-spacing: 0.5px;
-  color: #fde68a;   /* default, akan ditimpa JS */
-  text-shadow: 0 0 10px rgba(245,158,11,0.9), 0 0 20px rgba(245,158,11,0.5), 0 2px 3px rgba(0,0,0,0.9);
-  transition: color 1s ease, text-shadow 1s ease;
-}
-@keyframes pctGlow {
-  0%, 100% { filter: drop-shadow(0 0 3px rgba(52,211,153,0.45)); }
-  50%      { filter: drop-shadow(0 0 9px rgba(110,231,183,0.9)); }
-}
-.circular-percentage small {
-  display: block; font-size: 7px; font-weight: 700;
-  letter-spacing: 2px; color: rgba(255,255,255,0.6); margin-top: 2px;
-}
+.circular-percentage small { display: block; font-size: 7px; font-weight: 600; opacity: 0.7; text-align: center; }
 
-/* Detail cards (tetap sama) */
 .revenue-details-grid { flex: 1; }
-.revenue-progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.revenue-progress-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+}
 .revenue-progress-title { font-size: 9px; font-weight: 600; display: flex; align-items: center; gap: 4px; opacity: 0.9; }
 .revenue-progress-stats { display: flex; gap: 8px; font-size: 9px; }
-.revenue-progress-stat { display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px; }
+.revenue-progress-stat {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px;
+}
 .revenue-progress-details { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-.revenue-detail-card { background: rgba(255,255,255,0.08); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); }
-.revenue-detail-label { font-size: 7px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 1px; display: flex; align-items: center; gap: 3px; }
+.revenue-detail-card {
+  background: rgba(255,255,255,0.08); padding: 4px 8px; border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.revenue-detail-label {
+  font-size: 7px; color: rgba(255,255,255,0.7); text-transform: uppercase;
+  letter-spacing: 0.3px; margin-bottom: 1px; display: flex; align-items: center; gap: 3px;
+}
 .revenue-detail-value { font-size: 11px; font-weight: 700; color: white; }
 .revenue-detail-value.warning { color: #fbbf24; }
 .revenue-detail-value.danger { color: #f87171; }
 .revenue-detail-value.success { color: #86efac; }
 
-@media (max-width: 768px) {
-  .circular-progress-wrapper { width: 80px; height: 80px; }
-  .circular-percentage span { font-size: 15px; }
-}
-
 /* ============================================
    MAIN LAYOUT
    ============================================ */
-.main-wrapper { display: flex; height: calc(100vh - 110px); position: relative; margin-right: 260px; }
+.main-wrapper { display: flex; height: calc(100vh - 110px); position: relative; margin-right: 320px; }
 #map { flex: 1; height: 100%; z-index: 1; background: #1e293b; }
 
 /* ============================================
@@ -227,7 +201,7 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
    ============================================ */
 .sidebar {
   position: fixed !important; right: 0 !important; top: 110px !important; bottom: 0 !important;
-  width: 260px !important; background: white;
+  width: 320px !important; background: white;
   box-shadow: -2px 0 15px rgba(0,0,0,0.2); z-index: 999;
   display: flex; flex-direction: column; transform: translateX(0) !important;
   border-radius: 12px 0 0 0; overflow: hidden;
@@ -239,7 +213,7 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .sidebar-header h5 { margin: 0; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 .sidebar-header small { opacity: 0.8; font-size: 9px; display: block; margin-top: 2px; }
 .sidebar-content {
-  padding: 10px; overflow-y: overflow-x: hidden; auto; flex: 1; scroll-behavior: smooth; background: #f8fafc;
+  padding: 10px; overflow-y: auto; flex: 1; scroll-behavior: smooth; background: #f8fafc;
 }
 .sidebar-content::-webkit-scrollbar { width: 4px; }
 .sidebar-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
@@ -257,13 +231,13 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 }
 .search-row { display: flex; gap: 4px; margin-bottom: 6px; }
 .search-input {
-  flex: 1; min-width: 0; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px;
+  flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px;
   font-size: 10px; background: white;
 }
 .search-input:focus { outline: none; border-color: #3b82f6; }
 .search-select {
   padding: 6px 4px; border: 1px solid #cbd5e1; border-radius: 6px;
-  font-size: 9px; background: white; min-width: 65px; flex-shrink: 0; 
+  font-size: 9px; background: white; min-width: 90px;
 }
 .search-btn {
   padding: 6px 10px; background: linear-gradient(135deg, #3b82f6, #2563eb);
@@ -548,7 +522,7 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
   justify-content: center; color: white; font-size: 6px;
 }
 .legend-pelanggan {
-  position: absolute; bottom: 10px; right: 270px; background: white; padding: 10px;
+  position: absolute; bottom: 10px; right: 330px; background: white; padding: 10px;
   border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); z-index: 500;
   max-width: 200px; font-size: 10px;
 }
@@ -791,7 +765,6 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
           <circle class="circular-track" cx="50" cy="50" r="45" />
           <circle class="circular-fill" id="circularProgressFill" cx="50" cy="50" r="45" />
         </svg>
-         <div class="circular-dot" id="circularDot"></div>   <!-- ← TAMBAHKAN INI -->
         <div class="circular-percentage">
           <span id="circularPercentage">0%</span>
           <small>TARGET</small>
@@ -1270,7 +1243,7 @@ const POLLING_INTERVAL = 10000;
 // ============================================
 let map, jalurLayers = {}, markerLayers = {}, pelangganLayers = {}, pelangganClusterGroup, zonaLayers = {};
 let isFullscreen = false, totalRevenue = 0, totalKubikasi = 0;
-let currentLayer = 'terrain', baseLayers = {}, currentBaseLayer = null;
+let currentLayer = 'satellite', baseLayers = {}, currentBaseLayer = null;
 let isMusicPlaying = false, isMusicPaused = false, autoRotateMusic = true, currentMusicType = '', currentPlaylistIndex = 0;
 let isLiveDashboardActive = false, highlightedMarkerElement = null;
 let liveCycleInterval = null, liveCycleIndex = 0, liveCycleSpeed = 7000;
@@ -1394,65 +1367,17 @@ function toggleMuteLive() {
 // ============================================
 // 🔥 CIRCULAR PROGRESS UPDATE
 // ============================================
-let displayedPct = 0;
-
 function updateCircularProgress(percentage) {
-  const fill  = document.getElementById('circularProgressFill');
-  const dot   = document.getElementById('circularDot');
+  const fill = document.getElementById('circularProgressFill');
   const pctEl = document.getElementById('circularPercentage');
-  if (!fill) return;
-
-  // 🔥 WARNA DINAMIS SESUAI PERSENTASE
-  let main, light, glow;
-  if (percentage < 40)      { main = '#ef4444'; light = '#fca5a5'; glow = '239,68,68';  }  // 🔴 MERAH
-  else if (percentage < 70) { main = '#f59e0b'; light = '#fde68a'; glow = '245,158,11'; }  // 🟡 KUNING
-  else                      { main = '#10b981'; light = '#a7f3d0'; glow = '16,185,129'; }  // 🟢 HIJAU
-
-  // 1. Ring ikut berubah warna
-  const stops = document.querySelectorAll('#progressGradient stop');
-  if (stops.length >= 3) {
-    stops[0].style.stopColor = light;
-    stops[1].style.stopColor = main;
-    stops[2].style.stopColor = light;
-  }
-  fill.style.filter = `drop-shadow(0 0 8px rgba(${glow},0.8))`;
-
-  // 2. Angka persentase: WARNA TERANG + GLOW KUAT (pasti terlihat)
-  if (pctEl) {
-    pctEl.style.color = light;
-    pctEl.style.textShadow = `0 0 10px rgba(${glow},0.9), 0 0 22px rgba(${glow},0.6), 0 2px 3px rgba(0,0,0,0.9)`;
-  }
-
-  // 3. Dot comet ikut berubah warna
-  if (dot) {
-    dot.style.background = light;
-    dot.style.boxShadow = `0 0 8px rgba(${glow},1), 0 0 18px rgba(${glow},0.7)`;
-    const r = (dot.closest('.circular-progress-wrapper').offsetWidth / 2) * 0.9;
-    dot.style.transform = `rotate(${percentage * 3.6}deg) translateY(-${r}px)`;
-  }
-
-  // 4. Ring terisi
-  const C = 2 * Math.PI * 45;
-  fill.style.strokeDasharray = C;
-  fill.style.strokeDashoffset = C - (percentage / 100) * C;
-
-  // 5. Count-up angka
-  animateCounter(displayedPct, percentage, 2000);
-  displayedPct = percentage;
+  if (!fill || !pctEl) return;
+  const circumference = 2 * Math.PI * 45; // r=45
+  const offset = circumference - (percentage / 100) * circumference;
+  fill.style.strokeDasharray = circumference;
+  fill.style.strokeDashoffset = offset;
+  pctEl.textContent = percentage.toFixed(1) + '%';
 }
 
-function animateCounter(from, to, duration) {
-  const el = document.getElementById('circularPercentage');
-  if (!el) return;
-  const start = performance.now();
-  function frame(now) {
-    const t = Math.min((now - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - t, 3);
-    el.textContent = (from + (to - from) * eased).toFixed(1) + '%';
-    if (t < 1) requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-}
 // ============================================
 // REVENUE CALCULATION
 // ============================================
@@ -1903,221 +1828,16 @@ function stopRealtimePolling() { if (realtimePollingInterval) { clearInterval(re
 // ============================================
 // PAYMENT NOTIFICATION
 // ============================================
-// ============================================
-// 🔥 FUNGSI PENERIMAAN PEMBAYARAN (PPOB vs KANTOR)
-// ============================================
 function handlePaymentReceived(pelanggan) {
-    console.log('💰 Payment received:', pelanggan);
-
-    // 🔔 Notifikasi visual
-    if (typeof showNotification === 'function') {
-        showNotification(`💰 Pembayaran dari ${pelanggan.nama} - Terima kasih!`, 'payment');
-    }
-
-    if (typeof speechSynthesis === 'undefined') return;
-
-    // 🔹 1. Format Nama
-    const rawNama = typeof formatNameForSpeech === 'function' 
-        ? formatNameForSpeech(pelanggan.nama) 
-        : (pelanggan.nama || 'Pelanggan');
-    const namaNormal = typeof cleanSpacedLetters === 'function' 
-        ? cleanSpacedLetters(rawNama) 
-        : rawNama;
-
-    // 🔹 2. Format Alamat (Prioritas: blok → alamat → wilayah)
-    const rawAlamat = (pelanggan.nama_blok && pelanggan.nama_blok !== '-')
-        ? pelanggan.nama_blok
-        : (pelanggan.alamat && pelanggan.alamat !== '-')
-            ? pelanggan.alamat
-            : (pelanggan.nama_wilayah || 'lokasi tidak terdaftar');
-    const alamatPelanggan = String(rawAlamat).replace(/\//g, ' ').trim();
-
-    // 🔹 3. Deteksi Metode
-    const metode = pelanggan?.statusInfo?.metode || 'Kantor';
-
-    // 🔹 Helper random
-    const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
-    let pesanTerpilih = '';
-
-    if (metode === 'PPOB') {
-        // 📢 PPOB → Pengumuman internal untuk petugas kantor (10 × 10 × 10 = 1000 kombinasi)
-    const awalanPPOB = [
-        `Info PPOB, ada transaksi baru masuk.`,
-        `Info PPOB, pembayaran terdeteksi.`,
-        `Info PPOB, pelunasan telah masuk.`,
-        `Info PPOB, transaksi baru diterima.`,
-        `Info PPOB, ada pelunasan masuk.`,
-        `Info PPOB, pembayaran diproses.`,
-        `Info PPOB, data transaksi tercatat.`,
-        `Info PPOB, pembayaran terkonfirmasi.`,
-        `Info PPOB, ada pembaruan transaksi.`,
-        `Info PPOB, laporan pelunasan masuk.`
-    ];
-
-    const intiPPOB = [
-        `Pembayaran atas nama ${namaNormal}, warga ${alamatPelanggan}, telah sukses.`,
-        `Telah masuk pembayaran dari ${namaNormal}, lokasi ${alamatPelanggan}.`,
-        `Transaksi atas nama ${namaNormal}, ${alamatPelanggan}, sukses terbayar.`,
-        `Pelunasan dari ${namaNormal}, ${alamatPelanggan}, tercatat di sistem.`,
-        `Data pembayaran ${namaNormal}, dari ${alamatPelanggan}, masuk ke database.`,
-        `Atas nama ${namaNormal}, warga ${alamatPelanggan}, selesai membayar.`,
-        `Pelanggan ${namaNormal}, ${alamatPelanggan}, melunasi via PPOB.`,
-        `Transaksi PPOB dari ${namaNormal}, ${alamatPelanggan}, terkonfirmasi.`,
-        `Pembayaran online dari ${namaNormal}, ${alamatPelanggan}, terverifikasi.`,
-        `Tagihan atas nama ${namaNormal}, ${alamatPelanggan}, telah dilunasi.`
-    ];
-
-    const penutupPPOB = [
-        `Terima kasih.`,
-        `Terima kasih banyak.`,
-        `Sekian dan terima kasih.`,
-        `Terima kasih atas perhatiannya.`,
-        `Terima kasih, transaksi selesai.`,
-        `Terima kasih, laporan selesai.`,
-        `Terima kasih, proses berhasil.`,
-        `Terima kasih atas kerjasamanya.`,
-        `Terima kasih, data terbarui.`,
-        `Terima kasih, sistem siap kembali.`
-    ];
-
-        pesanTerpilih = `${getRandom(awalanPPOB)} ${getRandom(intiPPOB)} ${getRandom(penutupPPOB)}`;
-
-    } else {
-        // 🏢 KANTOR → Sapaan & terima kasih langsung ke pelanggan (10 × 10 × 10 = 1000 kombinasi)
-        const awalanKantor = [
-            `Yang Terhormat ${namaNormal}, warga ${alamatPelanggan}.`,
-            `Kepada Yth. ${namaNormal}, lokasi ${alamatPelanggan}.`,
-            `Terimakaish untuk ${namaNormal}, ${alamatPelanggan}.`,
-            `Pelayanan loket untuk ${namaNormal}, ${alamatPelanggan}.`,
-            `Selamat datang ${namaNormal}, warga ${alamatPelanggan}.`,
-            `Konfirmasi transaksi ${namaNormal}, ${alamatPelanggan}.`,
-            `Pemberitahuan untuk ${namaNormal}, ${alamatPelanggan}.`,
-            `Transaksi loket ${namaNormal}, warga ${alamatPelanggan}.`,
-            `Data pembayaran ${namaNormal}, ${alamatPelanggan}.`,
-            `Laporan loket ${namaNormal}, lokasi ${alamatPelanggan}.`
-        ];
-
-        const intiKantor = [
-            `Pembayaran Anda telah kami terima.`,
-            `Transaksi di loket berhasil diproses.`,
-            `Pembayaran langsung sukses terkonfirmasi.`,
-            `Tagihan Anda telah dinyatakan lunas.`,
-            `Pembayaran tunai telah kami terima.`,
-            `Pelunasan telah resmi tercatat di sistem.`,
-            `Pembayaran berhasil diverifikasi.`,
-            `Pembayaran resmi kami terima di loket.`,
-            `Pelunasan tagihan telah tercatat.`,
-            `Pembayaran untuk lokasi tersebut berhasil.`
-        ];
-
-        const penutupKantor = [
-            `Terima kasih atas kunjungan Anda.`,
-            `Terima kasih telah melakukan pembayaran di loket.`,
-            `Terima kasih, selamat melanjutkan aktivitas.`,
-            `Terima kasih, selamat beraktivitas kembali.`,
-            `Terima kasih banyak, sampai jumpa.`,
-            `Terima kasih atas kepercayaan Anda.`,
-            `Terima kasih atas kedatangan anda.`,
-            `Terima kasih telah menjadi pelanggan setia pdam Upe Darmaraja.`,
-            `Terima kasih atas kedisiplinan Anda.`,
-            `Senang dapat melayani Anda, terima kasih.`
-        ];
-
-        pesanTerpilih = `${getRandom(awalanKantor)} ${getRandom(intiKantor)} ${getRandom(penutupKantor)}`;
-    }
-
-    console.log('🔊 Memutar pesan:', pesanTerpilih);
-
-    // ⚡ Eksekusi suara
-    try { 
-        speechSynthesis.cancel(); 
-        if (speechSynthesis.paused) speechSynthesis.resume();
-    } catch (e) {}
-
-    if (typeof speak === 'function') {
-        speak(pesanTerpilih, 'female');
-    }
-}
-
-// ============================================
-// 🧪 FUNGSI TEST NOTIFIKASI PEMBAYARAN
-// ============================================
-
-// Test 1: Pembayaran KANTOR (Loket)
-function testPaymentNotification() {
-    console.log('🧪 Testing pembayaran KANTOR...');
-    const dummyPelanggan = {
-        no_pelanggan: '0301001001',
-        nama: 'DR. HERMAN WIJAYA',
-        nama_blok: 'BLOK C3 / 12',
-        alamat: 'Jl. Raya Darmaraja No. 45',
-        nama_wilayah: 'WILAYAH I',
-        jumlah: '604800',
-        pakai: '71',
-        kode_gol_trf: 'RT.D',
-        koordinator: '-6.9170766,108.0685615',
-        statusInfo: {
-            status: 'Kantor',
-            color: '#10b981',
-            icon: 'fa-building',
-            tanggal: new Date().toISOString(),
-            metode: 'Kantor'
-        }
-    };
-    handlePaymentReceived(dummyPelanggan);
-    if (typeof updateUIAfterPayment === 'function') updateUIAfterPayment(dummyPelanggan);
-    showNotification('🧪 Test pembayaran KANTOR dipicu!', 'success');
-}
-
-// Test 2: Pembayaran PPOB (Online)
-function testPaymentPPOB() {
-    console.log('🧪 Testing pembayaran PPOB...');
-    const dummyPelanggan = {
-        no_pelanggan: '0301007155',
-        nama: 'H. ACENG SUHANDI',
-        nama_blok: 'BLOK A2 / 07',
-        alamat: 'Kp. Cieunteung RT 02 RW 05',
-        nama_wilayah: 'WILAYAH III',
-        jumlah: '418600',
-        pakai: '52',
-        kode_gol_trf: 'RT.D',
-        koordinator: '-6.9152425,108.0678316',
-        statusInfo: {
-            status: 'PPOB',
-            color: '#f59e0b',
-            icon: 'fa-mobile-alt',
-            tanggal: new Date().toISOString(),
-            metode: 'PPOB'
-        }
-    };
-    handlePaymentReceived(dummyPelanggan);
-    if (typeof updateUIAfterPayment === 'function') updateUIAfterPayment(dummyPelanggan);
-    showNotification('🧪 Test pembayaran PPOB dipicu!', 'success');
-}
-
-// Test 3: Test fallback alamat (hanya wilayah)
-function testPaymentAlamatFallback() {
-    console.log('🧪 Testing fallback alamat (hanya wilayah)...');
-    const dummyPelanggan = {
-        no_pelanggan: '0301009999',
-        nama: 'SITI NURHALIZA',
-        nama_blok: '-',
-        alamat: '-',
-        nama_wilayah: 'WILAYAH V',
-        jumlah: '350000',
-        pakai: '40',
-        kode_gol_trf: 'RT.C',
-        statusInfo: {
-            status: 'Kantor',
-            color: '#10b981',
-            icon: 'fa-building',
-            tanggal: new Date().toISOString(),
-            metode: 'Kantor'
-        }
-    };
-    handlePaymentReceived(dummyPelanggan);
-    showNotification('🧪 Test fallback alamat dipicu!', 'success');
+  showNotification(`💰 Pembayaran dari ${pelanggan.nama} - Terima kasih!`, 'payment');
+  const nama = formatNameForSpeech(pelanggan.nama);
+  const metode = pelanggan.statusInfo?.metode === 'PPOB' ? 'PPOB' : 'Kantor Unit Darmaraja';
+  const msgs = [
+    `Yang Terhormat, ${nama}. Pembayaran Anda baru saja kami terima. Terima kasih dari keluarga besar PDAM Darmaraja.`,
+    `Kepada ${nama}, pembayaran telah dikonfirmasi. Terima kasih atas loyalitas Anda.`,
+    `Salam hormat, ${nama}. Pembayaran Anda tercatat melalui ${metode}. Terima kasih banyak.`
+  ];
+  speak(msgs[Math.floor(Math.random() * msgs.length)] + ` Transaksi melalui ${metode}.`, 'female');
 }
 function updateUIAfterPayment(pelanggan) {
   const bar = document.getElementById('notificationBar'), content = document.getElementById('notificationContent');
