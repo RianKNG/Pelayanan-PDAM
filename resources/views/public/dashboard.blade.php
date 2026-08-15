@@ -1300,7 +1300,7 @@ const POLLING_INTERVAL = 10000;
 // ============================================
 let map, jalurLayers = {}, markerLayers = {}, pelangganLayers = {}, pelangganClusterGroup, zonaLayers = {};
 let isFullscreen = false, totalRevenue = 0, totalKubikasi = 0;
-let currentLayer = 'terrain', baseLayers = {}, currentBaseLayer = null;
+let currentLayer = 'satellite', baseLayers = {}, currentBaseLayer = null;
 let isMusicPlaying = false, isMusicPaused = false, autoRotateMusic = true, currentMusicType = '', currentPlaylistIndex = 0;
 let isLiveDashboardActive = false, highlightedMarkerElement = null;
 let liveCycleInterval = null, liveCycleIndex = 0, liveCycleSpeed = 7000;
@@ -1420,7 +1420,35 @@ function toggleMuteLive() {
     document.getElementById('muteLiveStatusText').textContent = 'Suara Live Aktif';
   }
 }
+// ============================================
+// 🔥 AUTO LIVE ON + MUTE SAAT PERTAMA NYALA
+// ============================================
+function syncMuteUI() {
+  const btn = document.getElementById('btnMuteLive');
+  const statusDot = document.getElementById('muteLiveStatusDot');
+  const statusText = document.getElementById('muteLiveStatusText');
+  if (!btn) return;
+  if (isLiveMuted) {
+    btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+    btn.innerHTML = '<i class="fas fa-volume-mute"></i> <span id="muteLiveText">Unmute Suara Live</span>';
+    if (statusDot) statusDot.className = 'voice-status-dot paused';
+    if (statusText) statusText.textContent = 'Suara Live Dimatikan';
+  } else {
+    btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+    btn.innerHTML = '<i class="fas fa-volume-up"></i> <span id="muteLiveText">Mute Suara Live</span>';
+    if (statusDot) statusDot.className = 'voice-status-dot active';
+    if (statusText) statusText.textContent = 'Suara Live Aktif';
+  }
+}
 
+function initAutoLive() {
+  isLiveMuted = true;   // 🔇 suara mute dulu
+  syncMuteUI();         // tombol di Panel Suara ikut sinkron
+  if (unpaidCustomerList.length > 0) {
+    startLiveCycle();   // 🔴 LIVE langsung jalan (visual saja)
+    showNotification('🔴 LIVE aktif otomatis — suara mute, klik Unmute di Panel Suara untuk mengaktifkan', 'live');
+  }
+}
 // ============================================
 // 🔥 CIRCULAR PROGRESS UPDATE
 // ============================================
@@ -2414,6 +2442,8 @@ function initMap() {
   initSidebarAutoScroll(); setScrollSpeed(60);
   document.getElementById('searchResults').innerHTML = '<div class="search-empty">Ketik untuk mencari pelanggan</div>';
   startRealtimePolling();
+  // 🔥 BARU: auto live saat pertama nyala (suara mute)
+setTimeout(initAutoLive, 2000);
   initAudioUnlock();
 }
 
