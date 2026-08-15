@@ -106,7 +106,7 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
   position: relative; z-index: 999;
 }
 .unit-progress-container {
-  max-width: 1600px; margin: 0 auto; padding: 0 16px;
+  max-width: 1600px; margin: 0 auto; padding: 0 16px;padding-right: 280px;
   display: flex; align-items: center; gap: 16px;
 }
 
@@ -203,7 +203,7 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .revenue-progress-title { font-size: 9px; font-weight: 600; display: flex; align-items: center; gap: 4px; opacity: 0.9; }
 .revenue-progress-stats { display: flex; gap: 8px; font-size: 9px; }
 .revenue-progress-stat { display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px; }
-.revenue-progress-details { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.revenue-progress-details { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
 .revenue-detail-card { background: rgba(255,255,255,0.08); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); }
 .revenue-detail-label { font-size: 7px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 1px; display: flex; align-items: center; gap: 3px; }
 .revenue-detail-value { font-size: 11px; font-weight: 700; color: white; }
@@ -238,8 +238,8 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 }
 .sidebar-header h5 { margin: 0; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 .sidebar-header small { opacity: 0.8; font-size: 9px; display: block; margin-top: 2px; }
-.sidebar-content {
-  padding: 10px; overflow-y: overflow-x: hidden; auto; flex: 1; scroll-behavior: smooth; background: #f8fafc;
+.sidebar-content {padding: 10px;overflow-y: auto;        /* ← scroll vertikal AKTIF */overflow-x: hidden;      /* ← horizontal disembunyikan */
+  flex: 1;min-height: 0;           /* ← KUNCI: biar flex child bisa scroll */scroll-behavior: smooth;background: #f8fafc;
 }
 .sidebar-content::-webkit-scrollbar { width: 4px; }
 .sidebar-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
@@ -694,6 +694,7 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 @media (max-width: 768px) {
   .top-navbar-container { flex-direction: column; text-align: center; }
   .unit-progress-container { flex-direction: column; }
+  .unit-progress-container { padding-right: 16px; }   /* ← TAMBAHKAN */
   .main-wrapper { margin-right: 0; height: calc(100vh - 150px); }
   .sidebar {
     width: 100% !important; max-width: 320px !important; top: auto !important;
@@ -711,6 +712,45 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
   .circular-progress-wrapper { width: 80px; height: 80px; }
   .circular-percentage { font-size: 14px; }
 }
+.revenue-progress-section { flex: 1; color: white; display: flex; align-items: center; gap: 16px; }
+.revenue-middle { flex: 1; }
+
+/* 🔥 LINGKARAN GLOBAL */
+.circular-progress-wrapper { position: relative; width: 110px; height: 110px; flex-shrink: 0; }
+.circular-progress-svg { transform: rotate(-90deg); }
+.circular-track { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 8; }
+.circular-fill {
+  fill: none; stroke: url(#progressGradient); stroke-width: 8; stroke-linecap: round;
+  stroke-dasharray: 283; stroke-dashoffset: 283;
+  transition: stroke-dashoffset 2s cubic-bezier(0.4,0,0.2,1), filter 1s ease;
+}
+.circular-dot {
+  position: absolute; top: 50%; left: 50%; width: 10px; height: 10px;
+  margin: -5px 0 0 -5px; border-radius: 50%; background: #fde68a;
+  box-shadow: 0 0 8px rgba(245,158,11,1), 0 0 18px rgba(245,158,11,0.7);
+  transform: rotate(0deg) translateY(-49px);
+  transition: transform 2s cubic-bezier(0.4,0,0.2,1), background 1s, box-shadow 1s;
+  z-index: 3; pointer-events: none;
+}
+.circular-percentage { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+.circular-percentage span {
+  display: block; font-size: 22px; font-weight: 900; letter-spacing: 0.5px; color: #fde68a;
+  text-shadow: 0 0 10px rgba(245,158,11,0.9), 0 2px 3px rgba(0,0,0,0.9);
+  transition: color 1s ease, text-shadow 1s ease;
+}
+.circular-percentage small { display: block; font-size: 7px; font-weight: 700; letter-spacing: 2px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+
+/* 🔥 RING KECIL PER WILAYAH */
+.wilayah-progress-strip { flex-shrink: 0; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 6px 10px; }
+.wilayah-strip-title { font-size: 8px; font-weight: 700; color: rgba(255,255,255,0.7); letter-spacing: 0.5px; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+.wilayah-progress-grid { display: flex; gap: 10px; align-items: center; max-width: 340px; overflow-x: auto; }
+.wilayah-ring-card { text-align: center; cursor: pointer; flex-shrink: 0; transition: transform 0.2s; }
+.wilayah-ring-card:hover { transform: scale(1.1); }
+.wilayah-ring-wrapper { position: relative; width: 52px; height: 52px; margin: 0 auto; }
+.wilayah-ring-pct { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 10px; font-weight: 800; }
+.wilayah-ring-name { margin-top: 2px; font-size: 7px; font-weight: 700; color: rgba(255,255,255,0.85); white-space: nowrap; }
+.wilayah-ring-detail { font-size: 6px; color: rgba(255,255,255,0.5); }
+@media (max-width: 768px) { .wilayah-progress-strip { display: none; } }
 </style>
 </head>
 <body>
@@ -779,61 +819,51 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 
     <!-- 🔥 CIRCULAR PROGRESS BAR -->
     <div class="revenue-progress-section">
-      <div class="circular-progress-wrapper">
-        <svg class="circular-progress-svg" width="110" height="110" viewBox="0 0 100 100">
-          <defs>
-            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#10b981" />
-              <stop offset="50%" style="stop-color:#059669" />
-              <stop offset="100%" style="stop-color:#34d399" />
-            </linearGradient>
-          </defs>
-          <circle class="circular-track" cx="50" cy="50" r="45" />
-          <circle class="circular-fill" id="circularProgressFill" cx="50" cy="50" r="45" />
-        </svg>
-         <div class="circular-dot" id="circularDot"></div>   <!-- ← TAMBAHKAN INI -->
-        <div class="circular-percentage">
-          <span id="circularPercentage">0%</span>
-          <small>TARGET</small>
-        </div>
-      </div>
-      <div class="revenue-details-grid">
-        <div class="revenue-progress-header">
-          <div class="revenue-progress-title">
-            <i class="fas fa-chart-line"></i>
-            <span>PROGRES PENDAPATAN BULAN INI</span>
-          </div>
-          <div class="revenue-progress-stats">
-            <div class="revenue-progress-stat">
-              <i class="fas fa-calendar-day"></i>
-              <span>Hari ke-<strong id="currentDayOfMonth">0</strong></span>
-            </div>
-            <div class="revenue-progress-stat">
-              <i class="fas fa-hourglass-half"></i>
-              <span>Sisa <strong id="remainingDays">0</strong> hari</span>
-            </div>
-          </div>
-        </div>
-        <div class="revenue-progress-details">
-          <div class="revenue-detail-card">
-            <div class="revenue-detail-label"><i class="fas fa-coins"></i><span>Target</span></div>
-            <div class="revenue-detail-value" id="targetRevenue">Rp 0</div>
-          </div>
-          <div class="revenue-detail-card">
-            <div class="revenue-detail-label"><i class="fas fa-money-bill-wave"></i><span>Terkumpul</span></div>
-            <div class="revenue-detail-value success" id="collectedRevenue">Rp 0</div>
-          </div>
-          <div class="revenue-detail-card">
-            <div class="revenue-detail-label"><i class="fas fa-exclamation-triangle"></i><span>Sisa+Denda</span></div>
-            <div class="revenue-detail-value warning" id="remainingRevenue">Rp 0</div>
-          </div>
-          <div class="revenue-detail-card">
-            <div class="revenue-detail-label"><i class="fas fa-tachometer-alt"></i><span>Rata²/Hari</span></div>
-            <div class="revenue-detail-value danger" id="dailyTarget">Rp 0</div>
-          </div>
-        </div>
+
+  <!-- 🔥 LINGKARAN GLOBAL (pengganti bar linear) -->
+  <div class="circular-progress-wrapper">
+    <svg class="circular-progress-svg" width="110" height="110" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#fde68a" />
+          <stop offset="50%" style="stop-color:#f59e0b" />
+          <stop offset="100%" style="stop-color:#fde68a" />
+        </linearGradient>
+      </defs>
+      <circle class="circular-track" cx="50" cy="50" r="45" />
+      <circle class="circular-fill" id="circularProgressFill" cx="50" cy="50" r="45" />
+    </svg>
+    <div class="circular-dot" id="circularDot"></div>
+    <div class="circular-percentage">
+      <span id="circularPercentage">0%</span>
+      <small>TARGET</small>
+    </div>
+  </div>
+
+  <!-- DETAIL TENGAH (isi sama seperti lama, dibungkus) -->
+  <div class="revenue-middle">
+    <div class="revenue-progress-header">
+      <div class="revenue-progress-title"><i class="fas fa-chart-line"></i><span>PROGRES PENDAPATAN BULAN INI</span></div>
+      <div class="revenue-progress-stats">
+        <div class="revenue-progress-stat"><i class="fas fa-calendar-day"></i><span>Hari ke-<strong id="currentDayOfMonth">0</strong></span></div>
+        <div class="revenue-progress-stat"><i class="fas fa-hourglass-half"></i><span>Sisa <strong id="remainingDays">0</strong> hari</span></div>
       </div>
     </div>
+    <div class="revenue-progress-details">
+      <div class="revenue-detail-card"><div class="revenue-detail-label"><i class="fas fa-coins"></i><span>Target</span></div><div class="revenue-detail-value" id="targetRevenue">Rp 0</div></div>
+      <div class="revenue-detail-card"><div class="revenue-detail-label"><i class="fas fa-money-bill-wave"></i><span>Terkumpul</span></div><div class="revenue-detail-value success" id="collectedRevenue">Rp 0</div></div>
+      <div class="revenue-detail-card"><div class="revenue-detail-label"><i class="fas fa-exclamation-triangle"></i><span>Sisa+Denda</span></div><div class="revenue-detail-value warning" id="remainingRevenue">Rp 0</div></div>
+      <div class="revenue-detail-card"><div class="revenue-detail-label"><i class="fas fa-tachometer-alt"></i><span>Rata²/Hari</span></div><div class="revenue-detail-value danger" id="dailyTarget">Rp 0</div></div>
+    </div>
+  </div>
+
+  <!-- 🔥 RING KECIL PER WILAYAH (sejajar lingkaran global) -->
+  <div class="wilayah-progress-strip">
+    <div class="wilayah-strip-title"><i class="fas fa-chart-pie"></i> PROGRES PER WILAYAH</div>
+    <div class="wilayah-progress-grid" id="wilayahProgressGrid"></div>
+  </div>
+
+</div>
   </div>
 </div>
 
@@ -1480,6 +1510,8 @@ function calculateMonthlyRevenue() {
   return { totalTarget, totalCollected, totalUnpaidWithPenalty, percentage, currentDay, daysInMonth, remainingDays, dailyTarget };
 }
 
+
+
 function updateRevenueProgress() {
   const stats = calculateMonthlyRevenue();
   updateCircularProgress(stats.percentage);
@@ -1489,6 +1521,88 @@ function updateRevenueProgress() {
   document.getElementById('collectedRevenue').textContent = formatRupiah(stats.totalCollected);
   document.getElementById('remainingRevenue').textContent = formatRupiah(stats.totalUnpaidWithPenalty);
   document.getElementById('dailyTarget').textContent = formatRupiah(stats.dailyTarget);
+  renderWilayahProgress();
+}
+
+function updateCircularProgress(percentage) {
+  const fill = document.getElementById('circularProgressFill');
+  const dot = document.getElementById('circularDot');
+  const pctEl = document.getElementById('circularPercentage');
+  if (!fill) return;
+  let main, light, glow;
+  if (percentage < 40)      { main = '#ef4444'; light = '#fca5a5'; glow = '239,68,68';  }
+  else if (percentage < 70) { main = '#f59e0b'; light = '#fde68a'; glow = '245,158,11'; }
+  else                      { main = '#10b981'; light = '#a7f3d0'; glow = '16,185,129'; }
+  const stops = document.querySelectorAll('#progressGradient stop');
+  if (stops.length >= 3) { stops[0].style.stopColor = light; stops[1].style.stopColor = main; stops[2].style.stopColor = light; }
+  fill.style.filter = `drop-shadow(0 0 8px rgba(${glow},0.8))`;
+  if (pctEl) { pctEl.style.color = light; pctEl.style.textShadow = `0 0 10px rgba(${glow},0.9), 0 0 22px rgba(${glow},0.6), 0 2px 3px rgba(0,0,0,0.9)`; }
+  if (dot) {
+    dot.style.background = light;
+    dot.style.boxShadow = `0 0 8px rgba(${glow},1), 0 0 18px rgba(${glow},0.7)`;
+    const r = (dot.closest('.circular-progress-wrapper').offsetWidth / 2) * 0.9;
+    dot.style.transform = `rotate(${percentage * 3.6}deg) translateY(-${r}px)`;
+  }
+  const C = 2 * Math.PI * 45;
+  fill.style.strokeDasharray = C;
+  fill.style.strokeDashoffset = C - (percentage / 100) * C;
+  animateCounter(displayedPct, percentage, 2000);
+  displayedPct = percentage;
+}
+
+function animateCounter(from, to, duration) {
+  const el = document.getElementById('circularPercentage');
+  if (!el) return;
+  const start = performance.now();
+  function frame(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3);
+    el.textContent = (from + (to - from) * eased).toFixed(1) + '%';
+    if (t < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function calculateWilayahProgress() {
+  const mapWil = {};
+  pelangganDataFromLaravel.forEach(p => {
+    const w = p.nama_wilayah || 'Tidak Diketahui';
+    if (!mapWil[w]) mapWil[w] = { target: 0, collected: 0, count: 0, paid: 0 };
+    mapWil[w].target += parseFloat(p.jumlah) || 0;
+    mapWil[w].count++;
+    if (getPaymentStatus(p).status !== 'Belum Bayar') { mapWil[w].collected += parseFloat(p.jumlah) || 0; mapWil[w].paid++; }
+  });
+  return mapWil;
+}
+
+function renderWilayahProgress() {
+  const grid = document.getElementById('wilayahProgressGrid');
+  if (!grid) return;
+  const C = 2 * Math.PI * 26;
+  let html = '';
+  Object.entries(calculateWilayahProgress())
+    .sort((a, b) => (b[1].collected / (b[1].target || 1)) - (a[1].collected / (a[1].target || 1)))
+    .forEach(([wilayah, d]) => {
+      const pct = d.target > 0 ? (d.collected / d.target) * 100 : 0;
+      const color = pct < 40 ? '#ef4444' : pct < 70 ? '#f59e0b' : '#10b981';
+      const offset = C - (pct / 100) * C;
+      html += `
+      <div class="wilayah-ring-card" onclick="focusOnWilayah('${wilayah.replace(/'/g, "\\'")}')">
+        <div class="wilayah-ring-wrapper">
+          <svg width="52" height="52" viewBox="0 0 60 60">
+            <circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="6"/>
+            <circle cx="30" cy="30" r="26" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round"
+              stroke-dasharray="${C}" stroke-dashoffset="${C}" data-offset="${offset}"
+              transform="rotate(-90 30 30)" style="transition: stroke-dashoffset 1.5s ease;"/>
+          </svg>
+          <div class="wilayah-ring-pct" style="color:${color}">${pct.toFixed(0)}%</div>
+        </div>
+        <div class="wilayah-ring-name">${wilayah}</div>
+        <div class="wilayah-ring-detail">${d.paid}/${d.count} lunas</div>
+      </div>`;
+    });
+  grid.innerHTML = html;
+  setTimeout(() => { grid.querySelectorAll('circle[data-offset]').forEach(c => c.style.strokeDashoffset = c.getAttribute('data-offset')); }, 150);
 }
 
 // ============================================
