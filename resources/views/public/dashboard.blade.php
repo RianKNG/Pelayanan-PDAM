@@ -2058,79 +2058,80 @@ function handlePaymentReceived(pelanggan) {
 
     if (typeof speechSynthesis === 'undefined') return;
 
-    // 🔹 1. Format Nama
-    const rawNama = typeof formatNameForSpeech === 'function' 
-        ? formatNameForSpeech(pelanggan.nama) 
+    // ✅ 1. Format Nama → TANPA EJAAN HURUF, dibaca alami
+    const namaMentah = typeof formatNameForSpeech === 'function' 
+        ? formatNameForSpeech(pelanggan.nama || 'Pelanggan') 
         : (pelanggan.nama || 'Pelanggan');
-    const namaNormal = typeof cleanSpacedLetters === 'function' 
-        ? cleanSpacedLetters(rawNama) 
-        : rawNama;
 
-    // 🔹 2. Format Alamat (Prioritas: blok → alamat → wilayah)
-    const rawAlamat = (pelanggan.nama_blok && pelanggan.nama_blok !== '-')
+    // HAPUS spasi antar huruf → "A J A" menjadi "AJA" agar dibaca utuh, tidak dieja
+    const namaNormal = namaMentah.replace(/\s+/g, '');
+
+    // ✅ 2. Format Alamat → UTAMAKAN ALAMAT, bukan wilayah
+    // Prioritas: nama_blok → alamat → nama_wilayah
+    let alamatMentah = (pelanggan.nama_blok && pelanggan.nama_blok !== '-')
         ? pelanggan.nama_blok
         : (pelanggan.alamat && pelanggan.alamat !== '-')
             ? pelanggan.alamat
             : (pelanggan.nama_wilayah || 'lokasi tidak terdaftar');
-    const alamatPelanggan = String(rawAlamat).replace(/\//g, ' ').trim();
 
-    // 🔹 3. Deteksi Metode
+    // Bersihkan tanda miring dan spasi
+    const alamatPelanggan = String(alamatMentah).replace(/\//g, ' ').trim();
+
+    // ✅ 3. Deteksi Metode
     const metode = pelanggan?.statusInfo?.metode || 'Kantor';
 
-    // 🔹 Helper random
-    const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    // Helper ringkas → lebih cepat
+    const ambilAcak = arr => arr[Math.random() * arr.length | 0];
 
-    let pesanTerpilih = '';
+    let pesan = '';
 
     if (metode === 'PPOB') {
-        // 📢 PPOB → Pengumuman internal untuk petugas kantor (10 × 10 × 10 = 1000 kombinasi)
-    const awalanPPOB = [
-        `Info PPOB, ada transaksi baru masuk.`,
-        `Info PPOB, pembayaran terdeteksi.`,
-        `Info PPOB, pelunasan telah masuk.`,
-        `Info PPOB, transaksi baru diterima.`,
-        `Info PPOB, ada pelunasan masuk.`,
-        `Info PPOB, pembayaran diproses.`,
-        `Info PPOB, data transaksi tercatat.`,
-        `Info PPOB, pembayaran terkonfirmasi.`,
-        `Info PPOB, ada pembaruan transaksi.`,
-        `Info PPOB, laporan pelunasan masuk.`
-    ];
+        const awalan = [
+            'Info PPOB, ada transaksi baru masuk.',
+            'Info PPOB, pembayaran terdeteksi.',
+            'Info PPOB, pelunasan telah masuk.',
+            'Info PPOB, transaksi baru diterima.',
+            'Info PPOB, ada pelunasan masuk.',
+            'Info PPOB, pembayaran diproses.',
+            'Info PPOB, data transaksi tercatat.',
+            'Info PPOB, pembayaran terkonfirmasi.',
+            'Info PPOB, ada pembaruan transaksi.',
+            'Info PPOB, laporan pelunasan masuk.'
+        ];
 
-    const intiPPOB = [
-        `Pembayaran atas nama ${namaNormal}, warga ${alamatPelanggan}, telah sukses.`,
-        `Telah masuk pembayaran dari ${namaNormal}, lokasi ${alamatPelanggan}.`,
-        `Transaksi atas nama ${namaNormal}, ${alamatPelanggan}, sukses terbayar.`,
-        `Pelunasan dari ${namaNormal}, ${alamatPelanggan}, tercatat di sistem.`,
-        `Data pembayaran ${namaNormal}, dari ${alamatPelanggan}, masuk ke database.`,
-        `Atas nama ${namaNormal}, warga ${alamatPelanggan}, selesai membayar.`,
-        `Pelanggan ${namaNormal}, ${alamatPelanggan}, melunasi via PPOB.`,
-        `Transaksi PPOB dari ${namaNormal}, ${alamatPelanggan}, terkonfirmasi.`,
-        `Pembayaran online dari ${namaNormal}, ${alamatPelanggan}, terverifikasi.`,
-        `Tagihan atas nama ${namaNormal}, ${alamatPelanggan}, telah dilunasi.`
-    ];
+        const inti = [
+            `Pembayaran atas nama ${namaNormal}, warga ${alamatPelanggan}, telah sukses.`,
+            `Telah masuk pembayaran dari ${namaNormal}, lokasi ${alamatPelanggan}.`,
+            `Transaksi atas nama ${namaNormal}, ${alamatPelanggan}, sukses terbayar.`,
+            `Pelunasan dari ${namaNormal}, ${alamatPelanggan}, tercatat di sistem.`,
+            `Data pembayaran ${namaNormal}, dari ${alamatPelanggan}, masuk ke database.`,
+            `Atas nama ${namaNormal}, warga ${alamatPelanggan}, selesai membayar.`,
+            `Pelanggan ${namaNormal}, ${alamatPelanggan}, melunasi lewat PPOB.`,
+            `Transaksi PPOB dari ${namaNormal}, ${alamatPelanggan}, terkonfirmasi.`,
+            `Pembayaran daring dari ${namaNormal}, ${alamatPelanggan}, terverifikasi.`,
+            `Tagihan atas nama ${namaNormal}, ${alamatPelanggan}, telah dilunasi.`
+        ];
 
-    const penutupPPOB = [
-        `Terima kasih.`,
-        `Terima kasih banyak.`,
-        `Sekian dan terima kasih.`,
-        `Terima kasih atas perhatiannya.`,
-        `Terima kasih, transaksi selesai.`,
-        `Terima kasih, laporan selesai.`,
-        `Terima kasih, proses berhasil.`,
-        `Terima kasih atas kerjasamanya.`,
-        `Terima kasih, data terbarui.`,
-        `Terima kasih, sistem siap kembali.`
-    ];
+        const penutup = [
+            'Terima kasih.',
+            'Terima kasih banyak.',
+            'Sekian dan terima kasih.',
+            'Terima kasih atas perhatiannya.',
+            'Terima kasih, transaksi selesai.',
+            'Terima kasih, laporan selesai.',
+            'Terima kasih, proses berhasil.',
+            'Terima kasih atas kerja samanya.',
+            'Terima kasih, data telah diperbarui.',
+            'Terima kasih, sistem siap kembali.'
+        ];
 
-        pesanTerpilih = `${getRandom(awalanPPOB)} ${getRandom(intiPPOB)} ${getRandom(penutupPPOB)}`;
+        pesan = `${ambilAcak(awalan)} ${ambilAcak(inti)} ${ambilAcak(penutup)}`;
 
     } else {
-        // 🏢 KANTOR → Sapaan & terima kasih langsung ke pelanggan (10 × 10 × 10 = 1000 kombinasi)
-        const awalanKantor = [
+        const awalan = [
             `Yang Terhormat ${namaNormal}, warga ${alamatPelanggan}.`,
-            `Kepada Yth. ${namaNormal}, lokasi ${alamatPelanggan}.`,
-            `Terimakaish untuk ${namaNormal}, ${alamatPelanggan}.`,
+            `Kepada Yang Terhormat ${namaNormal}, lokasi ${alamatPelanggan}.`,
+            `Terima kasih untuk ${namaNormal}, ${alamatPelanggan}.`,
             `Pelayanan loket untuk ${namaNormal}, ${alamatPelanggan}.`,
             `Selamat datang ${namaNormal}, warga ${alamatPelanggan}.`,
             `Konfirmasi transaksi ${namaNormal}, ${alamatPelanggan}.`,
@@ -2140,48 +2141,55 @@ function handlePaymentReceived(pelanggan) {
             `Laporan loket ${namaNormal}, lokasi ${alamatPelanggan}.`
         ];
 
-        const intiKantor = [
-            `Pembayaran Anda telah kami terima.`,
-            `Transaksi di loket berhasil diproses.`,
-            `Pembayaran langsung sukses terkonfirmasi.`,
-            `Tagihan Anda telah dinyatakan lunas.`,
-            `Pembayaran tunai telah kami terima.`,
-            `Pelunasan telah resmi tercatat di sistem.`,
-            `Pembayaran berhasil diverifikasi.`,
-            `Pembayaran resmi kami terima di loket.`,
-            `Pelunasan tagihan telah tercatat.`,
-            `Pembayaran untuk lokasi tersebut berhasil.`
+        const inti = [
+            'Pembayaran Anda telah kami terima.',
+            'Transaksi di loket berhasil diproses.',
+            'Pembayaran langsung sukses terkonfirmasi.',
+            'Tagihan Anda telah dinyatakan lunas.',
+            'Pembayaran tunai telah kami terima.',
+            'Pelunasan telah resmi tercatat di sistem.',
+            'Pembayaran berhasil diverifikasi.',
+            'Pembayaran resmi kami terima di loket.',
+            'Pelunasan tagihan telah tercatat.',
+            'Pembayaran untuk lokasi tersebut berhasil.'
         ];
 
-        const penutupKantor = [
-            `Terima kasih atas kunjungan Anda.`,
-            `Terima kasih telah melakukan pembayaran di loket.`,
-            `Terima kasih, selamat melanjutkan aktivitas.`,
-            `Terima kasih, selamat beraktivitas kembali.`,
-            `Terima kasih banyak, sampai jumpa.`,
-            `Terima kasih atas kepercayaan Anda.`,
-            `Terima kasih atas kedatangan anda.`,
-            `Terima kasih telah menjadi pelanggan setia pdam Upe Darmaraja.`,
-            `Terima kasih atas kedisiplinan Anda.`,
-            `Senang dapat melayani Anda, terima kasih.`
+        const penutup = [
+            'Terima kasih atas kunjungan Anda.',
+            'Terima kasih telah melakukan pembayaran di loket.',
+            'Terima kasih, selamat melanjutkan aktivitas.',
+            'Terima kasih, selamat beraktivitas kembali.',
+            'Terima kasih banyak, sampai jumpa.',
+            'Terima kasih atas kepercayaan Anda.',
+            'Terima kasih atas kedatangan Anda.',
+            'Terima kasih telah menjadi pelanggan setia PDAM Unit pelayanan Darmaraja.',
+            'Terima kasih atas kedisiplinan Anda.',
+            'Senang dapat melayani Anda, terima kasih.'
         ];
 
-        pesanTerpilih = `${getRandom(awalanKantor)} ${getRandom(intiKantor)} ${getRandom(penutupKantor)}`;
+        pesan = `${ambilAcak(awalan)} ${ambilAcak(inti)} ${ambilAcak(penutup)}`;
     }
 
-    console.log('🔊 Memutar pesan:', pesanTerpilih);
+    console.log('🔊 Memutar pesan:', pesan);
 
-    // ⚡ Eksekusi suara
-    try { 
-        speechSynthesis.cancel(); 
+    // ⚡ Suara CEPAT — langsung putar, tidak menunggu
+    try {
+        speechSynthesis.cancel();
         if (speechSynthesis.paused) speechSynthesis.resume();
     } catch (e) {}
 
+    // Putar pesan dengan kecepatan suara yang nyaman & instan
     if (typeof speak === 'function') {
-        speak(pesanTerpilih, 'female');
+        speak(pesan, 'female');
+    } else {
+        // Jika fungsi speak tidak ada, gunakan suara bawaan peramban
+        const ucapan = new SpeechSynthesisUtterance(pesan);
+        ucapan.lang = 'id-ID';
+        ucapan.rate = 1.05; // Sedikit lebih cepat dari normal, jelas dan tidak lambat
+        ucapan.pitch = 1.1; // Sedikit lebih tinggi, suara lebih enak didengar
+        speechSynthesis.speak(ucapan);
     }
 }
-
 // ============================================
 // 🧪 FUNGSI TEST NOTIFIKASI PEMBAYARAN
 // ============================================
@@ -2191,7 +2199,7 @@ function testPaymentNotification() {
     console.log('🧪 Testing pembayaran KANTOR...');
     const dummyPelanggan = {
         no_pelanggan: '0301001001',
-        nama: 'DR. HERMAN WIJAYA',
+        nama: 'A J A',
         nama_blok: 'BLOK C3 / 12',
         alamat: 'Jl. Raya Darmaraja No. 45',
         nama_wilayah: 'WILAYAH I',
