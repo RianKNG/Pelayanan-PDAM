@@ -1512,33 +1512,80 @@ function animateCounter(from, to, duration) {
   requestAnimationFrame(frame);
 }
 // ============================================
-// REVENUE CALCULATION
+// REVENUE CALCULATION — OTOMATIS PERBARUI
 // ============================================
+
+// Simpan nilai terakhir agar tahu berubah atau tidak
+let lastDataHash = '';
+
 function calculateMonthlyRevenue() {
   const now = new Date();
   const currentDay = now.getDate();
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
   const remainingDays = daysInMonth - currentDay;
+  
   let totalTarget = 0, totalCollected = 0, totalUnpaidWithPenalty = 0;
+
   pelangganDataFromLaravel.forEach(p => {
     const jumlah = parseFloat(p.jumlah) || 0;
     const hasLoket = p.tanggal_pembayaran_loket && !['-','.','',null].includes(p.tanggal_pembayaran_loket);
     const hasPPOB = p.tanggal_pembayaran_ppob && !['-','.','',null].includes(p.tanggal_pembayaran_ppob);
-    if (hasLoket || hasPPOB) totalCollected += jumlah;
-    else {
+
+    if (hasLoket || hasPPOB) {
+      totalCollected += jumlah;
+    } else {
       let tagihan = jumlah;
-      if (currentDay > 20) tagihan += 5000;
-      if (jumlah > 1000000) tagihan += 10000;
+      if (currentDay > 20) tagihan += 5000; // Denda setelah tanggal 20
+      if (jumlah > 1000000) tagihan += 10000; // Denda tambahan
       totalUnpaidWithPenalty += tagihan;
     }
     totalTarget += jumlah;
   });
+
   const percentage = totalTarget > 0 ? (totalCollected / totalTarget) * 100 : 0;
   const dailyTarget = remainingDays > 0 ? totalUnpaidWithPenalty / remainingDays : 0;
+
   return { totalTarget, totalCollected, totalUnpaidWithPenalty, percentage, currentDay, daysInMonth, remainingDays, dailyTarget };
 }
 
+// ✅ FUNGSI PEMBARUAN TAMPILAN — PANGGIL INI SAAT DATA BERUBAH
+function updateRevenueDisplay() {
+  // Buat "tanda sidik jari" data untuk mendeteksi perubahan
+  const currentHash = pelangganDataFromLaravel.map(p => 
+    `${p.jumlah}|${p.tanggal_pembayaran_loket}|${p.tanggal_pembayaran_ppob}`
+  ).join('');
 
+  // Jika data TIDAK berubah → lewati, hemat kinerja
+  if (currentHash === lastDataHash) return;
+  lastDataHash = currentHash;
+
+  // ✅ Hitung ulang otomatis
+  const result = calculateMonthlyRevenue();
+
+  // ==========================================
+  // 🔧 DI SINI: PERBARUI ELEMEN TAMPILANMU
+  // Sesuaikan ID/Nama elemen dengan halamanmu!
+  // ==========================================
+  const elPersen = document.getElementById('revenue-percentage');
+  const elTarget = document.getElementById('revenue-target');
+  const elTerkumpul = document.getElementById('revenue-collected');
+  const elBelumBayar = document.getElementById('revenue-unpaid');
+  const elHarian = document.getElementById('revenue-daily');
+
+  if (elPersen) elPersen.textContent = result.percentage.toFixed(1) + '%';
+  if (elTarget) elTarget.textContent = result.totalTarget.toLocaleString('id-ID');
+  if (elTerkumpul) elTerkumpul.textContent = result.totalCollected.toLocaleString('id-ID');
+  if (elBelumBayar) elBelumBayar.textContent = result.totalUnpaidWithPenalty.toLocaleString('id-ID');
+  if (elHarian) elHarian.textContent = result.dailyTarget.toLocaleString('id-ID', {maximumFractionDigits: 0});
+
+  console.log('📊 Data diperbarui otomatis:', result.percentage.toFixed(1) + '%');
+}
+
+// ✅ JALANKAN PERTAMA KALI SAAT HALAMAN DIBUKA
+updateRevenueDisplay();
+
+// ✅ PANTAU SETIAP 1 DETIK → JIKA DATA BERUBAH, LANGSUNG PERBARUI
+setInterval(updateRevenueDisplay, 1000);
 
 function updateRevenueProgress() {
   const stats = calculateMonthlyRevenue();
