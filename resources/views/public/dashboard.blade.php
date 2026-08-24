@@ -2041,154 +2041,45 @@ async function checkNewPayments() {
   } catch(e) { console.error('Polling error:', e); }
 }
 function stopRealtimePolling() { if (realtimePollingInterval) { clearInterval(realtimePollingInterval); realtimePollingInterval = null; } }
-
 // ============================================
-// PAYMENT NOTIFICATION
-// ============================================
-// ============================================
-// 🔥 FUNGSI PENERIMAAN PEMBAYARAN (PPOB vs KANTOR)
+// PAYMENT NOTIFICATION — INSTAN & CEPAT
 // ============================================
 function handlePaymentReceived(pelanggan) {
     console.log('💰 Payment received:', pelanggan);
 
-    // 🔔 Notifikasi visual
     if (typeof showNotification === 'function') {
-        showNotification(`💰 Pembayaran dari ${pelanggan.nama} - Terima kasih!`, 'payment');
+        showNotification(`💰 Pembayaran dari ${pelanggan.nama||'Pelanggan'} — Terima kasih!`, 'payment');
     }
 
     if (typeof speechSynthesis === 'undefined') return;
 
-    // ✅ 1. Format Nama → TANPA EJAAN HURUF, dibaca alami
-    const namaMentah = typeof formatNameForSpeech === 'function' 
-        ? formatNameForSpeech(pelanggan.nama || 'Pelanggan') 
-        : (pelanggan.nama || 'Pelanggan');
+    // ✅ Langsung ambil & bersihkan
+    const nama = ((typeof formatNameForSpeech==='function' 
+        ? formatNameForSpeech(pelanggan.nama||'Pelanggan') 
+        : pelanggan.nama||'Pelanggan')).replace(/\s+/g,'');
 
-    // HAPUS spasi antar huruf → "A J A" menjadi "AJA" agar dibaca utuh, tidak dieja
-    const namaNormal = namaMentah.replace(/\s+/g, '');
+    const blok = pelanggan.nama_blok||'';
+    const almt = pelanggan.alamat||'';
+    const wilayah = pelanggan.nama_wilayah||'lokasi tidak terdaftar';
+    const alamat = String(blok && blok!=='-' ? blok : almt && almt!=='-' ? almt : wilayah).replace(/\//g,' ').trim();
 
-    // ✅ 2. Format Alamat → UTAMAKAN ALAMAT, bukan wilayah
-    // Prioritas: nama_blok → alamat → nama_wilayah
-    let alamatMentah = (pelanggan.nama_blok && pelanggan.nama_blok !== '-')
-        ? pelanggan.nama_blok
-        : (pelanggan.alamat && pelanggan.alamat !== '-')
-            ? pelanggan.alamat
-            : (pelanggan.nama_wilayah || 'lokasi tidak terdaftar');
+    const metode = pelanggan?.statusInfo?.metode||'Kantor';
+    const acak = a=>a[(Math.random()*a.length)|0];
 
-    // Bersihkan tanda miring dan spasi
-    const alamatPelanggan = String(alamatMentah).replace(/\//g, ' ').trim();
+    // ✅ PESAN PENDEK + VARIASI, LANGSUNG GABUNG
+    const pesan = metode==='PPOB'
+        ? `${acak(['Info PPOB, ada pembayaran.','Info PPOB, transaksi masuk.','Info PPOB, lunas tercatat.'])} Dari ${nama}, ${alamat}, sukses. ${acak(['Terima kasih.','Terima kasih banyak.','Selesai, terima kasih.'])}`
+        : `${acak(['Pembayaran atas nama ','Konfirmasi untuk ','Diterima dari '])}${nama}, ${alamat}. ${acak(['Telah kami terima.','Transaksi selesai.','Lunas tercatat.'])} ${acak(['Terima kasih.','Terima kasih atas kunjungan.','Terima kasih, selamat beraktivitas.'])}`;
 
-    // ✅ 3. Deteksi Metode
-    const metode = pelanggan?.statusInfo?.metode || 'Kantor';
+    console.log('🔊', pesan);
 
-    // Helper ringkas → lebih cepat
-    const ambilAcak = arr => arr[Math.random() * arr.length | 0];
+    // ⚡ LANGSUNG PUTAR — hanya batalkan jika sedang bicara
+    speechSynthesis.speaking && speechSynthesis.cancel();
 
-    let pesan = '';
-
-    if (metode === 'PPOB') {
-        const awalan = [
-            'Info PPOB, ada transaksi baru masuk.',
-            'Info PPOB, pembayaran terdeteksi.',
-            'Info PPOB, pelunasan telah masuk.',
-            'Info PPOB, transaksi baru diterima.',
-            'Info PPOB, ada pelunasan masuk.',
-            'Info PPOB, pembayaran diproses.',
-            'Info PPOB, data transaksi tercatat.',
-            'Info PPOB, pembayaran terkonfirmasi.',
-            'Info PPOB, ada pembaruan transaksi.',
-            'Info PPOB, laporan pelunasan masuk.'
-        ];
-
-        const inti = [
-            `Pembayaran atas nama ${namaNormal}, warga ${alamatPelanggan}, telah sukses.`,
-            `Telah masuk pembayaran dari ${namaNormal}, lokasi ${alamatPelanggan}.`,
-            `Transaksi atas nama ${namaNormal}, ${alamatPelanggan}, sukses terbayar.`,
-            `Pelunasan dari ${namaNormal}, ${alamatPelanggan}, tercatat di sistem.`,
-            `Data pembayaran ${namaNormal}, dari ${alamatPelanggan}, masuk ke database.`,
-            `Atas nama ${namaNormal}, warga ${alamatPelanggan}, selesai membayar.`,
-            `Pelanggan ${namaNormal}, ${alamatPelanggan}, melunasi lewat PPOB.`,
-            `Transaksi PPOB dari ${namaNormal}, ${alamatPelanggan}, terkonfirmasi.`,
-            `Pembayaran daring dari ${namaNormal}, ${alamatPelanggan}, terverifikasi.`,
-            `Tagihan atas nama ${namaNormal}, ${alamatPelanggan}, telah dilunasi.`
-        ];
-
-        const penutup = [
-            'Terima kasih.',
-            'Terima kasih banyak.',
-            'Sekian dan terima kasih.',
-            'Terima kasih atas perhatiannya.',
-            'Terima kasih, transaksi selesai.',
-            'Terima kasih, laporan selesai.',
-            'Terima kasih, proses berhasil.',
-            'Terima kasih atas kerja samanya.',
-            'Terima kasih, data telah diperbarui.',
-            'Terima kasih, sistem siap kembali.'
-        ];
-
-        pesan = `${ambilAcak(awalan)} ${ambilAcak(inti)} ${ambilAcak(penutup)}`;
-
-    } else {
-        const awalan = [
-            `Yang Terhormat ${namaNormal}, warga ${alamatPelanggan}.`,
-            `Kepada Yang Terhormat ${namaNormal}, lokasi ${alamatPelanggan}.`,
-            `Terima kasih untuk ${namaNormal}, ${alamatPelanggan}.`,
-            `Pelayanan loket untuk ${namaNormal}, ${alamatPelanggan}.`,
-            `Selamat datang ${namaNormal}, warga ${alamatPelanggan}.`,
-            `Konfirmasi transaksi ${namaNormal}, ${alamatPelanggan}.`,
-            `Pemberitahuan untuk ${namaNormal}, ${alamatPelanggan}.`,
-            `Transaksi loket ${namaNormal}, warga ${alamatPelanggan}.`,
-            `Data pembayaran ${namaNormal}, ${alamatPelanggan}.`,
-            `Laporan loket ${namaNormal}, lokasi ${alamatPelanggan}.`
-        ];
-
-        const inti = [
-            'Pembayaran Anda telah kami terima.',
-            'Transaksi di loket berhasil diproses.',
-            'Pembayaran langsung sukses terkonfirmasi.',
-            'Tagihan Anda telah dinyatakan lunas.',
-            'Pembayaran tunai telah kami terima.',
-            'Pelunasan telah resmi tercatat di sistem.',
-            'Pembayaran berhasil diverifikasi.',
-            'Pembayaran resmi kami terima di loket.',
-            'Pelunasan tagihan telah tercatat.',
-            'Pembayaran untuk lokasi tersebut berhasil.'
-        ];
-
-        const penutup = [
-            'Terima kasih atas kunjungan Anda.',
-            'Terima kasih telah melakukan pembayaran di loket.',
-            'Terima kasih, selamat melanjutkan aktivitas.',
-            'Terima kasih, selamat beraktivitas kembali.',
-            'Terima kasih banyak, sampai jumpa.',
-            'Terima kasih atas kepercayaan Anda.',
-            'Terima kasih atas kedatangan Anda.',
-            'Terima kasih telah menjadi pelanggan setia PDAM Unit pelayanan Darmaraja.',
-            'Terima kasih atas kedisiplinan Anda.',
-            'Senang dapat melayani Anda, terima kasih.'
-        ];
-
-        pesan = `${ambilAcak(awalan)} ${ambilAcak(inti)} ${ambilAcak(penutup)}`;
-    }
-
-    console.log('🔊 Memutar pesan:', pesan);
-
-    // ⚡ Suara CEPAT — langsung putar, tidak menunggu
-    try {
-        speechSynthesis.cancel();
-        if (speechSynthesis.paused) speechSynthesis.resume();
-    } catch (e) {}
-
-    // Putar pesan dengan kecepatan suara yang nyaman & instan
-    if (typeof speak === 'function') {
-        speak(pesan, 'female');
-    } else {
-        // Jika fungsi speak tidak ada, gunakan suara bawaan peramban
-        const ucapan = new SpeechSynthesisUtterance(pesan);
-        ucapan.lang = 'id-ID';
-        ucapan.rate = 1.05; // Sedikit lebih cepat dari normal, jelas dan tidak lambat
-        ucapan.pitch = 1.1; // Sedikit lebih tinggi, suara lebih enak didengar
-        speechSynthesis.speak(ucapan);
-    }
+    // ✅ Langsung putar tanpa tunggu, suara siap duluan
+    const u = new SpeechSynthesisUtterance(pesan);
+    u.lang='id-ID'; u.rate=1.15; u.pitch=1.1; u.volume=1;
+    typeof speak==='function' ? speak(pesan,'female') : speechSynthesis.speak(u);
 }
 // ============================================
 // 🧪 FUNGSI TEST NOTIFIKASI PEMBAYARAN
