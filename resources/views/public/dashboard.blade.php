@@ -2115,17 +2115,25 @@ window.addEventListener('load', () => {
 // ==================================================
 // ✅ UBAH ANGKA ROMAWI → ANGKA BIASA, TANPA MERUSAK KATA
 // ==================================================
+// ==================================================
+// ✅ UBAH ANGKA ROMAWI + SINGKATAN ALAMAT
+// ==================================================
 function ubahRomawiKeAngka(teks) {
-  if (!teks) return teks;
-  let hasil = teks;
-  // HANYA ubah angka Romawi yang berdiri sendiri / di AKHIR kalimat
-  // Urutan dari yang terpanjang → terpendek agar tidak salah ubah
-  hasil = hasil.replace(/IIII\b/g, '4');
-  hasil = hasil.replace(/III\b/g, '3');
-  hasil = hasil.replace(/II\b/g, '2');
-  hasil = hasil.replace(/IV\b/g, '4');
-  hasil = hasil.replace(/I\b/g, '1');
-  return hasil;
+    if (!teks) return teks;
+    let hasil = teks;
+    // HANYA ubah angka Romawi yang berdiri sendiri
+    hasil = hasil.replace(/IIII\b/g, '4');
+    hasil = hasil.replace(/III\b/g, '3');
+    hasil = hasil.replace(/II\b/g, '2');
+    hasil = hasil.replace(/IV\b/g, '4');
+    hasil = hasil.replace(/I\b/g, '1');
+    // ✅ UBAH SINGKATAN ALAMAT — KHUSUS KAMU!
+    hasil = hasil.replace(/\bKp\b/g, 'Kampung');   // Kp → Kampung
+    hasil = hasil.replace(/\bJl\b/g, 'Jalan');      // Jl → Jalan
+    hasil = hasil.replace(/\bBlok\b/g, 'Blok');     // Tetap Blok
+    hasil = hasil.replace(/\bRT\b/g, 'R T');
+    hasil = hasil.replace(/\bRW\b/g, 'R W');
+    return hasil;
 }
 
 // ==================================================
@@ -2138,28 +2146,44 @@ function handlePaymentReceived(pelanggan) {
     }
     if (typeof speechSynthesis === 'undefined') return;
 
-    // ✅ Ambil data & UBAH ANGKA ROMAWI JADI ANGKA BIASA
+    // ✅ Ambil data
     const nama = ((typeof formatNameForSpeech==='function' 
         ? formatNameForSpeech(pelanggan.nama||'Pelanggan') 
         : pelanggan.nama||'Pelanggan')).replace(/\s+/g,'');
     const blok = pelanggan.nama_blok||'';
     const almt = pelanggan.alamat||'';
     const wilayahAsli = pelanggan.nama_wilayah||'wilayah tidak terdaftar';
-    const wilayah = ubahRomawiKeAngka(wilayahAsli); // ← DIUBAH OTOMATIS
-    const alamat = String(blok && blok!=='-' ? blok : almt && almt!=='-' ? almt : wilayah).replace(/\//g,' ').trim();
+    const wilayah = ubahRomawiKeAngka(wilayahAsli);
+
+    // ✅ GABUNGKAN BLOK + ALAMAT
+    let alamatBagian = '';
+    if (blok && blok !== '-' && almt && almt !== '-') {
+        alamatBagian = `${blok}, ${almt}`;
+    } else if (blok && blok !== '-') {
+        alamatBagian = blok;
+    } else if (almt && almt !== '-') {
+        alamatBagian = almt;
+    } else {
+        alamatBagian = wilayah;
+    }
+    alamatBagian = alamatBagian.replace(/\//g,' ').trim();
+
+    // ✅ UBAH SINGKATAN DI ALAMAT JUGA!
+    alamatBagian = ubahRomawiKeAngka(alamatBagian);
+
     const metode = pelanggan?.statusInfo?.metode||'Kantor';
     const acak = a=>a[(Math.random()*a.length)|0];
 
-    // ✅ PESAN — WILAYAH SUDAH BERANGKA BIASA
+    // ✅ PESAN
     const pesan = metode==='PPOB'
-        ? `${acak(['Info PPOB, ada pembayaran.','Info PPOB, transaksi masuk.','Info PPOB, lunas tercatat.'])} Dari ${nama}, ${alamat}, ${wilayah}, sukses. ${acak(['Terima kasih.','Terima kasih banyak.','Selesai, terima kasih.'])}`
+        ? `${acak(['Info PPOB, ada pembayaran.','Info PPOB, transaksi masuk.','Info PPOB, lunas tercatat.'])} Dari ${nama}, ${alamatBagian}, ${wilayah}, sukses. ${acak(['Terima kasih.','Terima kasih banyak.','Selesai, terima kasih.'])}`
         : `${acak([
             'Terima kasih kepada',
             'Konfirmasi pembayaran dari',
             'Diterima pembayaran atas nama',
             'Pembayaran telah kami terima dari',
             'Selamat, pembayaran atas nama'
-          ])} ${nama}, beralamat di ${alamat}, ${wilayah}. ${acak([
+          ])} ${nama}, beralamat di ${alamatBagian}, ${wilayah}. ${acak([
             'Telah kami terima dengan baik.',
             'Transaksi telah tercatat lunas.',
             'Pembayaran sudah tercatat di sistem.',
@@ -2169,18 +2193,16 @@ function handlePaymentReceived(pelanggan) {
 
     console.log('🔊', pesan);
 
-    // ⚡ SUARA LANGSUNG BUNYI TANPA JEDA
+    // ⚡ SUARA LANGSUNG BUNYI
     if (speechSynthesis.speaking || speechSynthesis.pending) {
         speechSynthesis.cancel();
     }
-
     setTimeout(() => {
         const u = new SpeechSynthesisUtterance(pesan);
         u.lang='id-ID'; u.rate=1.15; u.pitch=1.1; u.volume=1;
         typeof speak==='function' ? speak(pesan,'female') : speechSynthesis.speak(u);
     }, 0);
-}
-// ============================================
+}============================================
 // 🧪 FUNGSI TEST NOTIFIKASI PEMBAYARAN
 // ============================================
 
