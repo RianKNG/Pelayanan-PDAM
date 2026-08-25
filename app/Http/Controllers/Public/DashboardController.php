@@ -9,10 +9,11 @@ use App\Models\Bangunan;
 use App\Models\TitikPenting;
 use App\Models\Zona;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
-        public function index()
+    public function index()
     {
         // 🔥 PENTING: Load data gangguan beserta relasi 'fotos'
         $gangguan = Gangguan::with('fotos')->orderBy('created_at', 'desc')->get();
@@ -21,15 +22,22 @@ class DashboardController extends Controller
         $titikPenting = TitikPenting::all();
         $zonaList = Zona::all();
 
-        // Ambil data pelanggan dari API PDAM Sumedang
-        $response = Http::withoutVerifying()
-                        ->get('https://pdamsumedang.com/portal/dashboard_api/pelanggan.php?of_id=04');
-        
-        $pelanggan = [];
-        if ($response->successful()) {
-            $pelanggan = $response->json();
-        }
-        
+        // ==================================================
+        // ✅ PERBAIKAN UTAMA: AMBIL DARI CACHE, JANGAN SETIAP KALI!
+        // ==================================================
+        $pelanggan = Cache::remember('data_pelanggan_pdam', 300, function () {
+            // Hanya ambil ulang dari API tiap 5 menit (300 detik) → SERVER TIDAK LAGI BERAT!
+            $response = Http::withoutVerifying()
+                ->timeout(10) // ⏰ Maksimal tunggu 10 detik saja → kalau lambat, lewati!
+                ->get('https://pdamsumedang.com/portal/dashboard_api/pelanggan.php?of_id=04');
+
+            if ($response->successful()) {
+                return $response->json() ?? [];
+            }
+            // Kalau API lambat/mati → kembalikan data kosong, JANGAN BIKIN ERROR!
+            return [];
+        });
+
         // Hitung statistik
         $stats = [
             'total' => $gangguan->count(),
@@ -42,27 +50,26 @@ class DashboardController extends Controller
             'total_zona' => $zonaList->count(),
             'total_pelanggan' => count($pelanggan),
         ];
-        
+
         // Gangguan aktif untuk alert
         $gangguanAktif = $gangguan->where('status', '!=', 'selesai');
-        
+
         // ============================================
-        // 🔥 PERBAIKAN: HAPUS pemanggilan getAllFotos()
-        // Gunakan relasi 'fotos' langsung dengan fallback ke kolom 'foto' utama
+        // 🔥 FOTO: Gunakan relasi 'fotos' langsung dengan fallback ke kolom 'foto' utama
         // ============================================
         $gangguanFotosData = [];
         foreach ($gangguan as $g) {
-            // 1. Cek jika ada foto dari relasi tabel gangguan_fotos (Multiple Foto)
+            // 1. Cek jika ada foto dari relasi tabel gangguan_fotos (Banyak Foto)
             if ($g->fotos && $g->fotos->count() > 0) {
-                $gangguanFotosData[$g->id] = $g->fotos->map(function($foto) {
+                $gangguanFotosData[$g->id] = $g->fotos->map(function ($foto) {
                     return [
                         'id' => $foto->id,
                         'url' => asset('storage/' . $foto->foto_path),
                         'urutan' => $foto->urutan,
                     ];
                 })->toArray();
-            } 
-            // 2. Fallback: Jika tidak ada foto di tabel gangguan_fotos, cek kolom 'foto' utama (Single Foto)
+            }
+            // 2. Fallback: Jika tidak ada foto tambahan, pakai kolom 'foto' utama (Satu Foto)
             elseif (!empty($g->foto)) {
                 $gangguanFotosData[$g->id] = [
                     [
@@ -73,18 +80,18 @@ class DashboardController extends Controller
                 ];
             }
         }
-        
-        // ✅ PASTIKAN gangguanFotosData MASUK KE COMPACT
+
+        // ✅ SEMUA DATA DIKIRIM KE TAMPILAN
         return view('public.dashboard', compact(
-            'gangguan', 
+            'gangguan',
             'gangguanAktif',
-            'jalurPipa', 
-            'bangunan', 
-            'titikPenting', 
+            'jalurPipa',
+            'bangunan',
+            'titikPenting',
             'zonaList',
             'stats',
             'pelanggan',
-            'gangguanFotosData' // ← INI HARUS ADA!
+            'gangguanFotosData'
         ));
     }
 }

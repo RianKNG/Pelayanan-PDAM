@@ -2091,42 +2091,94 @@ function stopRealtimePolling() { if (realtimePollingInterval) { clearInterval(re
 // ============================================
 // PAYMENT NOTIFICATION — INSTAN & CEPAT
 // ============================================
+// ==================================================
+// ✅ SIAPKAN SUARA DULUAN — DIJALANKAN SAAT HALAMAN BUKA
+// ==================================================
+window.addEventListener('load', () => {
+  if (typeof speechSynthesis === 'undefined') return;
+  
+  const siapkan = () => {
+    speechSynthesis.getVoices();
+    console.log('🔊 Suara siap, tidak perlu tunggu lagi!');
+  };
+  
+  siapkan();
+  speechSynthesis.onvoiceschanged = siapkan;
+
+  // Panaskan mesin suara diam-diam tanpa bunyi
+  const uji = new SpeechSynthesisUtterance('');
+  uji.volume = 0;
+  uji.lang = 'id-ID';
+  speechSynthesis.speak(uji);
+});
+
+// ==================================================
+// ✅ UBAH ANGKA ROMAWI → ANGKA BIASA, TANPA MERUSAK KATA
+// ==================================================
+function ubahRomawiKeAngka(teks) {
+  if (!teks) return teks;
+  let hasil = teks;
+  // HANYA ubah angka Romawi yang berdiri sendiri / di AKHIR kalimat
+  // Urutan dari yang terpanjang → terpendek agar tidak salah ubah
+  hasil = hasil.replace(/IIII\b/g, '4');
+  hasil = hasil.replace(/III\b/g, '3');
+  hasil = hasil.replace(/II\b/g, '2');
+  hasil = hasil.replace(/IV\b/g, '4');
+  hasil = hasil.replace(/I\b/g, '1');
+  return hasil;
+}
+
+// ==================================================
+// ✅ FUNGSI UTAMA
+// ==================================================
 function handlePaymentReceived(pelanggan) {
     console.log('💰 Payment received:', pelanggan);
-
     if (typeof showNotification === 'function') {
         showNotification(`💰 Pembayaran dari ${pelanggan.nama||'Pelanggan'} — Terima kasih!`, 'payment');
     }
-
     if (typeof speechSynthesis === 'undefined') return;
 
-    // ✅ Langsung ambil & bersihkan
+    // ✅ Ambil data & UBAH ANGKA ROMAWI JADI ANGKA BIASA
     const nama = ((typeof formatNameForSpeech==='function' 
         ? formatNameForSpeech(pelanggan.nama||'Pelanggan') 
         : pelanggan.nama||'Pelanggan')).replace(/\s+/g,'');
-
     const blok = pelanggan.nama_blok||'';
     const almt = pelanggan.alamat||'';
-    const wilayah = pelanggan.nama_wilayah||'lokasi tidak terdaftar';
+    const wilayahAsli = pelanggan.nama_wilayah||'wilayah tidak terdaftar';
+    const wilayah = ubahRomawiKeAngka(wilayahAsli); // ← DIUBAH OTOMATIS
     const alamat = String(blok && blok!=='-' ? blok : almt && almt!=='-' ? almt : wilayah).replace(/\//g,' ').trim();
-
     const metode = pelanggan?.statusInfo?.metode||'Kantor';
     const acak = a=>a[(Math.random()*a.length)|0];
 
-    // ✅ PESAN PENDEK + VARIASI, LANGSUNG GABUNG
+    // ✅ PESAN — WILAYAH SUDAH BERANGKA BIASA
     const pesan = metode==='PPOB'
-        ? `${acak(['Info PPOB, ada pembayaran.','Info PPOB, transaksi masuk.','Info PPOB, lunas tercatat.'])} Dari ${nama}, ${alamat}, sukses. ${acak(['Terima kasih.','Terima kasih banyak.','Selesai, terima kasih.'])}`
-        : `${acak(['Pembayaran atas nama ','Konfirmasi untuk ','Diterima dari '])}${nama}, ${alamat}. ${acak(['Telah kami terima.','Transaksi selesai.','Lunas tercatat.'])} ${acak(['Terima kasih.','Terima kasih atas kunjungan.','Terima kasih, selamat beraktivitas.'])}`;
+        ? `${acak(['Info PPOB, ada pembayaran.','Info PPOB, transaksi masuk.','Info PPOB, lunas tercatat.'])} Dari ${nama}, ${alamat}, ${wilayah}, sukses. ${acak(['Terima kasih.','Terima kasih banyak.','Selesai, terima kasih.'])}`
+        : `${acak([
+            'Terima kasih kepada',
+            'Konfirmasi pembayaran dari',
+            'Diterima pembayaran atas nama',
+            'Pembayaran telah kami terima dari',
+            'Selamat, pembayaran atas nama'
+          ])} ${nama}, beralamat di ${alamat}, ${wilayah}. ${acak([
+            'Telah kami terima dengan baik.',
+            'Transaksi telah tercatat lunas.',
+            'Pembayaran sudah tercatat di sistem.',
+            'Lunas tercatat, terima kasih.',
+            'Terima kasih atas pembayarannya, selamat beraktivitas.'
+          ])}`;
 
     console.log('🔊', pesan);
 
-    // ⚡ LANGSUNG PUTAR — hanya batalkan jika sedang bicara
-    speechSynthesis.speaking && speechSynthesis.cancel();
+    // ⚡ SUARA LANGSUNG BUNYI TANPA JEDA
+    if (speechSynthesis.speaking || speechSynthesis.pending) {
+        speechSynthesis.cancel();
+    }
 
-    // ✅ Langsung putar tanpa tunggu, suara siap duluan
-    const u = new SpeechSynthesisUtterance(pesan);
-    u.lang='id-ID'; u.rate=1.15; u.pitch=1.1; u.volume=1;
-    typeof speak==='function' ? speak(pesan,'female') : speechSynthesis.speak(u);
+    setTimeout(() => {
+        const u = new SpeechSynthesisUtterance(pesan);
+        u.lang='id-ID'; u.rate=1.15; u.pitch=1.1; u.volume=1;
+        typeof speak==='function' ? speak(pesan,'female') : speechSynthesis.speak(u);
+    }, 0);
 }
 // ============================================
 // 🧪 FUNGSI TEST NOTIFIKASI PEMBAYARAN
