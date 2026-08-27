@@ -124,7 +124,7 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .section-title { font-size: 10px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin: 10px 0 6px 0; padding-bottom: 4px; border-bottom: 2px solid #e2e8f0; display: flex; align-items: center; gap: 6px; }
 .list-item { padding: 8px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 6px; cursor: pointer; transition: all 0.2s; background: white; }
 .list-item:hover { background: #f0f9ff; border-color: #0ea5e9; transform: translateX(2px); box-shadow: 0 2px 6px rgba(14,165,233,0.1); }
-.control-buttons { position: fixed; left: 10px; top: 120px; z-index: 1001; display: flex; flex-direction: column; gap: 6px; }
+.control-buttons { position: fixed; left: 10px; top: 220px; z-index: 1001; display: flex; flex-direction: column; gap: 6px; }
 .control-btn { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; border: none; padding: 8px 12px; border-radius: 8px; box-shadow: 0 2px 8px rgba(30,60,114,0.4); cursor: pointer; font-weight: 600; font-size: 11px; display: flex; align-items: center; gap: 6px; transition: all 0.3s; }
 .control-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(30,60,114,0.5); }
 .control-btn.expand { background: linear-gradient(135deg, #10b981, #059669); }
@@ -134,7 +134,7 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .control-btn.live { background: linear-gradient(135deg, #ec4899, #db2777); }
 .control-btn.live.active { background: linear-gradient(135deg, #10b981, #059669); animation: pulse-live 2s infinite; }
 @keyframes pulse-live { 0%,100% { box-shadow: 0 2px 8px rgba(16,185,129,0.3); } 50% { box-shadow: 0 2px 15px rgba(16,185,129,0.6); } }
-.custom-layer-control { position: fixed; top: 280px; left: 10px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 1001; padding: 8px; max-width: 160px; }
+.custom-layer-control { position: fixed; top: 480px; left: 10px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 1001; padding: 8px; max-width: 160px; }
 .layer-control-title { font-size: 9px; font-weight: 700; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; padding-bottom: 4px; border-bottom: 1px solid #e2e8f0; }
 .layer-btn-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
 .layer-btn { padding: 6px 4px; border: 2px solid #e2e8f0; background: white; border-radius: 6px; cursor: pointer; font-size: 9px; font-weight: 600; color: #64748b; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px; }
@@ -1353,7 +1353,7 @@ function updateTodayStatsDisplay() {
   document.getElementById('today-count').textContent = stats.countToday;
   document.getElementById('today-kubikasi').textContent = stats.kubikasiToday.toFixed(1);
 }
-setInterval(updateTodayStatsDisplay, 5000);
+setInterval(updateTodayStatsDisplay, 6000);
 
 // VOICE SYSTEM
 function isIndonesianVoice(voice) {
