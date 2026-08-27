@@ -367,7 +367,7 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 <div class="unit-progress-bar">
 <div class="unit-progress-container">
 <div class="unit-image-wrapper">
-<img src="{{ asset('img/logo.PNG') }}" alt="Unit PDAM Darmaraja" style="width:200px; height:150px; object-fit:cover;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2260%22%3E%3Crect fill=%22%231e3c72%22 width=%2280%22 height=%2260%22/%3E%3Ctext x=%2240%22 y=%2230%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2210%22%3EPDAM%3C/text%3E%3C/svg%3E'">
+<img src="{{ asset('img/logo.PNG') }}" alt="Unit PDAM Darmaraja" style="width:200px; height:150px; object-fit:cover; border-radius:22px; box-shadow:0 0 0 4px rgba(255,255,255,0.9),0 0 0 8px rgba(59,130,246,0.6),0 12px 30px rgba(59,130,246,0.3); background:linear-gradient(135deg,#dbeafe,#93c5fd);" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22150%22%3E%3Crect fill=%22%231e3c72%22 width=%22200%22 height=%22150%22 rx=%2222%22/%3E%3Ctext x=%22100%22 y=%2275%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22 font-weight=%22bold%22%3EPDAM%3C/text%3E%3C/svg%3E'">
 </div>
 <div class="unit-info">
 <h3><i class="fas fa-building"></i> Unit Cabang Darmaraja</h3>
