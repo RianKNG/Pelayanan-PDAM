@@ -367,7 +367,7 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 <div class="unit-progress-bar">
 <div class="unit-progress-container">
 <div class="unit-image-wrapper">
-<img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=200&h=150&fit=crop" alt="Unit PDAM Darmaraja" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2260%22%3E%3Crect fill=%22%231e3c72%22 width=%2280%22 height=%2260%22/%3E%3Ctext x=%2240%22 y=%2230%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2210%22%3EPDAM%3C/text%3E%3C/svg%3E'" />
+<img src="{{ asset('img/logo.PNG') }}" alt="Unit PDAM Darmaraja" style="width:200px; height:150px; object-fit:cover;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2260%22%3E%3Crect fill=%22%231e3c72%22 width=%2280%22 height=%2260%22/%3E%3Ctext x=%2240%22 y=%2230%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2210%22%3EPDAM%3C/text%3E%3C/svg%3E'">
 </div>
 <div class="unit-info">
 <h3><i class="fas fa-building"></i> Unit Cabang Darmaraja</h3>
