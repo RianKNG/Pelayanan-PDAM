@@ -92,102 +92,119 @@
             </div>
 
             {{-- FORM FILTER DINAMIS --}}
-            {{-- FORM FILTER DINAMIS --}}
-<div class="row mb-4">
-    <div class="col-md-12">
-        <div class="card border-info">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="fas fa-filter"></i> Filter Data Dinamis</h5>
-            </div>
-            <div class="card-body">
-                <form method="GET" action="{{ route('golongan.index') }}" class="row g-3">
-                    {{-- Hidden inputs untuk periode --}}
-                    <input type="hidden" name="mode" value="{{ $mode ?? 'custom' }}">
-                    @if(($mode ?? 'custom') == 'preset')
-                        <input type="hidden" name="periode" value="{{ $periode ?? 3 }}">
-                    @else
-                        <input type="hidden" name="bulan_dari" value="{{ $bulanDari ?? '' }}">
-                        <input type="hidden" name="bulan_sampai" value="{{ $bulanSampai ?? '' }}">
-                        <input type="hidden" name="tahun" value="{{ $tahun ?? date('Y') }}">
-                    @endif
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card border-info">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-filter"></i> Filter Data Dinamis</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="GET" action="{{ route('golongan.index') }}" class="row g-3">
+                                {{-- Hidden inputs untuk periode --}}
+                                <input type="hidden" name="mode" value="{{ $mode ?? 'custom' }}">
+                                @if(($mode ?? 'custom') == 'preset')
+                                    <input type="hidden" name="periode" value="{{ $periode ?? 3 }}">
+                                @else
+                                    <input type="hidden" name="bulan_dari" value="{{ $bulanDari ?? '' }}">
+                                    <input type="hidden" name="bulan_sampai" value="{{ $bulanSampai ?? '' }}">
+                                    <input type="hidden" name="tahun" value="{{ $tahun ?? date('Y') }}">
+                                @endif
 
-                    <div class="col-md-3">
-    <label class="form-label fw-bold"><i class="fas fa-map-marker-alt text-success"></i> Wilayah</label>
-    <select name="filter_wilayah" class="form-select">
-        <option value="">-- Semua Wilayah --</option>
-        @foreach($wilayahList as $wil)
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold"><i class="fas fa-map-marker-alt text-success"></i> Wilayah</label>
+                                    <select name="filter_wilayah" class="form-select">
+                                        <option value="">-- Semua Wilayah --</option>
+                                        @foreach($wilayahList as $wil)
+                                            @php
+                                                $namaWilayah = $masterWilayah[$wil] ?? 'Wilayah ' . $wil;
+                                            @endphp
+                                            <option value="{{ $wil }}" {{ (string)($filterWilayah ?? '') === (string)$wil ? 'selected' : '' }}>
+                                                {{ $namaWilayah }} ({{ $wil }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold"><i class="fas fa-layer-group text-primary"></i> Golongan</label>
+                                    <select name="filter_golongan" class="form-select">
+                                        <option value="">-- Semua Golongan --</option>
+                                        @php
+                                            $master = $masterGolongan ?? [
+                                                '12' => 'Sosial',
+                                                '23' => 'Pemerintah',
+                                                '28' => 'RT C',
+                                                '29' => 'RT D',
+                                                '31' => 'Niaga Besar',
+                                            ];
+                                        @endphp
+
+                                        @foreach($master as $kode => $nama)
+                                            <option value="{{ $kode }}" {{ (string)($filterGolongan ?? '') === (string)$kode ? 'selected' : '' }}>
+                                                {{ $nama }} ({{ $kode }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold"><i class="fas fa-tachometer-alt text-danger"></i> Kategori Pemakaian</label>
+                                    <select name="filter_kategori" class="form-select">
+                                        <option value="semua" {{ ($filterKategori ?? 'semua') === 'semua' ? 'selected' : '' }}>-- Semua Kategori --</option>
+                                        <option value="0" {{ ($filterKategori ?? '') === '0' ? 'selected' : '' }}>0 m³ (Tidak Pakai)</option>
+                                        <option value="1-10" {{ ($filterKategori ?? '') === '1-10' ? 'selected' : '' }}>1-10 m³ (Hemat)</option>
+                                        <option value="11-30" {{ ($filterKategori ?? '') === '11-30' ? 'selected' : '' }}>11-30 m³ (Normal)</option>
+                                        <option value=">30" {{ ($filterKategori ?? '') === '>30' ? 'selected' : '' }}> >30 m³ (Boros)</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold"><i class="fas fa-chart-pie text-warning"></i> Jenis Grafik</label>
+                                    <select name="chart_type" class="form-select">
+                                        <option value="bar" {{ ($chartType ?? 'bar') === 'bar' ? 'selected' : '' }}>📊 Bar (Batang)</option>
+                                        <option value="line" {{ ($chartType ?? '') === 'line' ? 'selected' : '' }}>📈 Line (Garis)</option>
+                                        <option value="radar" {{ ($chartType ?? '') === 'radar' ? 'selected' : '' }}>🕸️ Radar</option>
+                                        <option value="polarArea" {{ ($chartType ?? '') === 'polarArea' ? 'selected' : '' }}>🎯 Polar Area</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12 text-end mt-3">
+                                    <a href="{{ route('golongan.index') }}" class="btn btn-outline-secondary btn-sm me-2">
+                                        <i class="fas fa-redo"></i> Reset
+                                    </a>
+                                    <button type="submit" class="btn btn-info text-white">
+                                        <i class="fas fa-search"></i> Terapkan Filter
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- INFO HASIL (DITAMBAHKAN AKUMULASI KUBIKASI & RUPIAH) --}}
             @php
-                // Ambil nama dari masterWilayah, jika tidak ada fallback ke Kode
-                $namaWilayah = $masterWilayah[$wil] ?? 'Wilayah ' . $wil;
+                $totalPelanggan = count($validCustomers ?? []);
+                $totalKubikasi = 0;
+                $totalRupiah = 0;
+
+                foreach ($validCustomers ?? [] as $cust) {
+                    // Akumulasi pakai (mengambil 'pakai' atau fallback ke 'avg_pakai')
+                    $totalKubikasi += floatval($cust['pakai'] ?? $cust['avg_pakai'] ?? 0);
+                    // Akumulasi total_rekening
+                    $totalRupiah += floatval($cust['total_rekening'] ?? 0);
+                }
             @endphp
-            <option value="{{ $wil }}" {{ (string)($filterWilayah ?? '') === (string)$wil ? 'selected' : '' }}>
-                {{ $namaWilayah }} ({{ $wil }})
-            </option>
-        @endforeach
-    </select>
-</div>
-                    
-                   <div class="col-md-3">
-    <label class="form-label fw-bold"><i class="fas fa-layer-group text-primary"></i> Golongan</label>
-    <select name="filter_golongan" class="form-select">
-        <option value="">-- Semua Golongan --</option>
-        @php
-            $master = $masterGolongan ?? [
-                '12' => 'Sosial',
-                '23' => 'Pemerintah',
-                '28' => 'RT C',
-                '29' => 'RT D',
-                '31' => 'Niaga Besar',
-            ];
-        @endphp
 
-        @foreach($master as $kode => $nama)
-            <option value="{{ $kode }}" {{ (string)($filterGolongan ?? '') === (string)$kode ? 'selected' : '' }}>
-                {{ $nama }} ({{ $kode }})
-            </option>
-        @endforeach
-    </select>
-</div>
-
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold"><i class="fas fa-tachometer-alt text-danger"></i> Kategori Pemakaian</label>
-                        <select name="filter_kategori" class="form-select">
-                            <option value="semua" {{ ($filterKategori ?? 'semua') === 'semua' ? 'selected' : '' }}>-- Semua Kategori --</option>
-                            <option value="0" {{ ($filterKategori ?? '') === '0' ? 'selected' : '' }}>0 m³ (Tidak Pakai)</option>
-                            <option value="1-10" {{ ($filterKategori ?? '') === '1-10' ? 'selected' : '' }}>1-10 m³ (Hemat)</option>
-                            <option value="11-30" {{ ($filterKategori ?? '') === '11-30' ? 'selected' : '' }}>11-30 m³ (Normal)</option>
-                            <option value=">30" {{ ($filterKategori ?? '') === '>30' ? 'selected' : '' }}> >30 m³ (Boros)</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold"><i class="fas fa-chart-pie text-warning"></i> Jenis Grafik</label>
-                        <select name="chart_type" class="form-select">
-                            <option value="bar" {{ ($chartType ?? 'bar') === 'bar' ? 'selected' : '' }}>📊 Bar (Batang)</option>
-                            <option value="line" {{ ($chartType ?? '') === 'line' ? 'selected' : '' }}>📈 Line (Garis)</option>
-                            <option value="radar" {{ ($chartType ?? '') === 'radar' ? 'selected' : '' }}>🕸️ Radar</option>
-                            <option value="polarArea" {{ ($chartType ?? '') === 'polarArea' ? 'selected' : '' }}>🎯 Polar Area</option>
-                        </select>
-                    </div>
-
-                    <div class="col-12 text-end mt-3">
-                        <a href="{{ route('golongan.index') }}" class="btn btn-outline-secondary btn-sm me-2">
-                            <i class="fas fa-redo"></i> Reset
-                        </a>
-                        <button type="submit" class="btn btn-info text-white">
-                            <i class="fas fa-search"></i> Terapkan Filter
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-            {{-- INFO HASIL --}}
-            <div class="alert alert-info d-flex justify-content-between align-items-center mb-4">
-                <span><i class="fas fa-users"></i> Ditemukan: <strong>{{ count($validCustomers ?? []) }} Pelanggan</strong></span>
-                <span class="fw-bold">Periode: {{ $bulanList[$bulanDari] ?? '-' }} - {{ $bulanList[$bulanSampai] ?? '-' }} {{ $tahun ?? '-' }}</span>
+            <div class="alert alert-info d-flex justify-content-between align-items-center mb-4 flex-wrap">
+                <div class="d-flex flex-wrap gap-3 mb-2 mb-md-0">
+                    <span><i class="fas fa-users text-primary"></i> Ditemukan: <strong>{{ number_format($totalPelanggan) }} Pelanggan</strong></span>
+                    <span class="d-none d-md-inline">|</span>
+                    <span><i class="fas fa-tint text-info"></i> Total Kubikasi: <strong>{{ number_format($totalKubikasi, 2, ',', '.') }} m³</strong></span>
+                    <span class="d-none d-md-inline">|</span>
+                    <span><i class="fas fa-money-bill-wave text-success"></i> Total Rekening: <strong>Rp {{ number_format($totalRupiah, 0, ',', '.') }}</strong></span>
+                </div>
+                <span class="fw-bold"><i class="fas fa-calendar-alt"></i> {{ $bulanList[$bulanDari] ?? '-' }} - {{ $bulanList[$bulanSampai] ?? '-' }} {{ $tahun ?? '-' }}</span>
             </div>
 
             {{-- GRAFIK DINAMIS --}}
@@ -209,7 +226,7 @@
             </div>
             @endif
 
-            {{-- TABEL DETAIL --}}
+            {{-- TABEL DETAIL (DITAMBAHKAN KOLOM TOTAL REKENING) --}}
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
@@ -226,7 +243,8 @@
                                             <th class="text-start">Nama</th>
                                             <th class="text-start">Alamat</th>
                                             <th>Gol</th>
-                                            <th>Rata-rata</th>
+                                            <th>Pemakaian (m³)</th>
+                                            <th>Total Rekening</th>
                                             <th>Kategori</th>
                                         </tr>
                                     </thead>
@@ -238,18 +256,19 @@
                                             <td class="text-start fw-semibold">{{ $cust['nama_pelanggan'] }}</td>
                                             <td class="text-start">{{ $cust['alamat'] }}</td>
                                             <td><span class="badge bg-secondary">{{ $cust['kode_gol'] }}</span></td>
-                                            <td class="fw-bold">{{ $cust['avg_pakai'] }} m³</td>
+                                            <td class="fw-bold">{{ $cust['pakai'] ?? $cust['avg_pakai'] }} m³</td>
+                                            <td class="fw-bold text-success">Rp {{ number_format($cust['total_rekening'] ?? 0, 0, ',', '.') }}</td>
                                             <td>
-                                                @if($cust['kategori'] == '0') <span class="badge bg-danger">0 m³</span>
-                                                @elseif($cust['kategori'] == '1-10') <span class="badge bg-success">1-10 m³</span>
-                                                @elseif($cust['kategori'] == '11-30') <span class="badge bg-info text-dark">11-30 m³</span>
+                                                @if(($cust['kategori'] ?? '') == '0') <span class="badge bg-danger">0 m³</span>
+                                                @elseif(($cust['kategori'] ?? '') == '1-10') <span class="badge bg-success">1-10 m³</span>
+                                                @elseif(($cust['kategori'] ?? '') == '11-30') <span class="badge bg-info text-dark">11-30 m³</span>
                                                 @else <span class="badge bg-warning text-dark"> >30 m³</span>
                                                 @endif
                                             </td>
                                         </tr>
                                         @empty
                                         <tr>
-                                            <td colspan="7" class="text-center text-muted py-4">
+                                            <td colspan="8" class="text-center text-muted py-4">
                                                 <i class="fas fa-search fa-2x mb-2 d-block"></i>
                                                 Belum ada data. Pilih periode dan filter untuk memulai.
                                             </td>

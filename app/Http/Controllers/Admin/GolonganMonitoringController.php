@@ -176,6 +176,12 @@ class GolonganMonitoringController extends Controller
             $wilayahPelanggan = substr($cleanNoSambungan, 0, 6);
 
             $totalPakai = $records->sum('pakai');
+            
+            // ✅ TAMBAHAN: Hitung total rekening dari kumpulan data bulan tersebut
+            // Pastikan nama kolom di database Anda adalah 'total_rekening'. 
+            // Jika di database bernama 'rupiah' atau 'tagihan', ganti 'total_rekening' di bawah ini.
+            $totalRekening = $records->sum('total_rekening'); 
+            
             $avgPakai = $totalPakai / (count($listBulan) ?: 1);
             $kategori = ($avgPakai == 0) ? '0' : (($avgPakai >= 11 && $avgPakai <= 30) ? '11-30' : (($avgPakai > 30) ? '>30' : '1-10'));
 
@@ -184,13 +190,15 @@ class GolonganMonitoringController extends Controller
             if ($filterKategori !== null && $kategori !== $filterKategori) continue;
 
             $validCustomers[] = [
-                'no_sambungan' => $no_sambungan, 
+                'no_sambungan'   => $no_sambungan, 
                 'nama_pelanggan' => $first->nama_pelanggan,
-                'alamat' => $first->alamat, 
-                'kode_gol' => $first->kode_gol,
-                'total_pakai' => $totalPakai, 
-                'avg_pakai' => round($avgPakai, 1), 
-                'kategori' => $kategori
+                'alamat'         => $first->alamat, 
+                'kode_gol'       => $first->kode_gol,
+                'total_pakai'    => $totalPakai, 
+                'pakai'          => $totalPakai,       // ✅ TAMBAHAN: Agar konsisten dengan fallback di Blade
+                'avg_pakai'      => round($avgPakai, 1), 
+                'total_rekening' => $totalRekening,    // ✅ TAMBAHAN: Mengirim data rupiah ke View
+                'kategori'       => $kategori
             ];
         }
 
@@ -243,14 +251,28 @@ class GolonganMonitoringController extends Controller
 
     public function catatPerubahan(Request $request)
     {
-        $request->validate(['no_sambungan' => 'required', 'golongan_baru' => 'required', 'tanggal_perubahan' => 'required|date', 'alasan_perubahan' => 'required']);
-        $pelanggan = Tagihan::where('no_sambungan', $request->no_sambungan)->firstOrFail();
-        GolonganHistory::create([
-            'no_sambungan' => $request->no_sambungan, 'golongan_lama' => $pelanggan->kode_gol, 'golongan_baru' => $request->golongan_baru,
-            'tanggal_perubahan' => $request->tanggal_perubahan, 'alasan_perubahan' => $request->alasan_perubahan, 'keterangan' => $request->keterangan,
-            'bulan' => now()->format('m'), 'tahun' => now()->format('Y')
+        $request->validate([
+            'no_sambungan' => 'required', 
+            'golongan_baru' => 'required', 
+            'tanggal_perubahan' => 'required|date', 
+            'alasan_perubahan' => 'required'
         ]);
+        
+        $pelanggan = Tagihan::where('no_sambungan', $request->no_sambungan)->firstOrFail();
+        
+        GolonganHistory::create([
+            'no_sambungan' => $request->no_sambungan, 
+            'golongan_lama' => $pelanggan->kode_gol, 
+            'golongan_baru' => $request->golongan_baru,
+            'tanggal_perubahan' => $request->tanggal_perubahan, 
+            'alasan_perubahan' => $request->alasan_perubahan, 
+            'keterangan' => $request->keterangan,
+            'bulan' => now()->format('m'), 
+            'tahun' => now()->format('Y')
+        ]);
+        
         $pelanggan->update(['kode_gol' => $request->golongan_baru]);
+        
         return back()->with('success', 'Perubahan golongan berhasil dicatat');
     }
 
@@ -258,13 +280,13 @@ class GolonganMonitoringController extends Controller
     {
         $filterKategori = $request->input('filter_kategori');
         if ($filterKategori === '' || $filterKategori === 'semua' || $filterKategori === null) $filterKategori = null;
-
+        
         $filterGolongan = $request->input('filter_golongan');
         if ($filterGolongan === '' || $filterGolongan === 'semua' || $filterGolongan === null) $filterGolongan = null;
-
+        
         $filterWilayah = $request->input('filter_wilayah');
         if ($filterWilayah === '' || $filterWilayah === 'semua' || $filterWilayah === null) $filterWilayah = null;
-
+        
         $mode = $request->input('mode', 'custom');
         $chartType = $request->input('chart_type', 'bar');
         
@@ -283,8 +305,11 @@ class GolonganMonitoringController extends Controller
             $bulanDari = $listBulan[0]; 
             $bulanSampai = end($listBulan);
         }
-
-        $bulanList = ['01'=>'Januari','02'=>'Februari','03'=>'Maret','04'=>'April','05'=>'Mei','06'=>'Juni','07'=>'Juli','08'=>'Agustus','09'=>'September','10'=>'Oktober','11'=>'November','12'=>'Desember'];
+        
+        $bulanList = [
+            '01'=>'Januari','02'=>'Februari','03'=>'Maret','04'=>'April','05'=>'Mei','06'=>'Juni',
+            '07'=>'Juli','08'=>'Agustus','09'=>'September','10'=>'Oktober','11'=>'November','12'=>'Desember'
+        ];
         
         $allData = Tagihan::where('tahun', $tahun)->whereIn('bulan', $listBulan)->get();
         $golonganList = $allData->pluck('kode_gol')->filter()->unique()->sort()->values();
@@ -293,35 +318,44 @@ class GolonganMonitoringController extends Controller
         foreach ($allData->groupBy('no_sambungan') as $no_sambungan => $records) {
             $first = $records->first();
             
-            // ✅ PERBAIKAN 5: Normalisasi Wilayah di Export PDF
             $cleanNoSambungan = ltrim(trim($no_sambungan), '0');
             $wilayahPelanggan = substr($cleanNoSambungan, 0, 6);
-
+            
             if ($filterWilayah !== null && $wilayahPelanggan !== $filterWilayah) continue;
             if ($filterGolongan !== null && $first->kode_gol !== $filterGolongan) continue;
             
-            $avgPakai = $records->sum('pakai') / (count($listBulan) ?: 1);
+            $totalPakai = $records->sum('pakai');
+            
+            // ✅ TAMBAHAN: Hitung total rekening untuk Export PDF juga
+            $totalRekening = $records->sum('total_rekening');
+            
+            $avgPakai = $totalPakai / (count($listBulan) ?: 1);
             $kategori = ($avgPakai == 0) ? '0' : (($avgPakai >= 11 && $avgPakai <= 30) ? '11-30' : (($avgPakai > 30) ? '>30' : '1-10'));
             
             if ($filterKategori !== null && $kategori !== $filterKategori) continue;
-
+            
             $validCustomers[] = [
-                'no_sambungan' => $no_sambungan, 
+                'no_sambungan'   => $no_sambungan, 
                 'nama_pelanggan' => $first->nama_pelanggan, 
-                'alamat' => $first->alamat, 
-                'kode_gol' => $first->kode_gol, 
-                'avg_pakai' => round($avgPakai, 1),
-                'kategori' => $kategori
+                'alamat'         => $first->alamat, 
+                'kode_gol'       => $first->kode_gol, 
+                'total_pakai'    => $totalPakai,
+                'pakai'          => $totalPakai,       // ✅ TAMBAHAN
+                'avg_pakai'      => round($avgPakai, 1),
+                'total_rekening' => $totalRekening,    // ✅ TAMBAHAN
+                'kategori'       => $kategori
             ];
         }
         
         usort($validCustomers, fn($a, $b) => strcmp($a['nama_pelanggan'], $b['nama_pelanggan']));
-
+        
         $chartLabels = [];
         $chartDatasets = [];
         $colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
         
-        foreach ($listBulan as $bulan) $chartLabels[] = $bulanList[$bulan] ?? $bulan;
+        foreach ($listBulan as $bulan) {
+            $chartLabels[] = $bulanList[$bulan] ?? $bulan;
+        }
         
         $golonganListForChart = $filterGolongan !== null ? collect([$filterGolongan]) : $golonganList;
         $golIdx = 0;
@@ -331,7 +365,6 @@ class GolonganMonitoringController extends Controller
             foreach ($listBulan as $bulan) {
                 $query = DB::table('tagihans')->where('tahun', $tahun)->where('bulan', $bulan)->where('kode_gol', $gol);
                 
-                // ✅ PERBAIKAN 6: Matching Wilayah pada Grafik PDF
                 if ($filterWilayah !== null) {
                     $query->whereRaw("LEFT(TRIM(LEADING '0' FROM no_sambungan), 6) = ?", [$filterWilayah]);
                 }
@@ -347,7 +380,7 @@ class GolonganMonitoringController extends Controller
             $chartDatasets[] = ['label' => 'Gol ' . $gol, 'data' => $data, 'color' => $colors[$golIdx % count($colors)]];
             $golIdx++;
         }
-
+        
         $quickchartDatasets = [];
         foreach ($chartDatasets as $ds) {
             $quickchartDatasets[] = [
@@ -361,17 +394,40 @@ class GolonganMonitoringController extends Controller
             'data' => ['labels' => $chartLabels, 'datasets' => $quickchartDatasets],
             'options' => [
                 'responsive' => false,
-                'plugins' => ['legend' => ['position' => 'top'], 'title' => ['display' => true, 'text' => 'Tren Pelanggan Terfilter']],
-                'scales' => ['y' => ['beginAtZero' => true]]
+                'plugins' => [
+                    'legend' => ['position' => 'top'],
+                    'title' => ['display' => true, 'text' => 'Tren Pelanggan Terfilter']
+                ],
+                'scales' => [
+                    'y' => [
+                        'beginAtZero' => true,
+                        'ticks' => [
+                            'stepSize' => 100,
+                            'maxTicksLimit' => 12,
+                            'precision' => 0
+                        ]
+                    ]
+                ]
             ]
         ];
         
         $chartUrl = 'https://quickchart.io/chart?c=' . urlencode(json_encode($chartConfig)) . '&width=700&height=350';
-
         $chartBase64 = null;
+
         try {
-            $imageContent = file_get_contents($chartUrl);
-            if ($imageContent !== false) {
+            $ch = curl_init($chartUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 90);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            
+            $imageContent = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $error = curl_error($ch);
+            curl_close($ch);
+
+            if ($httpCode === 200 && $imageContent !== false && empty($error)) {
                 $chartBase64 = 'data:image/png;base64,' . base64_encode($imageContent);
             }
         } catch (\Exception $e) {
@@ -379,7 +435,7 @@ class GolonganMonitoringController extends Controller
         }
 
         $filterText = "Gol: " . ($filterGolongan ?: 'Semua') . " | Wilayah: " . ($filterWilayah ?: 'Semua') . " | Kategori: " . ($filterKategori === null ? 'Semua' : $filterKategori . ' m³');
-
+        
         $pdf = Pdf::loadView('golongan.pdf_list', [
             'validCustomers' => $validCustomers,
             'periodeText' => "{$bulanList[$bulanDari]} - {$bulanList[$bulanSampai]} {$tahun}",
@@ -393,7 +449,7 @@ class GolonganMonitoringController extends Controller
         
         return $pdf->download("Daftar_Pelanggan_Terfilter.pdf");
     }
-
+    
     private function generateListBulan($dari, $sampai)
     {
         $list = []; 
