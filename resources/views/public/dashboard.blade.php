@@ -670,7 +670,14 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 <div class="stat-card stat-bangunan"><i class="fas fa-building stat-icon"></i><div class="stat-value">{{ ($bangunan ?? collect())->count() }}</div><div class="stat-label">Bangunan</div></div>
 <div class="stat-card" style="background:linear-gradient(135deg,#f59e0b,#d97706)"><i class="fas fa-map-marked-alt stat-icon"></i><div class="stat-value">{{ ($zonaList ?? collect())->count() }}</div><div class="stat-label">Zona</div></div>
 <div class="stat-card" style="background:linear-gradient(135deg,#06b6d4,#0891b2)"><i class="fas fa-map-pin stat-icon"></i><div class="stat-value">{{ ($titikPenting ?? collect())->count() }}</div><div class="stat-label">Titik Penting</div></div>
+ <!-- ✅ TOTAL PELANGGAN DI CELAH KOSONG -->
+    <div class="stat-card" style="background:linear-gradient(135deg,#10b981,#059669);">
+        <i class="fas fa-users stat-icon"></i>
+        <div class="stat-value">{{ count($pelanggan ?? []) }}</div>
+        <div class="stat-label">Total Pelanggan</div>
+    </div>
 </div>
+
 <div class="section-title"><i class="fas fa-exclamation-triangle text-danger"></i> Gangguan Aktif <span class="badge bg-danger ms-auto">{{ $gangguanAktif->count() }}</span></div>
 @forelse($gangguanAktif as $gang)
 @if(is_object($gang))
@@ -869,8 +876,8 @@ let currentRouteControl = null, userLocationMarker = null, userLocation = null, 
 let reminderEnabled = true, reminderTimeout = null;
 let lastTriggered = { ist: '', pulang: '' };
 const REMINDER_MESSAGES = {
-  ist: ["Waktu istirahat telah tiba. Jangan lupa sholat dan makan siang. Tetap semangat!","Istirahat dulu yuk. Jaga kesehatan agar tetap produktif.","Saatnya rehat sejenak. Refresh pikiran, lanjutkan pekerjaan dengan segar."],
-  pulang: ["Waktu pulang telah tiba. Terima kasih atas kerja keras hari ini. Hati-hati di jalan!","Shift selesai. Simpan peralatan, rapikan meja, dan pulang dengan selamat.","Alhamdulillah hari ini selesai. Sampai jumpa besok, jaga kesehatan!"]
+  ist: ["Waktu istirahat telah tiba. Jangan lupa makan siang. Tetap semangat!","Istirahat dulu yuk. Jaga kesehatan agar tetap produktif.","Saatnya rehat sejenak. Refresh pikiran, lanjutkan pekerjaan dengan segar."],
+  pulang: ["Waktu pulang telah tiba. Terima kasih atas kerja keras hari ini. Hati-hati di jalan!","Simpan peralatan, rapikan meja, dan pulang dengan selamat.","Alhamdulillah hari ini selesai. Sampai jumpa besok, jaga kesehatan!"]
 };
 
 const voiceProfiles = [{ name: 'Default', pitch: 1.0, rate: 0.95 },{ name: 'Alternatif 1', pitch: 1.1, rate: 0.90 },{ name: 'Alternatif 2', pitch: 0.9, rate: 1.00 },{ name: 'Alternatif 3', pitch: 1.2, rate: 0.85 },{ name: 'Alternatif 4', pitch: 0.8, rate: 1.05 }];
@@ -1210,26 +1217,40 @@ function calculateMonthlyRevenue() {
   const currentDay = now.getDate();
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
   const remainingDays = daysInMonth - currentDay;
-  let totalTarget = 0, totalCollected = 0, totalUnpaidWithPenalty = 0, totalKubikasiCollected = 0;
+  
+  let totalTarget = 0, totalCollected = 0, totalUnpaidWithPenalty = 0;
+  let totalKubikasiTarget = 0, totalKubikasiCollected = 0; // ✅ TAMBAH VARIABLE KUBIKASI
+
   pelangganDataFromLaravel.forEach(p => {
     const jumlah = parseFloat(p.jumlah) || 0;
-    const kubikasi = parseFloat(p.pakai) || 0;
+    const kubikasi = parseFloat(p.pakai) || 0; // ✅ AMBIL DATA PAKAI (M³)
+    
     const hasLoket = p.tanggal_pembayaran_loket && !['-','.','',null].includes(p.tanggal_pembayaran_loket);
     const hasPPOB = p.tanggal_pembayaran_ppob && !['-','.','',null].includes(p.tanggal_pembayaran_ppob);
+    
+    totalKubikasiTarget += kubikasi; // ✅ HITUNG TOTAL TARGET M³
+
     if (hasLoket || hasPPOB) {
       totalCollected += jumlah;
-      totalKubikasiCollected += kubikasi;
+      totalKubikasiCollected += kubikasi; // ✅ HITUNG TOTAL TERKUMPUL M³
     } else {
       let tagihan = jumlah;
-      if (currentDay > 20) tagihan += 5000;
-      if (jumlah > 1000000) tagihan += 10000;
+      if (currentDay > 20) tagihan += 5000; // Denda setelah tanggal 20
+      if (jumlah > 1000000) tagihan += 10000; // Denda tambahan
       totalUnpaidWithPenalty += tagihan;
     }
     totalTarget += jumlah;
   });
+  
   const percentage = totalTarget > 0 ? (totalCollected / totalTarget) * 100 : 0;
   const dailyTarget = remainingDays > 0 ? totalUnpaidWithPenalty / remainingDays : 0;
-  return { totalTarget, totalCollected, totalUnpaidWithPenalty, percentage, currentDay, daysInMonth, remainingDays, dailyTarget, totalKubikasiCollected };
+  
+  // ✅ RETURN DENGAN DATA KUBIKASI
+  return { 
+    totalTarget, totalCollected, totalUnpaidWithPenalty, percentage, 
+    currentDay, daysInMonth, remainingDays, dailyTarget,
+    totalKubikasiTarget, totalKubikasiCollected 
+  };
 }
 function updateRevenueDisplay() {
   const currentHash = pelangganDataFromLaravel.map(p => `${p.jumlah}|${p.tanggal_pembayaran_loket}|${p.tanggal_pembayaran_ppob}`).join('');
@@ -1240,12 +1261,17 @@ function updateRevenueDisplay() {
 function updateRevenueProgress() {
   const stats = calculateMonthlyRevenue();
   updateCircularProgress(stats.percentage);
+  
   document.getElementById('currentDayOfMonth').textContent = stats.currentDay;
   document.getElementById('remainingDays').textContent = stats.remainingDays;
-  document.getElementById('targetRevenue').textContent = formatRupiah(stats.totalTarget);
-  document.getElementById('collectedRevenue').textContent = formatRupiah(stats.totalCollected) + ' || M³ ' + stats.totalKubikasiCollected.toFixed(1);
+  
+  // ✅ UBAH FORMAT: Rp xxx.xxx || xxx M³
+  document.getElementById('targetRevenue').textContent = formatRupiah(stats.totalTarget) + ' || ' + stats.totalKubikasiTarget.toFixed(1) + ' M³';
+  document.getElementById('collectedRevenue').textContent = formatRupiah(stats.totalCollected) + ' || ' + stats.totalKubikasiCollected.toFixed(1) + ' M³';
+  
   document.getElementById('remainingRevenue').textContent = formatRupiah(stats.totalUnpaidWithPenalty);
   document.getElementById('dailyTarget').textContent = formatRupiah(stats.dailyTarget);
+  
   renderWilayahProgress();
 }
 function calculateWilayahProgress() {
