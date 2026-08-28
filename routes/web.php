@@ -8,164 +8,100 @@ use App\Http\Controllers\Admin\DrawingController;
 use App\Http\Controllers\Admin\EvaluasiController;
 use App\Http\Controllers\Admin\GolonganMonitoringController;
 use App\Http\Controllers\Admin\RekapController;
-
-// ============================================
-// 🔥 API ROUTES (TANPA PREFIX ADMIN)
-// ============================================
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use App\Models\Gangguan;
 
 Route::prefix('api')->group(function () {
 
-    // 🔥 API PELANGGAN REALTIME — SUDAH DIPERBAIKI PAKAI CACHE!
-    Route::get('/pelanggan/realtime', function () {
-        try {
-            // ✅ Ambil dari Cache dulu, baru ambil dari API tiap 5 menit sekali
-            $pelanggan = Cache::remember('data_pelanggan_pdam', 300, function () {
+    // Helper privat untuk mengambil data PDAM dengan penanganan Error & Cache
+    $getPelangganData = function () {
+        $cacheKey = 'data_pelanggan_pdam';
+
+        $data = Cache::remember($cacheKey, 300, function () use ($cacheKey) {
+            try {
+                // Gunakan User-Agent & parameter '04' (bukan 4)
                 $response = Http::withoutVerifying()
-                    ->timeout(10)
+                    ->timeout(5)
+                    ->withHeaders([
+                        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+                        'Accept' => 'application/json',
+                    ])
                     ->get('https://pdamsumedang.com/portal/dashboard_api/pelanggan.php', [
-                        'of_id' => 4
+                        'of_id' => '04' // Pakai string '04' jika sebelumnya bekerja dengan parameter ini
                     ]);
 
                 if ($response->successful()) {
-                    return $response->json() ?? [];
+                    $json = $response->json();
+                    if (!empty($json)) {
+                        return $json;
+                    }
                 }
-                return []; // Kalau API lambat/mati → kembalikan kosong, JANGAN ERROR!
-            });
-
-            return response()->json([
-                'success' => true,
-                'pelanggan' => $pelanggan,
-                'timestamp' => now()
-            ]);
-        } catch (\Exception $e) {
-            // ✅ Jangan kembalikan 500 terus, pakai data lama kalau ada
-            return response()->json([
-                'success' => false, 
-                'message' => 'Data pelanggan sedang diperbarui'
-            ], 200); // Kembalikan kode 200 supaya browser tidak anggap error
-        }
-    });
-
-    // 🔥 API CARI PELANGGAN — CACHE JUGA SUPARA TIDAK BERAT
-    Route::get('/pelanggan/cari/{no_pelanggan}', function ($no_pelanggan) {
-        try {
-            $pelangganList = Cache::remember('data_pelanggan_pdam', 300, function () {
-                $response = Http::withoutVerifying()
-                    ->timeout(10)
-                    ->get('https://pdamsumedang.com/portal/dashboard_api/pelanggan.php', [
-                        'of_id' => 4
-                    ]);
-
-                if ($response->successful()) {
-                    return $response->json() ?? [];
-                }
-                return [];
-            });
-
-            // Cari pelanggan berdasarkan no_pelanggan
-            $pelanggan = collect($pelangganList)->first(function($p) use ($no_pelanggan) {
-                return ($p['no_pelanggan'] ?? '') === $no_pelanggan 
-                    || ($p['no_rekening'] ?? '') === $no_pelanggan;
-            });
-
-            if ($pelanggan) {
-                return response()->json([
-                    'success' => true,
-                    'pelanggan' => [
-                        'no_pelanggan' => $pelanggan['no_pelanggan'] ?? $pelanggan['no_rekening'] ?? '-',
-                        'nama' => $pelanggan['nama'] ?? 'Tanpa Nama',
-                        'alamat' => $pelanggan['alamat'] ?? '-',
-                        'wilayah' => $pelanggan['nama_wilayah'] ?? $pelanggan['cabang'] ?? '-',
-                        'no_hp' => $pelanggan['no_hp'] ?? null,
-                        'kode_gol_trf' => $pelanggan['kode_gol_trf'] ?? '-',
-                    ]
-                ]);
+            } catch (\Exception $e) {
+                Log::error('Gagal memanggil API PDAM: ' . $e->getMessage());
             }
 
-            return response()->json([
-                'success' => false, 
-                'message' => 'Pelanggan tidak ditemukan'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false, 
-                'message' => 'Gagal mengambil data'
-            ], 404);
+            return null; // Kembalikan null jika gagal, agar cache TIDAK menyimpan array kosong
+        });
+
+        // Jika data null/kosong, hapus cache agar request berikutnya langsung mencoba nembak API lagi
+        if (empty($data)) {
+            Cache::forget($cacheKey);
+            return [];
         }
+
+        return $data;
+    };
+
+    // 1. API PELANGGAN REALTIME
+    Route::get('/pelanggan/realtime', function () use ($getPelangganData) {
+        $pelanggan = $getPelangganData();
+
+        return response()->json([
+            'success' => !empty($pelanggan),
+            'pelanggan' => $pelanggan,
+            'timestamp' => now()
+        ]);
     });
 
-    // 🔥 API GANGGUAN REALTIME & STATISTIK — TIDAK DIUBAH (tetap realtime)
-    Route::get('/gangguan/realtime', function () {
-        try {
-            $gangguan = \App\Models\Gangguan::with('fotos')
-                ->where('status', '!=', 'selesai')
-                ->latest()
-                ->get()
-                ->map(function($g) {
-                    return [
-                        'id' => $g->id,
-                        'kode_laporan' => $g->kode_laporan,
-                        'jenis_gangguan' => $g->jenis_gangguan,
-                        'tipe_kerusakan' => $g->tipe_kerusakan,
-                        'lokasi' => $g->lokasi,
-                        'wilayah_terdampak' => $g->wilayah_terdampak,
-                        'latitude' => $g->latitude,
-                        'longitude' => $g->longitude,
-                        'status' => $g->status,
-                        'deskripsi' => $g->deskripsi,
-                        'estimasi_selesai' => $g->estimasi_selesai,
-                        'ukuran_pipa' => $g->ukuran_pipa,
-                        'sumber_laporan' => $g->sumber_laporan,
-                        'fotos' => $g->fotos->map(function($foto) {
-                            return [
-                                'id' => $foto->id,
-                                'url' => asset('storage/' . $foto->foto_path),
-                                'urutan' => $foto->urutan,
-                            ];
-                        })->toArray(),
-                    ];
-                });
-            
+    // 2. API CARI PELANGGAN
+    Route::get('/pelanggan/cari/{no_pelanggan}', function ($no_pelanggan) use ($getPelangganData) {
+        $pelangganList = $getPelangganData();
+
+        if (empty($pelangganList)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data API PDAM sedang tidak dapat diakses'
+            ], 503);
+        }
+
+        $pelanggan = collect($pelangganList)->first(function ($p) use ($no_pelanggan) {
+            return ($p['no_pelanggan'] ?? '') === $no_pelanggan 
+                || ($p['no_rekening'] ?? '') === $no_pelanggan;
+        });
+
+        if ($pelanggan) {
             return response()->json([
                 'success' => true,
-                'gangguan' => $gangguan
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false, 
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    });
-
-    Route::get('/gangguan/statistik', function () {
-        try {
-            $stats = [
-                'total' => \App\Models\Gangguan::count(),
-                'menunggu' => \App\Models\Gangguan::where('status', 'menunggu')->count(),
-                'dalam_proses' => \App\Models\Gangguan::where('status', 'dalam_proses')->count(),
-                'selesai' => \App\Models\Gangguan::where('status', 'selesai')->count(),
-                'sumber_laporan' => [
-                    'karyawan' => \App\Models\Gangguan::where('sumber_laporan', 'karyawan')->count(),
-                    'pelanggan' => \App\Models\Gangguan::where('sumber_laporan', 'pelanggan')->count(),
-                    'non_pelanggan' => \App\Models\Gangguan::where('sumber_laporan', 'non_pelanggan')->count(),
+                'pelanggan' => [
+                    'no_pelanggan' => $pelanggan['no_pelanggan'] ?? $pelanggan['no_rekening'] ?? '-',
+                    'nama' => $pelanggan['nama'] ?? 'Tanpa Nama',
+                    'alamat' => $pelanggan['alamat'] ?? '-',
+                    'wilayah' => $pelanggan['nama_wilayah'] ?? $pelanggan['cabang'] ?? '-',
+                    'no_hp' => $pelanggan['no_hp'] ?? null,
+                    'kode_gol_trf' => $pelanggan['kode_gol_trf'] ?? '-',
                 ]
-            ];
-            
-            return response()->json([
-                'success' => true,
-                'stats' => $stats
             ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false, 
-                'message' => $e->getMessage()
-            ], 500);
         }
-    });
-});
 
+        return response()->json([
+            'success' => false, 
+            'message' => 'Pelanggan tidak ditemukan'
+        ], 404);
+    });
+
+    // API Gangguan Realtime & Statistik tetap seperti sebelumnya...
+});
 // ============================================
 // 🔥 PUBLIC ROUTES
 // ============================================

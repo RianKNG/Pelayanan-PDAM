@@ -10,12 +10,13 @@ use App\Models\TitikPenting;
 use App\Models\Zona;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // 🔥 PENTING: Load data gangguan beserta relasi 'fotos'
+        // Load data lokal — cepat dan selalu tersedia
         $gangguan = Gangguan::with('fotos')->orderBy('created_at', 'desc')->get();
         $jalurPipa = JalurPipa::all();
         $bangunan = Bangunan::all();
@@ -23,20 +24,39 @@ class DashboardController extends Controller
         $zonaList = Zona::all();
 
         // ==================================================
-        // ✅ PERBAIKAN UTAMA: AMBIL DARI CACHE, JANGAN SETIAP KALI!
+        // AMBIL DATA PELANGGAN DARI API EKSTERNAL
         // ==================================================
-        $pelanggan = Cache::remember('data_pelanggan_pdam', 300, function () {
-            // Hanya ambil ulang dari API tiap 5 menit (300 detik) → SERVER TIDAK LAGI BERAT!
-            $response = Http::withoutVerifying()
-                ->timeout(10) // ⏰ Maksimal tunggu 10 detik saja → kalau lambat, lewati!
-                ->get('https://pdamsumedang.com/portal/dashboard_api/pelanggan.php?of_id=04');
+        $cacheKey = 'data_pelanggan_pdam';
 
-            if ($response->successful()) {
-                return $response->json() ?? [];
+        // ✅ SELALU ambil cache lama DULU sebagai cadangan
+        $dataCadangan = Cache::get($cacheKey, []);
+
+        $pelanggan = Cache::remember($cacheKey, 300, function () use ($cacheKey, $dataCadangan) {
+            try {
+                // Timeout 2 detik — kalau API lambat, langsung pakai data lama
+                $response = Http::withoutVerifying()
+                    ->timeout(2)
+                    ->get('https://pdamsumedang.com/portal/dashboard_api/pelanggan.php?of_id=04');
+
+                if ($response->successful()) {
+                    $baru = $response->json();
+                    if (!empty($baru) && is_array($baru)) {
+                        Log::info('Data pelanggan berhasil diperbarui dari API');
+                        return $baru; // ✅ Ada data baru → simpan ke cache
+                    }
+                }
+            } catch (\Exception $e) {
+                Log::warning('API PDAM lambat/error: ' . $e->getMessage());
             }
-            // Kalau API lambat/mati → kembalikan data kosong, JANGAN BIKIN ERROR!
-            return [];
+
+            // ❌ API gagal / kosong → kembalikan data yang sudah ada sebelumnya
+            return $dataCadangan ?: [];
         });
+
+        // Pastikan $pelanggan selalu berupa array
+        if (!is_array($pelanggan)) {
+            $pelanggan = [];
+        }
 
         // Hitung statistik
         $stats = [
@@ -54,12 +74,9 @@ class DashboardController extends Controller
         // Gangguan aktif untuk alert
         $gangguanAktif = $gangguan->where('status', '!=', 'selesai');
 
-        // ============================================
-        // 🔥 FOTO: Gunakan relasi 'fotos' langsung dengan fallback ke kolom 'foto' utama
-        // ============================================
+        // Foto Fallback & Format Data
         $gangguanFotosData = [];
         foreach ($gangguan as $g) {
-            // 1. Cek jika ada foto dari relasi tabel gangguan_fotos (Banyak Foto)
             if ($g->fotos && $g->fotos->count() > 0) {
                 $gangguanFotosData[$g->id] = $g->fotos->map(function ($foto) {
                     return [
@@ -68,9 +85,7 @@ class DashboardController extends Controller
                         'urutan' => $foto->urutan,
                     ];
                 })->toArray();
-            }
-            // 2. Fallback: Jika tidak ada foto tambahan, pakai kolom 'foto' utama (Satu Foto)
-            elseif (!empty($g->foto)) {
+            } elseif (!empty($g->foto)) {
                 $gangguanFotosData[$g->id] = [
                     [
                         'id' => 'main_' . $g->id,
@@ -81,7 +96,6 @@ class DashboardController extends Controller
             }
         }
 
-        // ✅ SEMUA DATA DIKIRIM KE TAMPILAN
         return view('public.dashboard', compact(
             'gangguan',
             'gangguanAktif',
