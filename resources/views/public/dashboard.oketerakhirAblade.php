@@ -5,38 +5,62 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Peta Jaringan Pipa - PDAM UP Darmaraja</title>
 
-<!-- Leaflet & Plugins CSS -->
+<!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
-<link rel="stylesheet" href="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-elevation@2.2.2/dist/leaflet-elevation.min.css" />
 
 <!-- Bootstrap & Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-
 <style>
 /* ============================================
-   1. RESET & BASE
+   RESET & BASE
 ============================================ */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root { --scroll-duration: 60s; }
 body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; height: 100vh; }
 
 /* ============================================
-   2. TOP NAVBAR & PROGRESS
+   TOP NAVBAR
 ============================================ */
-.top-navbar { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 6px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.3); position: relative; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.top-navbar-container { max-width: 1600px; margin: 0 auto; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.top-navbar { 
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
+    color: white; 
+    padding: 6px 0; 
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3); 
+    position: relative; 
+    z-index: 1000; 
+    border-bottom: 1px solid rgba(255,255,255,0.05); 
+}
+.top-navbar-container { 
+    max-width: 1600px; 
+    margin: 0 auto; 
+    padding: 0 16px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    flex-wrap: wrap; 
+    gap: 10px; 
+}
 .brand-section { display: flex; align-items: center; gap: 8px; }
-.brand-logo { width: 32px; height: 32px; background: linear-gradient(135deg, #06b6d4, #0891b2); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 8px rgba(6,182,212,0.4); }
+.brand-logo { 
+    width: 32px; height: 32px; 
+    background: linear-gradient(135deg, #06b6d4, #0891b2); 
+    border-radius: 8px; 
+    display: flex; align-items: center; justify-content: center; 
+    font-size: 16px; 
+    box-shadow: 0 2px 8px rgba(6,182,212,0.4); 
+}
 .brand-text h1 { font-size: 13px; font-weight: 700; margin: 0; letter-spacing: 0.3px; }
 .brand-text small { font-size: 9px; opacity: 0.7; }
 .contact-info-bar { display: flex; align-items: center; gap: 15px; background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 8px; }
 .contact-item-nav { display: flex; align-items: center; gap: 6px; font-size: 11px; padding: 3px 8px; background: rgba(255,255,255,0.1); border-radius: 6px; transition: all 0.2s; }
 .contact-item-nav:hover { background: rgba(255,255,255,0.2); transform: translateY(-1px); }
+.contact-item-nav i { font-size: 12px; }
 .wa-qr-btn-nav { background: #25d366; color: white; border: none; padding: 3px 8px; border-radius: 6px; font-size: 9px; cursor: pointer; margin-left: 5px; transition: all 0.2s; }
 .wa-qr-btn-nav:hover { background: #128c7e; transform: scale(1.05); }
 .alert-section { display: flex; align-items: center; gap: 8px; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); padding: 4px 10px; border-radius: 8px; font-size: 10px; }
@@ -45,11 +69,15 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .alert-text small { opacity: 0.8; font-size: 9px; }
 .alert-count { background: #f59e0b; color: white; padding: 2px 8px; border-radius: 10px; font-weight: 700; font-size: 11px; }
 
+/* ============================================
+   NOTIFICATION BAR
+============================================ */
 .notification-bar { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 4px 10px; flex: 1; max-width: 400px; overflow: hidden; }
 .notification-title { font-size: 8px; opacity: 0.9; margin-bottom: 2px; font-weight: 600; }
 .notification-scroll { overflow: hidden; white-space: nowrap; }
 .notification-scroll-content { display: inline-block; animation: scroll-left var(--scroll-duration, 60s) linear infinite; font-size: 9px; }
 .notification-item { display: inline-block; margin-right: 20px; padding: 2px 8px; background: rgba(255,255,255,0.1); border-radius: 10px; }
+.notification-item.active-sync { background: linear-gradient(135deg, #fbbf24, #f59e0b) !important; }
 .notification-item.new-payment { animation: flashNew 2s ease; }
 .notification-item strong { color: #fff; font-size: 9px; }
 .notification-item .amount { color: #86efac; font-size: 9px; }
@@ -57,18 +85,27 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 @keyframes flashNew { 0%,100% { background: rgba(255,255,255,0.1); } 50% { background: linear-gradient(135deg, #10b981, #059669); } }
 @keyframes scroll-left { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-.unit-progress-bar { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 999; }
+/* ============================================
+   UNIT PROGRESS BAR
+============================================ */
+.unit-progress-bar { 
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
+    padding: 8px 0; 
+    border-bottom: 1px solid rgba(255,255,255,0.05); 
+    position: relative; 
+    z-index: 999; 
+}
 .unit-progress-container { max-width: 1600px; margin: 0 auto; padding: 0 16px; padding-right: 280px; display: flex; align-items: center; gap: 16px; }
-.unit-image-wrapper { width: 150px !important; height: 100px !important; border-radius: 10px; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.1); background: #1e293b; }
-.unit-image-wrapper img { width: 100% !important; height: 100% !important; object-fit: cover; }
+.unit-image-wrapper { width: 150px !important; height: 100px !important; border-radius: 10px; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.1); position: relative !important; display: block !important; background: #1e293b; }
+.unit-image-wrapper img { width: 100% !important; height: 100% !important; object-fit: cover; transition: opacity 0.5s ease-in-out; }
 .unit-info { flex-shrink: 0; color: white; min-width: 140px; }
 .unit-info h3 { font-size: 11px; font-weight: 700; margin-bottom: 2px; color: #fbbf24; }
 .unit-info p { font-size: 9px; opacity: 0.8; margin: 0; }
 .unit-narrate-btn { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 600; cursor: pointer; margin-top: 4px; display: flex; align-items: center; gap: 4px; transition: all 0.3s; }
-.unit-narrate-btn:hover { transform: scale(1.05); }
+.unit-narrate-btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(139,92,246,0.4); }
 
 /* ============================================
-   3. CIRCULAR PROGRESS & REVENUE
+   CIRCULAR PROGRESS & REVENUE
 ============================================ */
 .revenue-progress-section { flex: 1; color: white; display: flex; align-items: center; gap: 16px; }
 .revenue-middle { flex: 1; }
@@ -76,9 +113,9 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .circular-progress-svg { transform: rotate(-90deg); }
 .circular-track { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 8; }
 .circular-fill { fill: none; stroke: url(#progressGradient); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke-dashoffset 2s cubic-bezier(0.4,0,0.2,1), filter 1s ease; }
-.circular-dot { position: absolute; top: 50%; left: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: #fde68a; box-shadow: 0 0 8px rgba(245,158,11,1); transform: rotate(0deg) translateY(-49px); transition: transform 2s; z-index: 3; }
+.circular-dot { position: absolute; top: 50%; left: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: #fde68a; box-shadow: 0 0 8px rgba(245,158,11,1), 0 0 18px rgba(245,158,11,0.7); transform: rotate(0deg) translateY(-49px); transition: transform 2s cubic-bezier(0.4,0,0.2,1), background 1s, box-shadow 1s; z-index: 3; pointer-events: none; }
 .circular-percentage { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
-.circular-percentage span { display: block; font-size: 22px; font-weight: 900; color: #fde68a; text-shadow: 0 0 10px rgba(245,158,11,0.9); }
+.circular-percentage span { display: block; font-size: 22px; font-weight: 900; letter-spacing: 0.5px; color: #fde68a; text-shadow: 0 0 10px rgba(245,158,11,0.9), 0 2px 3px rgba(0,0,0,0.9); transition: color 1s ease, text-shadow 1s ease; }
 .circular-percentage small { display: block; font-size: 7px; font-weight: 700; letter-spacing: 2px; color: rgba(255,255,255,0.6); margin-top: 2px; }
 .revenue-progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 .revenue-progress-title { font-size: 9px; font-weight: 600; display: flex; align-items: center; gap: 4px; opacity: 0.9; }
@@ -86,14 +123,17 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .revenue-progress-stat { display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px; }
 .revenue-progress-details { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
 .revenue-detail-card { background: rgba(255,255,255,0.08); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); }
-.revenue-detail-label { font-size: 7px; color: rgba(255,255,255,0.7); text-transform: uppercase; margin-bottom: 1px; display: flex; align-items: center; gap: 3px; }
+.revenue-detail-label { font-size: 7px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 1px; display: flex; align-items: center; gap: 3px; }
 .revenue-detail-value { font-size: 11px; font-weight: 700; color: white; }
 .revenue-detail-value.warning { color: #fbbf24; }
 .revenue-detail-value.danger { color: #f87171; }
 .revenue-detail-value.success { color: #86efac; }
 
+/* ============================================
+   WILAYAH PROGRESS
+============================================ */
 .wilayah-progress-strip { flex-shrink: 0; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 6px 10px; }
-.wilayah-strip-title { font-size: 8px; font-weight: 700; color: rgba(255,255,255,0.7); margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+.wilayah-strip-title { font-size: 8px; font-weight: 700; color: rgba(255,255,255,0.7); letter-spacing: 0.5px; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
 .wilayah-progress-grid { display: flex; gap: 10px; align-items: center; max-width: 340px; overflow-x: auto; }
 .wilayah-ring-card { text-align: center; cursor: pointer; flex-shrink: 0; transition: transform 0.2s; }
 .wilayah-ring-card:hover { transform: scale(1.1); }
@@ -103,12 +143,26 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .wilayah-ring-detail { font-size: 6px; color: rgba(255,255,255,0.5); }
 
 /* ============================================
-   4. MAIN LAYOUT & SIDEBAR
+   MAIN LAYOUT & SIDEBAR
 ============================================ */
 .main-wrapper { display: flex; height: calc(100vh - 110px); position: relative; margin-right: 260px; }
 #map { flex: 1; height: 100%; z-index: 1; background: #1e293b; }
 
-.sidebar { position: fixed !important; right: 0 !important; top: 110px !important; bottom: 0 !important; width: 260px !important; background: white; box-shadow: -2px 0 15px rgba(0,0,0,0.2); z-index: 999; display: flex; flex-direction: column; border-radius: 12px 0 0 0; overflow: hidden; }
+.sidebar { 
+    position: fixed !important; 
+    right: 0 !important; 
+    top: 110px !important; 
+    bottom: 0 !important; 
+    width: 260px !important; 
+    background: white; 
+    box-shadow: -2px 0 15px rgba(0,0,0,0.2); 
+    z-index: 999; 
+    display: flex; 
+    flex-direction: column; 
+    transform: translateX(0) !important; 
+    border-radius: 12px 0 0 0; 
+    overflow: hidden; 
+}
 .sidebar-header { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 10px 14px; position: sticky; top: 0; z-index: 10; }
 .sidebar-header h5 { margin: 0; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 .sidebar-header small { opacity: 0.8; font-size: 9px; display: block; margin-top: 2px; }
@@ -117,7 +171,7 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .sidebar-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
 
 /* ============================================
-   5. SEARCH, STATS & CARDS
+   SEARCH & STATS
 ============================================ */
 .search-container { background: linear-gradient(135deg, #f0f9ff, #e0f2fe); padding: 8px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #bae6fd; }
 .search-title { font-size: 9px; font-weight: 700; color: #0369a1; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; text-transform: uppercase; }
@@ -148,22 +202,25 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .stat-value { font-size: 18px; font-weight: 700; margin: 0; position: relative; }
 .stat-label { font-size: 8px; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.3px; margin-top: 2px; position: relative; }
 
-.revenue-card { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(16,185,129,0.3); cursor: pointer; }
+.revenue-card { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(16,185,129,0.3); position: relative; overflow: hidden; cursor: pointer; }
 .revenue-title { font-size: 9px; opacity: 0.9; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
 .revenue-amount { font-size: 20px; font-weight: 800; margin-bottom: 2px; }
 .revenue-kubikasi { font-size: 10px; opacity: 0.9; display: flex; align-items: center; gap: 4px; }
 .section-title { font-size: 10px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin: 10px 0 6px 0; padding-bottom: 4px; border-bottom: 2px solid #e2e8f0; display: flex; align-items: center; gap: 6px; }
 .list-item { padding: 8px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 6px; cursor: pointer; transition: all 0.2s; background: white; }
-.list-item:hover { background: #f0f9ff; border-color: #0ea5e9; transform: translateX(2px); }
+.list-item:hover { background: #f0f9ff; border-color: #0ea5e9; transform: translateX(2px); box-shadow: 0 2px 6px rgba(14,165,233,0.1); }
 
 /* ============================================
-   6. CONTROLS, LAYERS & VOICE PANEL
+   CONTROLS & LAYERS
 ============================================ */
 .control-buttons { position: fixed; left: 10px; top: 220px; z-index: 1001; display: flex; flex-direction: column; gap: 6px; }
 .control-btn { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; border: none; padding: 8px 12px; border-radius: 8px; box-shadow: 0 2px 8px rgba(30,60,114,0.4); cursor: pointer; font-weight: 600; font-size: 11px; display: flex; align-items: center; gap: 6px; transition: all 0.3s; }
 .control-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(30,60,114,0.5); }
+.control-btn.expand { background: linear-gradient(135deg, #10b981, #059669); }
 .control-btn.expand.active { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.control-btn.voice { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
 .control-btn.voice.active { background: linear-gradient(135deg, #10b981, #059669); }
+.control-btn.live { background: linear-gradient(135deg, #ec4899, #db2777); }
 .control-btn.live.active { background: linear-gradient(135deg, #10b981, #059669); animation: pulse-live 2s infinite; }
 @keyframes pulse-live { 0%,100% { box-shadow: 0 2px 8px rgba(16,185,129,0.3); } 50% { box-shadow: 0 2px 15px rgba(16,185,129,0.6); } }
 
@@ -173,9 +230,13 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .layer-btn { padding: 6px 4px; border: 2px solid #e2e8f0; background: white; border-radius: 6px; cursor: pointer; font-size: 9px; font-weight: 600; color: #64748b; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .layer-btn:hover { border-color: #3b82f6; color: #3b82f6; }
 .layer-btn.active { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border-color: #3b82f6; }
+.layer-btn i { font-size: 12px; }
 
-.voice-panel { position: fixed; right: 10px; top: 120px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); padding: 14px; z-index: 1002; width: 340px; display: none; max-height: 85vh; overflow-y: auto; }
-.voice-panel.active { display: block; animation: slideInRight 0.3s ease; }
+/* ============================================
+   VOICE PANEL
+============================================ */
+.voice-panel { position: fixed; right: 10px; top: 120px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); padding: 14px; z-index: 1002; width: 340px; display: none; animation: slideInRight 0.3s ease; max-height: 85vh; overflow-y: auto; }
+.voice-panel.active { display: block; }
 @keyframes slideInRight { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 .voice-panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; }
 .voice-panel-title { font-size: 12px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 6px; }
@@ -186,55 +247,87 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .voice-control-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
 .voice-control-label { font-size: 9px; color: #64748b; font-weight: 600; min-width: 60px; }
 .voice-control-row input[type="range"] { flex: 1; accent-color: #3b82f6; }
+.voice-test-btn { width: 100%; margin-top: 8px; padding: 8px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; }
 .voice-btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .voice-btn { padding: 6px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 9px; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; }
 .voice-btn.play { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+.voice-btn.pause { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
 .voice-btn.stop { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
 .voice-btn.repeat { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
 .voice-btn:hover { transform: translateY(-1px); }
 .voice-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .voice-status-indicator { display: flex; align-items: center; gap: 6px; margin-top: 6px; padding: 6px; background: white; border-radius: 6px; font-size: 8px; }
 .voice-status-dot { width: 6px; height: 6px; border-radius: 50%; background: #94a3b8; }
-.voice-status-dot.active { background: #10b981; }
+.voice-status-dot.active { background: #10b981; animation: pulse-dot 1s infinite; }
+.voice-status-dot.paused { background: #f59e0b; }
+@keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+
 .gangguan-voice-control, .payment-voice-control, .music-control, .scroll-control, .youtube-control, .mute-control, .reminder-control { margin-top: 10px; padding: 10px; border-radius: 8px; border: 2px solid; }
 .gangguan-voice-control { background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b; }
 .payment-voice-control { background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-color: #10b981; }
 .music-control { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); border-color: #6366f1; }
 .scroll-control { background: linear-gradient(135deg, #fce7f3, #fbcfe8); border-color: #ec4899; }
 .youtube-control { background: linear-gradient(135deg, #fee2e2, #fecaca); border-color: #ef4444; }
-.mute-control, .reminder-control { background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b; }
+.mute-control { background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b; }
+.reminder-control { background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b; }
 .voice-control-title { font-size: 9px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
 .gangguan-voice-control .voice-control-title { color: #92400e; }
 .payment-voice-control .voice-control-title { color: #065f46; }
 .music-control .voice-control-title { color: #3730a3; }
 .scroll-control .voice-control-title { color: #9d174d; }
 .youtube-control .voice-control-title { color: #991b1b; }
-.mute-control .voice-control-title, .reminder-control .voice-control-title { color: #92400e; }
+.mute-control .voice-control-title { color: #92400e; }
+.reminder-control .voice-control-title { color: #92400e; }
 
 /* ============================================
-   7. LIVE INFO PANEL & MARKERS
+   LIVE INFO PANEL (SEJAJAR SIDEBAR)
 ============================================ */
 .live-info-panel { 
-    position: fixed !important; bottom: 15px !important; right: 275px !important; left: auto !important; transform: none !important;
+    position: fixed !important;
+    bottom: 15px !important;
+    right: 275px !important;  /* Sejajar dengan sidebar (260px + 15px gap) */
+    left: auto !important;
+    transform: none !important;
     background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(30, 58, 138, 0.92)) !important;
-    backdrop-filter: blur(16px) saturate(150%) !important; color: white; padding: 10px 16px !important; border-radius: 12px !important; 
-    border: 1px solid rgba(239, 68, 68, 0.4) !important; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important; z-index: 9997 !important; 
-    display: flex; align-items: center; gap: 14px !important; min-width: 340px !important; max-width: 420px !important;
-    animation: slideInRightPanel 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important; transition: all 0.3s ease !important;
+    backdrop-filter: blur(16px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
+    color: white; 
+    padding: 10px 16px !important; 
+    border-radius: 12px !important; 
+    border: 1px solid rgba(239, 68, 68, 0.4) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.05) inset, 0 0 15px rgba(239, 68, 68, 0.15) !important;
+    z-index: 9997 !important; 
+    display: flex; 
+    align-items: center; 
+    gap: 14px !important; 
+    min-width: 340px !important;
+    max-width: 420px !important;
+    animation: slideInRightPanel 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    transition: all 0.3s ease !important;
 }
-.live-info-panel:hover { transform: translateY(-2px) !important; border-color: rgba(239, 68, 68, 0.6) !important; }
-@keyframes slideInRightPanel { from { transform: translateX(30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-.live-info-panel .live-indicator { display: flex; align-items: center; gap: 6px; padding: 5px 12px !important; background: linear-gradient(135deg, #ef4444, #dc2626) !important; border-radius: 20px !important; font-size: 10px !important; font-weight: 800 !important; letter-spacing: 1px !important; flex-shrink: 0; }
+.live-info-panel:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 0 20px rgba(239, 68, 68, 0.25) !important;
+    border-color: rgba(239, 68, 68, 0.6) !important;
+}
+@keyframes slideInRightPanel { 
+    from { transform: translateX(30px); opacity: 0; } 
+    to { transform: translateX(0); opacity: 1; } 
+}
+.live-info-panel .live-indicator { display: flex; align-items: center; gap: 6px; padding: 5px 12px !important; background: linear-gradient(135deg, #ef4444, #dc2626) !important; border-radius: 20px !important; font-size: 10px !important; font-weight: 800 !important; letter-spacing: 1px !important; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4) !important; border: 1px solid rgba(255, 255, 255, 0.15) !important; flex-shrink: 0; }
 .live-info-panel .live-dot { width: 7px; height: 7px; background: white; border-radius: 50%; animation: live-pulse 1.5s infinite; }
 @keyframes live-pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.3); } }
 .live-info-panel .customer-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.live-info-panel .customer-name { font-size: 13px !important; font-weight: 800 !important; color: #fbbf24 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.live-info-panel .customer-name { font-size: 13px !important; font-weight: 800 !important; color: #fbbf24 !important; text-shadow: 0 1px 3px rgba(0,0,0,0.4) !important; letter-spacing: 0.5px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .live-info-panel .customer-detail { font-size: 9px !important; opacity: 0.85 !important; color: #cbd5e1 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .live-info-panel .customer-amount { font-size: 14px !important; font-weight: 900 !important; color: #f87171 !important; padding: 5px 12px !important; background: rgba(239, 68, 68, 0.15) !important; border-radius: 10px !important; border: 1px solid rgba(239, 68, 68, 0.3) !important; white-space: nowrap !important; flex-shrink: 0; }
 .live-info-panel .counter { text-align: center; padding: 5px 10px !important; background: rgba(255, 255, 255, 0.08) !important; border-radius: 10px !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; min-width: 55px !important; flex-shrink: 0; }
 .live-info-panel .counter-num { font-size: 15px !important; font-weight: 900 !important; color: #fbbf24 !important; line-height: 1.1; }
 .live-info-panel .counter-label { font-size: 7px !important; opacity: 0.7 !important; text-transform: uppercase !important; letter-spacing: 1px !important; margin: 2px 0 !important; }
 
+/* ============================================
+   MARKERS, TOAST & LEGEND
+============================================ */
 .unpaid-marker-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; pointer-events: none; }
 .unpaid-marker-pin { width: 14px; height: 14px; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-size: 7px; box-shadow: 0 1px 4px rgba(239,68,68,0.5); position: relative; z-index: 2; transition: all 0.3s ease; pointer-events: auto; }
 .unpaid-marker-pulse { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; border-radius: 50%; background: rgba(239,68,68,0.3); animation: unpaid-pulse 2s infinite; z-index: 1; }
@@ -248,9 +341,6 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .pelanggan-marker-small { width: 10px; height: 10px; border-radius: 50%; border: 2px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
 .pelanggan-marker-small:hover { transform: scale(1.5); box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 
-/* ============================================
-   8. TOAST, LEGEND & ROUTING
-============================================ */
 .toast-notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: white; padding: 10px 16px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); z-index: 99999; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; animation: toastSlide 0.3s ease; max-width: 350px; }
 .toast-notification.success { border-left: 4px solid #10b981; color: #065f46; }
 .toast-notification.info { border-left: 4px solid #3b82f6; color: #1e40af; }
@@ -264,14 +354,19 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .legend-group { margin-bottom: 6px; }
 .legend-group-title { font-size: 8px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 2px; padding-bottom: 2px; border-bottom: 1px solid #e2e8f0; }
 .legend-item { display: flex; align-items: center; gap: 6px; margin: 2px 0; }
+.legend-color { width: 16px; height: 3px; border-radius: 2px; }
 .legend-marker { width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 1px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; color: white; font-size: 6px; }
 .legend-pelanggan { position: absolute; bottom: 10px; right: 270px; background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); z-index: 500; max-width: 200px; font-size: 10px; }
 .legend-pelanggan-title { font-weight: 700; margin-bottom: 6px; color: #1e293b; font-size: 11px; display: flex; align-items: center; gap: 4px; }
 .legend-pelanggan-item { display: flex; align-items: center; gap: 6px; margin: 3px 0; font-size: 9px; }
 .legend-pelanggan-marker { width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 1px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; color: white; font-size: 6px; }
 
+/* ============================================
+   GANGGUAN & WILAYAH CARDS
+============================================ */
 .gangguan-card { margin-bottom: 8px; border: 2px solid #e2e8f0; border-radius: 8px; overflow: hidden; cursor: pointer; transition: all 0.2s; background: white; }
 .gangguan-card:hover { border-color: #0ea5e9; transform: translateX(2px); box-shadow: 0 2px 8px rgba(14,165,233,0.15); }
+.gangguan-card.active { border-color: #3b82f6; box-shadow: 0 2px 10px rgba(59,130,246,0.25); }
 .gangguan-card-header { padding: 6px 10px; color: white; display: flex; justify-content: space-between; align-items: center; }
 .gangguan-card-header.status-menunggu { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
 .gangguan-card-header.status-dalam_proses { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
@@ -289,35 +384,69 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .estimasi-box { background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 8px; border-radius: 8px; border-left: 3px solid #f59e0b; margin-top: 6px; }
 .estimasi-box-title { font-size: 8px; color: #92400e; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; text-transform: uppercase; }
 .estimasi-item { margin-bottom: 4px; }
+.estimasi-item:last-child { margin-bottom: 0; }
 .estimasi-label { font-size: 8px; color: #78350f; font-weight: 600; margin-bottom: 1px; display: flex; align-items: center; gap: 3px; }
 .estimasi-value { font-weight: 700; color: #92400e; font-size: 10px; }
 .estimasi-value.big { font-size: 16px; color: #dc2626; display: flex; align-items: baseline; gap: 3px; }
 .estimasi-value.big .unit { font-size: 8px; color: #92400e; font-weight: 600; }
 .estimasi-sub { font-size: 8px; color: #78350f; margin-top: 1px; }
 .estimasi-sub strong { color: #dc2626; }
-.empty-state { text-align: center; padding: 12px; color: #94a3b8; font-size: 10px; font-style: italic; }
 
 .wilayah-card { margin-bottom: 10px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
 .wilayah-header { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; padding: 6px 10px; font-weight: 600; font-size: 11px; display: flex; justify-content: space-between; align-items: center; }
 .wilayah-blok-list { padding: 6px; }
+.blok-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; margin: 3px 0; background: #f8fafc; border-radius: 5px; font-size: 10px; cursor: pointer; transition: all 0.2s; }
+.blok-item:hover { background: #e0f2fe; }
+.empty-state { text-align: center; padding: 12px; color: #94a3b8; font-size: 10px; font-style: italic; }
 
+/* ============================================
+   ROUTING & ELEVATION
+============================================ */
 .leaflet-routing-container { background: white !important; border-radius: 12px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important; padding: 12px !important; max-width: 350px !important; font-size: 11px !important; }
+.leaflet-routing-alt h3 { font-size: 13px !important; color: #1e293b !important; margin-bottom: 8px !important; font-weight: 700 !important; }
 .route-summary-box { background: linear-gradient(135deg,#3b82f6,#2563eb) !important; color: white !important; padding: 8px 12px !important; border-radius: 8px !important; margin-bottom: 8px !important; font-weight: 700 !important; text-align: center !important; }
 .turn-direction { display: flex; align-items: center; padding: 6px 0; border-bottom: 1px solid #e2e8f0; }
 .turn-direction i { margin-right: 10px; color: #3b82f6; width: 20px; text-align: center; font-size: 14px; }
 .turn-direction span { flex: 1; color: #334155; font-size: 12px; }
 .turn-direction .distance { color: #64748b; font-size: 11px; margin-left: 8px; font-weight: 600; }
+.elevation-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 10px 0; padding: 10px; background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 8px; border: 2px solid #f59e0b; }
+.elevation-stat { display: flex; flex-direction: column; font-size: 11px; }
+.elevation-stat .label { color: #92400e; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 4px; }
+.elevation-stat .value { color: #78350f; font-weight: 800; font-size: 13px; }
+#elevation-profile { height: 150px; margin-top: 10px; border-radius: 8px; overflow: hidden; border: 2px solid #e2e8f0; }
 .elevation-btn { width: 100%; margin-top: 8px; padding: 8px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 6px; }
 
 /* ============================================
-   9. FULLSCREEN & RESPONSIVE
+   FULLSCREEN OVERRIDES
 ============================================ */
-.main-wrapper.is-fullscreen .sidebar, .main-wrapper.is-fullscreen .control-buttons, .main-wrapper.is-fullscreen .custom-layer-control, .main-wrapper.is-fullscreen .legend, .main-wrapper.is-fullscreen .legend-pelanggan { display: none !important; }
+.main-wrapper.is-fullscreen .sidebar, 
+.main-wrapper.is-fullscreen .control-buttons, 
+.main-wrapper.is-fullscreen .custom-layer-control,
+.main-wrapper.is-fullscreen .legend,
+.main-wrapper.is-fullscreen .legend-pelanggan { display: none !important; }
+
 .main-wrapper.is-fullscreen .top-navbar { display: flex !important; position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 9999998 !important; }
 .main-wrapper.is-fullscreen .unit-progress-bar { display: flex !important; position: fixed !important; top: 50px !important; left: 0 !important; right: 0 !important; z-index: 9999997 !important; }
-.main-wrapper.is-fullscreen #map { height: calc(100vh - 110px) !important; margin-top: 110px !important; }
-.main-wrapper.is-fullscreen .unit-image-wrapper { width: 200px !important; height: 130px !important; display: block !important; position: relative !important; top: auto !important; left: auto !important; z-index: 10 !important; border-radius: 10px !important; box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important; border: 2px solid rgba(255,255,255,0.1) !important; }
 
+/* ✅ PERBAIKAN PENTING: Gunakan calc agar tidak ada area hitam/scroll */
+.main-wrapper.is-fullscreen #map { height: calc(100vh - 110px) !important; margin-top: 110px !important; }
+
+.main-wrapper.is-fullscreen .unit-image-wrapper { 
+    width: 200px !important; 
+    height: 130px !important; 
+    display: block !important; 
+    position: relative !important; 
+    top: auto !important; 
+    left: auto !important; 
+    z-index: 10 !important; 
+    border-radius: 10px !important; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important; 
+    border: 2px solid rgba(255,255,255,0.1) !important; 
+}
+
+/* ============================================
+   RESPONSIVE (MOBILE)
+============================================ */
 @media (max-width: 768px) {
     .top-navbar-container { flex-direction: column; text-align: center; }
     .unit-progress-container { flex-direction: column; padding-right: 16px; }
@@ -329,9 +458,19 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
     .control-buttons { left: 10px; top: auto; bottom: 10px; flex-direction: row; flex-wrap: wrap; }
     .custom-layer-control { top: auto; bottom: 60px; left: 10px; max-width: 150px; }
     .voice-panel { right: 10px; top: auto; bottom: 60px; width: calc(100% - 20px); max-width: 340px; }
-    .live-info-panel { right: 10px !important; bottom: 10px !important; min-width: auto !important; max-width: calc(100% - 20px) !important; padding: 8px 12px !important; gap: 8px !important; flex-wrap: wrap !important; }
+    
+    .live-info-panel { 
+        right: 10px !important;
+        bottom: 10px !important;
+        min-width: auto !important;
+        max-width: calc(100% - 20px) !important;
+        padding: 8px 12px !important;
+        gap: 8px !important;
+        flex-wrap: wrap !important;
+    }
     .live-info-panel .customer-name { font-size: 11px !important; }
     .live-info-panel .customer-amount { font-size: 12px !important; }
+    
     .revenue-progress-details { grid-template-columns: repeat(2, 1fr); }
     .revenue-progress-section { flex-direction: column; }
     .circular-progress-wrapper { width: 80px; height: 80px; }
@@ -429,6 +568,7 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 </div>
 </div>
 </div>
+</div>
 
 <!-- MAIN WRAPPER -->
 <div class="main-wrapper" id="mainWrapper">
@@ -462,6 +602,7 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 <div class="voice-panel-title"><i class="fas fa-sliders-h"></i> Panel Kontrol Suara</div>
 <button class="voice-panel-close" onclick="toggleVoicePanel()"><i class="fas fa-times"></i></button>
 </div>
+<!-- 🔔 PENGINGAT OTOMATIS -->
 <div class="reminder-control">
 <div class="voice-control-title"><i class="fas fa-bell"></i> PENGINGAT OTOMATIS</div>
 <div class="voice-control-row"><div class="voice-control-label"><i class="fas fa-coffee"></i> Istirahat</div><input type="time" id="reminderIstTime" value="12:00" style="flex:1;padding:5px;border:1px solid #f59e0b;border-radius:6px;font-size:10px;"></div>
@@ -484,11 +625,12 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 <option value="musik2.mp3">🎶 Musik 2 (Semangat)</option>
 <option value="musik3.mp3">🎵 Musik 3 (Klasik)</option>
 <option value="musik4.mp3">🌧️ Musik 4 (Alam)</option>
-<option value="musik5.mp3">🎧 Musik 5 (Lo-Fi)</option>
+<option value="musik5.mp3"> Musik 5 (Lo-Fi)</option>
 </select>
 <div class="voice-control-row"><div class="voice-control-label">Volume</div><input type="range" min="0" max="100" value="30" id="musicVolumeSlider" oninput="setMusicVolume(this.value)" /><span id="musicVolumeValue" style="font-size:9px;font-weight:600;min-width:30px">30%</span></div>
 <div class="voice-btn-group" style="margin-top:6px">
 <button class="voice-btn play" id="btnPlayMusic" onclick="playMusic()"><i class="fas fa-play"></i> Putar</button>
+<button class="voice-btn pause" id="btnPauseMusic" onclick="pauseMusic()" disabled><i class="fas fa-pause"></i> Pause</button>
 <button class="voice-btn stop" id="btnStopMusic" onclick="stopMusic()" disabled><i class="fas fa-stop"></i> Stop</button>
 <button class="voice-btn repeat" id="btnLoopMusic" onclick="toggleLoopMusic()" style="background:linear-gradient(135deg,#6366f1,#4f46e5)"><i class="fas fa-redo"></i> Rotasi</button>
 </div>
@@ -509,10 +651,11 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 </div>
 <div class="gangguan-voice-control">
 <div class="voice-control-title"><i class="fas fa-exclamation-triangle"></i> SUARA GANGGUAN</div>
-<div class="voice-select-group"><label class="voice-select-label">🎤 Gender:</label><select class="voice-select" id="gangguanGenderSelect" onchange="updateGangguanGender()"><option value="male">👨 Laki-laki</option><option value="female" selected>👩 Perempuan</option></select></div>
-<div class="voice-select-group"><label class="voice-select-label">🎤 Pilih Suara:</label><select class="voice-select" id="gangguanVoiceSelect" onchange="updateVoiceIndex()"><option value="0">1. Default</option><option value="1">2. Alternatif 1</option><option value="2">3. Alternatif 2</option><option value="3" selected>4. Alternatif 3</option><option value="4">5. Alternatif 4</option></select></div>
+<div class="voice-select-group"><label class="voice-select-label">🎤 Gender:</label><select class="voice-select" id="gangguanGenderSelect" onchange="updateGangguanGender()"><option value="male"> Laki-laki</option><option value="female" selected>👩 Perempuan</option></select></div>
+<div class="voice-select-group"><label class="voice-select-label">🎤 Pilih Suara:</label><select class="voice-select" id="gangguanVoiceSelect" onchange="updateVoiceIndex()"><option value="0">1. Default</option><option value="1">2. Alternatif 1</option><option value="2">3. Alternatif 2</option><option value="3" selected>4. Alternatif 3 </option><option value="4">5. Alternatif 4</option></select></div>
 <div class="voice-btn-group">
 <button class="voice-btn play" id="btnPlayGangguan" onclick="playGangguanVoice()" disabled><i class="fas fa-play"></i> Putar</button>
+<button class="voice-btn pause" id="btnPauseGangguan" onclick="pauseGangguanVoice()" disabled><i class="fas fa-pause"></i> Pause</button>
 <button class="voice-btn stop" id="btnStopGangguan" onclick="stopGangguanVoice()" disabled><i class="fas fa-stop"></i> Stop</button>
 <button class="voice-btn repeat" id="btnRepeatGangguan" onclick="toggleRepeatGangguan()"><i class="fas fa-redo"></i> Ulang</button>
 </div>
@@ -520,10 +663,11 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 </div>
 <div class="payment-voice-control">
 <div class="voice-control-title"><i class="fas fa-money-bill-wave"></i> SUARA PELANGGAN</div>
-<div class="voice-select-group"><label class="voice-select-label">🎤 Gender:</label><select class="voice-select" id="paymentGenderSelect" onchange="updatePaymentGender()"><option value="female" selected>👩 Perempuan</option><option value="male">👨 Laki-laki</option></select></div>
+<div class="voice-select-group"><label class="voice-select-label"> Gender:</label><select class="voice-select" id="paymentGenderSelect" onchange="updatePaymentGender()"><option value="female" selected> Perempuan</option><option value="male"> Laki-laki</option></select></div>
 <div class="voice-select-group"><label class="voice-select-label">🎤 Pilih Suara:</label><select class="voice-select" id="paymentVoiceSelect" onchange="updateVoiceIndex()"><option value="0">1. Default</option><option value="1">2. Alternatif 1</option><option value="2">3. Alternatif 2</option><option value="3" selected>4. Alternatif 3</option><option value="4">5. Alternatif 4</option></select></div>
 <div class="voice-btn-group">
 <button class="voice-btn play" id="btnPlayPayment" onclick="playLast5Payments()"><i class="fas fa-play"></i> Baca Terakhir</button>
+<button class="voice-btn pause" id="btnPausePayment" onclick="pausePaymentVoice()" disabled><i class="fas fa-pause"></i> Pause</button>
 <button class="voice-btn stop" id="btnStopPayment" onclick="stopPaymentVoice()" disabled><i class="fas fa-stop"></i> Stop</button>
 <button class="voice-btn repeat" id="btnRepeatPayment" onclick="toggleRepeatPayment()"><i class="fas fa-redo"></i> Auto</button>
 </div>
@@ -645,6 +789,7 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 <div class="legend-pelanggan-item"><div class="legend-pelanggan-marker" style="background:#f59e0b"><i class="fas fa-mobile-alt"></i></div><span>Bayar di PPOB</span></div>
 <div class="legend-pelanggan-item"><div class="legend-pelanggan-marker" style="background:#ef4444"><i class="fas fa-times"></i></div><span>Belum Bayar</span></div>
 </div>
+</div>
 
 <!-- WA QR MODAL -->
 <div class="modal fade" id="waQRModal" tabindex="-1" aria-hidden="true">
@@ -662,18 +807,45 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 </div></div>
 </div>
 
-<!-- SCRIPTS -->
+<!-- FOTO GANGGUAN MODAL -->
+<div class="modal fade" id="fotoGangguanModal" tabindex="-1" aria-hidden="true">
+<div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header" style="background:linear-gradient(135deg,#1e3c72,#2a5298);color:white;">
+<h5 class="modal-title"><i class="fas fa-images"></i> Foto Gangguan - <span id="modalKodeLaporan"></span></h5>
+<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body p-3">
+<div style="position:relative;width:100%;height:400px;background:#000;border-radius:8px;overflow:hidden;">
+<img id="mainSlideshowImg" src="" alt="Foto Gangguan" style="width:100%;height:100%;object-fit:contain;">
+<button onclick="changeSlideshow(-1)" style="position:absolute;top:50%;left:10px;transform:translateY(-50%);background:rgba(0,0,0,0.6);color:white;border:none;padding:10px 15px;cursor:pointer;border-radius:4px;"><i class="fas fa-chevron-left"></i></button>
+<button onclick="changeSlideshow(1)" style="position:absolute;top:50%;right:10px;transform:translateY(-50%);background:rgba(0,0,0,0.6);color:white;border:none;padding:10px 15px;cursor:pointer;border-radius:4px;"><i class="fas fa-chevron-right"></i></button>
+<div id="slideshowCounter" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:white;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;">1 / 1</div>
+</div>
+<div id="thumbnailContainer" style="display:flex;gap:6px;margin-top:10px;overflow-x:auto;padding:5px 0;"></div>
+<div id="fotoInfo" style="margin-top:10px;padding:10px;background:#f1f5f9;border-radius:6px;font-size:11px;"><strong id="fotoLokasi"></strong></div>
+</div>
+</div></div>
+</div>
+
+<!-- SCRIPTS LEAFLET UTAMA -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+
+<!-- D3.JS & LEAFLET ELEVATION (GUNAKAN VERSI UNPKG INI) -->
+<!-- D3.js (Wajib) -->
+<script src="https://unpkg.com/d3@7/dist/d3.min.js"></script>
+
+<!-- Leaflet Elevation versi Standalone/Bundle dari @raruto -->
 <script src="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.min.js"></script>
+
+<!-- SCRIPTS LAINNYA -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
-
 <script>
 // ============================================
-// 1. DATA DARI LARAVEL & KONFIGURASI
+// DATA DARI LARAVEL
 // ============================================
 const jalurPipaData = @json($jalurPipa ?? []);
 const bangunanData = @json($bangunan ?? []);
@@ -683,10 +855,10 @@ const pelangganDataFromLaravel = @json($pelanggan ?? []);
 const zonaData = @json($zonaList ?? []);
 const gangguanFotosData = @json($gangguanFotosData ?? []);
 const API_REALTIME_URL = '/api/pelanggan/realtime';
-const POLLING_INTERVAL = 10000; // ✅ Dipercepat ke 10 detik agar lebih responsif
+const POLLING_INTERVAL = 30000;
 
 // ============================================
-// 2. GLOBAL STATE & CACHE
+// GLOBAL STATE
 // ============================================
 let map, jalurLayers = {}, markerLayers = {}, pelangganLayers = {}, pelangganClusterGroup, zonaLayers = {};
 let isFullscreen = false, totalRevenue = 0, totalKubikasi = 0;
@@ -703,33 +875,10 @@ let audioUnlocked = false;
 let currentRouteControl = null, userLocationMarker = null, userLocation = null, routeStartMarker = null, routeDestMarker = null, routingLoaded = false, elevationControl = null;
 let reminderEnabled = true, reminderTimeout = null;
 let lastTriggered = { ist: '', pulang: '' };
-
-// ✅ ANTI-SPAM CACHE UNTUK PEMBAYARAN
-if (typeof window.processedPaymentKeys === 'undefined') {
-    window.processedPaymentKeys = new Set();
-}
-let isInitialLoadComplete = false;
-
 const REMINDER_MESSAGES = {
   ist: ["Waktu istirahat telah tiba. Jangan lupa makan siang. Tetap semangat!","Istirahat dulu yuk. Jaga kesehatan agar tetap produktif.","Saatnya rehat sejenak. Refresh pikiran, lanjutkan pekerjaan dengan segar."],
   pulang: ["Waktu pulang telah tiba. Terima kasih atas kerja keras hari ini. Hati-hati di jalan!","Simpan peralatan, rapikan meja, dan pulang dengan selamat.","Alhamdulillah hari ini selesai. Sampai jumpa besok, jaga kesehatan!"]
 };
-
-// ✅ TAMBAHKAN FUNGSI INI DI SINI:
-function initReminderAutoActive() {
-    const dot = document.getElementById('reminderStatusDot');
-    const txt = document.getElementById('reminderStatusText');
-    
-    // 1. Paksa UI menjadi hijau/aktif (tanpa memunculkan notifikasi toast)
-    if (dot) dot.className = 'voice-status-dot active';
-    if (txt) txt.textContent = 'Pengingat Aktif';
-    
-    // 2. Jalankan penjadwalan timer Istirahat & Pulang
-    if (typeof scheduleNextReminder === 'function') {
-        scheduleNextReminder();
-    }
-    console.log('✅ Sistem Pengingat (Istirahat & Pulang) otomatis AKTIF');
-}
 const voiceProfiles = [{ name: 'Default', pitch: 1.0, rate: 0.95 },{ name: 'Alternatif 1', pitch: 1.1, rate: 0.90 },{ name: 'Alternatif 2', pitch: 0.9, rate: 1.00 },{ name: 'Alternatif 3', pitch: 1.2, rate: 0.85 },{ name: 'Alternatif 4', pitch: 0.8, rate: 1.05 }];
 const musicFolder = '/audio/';
 const musicPlaylist = ['musik1.mp3','musik2.mp3','musik3.mp3','musik4.mp3','musik5.mp3'];
@@ -743,13 +892,17 @@ let isPaymentVoicePlaying = false, isPaymentVoicePaused = false, repeatPaymentVo
 let voiceQueue = [], isVoiceSpeaking = false, isNarrating = false, currentNarrationIndex = 0, narrationPaused = false;
 let unpaidCustomerMarkers = [], unpaidCustomerList = [];
 let displayedPct = 0, lastDataHash = '';
+let isInitialLoadComplete = false; // ✅ TAMBAHKAN INI
 
 // ============================================
-// 3. UTILITY FUNCTIONS
+// UTILITY FUNCTIONS
 // ============================================
 function throttle(fn, wait = 100) {
   let last = 0;
-  return function(...args) { const now = Date.now(); if (now - last >= wait) { last = now; fn.apply(this, args); } };
+  return function(...args) {
+    const now = Date.now();
+    if (now - last >= wait) { last = now; fn.apply(this, args); }
+  };
 }
 function parseKoordinator(s) { try { if (!s) return null; const c = s.split(',').map(x => parseFloat(x.trim())); return (c.length === 2 && !isNaN(c[0]) && !isNaN(c[1])) ? c : null; } catch(e) { return null; } }
 function formatRupiah(a) { return (!a || a === 0) ? 'Rp 0' : 'Rp ' + parseInt(a).toLocaleString('id-ID'); }
@@ -801,20 +954,32 @@ function cleanSpacedLetters(text) {
 function ubahRomawiKeAngka(teks) {
   if (!teks) return teks;
   let hasil = teks;
-  hasil = hasil.replace(/IIII\b/g, '4'); hasil = hasil.replace(/III\b/g, '3'); hasil = hasil.replace(/II\b/g, '2');
-  hasil = hasil.replace(/IV\b/g, '4'); hasil = hasil.replace(/I\b/g, '1');
+  hasil = hasil.replace(/IIII\b/g, '4');
+  hasil = hasil.replace(/III\b/g, '3');
+  hasil = hasil.replace(/II\b/g, '2');
+  hasil = hasil.replace(/IV\b/g, '4');
+  hasil = hasil.replace(/I\b/g, '1');
   return hasil;
 }
 
 // ============================================
-// 4. REMINDER SYSTEM
+// REMINDER SYSTEM
 // ============================================
 function toggleReminder(state) {
   reminderEnabled = state;
   const dot = document.getElementById('reminderStatusDot');
   const txt = document.getElementById('reminderStatusText');
-  if (state) { dot.className = 'voice-status-dot active'; txt.textContent = 'Pengingat Aktif'; scheduleNextReminder(); showNotification('🔔 Pengingat diaktifkan', 'success'); }
-  else { dot.className = 'voice-status-dot paused'; txt.textContent = 'Pengingat Nonaktif'; if (reminderTimeout) { clearTimeout(reminderTimeout); reminderTimeout = null; } showNotification('🔕 Pengingat dimatikan', 'warning'); }
+  if (state) {
+    dot.className = 'voice-status-dot active';
+    txt.textContent = 'Pengingat Aktif';
+    scheduleNextReminder();
+    showNotification(' Pengingat diaktifkan', 'success');
+  } else {
+    dot.className = 'voice-status-dot paused';
+    txt.textContent = 'Pengingat Nonaktif';
+    if (reminderTimeout) { clearTimeout(reminderTimeout); reminderTimeout = null; }
+    showNotification('🔕 Pengingat dimatikan', 'warning');
+  }
 }
 function scheduleNextReminder() {
   if (reminderTimeout) clearTimeout(reminderTimeout);
@@ -827,8 +992,15 @@ function scheduleNextReminder() {
   const [pH, pM] = pulangTime.split(':').map(Number);
   const targets = [{ h: istH, m: istM, type: 'ist' },{ h: pH, m: pM, type: 'pulang' }];
   let next = null;
-  targets.forEach(t => { const target = new Date(); target.setHours(t.h, t.m, 0, 0); if (target > now && (!next || target < next.time)) next = { time: target, type: t.type }; });
-  if (next) { const delay = next.time - now; reminderTimeout = setTimeout(() => { triggerReminder(next.type); scheduleNextReminder(); }, delay); }
+  targets.forEach(t => {
+    const target = new Date();
+    target.setHours(t.h, t.m, 0, 0);
+    if (target > now && (!next || target < next.time)) next = { time: target, type: t.type };
+  });
+  if (next) {
+    const delay = next.time - now;
+    reminderTimeout = setTimeout(() => { triggerReminder(next.type); scheduleNextReminder(); }, delay);
+  }
 }
 function triggerReminder(type) {
   const messages = REMINDER_MESSAGES[type];
@@ -841,7 +1013,6 @@ function triggerReminder(type) {
 function showBigReminder(type, msg) {
   document.querySelectorAll('.big-reminder-overlay').forEach(el => el.remove());
   const overlay = document.createElement('div');
-  overlay.className = 'big-reminder-overlay';
   overlay.style.cssText = `position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:99999;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease;`;
   const colors = { ist: { bg: 'linear-gradient(135deg,#f59e0b,#d97706)', icon: 'fa-coffee', title: '⏰ WAKTU ISTIRAHAT' }, pulang: { bg: 'linear-gradient(135deg,#ec4899,#db2777)', icon: 'fa-home', title: '🏠 WAKTU PULANG' } };
   const c = colors[type];
@@ -849,10 +1020,15 @@ function showBigReminder(type, msg) {
   document.body.appendChild(overlay);
   setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, 30000);
 }
-function testReminder(type) { const msg = REMINDER_MESSAGES[type][0]; showBigReminder(type, msg); showNotification(`🧪 Test pengingat ${type === 'ist' ? 'istirahat' : 'pulang'}`, 'info'); if (voiceSettings.enabled) speak(msg, voiceSettings.paymentGender); }
+function testReminder(type) {
+  const msg = REMINDER_MESSAGES[type][0];
+  showBigReminder(type, msg);
+  showNotification(`🧪 Test pengingat ${type === 'ist' ? 'istirahat' : 'pulang'}`, 'info');
+  if (voiceSettings.enabled) speak(msg, voiceSettings.paymentGender);
+}
 
 // ============================================
-// 5. ROUTING & ELEVATION
+// ROUTING & ELEVATION
 // ============================================
 function getIndonesianInstruction(step) {
   const type = step.maneuver.type;
@@ -868,8 +1044,10 @@ function getIndonesianInstruction(step) {
       if (modifier === 'slight left') return `Belok agak ke kiri ke ${road}`;
       if (modifier === 'slight right') return `Belok agak ke kanan ke ${road}`;
       return `Belok ke ${road}`;
-    case 'continue': case 'new name': return `Lurus terus di ${road}`;
-    case 'roundabout': case 'rotary': return `Masuk bundaran, ambil keluaran ke ${road}`;
+    case 'continue':
+    case 'new name': return `Lurus terus di ${road}`;
+    case 'roundabout':
+    case 'rotary': return `Masuk bundaran, ambil keluaran ke ${road}`;
     case 'merge': return `Bergabung ke arah ${modifier} ke ${road}`;
     case 'fork':
       if (modifier === 'left') return `Ambil jalan kiri ke ${road}`;
@@ -883,25 +1061,37 @@ function getIndonesianInstruction(step) {
   }
 }
 async function showRouteTo(lat, lng, label = 'Tujuan') {
-  showNotification('⏳ Memuat modul navigasi...', 'info');
+  showNotification(' Memuat modul navigasi...', 'info');
   const ok = await ensureRoutingLoaded();
   if (!ok) return;
   getUserLocation((start) => {
     clearRoute(true);
-    routeStartMarker = L.marker(start, { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:3px solid white;box-shadow:0 2px 12px rgba(59,130,246,0.6);font-size:13px;"><i class="fas fa-location-arrow"></i></div>`, iconSize: [32, 32], iconAnchor: [16, 16] }) }).addTo(map).bindPopup(`<div style="text-align:center"><strong>📍 Lokasi Anda</strong><br><small>Titik awal navigasi</small></div>`);
-    routeDestMarker = L.marker([lat, lng], { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:linear-gradient(135deg,#ef4444,#dc2626);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:3px solid white;box-shadow:0 2px 12px rgba(239,68,68,0.6);font-size:13px;"><i class="fas fa-flag-checkered"></i></div>`, iconSize: [32, 32], iconAnchor: [16, 16] }) }).addTo(map);
-    
-    currentRouteControl = L.Routing.control({
-      waypoints: [ L.latLng(start[0], start[1]), L.latLng(lat, lng) ],
-      routeWhileDragging: false, showAlternatives: true, addWaypoints: false, draggableWaypoints: false, fitSelectedRoutes: true,
-      lineOptions: { styles: [{ color: '#3b82f6', opacity: 0.95, weight: 6 },{ color: '#ffffff', opacity: 0.4, weight: 2 }] },
-      altLineOptions: { styles: [{ color: '#94a3b8', opacity: 0.5, weight: 4, dashArray: '8,6' }] },
-      createMarker: () => null,
-      // ✅ PERBAIKAN: Gunakan 'en' untuk mencegah crash, tapi kita terjemahkan manual di bawah
-      formatter: new L.Routing.Formatter({ language: 'en', units: 'metric' }),
-      router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' })
+    routeStartMarker = L.marker(start, {
+      icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:3px solid white;box-shadow:0 2px 12px rgba(59,130,246,0.6);font-size:13px;animation:pulse-dot 2s infinite;"><i class="fas fa-location-arrow"></i></div>`, iconSize: [32, 32], iconAnchor: [16, 16] })
+    }).addTo(map).bindPopup(`<div style="text-align:center"><strong>📍 Lokasi Anda</strong><br><small>Titik awal navigasi</small></div>`);
+    routeDestMarker = L.marker([lat, lng], {
+      icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:linear-gradient(135deg,#ef4444,#dc2626);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:3px solid white;box-shadow:0 2px 12px rgba(239,68,68,0.6);font-size:13px;"><i class="fas fa-flag-checkered"></i></div>`, iconSize: [32, 32], iconAnchor: [16, 16] })
     }).addTo(map);
-
+    // ✅ KODE BARU (SUDAH DIPERBAIKI)
+currentRouteControl = L.Routing.control({
+  waypoints: [ L.latLng(start[0], start[1]), L.latLng(lat, lng) ],
+  routeWhileDragging: false, 
+  showAlternatives: true, 
+  addWaypoints: false, 
+  draggableWaypoints: false, 
+  fitSelectedRoutes: true,
+  lineOptions: { styles: [{ color: '#3b82f6', opacity: 0.95, weight: 6 },{ color: '#ffffff', opacity: 0.4, weight: 2 }] },
+  altLineOptions: { styles: [{ color: '#94a3b8', opacity: 0.5, weight: 4, dashArray: '8,6' }] },
+  createMarker: () => null,
+  
+  // ✅ PERBAIKAN UTAMA: 
+  // 1. Gunakan class yang benar: L.Routing.Formatter (bukan Itinerary)
+  // 2. Paksa bahasa 'en' agar tidak error crash (karena 'en' selalu tersedia)
+  // 3. Units tetap 'metric' agar jarak tampil dalam km/meter
+  formatter: new L.Routing.Formatter({ language: 'en', units: 'metric' }),
+  
+  router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' })
+}).addTo(map);
     currentRouteControl.on('routesfound', function(e) {
       const route = e.routes[0];
       const jarakKm = (route.summary.totalDistance / 1000).toFixed(2);
@@ -933,7 +1123,10 @@ async function showRouteTo(lat, lng, label = 'Tujuan') {
       }
       map.flyTo([lat, lng], 16, { duration: 1.2 });
     });
-    currentRouteControl.on('routingerror', function() { showNotification('❌ Gagal menghitung rute. Coba lagi.', 'warning'); clearRoute(); });
+    currentRouteControl.on('routingerror', function() {
+      showNotification('❌ Gagal menghitung rute. Coba lagi.', 'warning');
+      clearRoute();
+    });
     const btn = document.getElementById('clearRouteBtn');
     if (btn) btn.style.display = 'flex';
   });
@@ -941,114 +1134,118 @@ async function showRouteTo(lat, lng, label = 'Tujuan') {
 async function ensureRoutingLoaded() {
   if (routingLoaded) return true;
   return new Promise((resolve) => {
-    const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = 'https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css'; document.head.appendChild(link);
-    const script = document.createElement('script'); script.src = 'https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js';
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css';
+    document.head.appendChild(link);
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js';
     script.onload = () => { routingLoaded = true; resolve(true); };
     script.onerror = () => { showNotification('❌ Gagal memuat routing', 'warning'); resolve(false); };
     document.head.appendChild(script);
   });
 }
 function getUserLocation(callback) {
-  // ✅ KOORDINAT PRESISI KANTOR UNIT DARMARAJA
-  const DARMAKOORDINAT = [-6.917821785545315, 108.07163674919619];
-  
-  // Directly bypass geolocation for Kiosk mode to ensure routing starts from the office
-  userLocation = DARMAKOORDINAT;
-  
-  if (typeof callback === 'function') {
+  if (!navigator.geolocation) {
+    showNotification('❌ Browser tidak mendukung GPS', 'warning');
+    userLocation = [-6.918, 108.074];
     callback(userLocation);
+    return;
   }
+  showNotification(' Mendeteksi lokasi Anda...', 'info');
+  navigator.geolocation.getCurrentPosition(
+    (pos) => { userLocation = [pos.coords.latitude, pos.coords.longitude]; callback(userLocation); },
+    (err) => { showNotification('❌ GPS ditolak. Pakai kantor PDAM sebagai titik awal', 'warning'); userLocation = [-6.918, 108.074]; callback(userLocation); },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
 }
 function clearRoute(silent = false) {
-  // ✅ PERBAIKAN: Tambahkan pengecekan null/undefined
-  if (currentRouteControl && typeof currentRouteControl.remove === 'function') {
-    try { map.removeControl(currentRouteControl); } catch(e) {}
-    currentRouteControl = null;
-  }
-  if (routeStartMarker && typeof routeStartMarker.remove === 'function') {
-    try { map.removeLayer(routeStartMarker); } catch(e) {}
-    routeStartMarker = null;
-  }
-  if (routeDestMarker && typeof routeDestMarker.remove === 'function') {
-    try { map.removeLayer(routeDestMarker); } catch(e) {}
-    routeDestMarker = null;
-  }
-  if (elevationControl && typeof elevationControl.remove === 'function') {
-    try { map.removeControl(elevationControl); } catch(e) {}
-    elevationControl = null;
-  }
+  if (currentRouteControl) { try { map.removeControl(currentRouteControl); } catch(e) {} currentRouteControl = null; }
+  if (routeStartMarker) { try { map.removeLayer(routeStartMarker); } catch(e) {} routeStartMarker = null; }
+  if (routeDestMarker) { try { map.removeLayer(routeDestMarker); } catch(e) {} routeDestMarker = null; }
+  if (elevationControl) { try { map.removeControl(elevationControl); } catch(e) {} elevationControl = null; }
   const btn = document.getElementById('clearRouteBtn');
   if (btn) btn.style.display = 'none';
-  if (!silent) showNotification('🗑️ Rute dihapus', 'info');
+  if (!silent) showNotification('️ Rute dihapus', 'info');
 }
-
 function showElevationProfile() {
-  if (!window.currentRouteCoords || !window.currentRouteCoords.length) {
-    showNotification('❌ Tidak ada data rute', 'warning');
-    return;
+  if (!window.currentRouteCoords) { 
+    showNotification(' Tidak ada data rute', 'warning'); 
+    return; 
   }
-  
-  // ✅ PERBAIKAN: Toggle hapus control jika tombol diklik ulang
-  if (elevationControl && typeof elevationControl.remove === 'function') {
-    try { map.removeControl(elevationControl); } catch(e) {}
-    elevationControl = null;
-    return;
+
+  // Toggle hapus control jika tombol diklik ulang
+  if (elevationControl) { 
+    map.removeControl(elevationControl); 
+    elevationControl = null; 
+    return; 
   }
-  
-  // Inisialisasi control elevasi
-  try {
-    elevationControl = L.control.elevation({
-      position: "bottomleft",
-      theme: "lightblue-theme",
-      width: 400,
-      height: 125,
-      margins: { top: 10, right: 20, bottom: 25, left: 40 },
-      useHeightIndicator: true,
-      interpolation: "curveLinear",
-      hoverNumber: { decimalsX: 2, decimalsY: 0 },
-      detached: false,
-      elevationDiv: null
-    }).addTo(map);
-    
-    const lineCoords = window.currentRouteCoords.map((c, index) => [
-      c.lng,
-      c.lat,
-      c.alt !== undefined ? c.alt : (c.elevation !== undefined ? c.elevation : 100 + (index % 50) * 2)
-    ]);
-    
-    const geojson = {
-      type: 'Feature',
-      properties: {},
-      geometry: {
-        type: 'LineString',
-        coordinates: lineCoords
-      }
-    };
-    
-    elevationControl.addData(geojson);
-    showNotification('📈 Profil elevasi ditampilkan', 'info');
-  } catch(e) {
-    console.error('❌ Error menampilkan elevasi:', e);
-    showNotification('❌ Gagal menampilkan elevasi', 'warning');
+
+  // Inisialisasi control elevasi menempel di dalam peta (kiri bawah)
+  elevationControl = L.control.elevation({
+    position: "bottomleft",
+    theme: "lightblue-theme",
+    width: 400,
+    height: 125,
+    margins: { top: 10, right: 20, bottom: 25, left: 40 },
+    useHeightIndicator: true,
+    interpolation: "curveLinear",
+    hoverNumber: { decimalsX: 2, decimalsY: 0 },
+    detached: false, // Menjaga agar grafik tetap berada di dalam overlay peta
+    elevationDiv: null
+  }).addTo(map);
+
+  // Mengambil koordinat dan nilai elevasi (gunakan fallback simulasi jika elevasi kosong)
+  const lineCoords = window.currentRouteCoords.map((c, index) => [
+    c.lng, 
+    c.lat, 
+    c.alt !== undefined ? c.alt : (c.elevation !== undefined ? c.elevation : 100 + (index % 50) * 2)
+  ]);
+
+  const geojson = { 
+    type: 'Feature', 
+    properties: {}, 
+    geometry: { 
+      type: 'LineString', 
+      coordinates: lineCoords 
+    } 
+  };
+
+  elevationControl.addData(geojson);
+  showNotification('📈 Profil elevasi ditampilkan', 'info');
+}
+function speakRouteInstructions() {
+  if (window.currentRouteTTS) {
+    showNotification('🔊 Membacakan petunjuk arah...', 'info');
+    speak(window.currentRouteTTS, 'female');
   }
 }
-function speakRouteInstructions() { if (window.currentRouteTTS) { showNotification('🔊 Membacakan petunjuk arah...', 'info'); speak(window.currentRouteTTS, 'female'); } }
 function goToLocation(lat, lng, zoom = 17, options = {}) {
   if (!map || isNaN(lat) || isNaN(lng)) { showNotification('❌ Koordinat tidak valid', 'warning'); return false; }
   map.flyTo([lat, lng], zoom, { duration: 1.2 });
-  if (options.openPopup && options.markerId) { setTimeout(() => { const m = markerLayers[options.markerId] || pelangganLayers[options.markerId]?.marker; if (m) m.openPopup(); }, 1200); }
+  if (options.openPopup && options.markerId) {
+    setTimeout(() => {
+      const m = markerLayers[options.markerId] || pelangganLayers[options.markerId]?.marker;
+      if (m) m.openPopup();
+    }, 1200);
+  }
   return true;
 }
 
 // ============================================
-// 6. AUDIO UNLOCK & YOUTUBE
+// AUDIO UNLOCK
 // ============================================
 function initAudioUnlock() {
   const unlockHandler = () => {
     if (audioUnlocked) return;
     audioUnlocked = true;
     console.log('🔓 Audio unlocked');
-    if ('speechSynthesis' in window) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); setTimeout(() => speechSynthesis.cancel(), 100); }
+    if ('speechSynthesis' in window) {
+      const u = new SpeechSynthesisUtterance(' ');
+      u.volume = 0;
+      speechSynthesis.speak(u);
+      setTimeout(() => speechSynthesis.cancel(), 100);
+    }
     const audioEl = document.getElementById('backgroundMusic');
     if (audioEl && audioEl.src && audioEl.src !== window.location.href) audioEl.play().catch(() => {});
     document.removeEventListener('click', unlockHandler);
@@ -1059,40 +1256,91 @@ function initAudioUnlock() {
   document.addEventListener('touchstart', unlockHandler, { once: false });
   document.addEventListener('keydown', unlockHandler, { once: false });
 }
-function extractYouTubeId(url) { const m = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/); return (m && m[2].length === 11) ? m[2] : null; }
+
+// ============================================
+// YOUTUBE
+// ============================================
+function extractYouTubeId(url) {
+  const m = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+  return (m && m[2].length === 11) ? m[2] : null;
+}
 function loadYouTube() {
   const url = document.getElementById('youtubeUrl').value.trim();
-  if (!url) { showNotification('❌ Paste link YouTube dulu', 'warning'); return; }
+  if (!url) { showNotification(' Paste link YouTube dulu', 'warning'); return; }
   const videoId = extractYouTubeId(url);
   if (!videoId) { showNotification('❌ Link tidak valid', 'warning'); return; }
   if (!window.YT) {
     showNotification('⏳ Memuat YouTube...', 'info');
-    const tag = document.createElement('script'); tag.src = 'https://www.youtube.com/iframe_api';
-    tag.onload = () => { const checkReady = setInterval(() => { if (window.YT && window.YT.Player) { clearInterval(checkReady); isYoutubeReady = true; createYouTubePlayer(videoId); } }, 100); };
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    tag.onload = () => {
+      const checkReady = setInterval(() => {
+        if (window.YT && window.YT.Player) { clearInterval(checkReady); isYoutubeReady = true; createYouTubePlayer(videoId); }
+      }, 100);
+    };
     document.head.appendChild(tag);
   } else { createYouTubePlayer(videoId); }
 }
 function createYouTubePlayer(videoId) {
   if (youtubePlayer) { try { youtubePlayer.destroy(); } catch(e) {} }
   document.getElementById('youtubePlayerContainer').innerHTML = '<div id="ytPlayer"></div>';
-  youtubePlayer = new YT.Player('ytPlayer', { height: '1', width: '1', videoId: videoId, playerVars: { autoplay: 1, controls: 0, loop: 1, playlist: videoId }, events: { onReady: (e) => { e.target.setVolume(document.getElementById('youtubeVolumeSlider')?.value || 50); e.target.playVideo(); showNotification('🎵 Musik diputar', 'success'); }, onError: () => showNotification('❌ Video tidak bisa diputar', 'warning') } });
+  youtubePlayer = new YT.Player('ytPlayer', {
+    height: '1', width: '1', videoId: videoId,
+    playerVars: { autoplay: 1, controls: 0, loop: 1, playlist: videoId },
+    events: {
+      onReady: (e) => { e.target.setVolume(document.getElementById('youtubeVolumeSlider')?.value || 50); e.target.playVideo(); showNotification('🎵 Musik diputar', 'success'); },
+      onError: () => showNotification('❌ Video tidak bisa diputar', 'warning')
+    }
+  });
 }
-function stopYouTube() { if (youtubePlayer && typeof youtubePlayer.stopVideo === 'function') { try { youtubePlayer.stopVideo(); youtubePlayer.destroy(); } catch(e) {} } youtubePlayer = null; document.getElementById('youtubePlayerContainer').innerHTML = ''; showNotification('⏹️ YouTube dihentikan', 'info'); }
-function setYouTubeVolume(v) { document.getElementById('youtubeVolumeValue').textContent = v + '%'; if (youtubePlayer && typeof youtubePlayer.setVolume === 'function') youtubePlayer.setVolume(parseInt(v)); }
+function stopYouTube() {
+  if (youtubePlayer && typeof youtubePlayer.stopVideo === 'function') { try { youtubePlayer.stopVideo(); youtubePlayer.destroy(); } catch(e) {} }
+  youtubePlayer = null;
+  document.getElementById('youtubePlayerContainer').innerHTML = '';
+  showNotification('️ YouTube dihentikan', 'info');
+}
+function setYouTubeVolume(v) {
+  document.getElementById('youtubeVolumeValue').textContent = v + '%';
+  if (youtubePlayer && typeof youtubePlayer.setVolume === 'function') youtubePlayer.setVolume(parseInt(v));
+}
 
 // ============================================
-// 7. MUTE LIVE & CIRCULAR PROGRESS
+// MUTE LIVE
 // ============================================
 function toggleMuteLive() { isLiveMuted = !isLiveMuted; syncMuteUI(); }
 function syncMuteUI() {
-  const btn = document.getElementById('btnMuteLive'); const statusDot = document.getElementById('muteLiveStatusDot'); const statusText = document.getElementById('muteLiveStatusText');
+  const btn = document.getElementById('btnMuteLive');
+  const statusDot = document.getElementById('muteLiveStatusDot');
+  const statusText = document.getElementById('muteLiveStatusText');
   if (!btn) return;
-  if (isLiveMuted) { btn.style.background = 'linear-gradient(135deg,#10b981,#059669)'; btn.innerHTML = '<i class="fas fa-volume-mute"></i> <span id="muteLiveText">Unmute Suara Live</span>'; if (statusDot) statusDot.className = 'voice-status-dot paused'; if (statusText) statusText.textContent = 'Suara Live Dimatikan'; }
-  else { btn.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)'; btn.innerHTML = '<i class="fas fa-volume-up"></i> <span id="muteLiveText">Mute Suara Live</span>'; if (statusDot) statusDot.className = 'voice-status-dot active'; if (statusText) statusText.textContent = 'Suara Live Aktif'; }
+  if (isLiveMuted) {
+    btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+    btn.innerHTML = '<i class="fas fa-volume-mute"></i> <span id="muteLiveText">Unmute Suara Live</span>';
+    if (statusDot) statusDot.className = 'voice-status-dot paused';
+    if (statusText) statusText.textContent = 'Suara Live Dimatikan';
+  } else {
+    btn.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
+    btn.innerHTML = '<i class="fas fa-volume-up"></i> <span id="muteLiveText">Mute Suara Live</span>';
+    if (statusDot) statusDot.className = 'voice-status-dot active';
+    if (statusText) statusText.textContent = 'Suara Live Aktif';
+  }
 }
-function initAutoLive() { isLiveMuted = true; syncMuteUI(); if (unpaidCustomerList.length > 0) { startLiveCycle(); showNotification('🔴 LIVE aktif otomatis — suara mute, klik Unmute di Panel Suara untuk mengaktifkan', 'live'); } }
+function initAutoLive() {
+  isLiveMuted = true;
+  syncMuteUI();
+  if (unpaidCustomerList.length > 0) {
+    startLiveCycle();
+    showNotification(' LIVE aktif otomatis — suara mute, klik Unmute di Panel Suara untuk mengaktifkan', 'live');
+  }
+}
+
+// ============================================
+// CIRCULAR PROGRESS
+// ============================================
 function updateCircularProgress(percentage) {
-  const fill = document.getElementById('circularProgressFill'); const dot = document.getElementById('circularDot'); const pctEl = document.getElementById('circularPercentage');
+  const fill = document.getElementById('circularProgressFill');
+  const dot = document.getElementById('circularDot');
+  const pctEl = document.getElementById('circularPercentage');
   if (!fill) return;
   let main, light, glow;
   if (percentage < 40) { main = '#ef4444'; light = '#fca5a5'; glow = '239,68,68'; }
@@ -1102,44 +1350,76 @@ function updateCircularProgress(percentage) {
   if (stops.length >= 3) { stops[0].style.stopColor = light; stops[1].style.stopColor = main; stops[2].style.stopColor = light; }
   fill.style.filter = `drop-shadow(0 0 8px rgba(${glow},0.8))`;
   if (pctEl) { pctEl.style.color = light; pctEl.style.textShadow = `0 0 10px rgba(${glow},0.9), 0 0 22px rgba(${glow},0.6), 0 2px 3px rgba(0,0,0,0.9)`; }
-  if (dot) { dot.style.background = light; dot.style.boxShadow = `0 0 8px rgba(${glow},1), 0 0 18px rgba(${glow},0.7)`; const r = (dot.closest('.circular-progress-wrapper').offsetWidth / 2) * 0.9; dot.style.transform = `rotate(${percentage * 3.6}deg) translateY(-${r}px)`; }
-  const C = 2 * Math.PI * 45; fill.style.strokeDasharray = C; fill.style.strokeDashoffset = C - (percentage / 100) * C;
-  animateCounter(displayedPct, percentage, 2000); displayedPct = percentage;
+  if (dot) {
+    dot.style.background = light;
+    dot.style.boxShadow = `0 0 8px rgba(${glow},1), 0 0 18px rgba(${glow},0.7)`;
+    const r = (dot.closest('.circular-progress-wrapper').offsetWidth / 2) * 0.9;
+    dot.style.transform = `rotate(${percentage * 3.6}deg) translateY(-${r}px)`;
+  }
+  const C = 2 * Math.PI * 45;
+  fill.style.strokeDasharray = C;
+  fill.style.strokeDashoffset = C - (percentage / 100) * C;
+  animateCounter(displayedPct, percentage, 2000);
+  displayedPct = percentage;
+  
 }
 function animateCounter(from, to, duration) {
-  const el = document.getElementById('circularPercentage'); if (!el) return;
+  const el = document.getElementById('circularPercentage');
+  if (!el) return;
   const start = performance.now();
-  function frame(now) { const t = Math.min((now - start) / duration, 1); const eased = 1 - Math.pow(1 - t, 3); el.textContent = (from + (to - from) * eased).toFixed(1) + '%'; if (t < 1) requestAnimationFrame(frame); }
+  function frame(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3);
+    el.textContent = (from + (to - from) * eased).toFixed(1) + '%';
+    if (t < 1) requestAnimationFrame(frame);
+  }
   requestAnimationFrame(frame);
 }
 
 // ============================================
-// 8. REVENUE & TODAY STATS
+// REVENUE CALCULATION
 // ============================================
 function calculateMonthlyRevenue() {
-  const now = new Date(); const currentDay = now.getDate(); const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(); const remainingDays = daysInMonth - currentDay;
-  let totalTarget = 0, totalCollected = 0, totalUnpaidWithPenalty = 0, totalKubikasiTarget = 0, totalKubikasiCollected = 0;
+  const now = new Date();
+  const currentDay = now.getDate();
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const remainingDays = daysInMonth - currentDay;
+  let totalTarget = 0, totalCollected = 0, totalUnpaidWithPenalty = 0;
+  let totalKubikasiTarget = 0, totalKubikasiCollected = 0;
   pelangganDataFromLaravel.forEach(p => {
-    const jumlah = parseFloat(p.jumlah) || 0; const kubikasi = parseFloat(p.pakai) || 0;
+    const jumlah = parseFloat(p.jumlah) || 0;
+    const kubikasi = parseFloat(p.pakai) || 0;
     const hasLoket = p.tanggal_pembayaran_loket && !['-','.','',null].includes(p.tanggal_pembayaran_loket);
     const hasPPOB = p.tanggal_pembayaran_ppob && !['-','.','',null].includes(p.tanggal_pembayaran_ppob);
     totalKubikasiTarget += kubikasi;
     if (hasLoket || hasPPOB) { totalCollected += jumlah; totalKubikasiCollected += kubikasi; }
-    else { let tagihan = jumlah; if (currentDay > 20) tagihan += 5000; if (jumlah > 1000000) tagihan += 10000; totalUnpaidWithPenalty += tagihan; }
+    else {
+      let tagihan = jumlah;
+      if (currentDay > 20) tagihan += 5000;
+      if (jumlah > 1000000) tagihan += 10000;
+      totalUnpaidWithPenalty += tagihan;
+    }
     totalTarget += jumlah;
   });
-  return { totalTarget, totalCollected, totalUnpaidWithPenalty, percentage: totalTarget > 0 ? (totalCollected / totalTarget) * 100 : 0, currentDay, daysInMonth, remainingDays, dailyTarget: remainingDays > 0 ? totalUnpaidWithPenalty / remainingDays : 0, totalKubikasiTarget, totalKubikasiCollected };
+  const percentage = totalTarget > 0 ? (totalCollected / totalTarget) * 100 : 0;
+  const dailyTarget = remainingDays > 0 ? totalUnpaidWithPenalty / remainingDays : 0;
+  return { totalTarget, totalCollected, totalUnpaidWithPenalty, percentage, currentDay, daysInMonth, remainingDays, dailyTarget, totalKubikasiTarget, totalKubikasiCollected };
 }
 function updateRevenueDisplay() {
   const currentHash = pelangganDataFromLaravel.map(p => `${p.jumlah}|${p.tanggal_pembayaran_loket}|${p.tanggal_pembayaran_ppob}`).join('');
-  if (currentHash === lastDataHash) return; lastDataHash = currentHash; updateRevenueProgress();
+  if (currentHash === lastDataHash) return;
+  lastDataHash = currentHash;
+  updateRevenueProgress();
 }
 function updateRevenueProgress() {
-  const stats = calculateMonthlyRevenue(); updateCircularProgress(stats.percentage);
-  document.getElementById('currentDayOfMonth').textContent = stats.currentDay; document.getElementById('remainingDays').textContent = stats.remainingDays;
+  const stats = calculateMonthlyRevenue();
+  updateCircularProgress(stats.percentage);
+  document.getElementById('currentDayOfMonth').textContent = stats.currentDay;
+  document.getElementById('remainingDays').textContent = stats.remainingDays;
   document.getElementById('targetRevenue').textContent = formatRupiah(stats.totalTarget) + ' || ' + stats.totalKubikasiTarget.toFixed(1) + ' M³';
   document.getElementById('collectedRevenue').textContent = formatRupiah(stats.totalCollected) + ' || ' + stats.totalKubikasiCollected.toFixed(1) + ' M³';
-  document.getElementById('remainingRevenue').textContent = formatRupiah(stats.totalUnpaidWithPenalty); document.getElementById('dailyTarget').textContent = formatRupiah(stats.dailyTarget);
+  document.getElementById('remainingRevenue').textContent = formatRupiah(stats.totalUnpaidWithPenalty);
+  document.getElementById('dailyTarget').textContent = formatRupiah(stats.dailyTarget);
   renderWilayahProgress();
 }
 function calculateWilayahProgress() {
@@ -1147,49 +1427,91 @@ function calculateWilayahProgress() {
   pelangganDataFromLaravel.forEach(p => {
     const w = p.nama_wilayah || 'Tidak Diketahui';
     if (!mapWil[w]) mapWil[w] = { target: 0, collected: 0, count: 0, paid: 0 };
-    mapWil[w].target += parseFloat(p.jumlah) || 0; mapWil[w].count++;
+    mapWil[w].target += parseFloat(p.jumlah) || 0;
+    mapWil[w].count++;
     if (getPaymentStatus(p).status !== 'Belum Bayar') { mapWil[w].collected += parseFloat(p.jumlah) || 0; mapWil[w].paid++; }
   });
   return mapWil;
 }
 function renderWilayahProgress() {
-  const grid = document.getElementById('wilayahProgressGrid'); if (!grid) return;
-  const C = 2 * Math.PI * 26; let html = '';
+  const grid = document.getElementById('wilayahProgressGrid');
+  if (!grid) return;
+  const C = 2 * Math.PI * 26;
+  let html = '';
   Object.entries(calculateWilayahProgress()).sort((a, b) => (b[1].collected / (b[1].target || 1)) - (a[1].collected / (a[1].target || 1))).forEach(([wilayah, d]) => {
     const pct = d.target > 0 ? (d.collected / d.target) * 100 : 0;
     const color = pct < 40 ? '#ef4444' : pct < 70 ? '#f59e0b' : '#10b981';
     const offset = C - (pct / 100) * C;
     html += `<div class="wilayah-ring-card" onclick="focusOnWilayah('${wilayah.replace(/'/g, "\\'")}')"><div class="wilayah-ring-wrapper"><svg width="52" height="52" viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="6"/><circle cx="30" cy="30" r="26" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}" data-offset="${offset}" transform="rotate(-90 30 30)" style="transition: stroke-dashoffset 1.5s ease;"/></svg><div class="wilayah-ring-pct" style="color:${color}">${pct.toFixed(0)}%</div></div><div class="wilayah-ring-name">${wilayah}</div><div class="wilayah-ring-detail">${d.paid}/${d.count} lunas</div></div>`;
   });
-  grid.innerHTML = html; setTimeout(() => { grid.querySelectorAll('circle[data-offset]').forEach(c => c.style.strokeDashoffset = c.getAttribute('data-offset')); }, 150);
+  grid.innerHTML = html;
+  setTimeout(() => { grid.querySelectorAll('circle[data-offset]').forEach(c => c.style.strokeDashoffset = c.getAttribute('data-offset')); }, 150);
 }
+
+// ============================================
+// TODAY STATS
+// ============================================
 function calculateTodayStats() {
-  const todayStr = new Date().toISOString().split('T')[0]; let totalToday = 0, countToday = 0, kubikasiToday = 0;
-  pelangganDataFromLaravel.forEach(p => { const s = getPaymentStatus(p); if (s.tanggal) { const d = new Date(s.tanggal).toISOString().split('T')[0]; if (d === todayStr) { totalToday += parseFloat(p.jumlah) || 0; kubikasiToday += parseFloat(p.pakai) || 0; countToday++; } } });
+  const todayStr = new Date().toISOString().split('T')[0];
+  let totalToday = 0, countToday = 0, kubikasiToday = 0;
+  pelangganDataFromLaravel.forEach(p => {
+    const s = getPaymentStatus(p);
+    if (s.tanggal) {
+      const d = new Date(s.tanggal).toISOString().split('T')[0];
+      if (d === todayStr) { totalToday += parseFloat(p.jumlah) || 0; kubikasiToday += parseFloat(p.pakai) || 0; countToday++; }
+    }
+  });
   return { totalToday, countToday, kubikasiToday };
 }
 let lastTodayHash = '';
 function updateTodayStatsDisplay() {
-  const stats = calculateTodayStats(); const hash = `${stats.totalToday}|${stats.countToday}|${stats.kubikasiToday}`;
-  if (hash === lastTodayHash) return; lastTodayHash = hash;
-  const now = new Date(); if (isNaN(now.getTime())) return;
+  const stats = calculateTodayStats();
+  const hash = `${stats.totalToday}|${stats.countToday}|${stats.kubikasiToday}`;
+  if (hash === lastTodayHash) return;
+  lastTodayHash = hash;
+  const now = new Date();
+  if (isNaN(now.getTime())) return;
   const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
   document.getElementById('today-date').innerHTML = `<div style="font-size:9px;opacity:0.85;">Pembayaran Hari Ini</div><div style="font-size:11px;font-weight:700;">${dateStr}</div><div style="font-size:10px;opacity:0.9;"><i class="fas fa-clock"></i> ${timeStr} WIB</div>`;
   document.getElementById('today-amount').textContent = formatRupiah(stats.totalToday) + ' || M³ ' + stats.kubikasiToday.toFixed(1);
-  document.getElementById('today-count').textContent = stats.countToday; document.getElementById('today-kubikasi').textContent = stats.kubikasiToday.toFixed(1);
+  document.getElementById('today-count').textContent = stats.countToday;
+  document.getElementById('today-kubikasi').textContent = stats.kubikasiToday.toFixed(1);
 }
 setInterval(updateTodayStatsDisplay, 6000);
 
 // ============================================
-// 9. VOICE SYSTEM
+// VOICE SYSTEM
 // ============================================
-function isIndonesianVoice(voice) { if (!voice) return false; const lang = (voice.lang || '').toLowerCase(), name = (voice.name || '').toLowerCase(); if (lang.startsWith('id')) return true; return ID_KEYWORDS.some(k => name.includes(k)); }
-function detectGender(voice) { if (!voice) return 'unknown'; const name = (voice.name || '').toLowerCase(); if (FEMALE_KEYWORDS.some(k => name.includes(k))) return 'female'; if (MALE_KEYWORDS.some(k => name.includes(k))) return 'male'; return 'unknown'; }
-function loadVoices() { if (!('speechSynthesis' in window)) return; availableVoices = speechSynthesis.getVoices(); categorizeIndonesianVoices(); if (availableVoices.length === 0) speechSynthesis.onvoiceschanged = () => { availableVoices = speechSynthesis.getVoices(); categorizeIndonesianVoices(); }; }
+function isIndonesianVoice(voice) {
+  if (!voice) return false;
+  const lang = (voice.lang || '').toLowerCase(), name = (voice.name || '').toLowerCase();
+  if (lang.startsWith('id')) return true;
+  return ID_KEYWORDS.some(k => name.includes(k));
+}
+function detectGender(voice) {
+  if (!voice) return 'unknown';
+  const name = (voice.name || '').toLowerCase();
+  if (FEMALE_KEYWORDS.some(k => name.includes(k))) return 'female';
+  if (MALE_KEYWORDS.some(k => name.includes(k))) return 'male';
+  return 'unknown';
+}
+function loadVoices() {
+  if (!('speechSynthesis' in window)) return;
+  availableVoices = speechSynthesis.getVoices();
+  categorizeIndonesianVoices();
+  if (availableVoices.length === 0) speechSynthesis.onvoiceschanged = () => { availableVoices = speechSynthesis.getVoices(); categorizeIndonesianVoices(); };
+}
 function categorizeIndonesianVoices() {
   indonesianVoices = []; indonesianFemaleVoices = []; indonesianMaleVoices = [];
-  availableVoices.forEach(v => { if (isIndonesianVoice(v)) { indonesianVoices.push(v); const g = detectGender(v); if (g === 'female') indonesianFemaleVoices.push(v); else if (g === 'male') indonesianMaleVoices.push(v); } });
+  availableVoices.forEach(v => {
+    if (isIndonesianVoice(v)) {
+      indonesianVoices.push(v);
+      const g = detectGender(v);
+      if (g === 'female') indonesianFemaleVoices.push(v);
+      else if (g === 'male') indonesianMaleVoices.push(v);
+    }
+  });
   if (!indonesianVoices.length) indonesianVoices = [...availableVoices];
   if (!indonesianFemaleVoices.length) indonesianFemaleVoices = [...indonesianVoices];
   if (!indonesianMaleVoices.length) indonesianMaleVoices = [...indonesianVoices];
@@ -1197,17 +1519,22 @@ function categorizeIndonesianVoices() {
 function speak(text, gender = 'female', callback) {
   if (!voiceSettings.enabled || !('speechSynthesis' in window)) { if (callback) callback(); return; }
   try { speechSynthesis.cancel(); } catch(e) {}
-  const audioEl = document.getElementById('backgroundMusic'); const wasPlaying = isMusicPlaying && !isMusicPaused; const origVol = audioEl ? audioEl.volume : 0.3;
+  const audioEl = document.getElementById('backgroundMusic');
+  const wasPlaying = isMusicPlaying && !isMusicPaused;
+  const origVol = audioEl ? audioEl.volume : 0.3;
   if (wasPlaying && audioEl) audioEl.volume = Math.max(0.05, origVol * 0.3);
   const trySpeak = (retry = 0) => {
     if (availableVoices.length === 0 && retry < 10) { setTimeout(() => trySpeak(retry + 1), 200); return; }
     setTimeout(() => {
       try {
-        const u = new SpeechSynthesisUtterance(text); u.lang = 'id-ID';
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'id-ID';
         const idx = gender === 'female' ? voiceSettings.paymentVoiceIndex : voiceSettings.gangguanVoiceIndex;
         const pool = gender === 'female' ? indonesianFemaleVoices : indonesianMaleVoices;
-        if (pool.length) u.voice = pool[idx % pool.length] || pool[0]; else if (indonesianVoices.length) u.voice = indonesianVoices[0];
-        const p = voiceProfiles[idx] || voiceProfiles[0]; u.pitch = p.pitch; u.rate = p.rate; u.volume = voiceSettings.volume;
+        if (pool.length) u.voice = pool[idx % pool.length] || pool[0];
+        else if (indonesianVoices.length) u.voice = indonesianVoices[0];
+        const p = voiceProfiles[idx] || voiceProfiles[0];
+        u.pitch = p.pitch; u.rate = p.rate; u.volume = voiceSettings.volume;
         u.onend = () => { if (wasPlaying && audioEl) audioEl.volume = origVol; if (callback) callback(); };
         u.onerror = () => { if (wasPlaying && audioEl) audioEl.volume = origVol; if (callback) callback(); };
         setTimeout(() => { try { speechSynthesis.speak(u); } catch(e) { if (callback) callback(); } }, 50);
@@ -1217,408 +1544,555 @@ function speak(text, gender = 'female', callback) {
   trySpeak();
 }
 function addToVoiceQueue(text, gender = 'female', callback = null) { voiceQueue.push({ text, gender, callback }); processVoiceQueue(); }
-function processVoiceQueue() { if (isVoiceSpeaking || !voiceQueue.length) return; isVoiceSpeaking = true; const item = voiceQueue.shift(); speak(item.text, item.gender, () => { isVoiceSpeaking = false; if (item.callback) item.callback(); setTimeout(processVoiceQueue, 500); }); }
-function clearVoiceQueue() { voiceQueue = []; isVoiceSpeaking = false; try { speechSynthesis.cancel(); } catch(e) {} }
+function processVoiceQueue() {
+  if (isVoiceSpeaking || !voiceQueue.length) return;
+  isVoiceSpeaking = true;
+  const item = voiceQueue.shift();
+  speak(item.text, item.gender, () => { isVoiceSpeaking = false; if (item.callback) item.callback(); setTimeout(processVoiceQueue, 500); });
+}
+function clearVoiceQueue() { voiceQueue = []; isVoiceSpeaking = false; speechSynthesis.cancel(); }
 function updateGangguanGender() { voiceSettings.gangguanGender = document.getElementById('gangguanGenderSelect').value; }
 function updatePaymentGender() { voiceSettings.paymentGender = document.getElementById('paymentGenderSelect').value; }
-function updateVoiceIndex() { voiceSettings.gangguanVoiceIndex = parseInt(document.getElementById('gangguanVoiceSelect').value); voiceSettings.paymentVoiceIndex = parseInt(document.getElementById('paymentVoiceSelect').value); }
+function updateVoiceIndex() {
+  voiceSettings.gangguanVoiceIndex = parseInt(document.getElementById('gangguanVoiceSelect').value);
+  voiceSettings.paymentVoiceIndex = parseInt(document.getElementById('paymentVoiceSelect').value);
+}
 function testVoice() { speak('Halo, ini test suara PDAM UP Darmaraja.', voiceSettings.paymentGender); }
 function setVoiceVolume(v) { voiceSettings.volume = v / 100; document.getElementById('volumeValue').textContent = v + '%'; }
 function toggleVoicePanel() { document.getElementById('voicePanel').classList.toggle('active'); }
 
 // ============================================
-// 10. MUSIC & GANGGUAN VOICE
+// MUSIC
 // ============================================
-function changeMusic() { const t = document.getElementById('musicSelect').value; if (!t) return; currentMusicType = t; const i = musicPlaylist.indexOf(t); if (i !== -1) currentPlaylistIndex = i; const a = document.getElementById('backgroundMusic'); a.src = musicFolder + t; a.load(); a.oncanplaythrough = () => { if (!isMusicPlaying) playMusic(); }; }
-function playMusic() { const a = document.getElementById('backgroundMusic'); if (!a.src || a.src === window.location.href) { showNotification('❌ Pilih musik dulu', 'warning'); return; } a.volume = parseInt(document.getElementById('musicVolumeSlider').value) / 100; a.loop = false; a.onended = () => { if (autoRotateMusic) playNextTrack(); }; a.play().then(() => { isMusicPlaying = true; isMusicPaused = false; document.getElementById('btnPlayMusic').disabled = true; document.getElementById('btnStopMusic').disabled = false; }).catch(() => showNotification('❌ Klik halaman dulu', 'warning')); }
-function playNextTrack() { currentPlaylistIndex = (currentPlaylistIndex + 1) % musicPlaylist.length; currentMusicType = musicPlaylist[currentPlaylistIndex]; const a = document.getElementById('backgroundMusic'); a.src = musicFolder + currentMusicType; a.load(); a.oncanplaythrough = () => a.play(); }
-function pauseMusic() { const a = document.getElementById('backgroundMusic'); if (!isMusicPlaying) return; if (isMusicPaused) { a.play(); isMusicPaused = false; } else { a.pause(); isMusicPaused = true; } }
-function stopMusic() { const a = document.getElementById('backgroundMusic'); a.pause(); a.currentTime = 0; isMusicPlaying = false; isMusicPaused = false; document.getElementById('btnPlayMusic').disabled = false; document.getElementById('btnStopMusic').disabled = true; }
-function toggleLoopMusic() { autoRotateMusic = !autoRotateMusic; }
+function changeMusic() {
+  const t = document.getElementById('musicSelect').value;
+  if (!t) return;
+  currentMusicType = t;
+  const i = musicPlaylist.indexOf(t);
+  if (i !== -1) currentPlaylistIndex = i;
+  const a = document.getElementById('backgroundMusic');
+  a.src = musicFolder + t; a.load();
+  a.oncanplaythrough = () => { if (!isMusicPlaying) playMusic(); };
+}
+function playMusic() {
+  const a = document.getElementById('backgroundMusic');
+  if (!a.src || a.src === window.location.href) { showNotification('❌ Pilih musik dulu', 'warning'); return; }
+  a.volume = parseInt(document.getElementById('musicVolumeSlider').value) / 100;
+  a.loop = false;
+  a.onended = () => { if (autoRotateMusic) playNextTrack(); };
+  a.play().then(() => {
+    isMusicPlaying = true; isMusicPaused = false;
+    document.getElementById('btnPlayMusic').disabled = true;
+    document.getElementById('btnPauseMusic').disabled = false;
+    document.getElementById('btnStopMusic').disabled = false;
+  }).catch(() => showNotification('❌ Klik halaman dulu', 'warning'));
+}
+function playNextTrack() {
+  currentPlaylistIndex = (currentPlaylistIndex + 1) % musicPlaylist.length;
+  currentMusicType = musicPlaylist[currentPlaylistIndex];
+  const a = document.getElementById('backgroundMusic');
+  a.src = musicFolder + currentMusicType; a.load();
+  a.oncanplaythrough = () => a.play();
+}
+function pauseMusic() {
+  const a = document.getElementById('backgroundMusic');
+  if (!isMusicPlaying) return;
+  if (isMusicPaused) { a.play(); isMusicPaused = false; document.getElementById('btnPauseMusic').innerHTML = '<i class="fas fa-pause"></i> Pause'; }
+  else { a.pause(); isMusicPaused = true; document.getElementById('btnPauseMusic').innerHTML = '<i class="fas fa-play"></i> Lanjut'; }
+}
+function stopMusic() {
+  const a = document.getElementById('backgroundMusic');
+  a.pause(); a.currentTime = 0;
+  isMusicPlaying = false; isMusicPaused = false;
+  document.getElementById('btnPlayMusic').disabled = false;
+  document.getElementById('btnPauseMusic').disabled = true;
+  document.getElementById('btnStopMusic').disabled = true;
+}
+function toggleLoopMusic() {
+  autoRotateMusic = !autoRotateMusic;
+  document.getElementById('btnLoopMusic').innerHTML = autoRotateMusic ? '<i class="fas fa-redo"></i> Rotasi: ON' : '<i class="fas fa-redo"></i> Rotasi: OFF';
+}
 function setMusicVolume(v) { document.getElementById('backgroundMusic').volume = v / 100; document.getElementById('musicVolumeValue').textContent = v + '%'; }
-function setScrollSpeed(v) { const duration = 210 - v; document.documentElement.style.setProperty('--scroll-duration', duration + 's'); const c = document.getElementById('notificationContent'); if (c) { c.style.animation = 'none'; c.offsetHeight; c.style.animation = `scroll-left ${duration}s linear infinite`; } let label = 'Normal'; if (v < 40) label = 'Sangat Lambat'; else if (v < 70) label = 'Lambat'; else if (v < 130) label = 'Cepat'; else label = 'Sangat Cepat'; document.getElementById('scrollSpeedValue').textContent = label; }
-function formatGangguanVoiceText(g) { const kode = g.kode_laporan.split('').join(' '); const status = g.status === 'menunggu' ? 'Menunggu' : g.status === 'dalam_proses' ? 'Dalam Proses' : 'Selesai'; let lokasi = toTitleCase(cleanSpacedLetters(g.lokasi || '-').toLowerCase()); lokasi = convertRegionRomanToNumber(lokasi); let wilayah = toTitleCase(cleanSpacedLetters(g.wilayah_terdampak || '-').toLowerCase()); wilayah = convertRegionRomanToNumber(wilayah); return `Gangguan nomor ${kode}. Status: ${status}. Lokasi: ${lokasi}. Wilayah Terdampak: ${wilayah}. Ukuran pipa: ${g.ukuran_pipa || '-'}.`; }
-function playGangguanVoiceLoop() { if (!isGangguanVoicePlaying || isGangguanVoicePaused) return; if (!activeGangguanList.length) { updateGangguanVoiceStatus('idle', 'Tidak ada gangguan'); return; } let idx = 0; (function playNext() { if (!isGangguanVoicePlaying || isGangguanVoicePaused) return; if (idx >= activeGangguanList.length) { if (repeatGangguanVoice) { idx = 0; setTimeout(playNext, 2000); } else stopGangguanVoice(); return; } updateGangguanVoiceStatus('playing', `Memutar: ${activeGangguanList[idx].kode_laporan}`); addToVoiceQueue(formatGangguanVoiceText(activeGangguanList[idx]), voiceSettings.gangguanGender, () => { idx++; setTimeout(playNext, 1500); }); })(); }
-function playGangguanVoice() { if (!activeGangguanList.length) { showNotification('❌ Tidak ada gangguan aktif', 'warning'); return; } isGangguanVoicePlaying = true; isGangguanVoicePaused = false; updateGangguanVoiceStatus('playing', `Memutar ${activeGangguanList.length} gangguan`); updateGangguanVoiceButtons(); playGangguanVoiceLoop(); }
-function pauseGangguanVoice() { if (!isGangguanVoicePlaying) return; isGangguanVoicePaused = !isGangguanVoicePaused; if (isGangguanVoicePaused) try { speechSynthesis.pause(); } catch(e){} else try { speechSynthesis.resume(); } catch(e){} updateGangguanVoiceStatus(isGangguanVoicePaused ? 'paused' : 'playing', isGangguanVoicePaused ? 'Dijeda' : 'Dilanjutkan'); updateGangguanVoiceButtons(); }
-function stopGangguanVoice() { isGangguanVoicePlaying = false; isGangguanVoicePaused = false; try { speechSynthesis.cancel(); } catch(e){} updateGangguanVoiceStatus('idle', 'Dihentikan'); updateGangguanVoiceButtons(); }
-function toggleRepeatGangguan() { repeatGangguanVoice = !repeatGangguanVoice; }
+function setScrollSpeed(v) {
+  const duration = 210 - v;
+  document.documentElement.style.setProperty('--scroll-duration', duration + 's');
+  const c = document.getElementById('notificationContent');
+  if (c) { c.style.animation = 'none'; c.offsetHeight; c.style.animation = `scroll-left ${duration}s linear infinite`; }
+  let label = 'Normal';
+  if (v < 40) label = 'Sangat Lambat'; else if (v < 70) label = 'Lambat'; else if (v < 130) label = 'Cepat'; else if (v >= 130) label = 'Sangat Cepat';
+  document.getElementById('scrollSpeedValue').textContent = label;
+}
+
+// ============================================
+// GANGGUAN VOICE
+// ============================================
+function formatGangguanVoiceText(g) {
+  const kode = g.kode_laporan.split('').join(' ');
+  const status = g.status === 'menunggu' ? 'Menunggu' : g.status === 'dalam_proses' ? 'Dalam Proses' : 'Selesai';
+  let lokasi = toTitleCase(cleanSpacedLetters(g.lokasi || '-').toLowerCase());
+  lokasi = convertRegionRomanToNumber(lokasi);
+  let wilayah = toTitleCase(cleanSpacedLetters(g.wilayah_terdampak || '-').toLowerCase());
+  wilayah = convertRegionRomanToNumber(wilayah);
+  return `Gangguan nomor ${kode}. Status: ${status}. Lokasi: ${lokasi}. Wilayah Terdampak: ${wilayah}. Ukuran pipa: ${g.ukuran_pipa || '-'}.`;
+}
+function playGangguanVoiceLoop() {
+  if (!isGangguanVoicePlaying || isGangguanVoicePaused) return;
+  if (!activeGangguanList.length) { updateGangguanVoiceStatus('idle', 'Tidak ada gangguan'); return; }
+  let idx = 0;
+  (function playNext() {
+    if (!isGangguanVoicePlaying || isGangguanVoicePaused) return;
+    if (idx >= activeGangguanList.length) { if (repeatGangguanVoice) { idx = 0; setTimeout(playNext, 2000); } else stopGangguanVoice(); return; }
+    updateGangguanVoiceStatus('playing', `Memutar: ${activeGangguanList[idx].kode_laporan}`);
+    addToVoiceQueue(formatGangguanVoiceText(activeGangguanList[idx]), voiceSettings.gangguanGender, () => { idx++; setTimeout(playNext, 1500); });
+  })();
+}
+function playGangguanVoice() {
+  if (!activeGangguanList.length) { showNotification('❌ Tidak ada gangguan aktif', 'warning'); return; }
+  isGangguanVoicePlaying = true; isGangguanVoicePaused = false;
+  updateGangguanVoiceStatus('playing', `Memutar ${activeGangguanList.length} gangguan`);
+  updateGangguanVoiceButtons(); playGangguanVoiceLoop();
+}
+function pauseGangguanVoice() {
+  if (!isGangguanVoicePlaying) return;
+  isGangguanVoicePaused = !isGangguanVoicePaused;
+  if (isGangguanVoicePaused) speechSynthesis.pause(); else speechSynthesis.resume();
+  updateGangguanVoiceStatus(isGangguanVoicePaused ? 'paused' : 'playing', isGangguanVoicePaused ? 'Dijeda' : 'Dilanjutkan');
+  updateGangguanVoiceButtons();
+}
+function stopGangguanVoice() { isGangguanVoicePlaying = false; isGangguanVoicePaused = false; speechSynthesis.cancel(); updateGangguanVoiceStatus('idle', 'Dihentikan'); updateGangguanVoiceButtons(); }
+function toggleRepeatGangguan() { repeatGangguanVoice = !repeatGangguanVoice; document.getElementById('btnRepeatGangguan').innerHTML = repeatGangguanVoice ? '<i class="fas fa-redo"></i> Ulang: ON' : '<i class="fas fa-redo"></i> Ulang: OFF'; }
 function updateGangguanVoiceStatus(s, t) { const d = document.getElementById('gangguanVoiceStatusDot'); d.className = 'voice-status-dot' + (s === 'playing' ? ' active' : s === 'paused' ? ' paused' : ''); document.getElementById('gangguanVoiceStatusText').textContent = t; }
-function updateGangguanVoiceButtons() { const h = activeGangguanList.length > 0; document.getElementById('btnPlayGangguan').disabled = isGangguanVoicePlaying || !h; document.getElementById('btnStopGangguan').disabled = !isGangguanVoicePlaying && !isGangguanVoicePaused; }
+function updateGangguanVoiceButtons() { const h = activeGangguanList.length > 0; document.getElementById('btnPlayGangguan').disabled = isGangguanVoicePlaying || !h; document.getElementById('btnPauseGangguan').disabled = !isGangguanVoicePlaying; document.getElementById('btnStopGangguan').disabled = !isGangguanVoicePlaying && !isGangguanVoicePaused; }
 
 // ============================================
-// 11. PAYMENT VOICE & NARRATION
+// PAYMENT VOICE
 // ============================================
-function playPaymentSequence() { if (!isPaymentVoicePlaying || isPaymentVoicePaused) return; if (currentPaymentIndex >= last5Payments.length) { if (repeatPaymentVoice) { currentPaymentIndex = 0; setTimeout(playPaymentSequence, 2000); } else stopPaymentVoice(); return; } const p = last5Payments[currentPaymentIndex]; updatePaymentVoiceStatus('playing', `Memutar: ${p.nama}`); const nama = formatNameForSpeech(p.nama); const metode = p.metode === 'PPOB' ? 'P. P. O. B.' : 'Kantor Unit Cabang'; const text = `Terima kasih kepada Yang Terhormat, ${nama}, telah melakukan pembayaran di ${metode}.`; addToVoiceQueue(text, voiceSettings.paymentGender, () => { currentPaymentIndex++; setTimeout(playPaymentSequence, 1500); }); }
-function playLast5Payments() { if (!last5Payments.length) { showNotification('❌ Belum ada data pembayaran', 'warning'); return; } isPaymentVoicePlaying = true; isPaymentVoicePaused = false; currentPaymentIndex = 0; updatePaymentVoiceStatus('playing', `Memutar ${last5Payments.length} pembayaran`); updatePaymentVoiceButtons(); playPaymentSequence(); }
-function pausePaymentVoice() { if (!isPaymentVoicePlaying) return; isPaymentVoicePaused = !isPaymentVoicePaused; if (isPaymentVoicePaused) try { speechSynthesis.pause(); } catch(e){} else try { speechSynthesis.resume(); } catch(e){} updatePaymentVoiceStatus(isPaymentVoicePaused ? 'paused' : 'playing', isPaymentVoicePaused ? 'Dijeda' : 'Dilanjutkan'); updatePaymentVoiceButtons(); }
-function stopPaymentVoice() { isPaymentVoicePlaying = false; isPaymentVoicePaused = false; currentPaymentIndex = 0; try { speechSynthesis.cancel(); } catch(e){} updatePaymentVoiceStatus('idle', 'Dihentikan'); updatePaymentVoiceButtons(); }
-function toggleRepeatPayment() { repeatPaymentVoice = !repeatPaymentVoice; }
+function playPaymentSequence() {
+  if (!isPaymentVoicePlaying || isPaymentVoicePaused) return;
+  if (currentPaymentIndex >= last5Payments.length) { if (repeatPaymentVoice) { currentPaymentIndex = 0; setTimeout(playPaymentSequence, 2000); } else stopPaymentVoice(); return; }
+  const p = last5Payments[currentPaymentIndex];
+  updatePaymentVoiceStatus('playing', `Memutar: ${p.nama}`);
+  const nama = formatNameForSpeech(p.nama);
+  const metode = p.metode === 'PPOB' ? 'P. P. O. B.' : 'Kantor Unit Cabang';
+  const text = `Terima kasih kepada Yang Terhormat, ${nama}, telah melakukan pembayaran di ${metode}.`;
+  addToVoiceQueue(text, voiceSettings.paymentGender, () => { currentPaymentIndex++; setTimeout(playPaymentSequence, 1500); });
+}
+function playLast5Payments() {
+  if (!last5Payments.length) { showNotification('❌ Belum ada data pembayaran', 'warning'); return; }
+  isPaymentVoicePlaying = true; isPaymentVoicePaused = false; currentPaymentIndex = 0;
+  updatePaymentVoiceStatus('playing', `Memutar ${last5Payments.length} pembayaran`);
+  updatePaymentVoiceButtons(); playPaymentSequence();
+}
+function pausePaymentVoice() {
+  if (!isPaymentVoicePlaying) return;
+  isPaymentVoicePaused = !isPaymentVoicePaused;
+  if (isPaymentVoicePaused) speechSynthesis.pause(); else speechSynthesis.resume();
+  updatePaymentVoiceStatus(isPaymentVoicePaused ? 'paused' : 'playing', isPaymentVoicePaused ? 'Dijeda' : 'Dilanjutkan');
+  updatePaymentVoiceButtons();
+}
+function stopPaymentVoice() { isPaymentVoicePlaying = false; isPaymentVoicePaused = false; currentPaymentIndex = 0; speechSynthesis.cancel(); updatePaymentVoiceStatus('idle', 'Dihentikan'); updatePaymentVoiceButtons(); }
+function toggleRepeatPayment() { repeatPaymentVoice = !repeatPaymentVoice; document.getElementById('btnRepeatPayment').innerHTML = repeatPaymentVoice ? '<i class="fas fa-redo"></i> Auto: ON' : '<i class="fas fa-redo"></i> Auto: OFF'; }
 function updatePaymentVoiceStatus(s, t) { const d = document.getElementById('paymentVoiceStatusDot'); d.className = 'voice-status-dot' + (s === 'playing' ? ' active' : s === 'paused' ? ' paused' : ''); document.getElementById('paymentVoiceStatusText').textContent = t; }
-function updatePaymentVoiceButtons() { const h = last5Payments.length > 0; document.getElementById('btnPlayPayment').disabled = isPaymentVoicePlaying || !h; document.getElementById('btnStopPayment').disabled = !isPaymentVoicePlaying && !isPaymentVoicePaused; }
-function generateDynamicNarration() { const n = []; n.push("Selamat datang di Sistem Monitoring PDAM Unit Pelaksana Darmaraja."); const total = pelangganDataFromLaravel.length; let kantor = 0, ppob = 0, belum = 0; pelangganDataFromLaravel.forEach(p => { const s = getPaymentStatus(p); if (s.status === 'Kantor') kantor++; else if (s.status === 'PPOB') ppob++; else belum++; }); n.push(`Saat ini kami melayani ${total} pelanggan. ${kantor} membayar di kantor, ${ppob} melalui PPOB, dan ${belum} belum membayar.`); const aktif = gangguanData.filter(g => g.status !== 'selesai').length; n.push(aktif > 0 ? `Terdapat ${aktif} gangguan aktif.` : 'Seluruh jaringan beroperasi normal.'); const stats = calculateMonthlyRevenue(); n.push(`Progres pendapatan bulan ini ${stats.percentage.toFixed(1)} persen, terkumpul ${formatRupiah(stats.totalCollected)} dari target ${formatRupiah(stats.totalTarget)}.`); return n; }
-function narrateUnitProfile() { if (isNarrating) { isNarrating = false; clearVoiceQueue(); showNotification('❌ Narasi dihentikan', 'info'); return; } isNarrating = true; currentNarrationIndex = 0; if (isLiveDashboardActive) stopLiveCycle(); const narrations = generateDynamicNarration(); (function playNext() { if (!isNarrating || currentNarrationIndex >= narrations.length) { isNarrating = false; showNotification('✅ Narasi selesai', 'success'); return; } speak(narrations[currentNarrationIndex], voiceSettings.paymentGender, () => { currentNarrationIndex++; setTimeout(playNext, 800); }); })(); }
+function updatePaymentVoiceButtons() { const h = last5Payments.length > 0; document.getElementById('btnPlayPayment').disabled = isPaymentVoicePlaying || !h; document.getElementById('btnPausePayment').disabled = !isPaymentVoicePlaying; document.getElementById('btnStopPayment').disabled = !isPaymentVoicePlaying && !isPaymentVoicePaused; }
 
 // ============================================
-// 12. REALTIME POLLING & PAYMENT HANDLER (ANTI-SPAM)
+// NARRATION
 // ============================================
-function startRealtimePolling() { initializePaymentTimestamps(); realtimePollingInterval = setInterval(checkNewPayments, POLLING_INTERVAL); setTimeout(checkNewPayments, 1500); }
-function initializePaymentTimestamps() { pelangganDataFromLaravel.forEach(p => { const s = getPaymentStatus(p); if (s.tanggal) lastKnownPaymentTimestamps[p.no_pelanggan] = s.tanggal; }); isFirstLoad = false; }
-// ============================================
-// REALTIME POLLING (VERSI RINGAN & CEPAT)
-// ============================================
-let spokenPayments = new Set(); // Cache sederhana untuk ID yang sudah dibacakan
+function generateDynamicNarration() {
+  const n = [];
+  n.push("Selamat datang di Sistem Monitoring PDAM Unit Pelaksana Darmaraja.");
+  const total = pelangganDataFromLaravel.length;
+  let kantor = 0, ppob = 0, belum = 0;
+  pelangganDataFromLaravel.forEach(p => { const s = getPaymentStatus(p); if (s.status === 'Kantor') kantor++; else if (s.status === 'PPOB') ppob++; else belum++; });
+  n.push(`Saat ini kami melayani ${total} pelanggan. ${kantor} membayar di kantor, ${ppob} melalui PPOB, dan ${belum} belum membayar.`);
+  const aktif = gangguanData.filter(g => g.status !== 'selesai').length;
+  n.push(aktif > 0 ? `Terdapat ${aktif} gangguan aktif.` : 'Seluruh jaringan beroperasi normal.');
+  const stats = calculateMonthlyRevenue();
+  n.push(`Progres pendapatan bulan ini ${stats.percentage.toFixed(1)} persen, terkumpul ${formatRupiah(stats.totalCollected)} dari target ${formatRupiah(stats.totalTarget)}.`);
+  return n;
+}
+function narrateUnitProfile() {
+  if (isNarrating) { isNarrating = false; clearVoiceQueue(); showNotification('❌ Narasi dihentikan', 'info'); return; }
+  isNarrating = true; currentNarrationIndex = 0;
+  if (isLiveDashboardActive) stopLiveCycle();
+  const narrations = generateDynamicNarration();
+  (function playNext() {
+    if (!isNarrating || currentNarrationIndex >= narrations.length) { isNarrating = false; showNotification('✅ Narasi selesai', 'success'); return; }
+    speak(narrations[currentNarrationIndex], voiceSettings.paymentGender, () => { currentNarrationIndex++; setTimeout(playNext, 800); });
+  })();
+}
 
+// ============================================
+// REALTIME POLLING
+// ============================================
+function startRealtimePolling() {
+  initializePaymentTimestamps();
+  realtimePollingInterval = setInterval(checkNewPayments, POLLING_INTERVAL);
+  setTimeout(checkNewPayments, 3000);
+}
+function initializePaymentTimestamps() {
+  pelangganDataFromLaravel.forEach(p => { const s = getPaymentStatus(p); if (s.tanggal) lastKnownPaymentTimestamps[p.no_pelanggan] = s.tanggal; });
+  isFirstLoad = false;
+}
 async function checkNewPayments() {
   try {
     const res = await fetch(API_REALTIME_URL + '?t=' + Date.now());
     if (!res.ok) return;
     const result = await res.json();
     if (!result.success || !result.pelanggan) return;
-
     const newPayments = [];
     result.pelanggan.forEach(p => {
-      const mapped = { 
-        no_pelanggan: p.no_pelanggan || p.no_rekening || '-', 
-        nama: p.nama || 'Tanpa Nama', 
-        jumlah: p.jumlah || '0', 
-        pakai: p.pakai || '0', 
-        kode_gol_trf: p.kode_gol_trf || '-', 
-        nama_wilayah: p.nama_wilayah || p.cabang || '-', 
-        koordinator: p.koordinator || '', 
-        tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null, 
-        tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null 
-      };
+      const mapped = { no_pelanggan: p.no_pelanggan || p.no_rekening || '-', nama: p.nama || 'Tanpa Nama', jumlah: p.jumlah || '0', pakai: p.pakai || '0', kode_gol_trf: p.kode_gol_trf || '-', nama_wilayah: p.nama_wilayah || p.cabang || '-', koordinator: p.koordinator || '', tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null, tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null };
       const s = getPaymentStatus(mapped);
-      if (s.tanggal) { 
-        const last = lastKnownPaymentTimestamps[mapped.no_pelanggan]; 
-        if (!last || last !== s.tanggal) { 
-          newPayments.push({ ...mapped, statusInfo: s, isNewPayment: !last }); 
-          lastKnownPaymentTimestamps[mapped.no_pelanggan] = s.tanggal; 
-        } 
+      if (s.tanggal) {
+        const last = lastKnownPaymentTimestamps[mapped.no_pelanggan];
+        if (!last || last !== s.tanggal) { newPayments.push({ ...mapped, statusInfo: s, isNewPayment: !last }); lastKnownPaymentTimestamps[mapped.no_pelanggan] = s.tanggal; }
       }
     });
-
-    if (newPayments.length && !isFirstLoad) { 
-      // ✅ PERBAIKAN: Ambil HANYA pembayaran yang benar-benar baru
-      const trulyNewPayments = newPayments.filter(p => p.isNewPayment);
-      
-      if (trulyNewPayments.length > 0) {
-        // ✅ AMBIL HANYA 1 PELANGGAN PERTAMA (Terbaru)
-        const singleLatestPayment = trulyNewPayments[0];
-        
-        console.log(`🔊 Membacakan HANYA 1 pembayaran terbaru: ${singleLatestPayment.nama}`);
-        
-        // Panggil fungsi suara HANYA untuk 1 pelanggan ini
-        handlePaymentReceived(singleLatestPayment);
-        
-        // Update tampilan revenue (cukup 1x saja)
-        updateRevenueDisplay();
-
-        // Jika ada lebih dari 1 pembayaran baru, beri tahu di console bahwa sisanya di-skip suaranya
-        if (trulyNewPayments.length > 1) {
-          console.log(`ℹ️ ${trulyNewPayments.length - 1} pembayaran lain hanya di-update di UI, TIDAK dibacakan suaranya.`);
-        }
-      }
+    if (newPayments.length && !isFirstLoad) {
+      newPayments.filter(p => p.isNewPayment).forEach((p, i) => { setTimeout(() => { handlePaymentReceived(p); updateRevenueDisplay(); }, i * 3000); });
     }
-  } catch(e) { 
-    console.error('Polling error:', e); 
-  }
+  } catch(e) { console.error('Polling error:', e); }
 }
 function stopRealtimePolling() { if (realtimePollingInterval) { clearInterval(realtimePollingInterval); realtimePollingInterval = null; } }
 
 // ============================================
-// GLOBAL STATE & STORAGE (ANTI-DUPLIKASI)
+// PAYMENT NOTIFICATION
 // ============================================
-if (typeof window.processedPaymentKeys === 'undefined') {
-  window.processedPaymentKeys = new Set();
-}
-
-// ============================================
-// HELPER 1: FORMAT NAMA (Mengeja ke Kata)
-// ============================================
-// Mengubah "A J A" -> "Aja", "B U D I" -> "Budi"
-function formatNamaTanpaSpasiEja(nama) {
-  if (!nama) return 'Pelanggan';
-  
-  // Hapus spasi di antara huruf kapital/kecil tunggal secara presisi
-  let namaBersih = String(nama).replace(/(?<=\b[A-Za-z])\s+(?=[A-Za-z]\b)/g, '');
-  
-  // Format Title Case (Huruf depan kapital, sisanya kecil)
-  return namaBersih.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
-}
-
-// ============================================
-// HELPER 2: FORMAT WILAYAH (Romawi ke Angka)
-// ============================================
-// Mengubah "WILAYAH I" / "Wilayah II" -> "Wilayah 1" / "Wilayah 2" (Anti-Dobel Kata)
-function formatWilayahKeAngka(wilayahText) {
-  if (!wilayahText) return 'Wilayah tidak terdaftar';
-
-  let teks = String(wilayahText).trim();
-
-  // Hapus kata "WILAYAH" dari string bawaan API agar tidak menjadi "Wilayah Wilayah X"
-  teks = teks.replace(/\bWILAYAH\b/gi, '').trim();
-
-  // Konversi Angka Romawi ke Angka Biasa (Urutan terbesar ke terkecil agar aman)
-  teks = teks
-    .replace(/\bIV\b/gi, '4')
-    .replace(/\bIII\b/gi, '3')
-    .replace(/\bII\b/gi, '2')
-    .replace(/\bI\b/gi, '1');
-
-  return `Wilayah ${teks}`;
-}
-
-// ============================================
-// FUNGSI UTAMA PEMBAYARAN REALTIME
-// ============================================
+window.addEventListener('load', () => {
+  if (typeof speechSynthesis === 'undefined') return;
+  const siapkan = () => { speechSynthesis.getVoices(); };
+  siapkan();
+  speechSynthesis.onvoiceschanged = siapkan;
+  const uji = new SpeechSynthesisUtterance('');
+  uji.volume = 0; uji.lang = 'id-ID';
+  speechSynthesis.speak(uji);
+});
 function handlePaymentReceived(pelanggan) {
-  if (!pelanggan || typeof pelanggan !== 'object') return;
+  if (!pelanggan || !pelanggan.no_pelanggan) return;
 
-  // 1. Ekstraksi Data Pelanggan dengan Fallback Fleksibel
-  const namaPelanggan = pelanggan.nama || pelanggan.nama_pelanggan || 'Pelanggan';
-  const idUnik = pelanggan.no_pelanggan || pelanggan.id || pelanggan.no_sambungan || pelanggan.id_pelanggan || 'ID_UNKNOWN';
-  
-  // Tanggal / Stempel Waktu Transaksi
-  const tanggalAtauJam = pelanggan.tanggal_pembayaran_loket 
-    || pelanggan.tanggal_pembayaran_ppob 
-    || pelanggan.created_at 
-    || pelanggan.id_transaksi 
-    || Date.now();
-
-  // 2. Buat Kunci Unik & Cek Anti-Spam
-  const paymentKey = `${idUnik}_${tanggalAtauJam}`.trim();
-
-  if (window.processedPaymentKeys.has(paymentKey)) {
-    console.log('⏳ Skip suara: Transaksi ini sudah dibacakan sebelumnya.');
+  // 1. SKIP SAAT INITIAL LOAD (5-10 detik pertama aplikasi dimuat)
+  if (!window.isInitialLoadComplete) {
+    // Masukkan ke cache agar saat initial load selesai, data lama ini tidak dibaca ulang
+    window.spokenPaymentsCache.add(pelanggan.no_pelanggan);
+    console.log('⏳ Skip suara - masih initial load:', pelanggan.nama);
     return;
   }
 
-  // Tandai kunci transaksi sebagai sudah diproses
-  window.processedPaymentKeys.add(paymentKey);
-
-  // Batasi kapasitas memori Set (Maksimal simpan 100 entri terakhir)
-  if (window.processedPaymentKeys.size > 100) {
-    const firstItem = window.processedPaymentKeys.values().next().value;
-    window.processedPaymentKeys.delete(firstItem);
+  // 2. CEK CACHE: Jika ID pelanggan sudah pernah dibacakan, SKIP!
+  if (window.spokenPaymentsCache.has(pelanggan.no_pelanggan)) {
+    console.log('⏳ Skip suara - transaksi sudah pernah dibacakan:', pelanggan.nama);
+    return;
   }
 
-  // 3. Olah Teks (Nama, Alamat, Wilayah)
-  const namaNormal = formatNamaTanpaSpasiEja(namaPelanggan);
-  const alamatRaw = pelanggan.alamat || pelanggan.alamat_pelanggan || 'alamat tidak terdaftar';
-  const wilayahRaw = pelanggan.wilayah || pelanggan.nama_wilayah || pelanggan.kode_wilayah || '';
-  const wilayahNormal = formatWilayahKeAngka(wilayahRaw);
+  // 3. JIKA TRANSAKSI BENAR-BENAR BARU: Tandai ID-nya agar tidak dibaca lagi nanti
+  window.spokenPaymentsCache.add(pelanggan.no_pelanggan);
 
-  // 4. Deteksi Sumber Transaksi (PPOB vs Kantor Unit)
-  const metode = pelanggan?.statusInfo?.metode || pelanggan?.metode_pembayaran || '';
-  const isPPOB = String(metode).toUpperCase() === 'PPOB' || Boolean(pelanggan.tanggal_pembayaran_ppob);
+  // --- PROSES NOTIFIKASI & SUARA REALTIME ---
+  console.log('💰 Payment received REALTIME:', pelanggan);
 
-  // 5. Susun kalimat lengkap untuk pembacaan suara (TTS)
-  let fullMessage = '';
-
-  if (isPPOB) {
-    // Format Suara PPOB
-    fullMessage = `INFO PPOB: Yth. ${namaNormal}, ${alamatRaw}, ${wilayahNormal}. Pembayaran berhasil diterima. Terima kasih atas kepercayaan Anda!`;
-  } else {
-    // Format Suara Kantor Unit
-    fullMessage = `Yth. ${namaNormal}, ${alamatRaw}, ${wilayahNormal}. Pembayaran diterima melalui Kantor Unit Darmaraja. Terima kasih atas kepercayaan Anda pada PDAM Darmaraja!`;
-  }
-
-  console.log('💰 Payment received (Dibacakan):', fullMessage);
-
-  // 6. Notifikasi Visual UI (Opsional)
   if (typeof showNotification === 'function') {
-    showNotification(
-      isPPOB ? `📲 INFO PPOB: ${namaNormal}` : `💰 Pembayaran Kantor: ${namaNormal}`, 
-      'payment'
-    );
+    showNotification(`💰 Pembayaran dari ${pelanggan.nama || 'Pelanggan'} — Terima kasih!`, 'payment');
   }
 
-  // 7. Eksekusi Pembacaan Suara (Text-to-Speech)
-  if (typeof speak === 'function') {
-    speak(fullMessage, 'female');
-  } else if ('speechSynthesis' in window) {
-    const utterance = new SpeechSynthesisUtterance(fullMessage);
-    utterance.lang = 'id-ID';
-    utterance.rate = 0.95; // Kecepatan pembacaan optimal
-    speechSynthesis.speak(utterance);
+  if (typeof speechSynthesis === 'undefined') return;
+
+  const nama = ((typeof formatNameForSpeech === 'function' ? formatNameForSpeech(pelanggan.nama || 'Pelanggan') : pelanggan.nama || 'Pelanggan')).replace(/\s+/g, ' ');
+  const blok = pelanggan.nama_blok || '';
+  const almt = pelanggan.alamat || '';
+  const wilayahAsli = pelanggan.nama_wilayah || 'wilayah tidak terdaftar';
+  const wilayah = ubahRomawiKeAngka(wilayahAsli);
+  const alamat = String(blok && blok !== '-' ? blok : almt && almt !== '-' ? almt : wilayah).replace(/\//g, ' ').trim();
+  const metode = pelanggan?.statusInfo?.metode || 'Kantor';
+  const acak = a => a[(Math.random() * a.length) | 0];
+
+  const pesan = metode === 'PPOB'
+    ? `${acak(['Info PPOB, ada pembayaran.', 'Info PPOB, transaksi masuk.', 'Info PPOB, lunas tercatat.'])} Dari ${nama}, ${alamat}, ${wilayah}, sukses. ${acak(['Terima kasih.', 'Terima kasih banyak.', 'Selesai, terima kasih.'])}`
+    : `${acak(['Terima kasih kepada', 'Konfirmasi pembayaran dari', 'Diterima pembayaran atas nama', 'Pembayaran telah kami terima dari', 'Selamat, pembayaran atas nama'])} ${nama}, beralamat di ${alamat}, ${wilayah}. ${acak(['Telah kami terima dengan baik.', 'Transaksi telah tercatat lunas.', 'Pembayaran sudah tercatat di sistem.', 'Lunas tercatat, terima kasih.', 'Terima kasih atas pembayarannya, selamat beraktivitas.'])}`;
+
+  console.log('🔊 Reading Realtime Speech:', pesan);
+
+  if (speechSynthesis.speaking || speechSynthesis.pending) { 
+    speechSynthesis.cancel(); 
   }
+
+  setTimeout(() => {
+    const u = new SpeechSynthesisUtterance(pesan);
+    u.lang = 'id-ID'; 
+    u.rate = 1.15; 
+    u.pitch = 1.1; 
+    u.volume = 1;
+    typeof speak === 'function' ? speak(pesan, 'female') : speechSynthesis.speak(u);
+  }, 0);
 }
-// ============================================
-// TEST FUNCTIONS
-// ============================================
 function testPaymentNotification() {
   console.log('🧪 Testing pembayaran KANTOR...');
-  window.isInitialLoadComplete = true;
-  const dummy = { 
-    no_pelanggan: 'TEST-KANTOR-' + Date.now(), 
-    nama: 'A J A', 
-    nama_blok: 'BLOK C3 / 12', 
-    alamat: 'Jl. Raya Darmaraja No. 45', 
-    nama_wilayah: 'WILAYAH I', 
-    jumlah: '604800', 
-    pakai: '71', 
-    kode_gol_trf: 'RT.D', 
-    statusInfo: { status: 'Kantor', color: '#10b981', icon: 'fa-building', tanggal: new Date().toISOString(), metode: 'Kantor' } 
-  };
-  handlePaymentReceived(dummy);
-  if (typeof updateUIAfterPayment === 'function') updateUIAfterPayment(dummy);
+  const dummyPelanggan = { no_pelanggan: '0301001001', nama: 'A J A', nama_blok: 'BLOK C3 / 12', alamat: 'Jl. Raya Darmaraja No. 45', nama_wilayah: 'WILAYAH I', jumlah: '604800', pakai: '71', kode_gol_trf: 'RT.D', koordinator: '-6.9170766,108.0685615', statusInfo: { status: 'Kantor', color: '#10b981', icon: 'fa-building', tanggal: new Date().toISOString(), metode: 'Kantor' } };
+  handlePaymentReceived(dummyPelanggan);
+  if (typeof updateUIAfterPayment === 'function') updateUIAfterPayment(dummyPelanggan);
+  showNotification('🧪 Test pembayaran KANTOR dipicu!', 'success');
 }
-
 function testPaymentPPOB() {
   console.log('🧪 Testing pembayaran PPOB...');
-  window.isInitialLoadComplete = true;
-  const dummy = { 
-    no_pelanggan: 'TEST-PPOB-' + Date.now(), 
-    nama: 'H. ACENG SUHANDI', 
-    nama_blok: 'BLOK A2 / 07', 
-    alamat: 'Kp. Cieunteung RT 02 RW 05', 
-    nama_wilayah: 'WILAYAH III', 
-    jumlah: '418600', 
-    pakai: '52', 
-    kode_gol_trf: 'RT.D', 
-    statusInfo: { status: 'PPOB', color: '#f59e0b', icon: 'fa-mobile-alt', tanggal: new Date().toISOString(), metode: 'PPOB' } 
-  };
-  handlePaymentReceived(dummy);
-  if (typeof updateUIAfterPayment === 'function') updateUIAfterPayment(dummy);
+  const dummyPelanggan = { no_pelanggan: '0301007155', nama: 'H. ACENG SUHANDI', nama_blok: 'BLOK A2 / 07', alamat: 'Kp. Cieunteung RT 02 RW 05', nama_wilayah: 'WILAYAH III', jumlah: '418600', pakai: '52', kode_gol_trf: 'RT.D', koordinator: '-6.9152425,108.0678316', statusInfo: { status: 'PPOB', color: '#f59e0b', icon: 'fa-mobile-alt', tanggal: new Date().toISOString(), metode: 'PPOB' } };
+  handlePaymentReceived(dummyPelanggan);
+  if (typeof updateUIAfterPayment === 'function') updateUIAfterPayment(dummyPelanggan);
+  showNotification('🧪 Test pembayaran PPOB dipicu!', 'success');
 }
 function updateUIAfterPayment(pelanggan) {
-  const bar = document.getElementById('notificationBar'), content = document.getElementById('notificationContent'); if (!bar || !content) return;
-  bar.style.display = 'block'; const metode = pelanggan.statusInfo?.metode === 'PPOB' ? 'PPOB' : 'Kantor'; const icon = metode === 'PPOB' ? 'fa-mobile-alt' : 'fa-building';
+  const bar = document.getElementById('notificationBar'), content = document.getElementById('notificationContent');
+  if (!bar || !content) return;
+  bar.style.display = 'block';
+  const metode = pelanggan.statusInfo?.metode === 'PPOB' ? 'PPOB' : 'Kantor';
+  const icon = metode === 'PPOB' ? 'fa-mobile-alt' : 'fa-building';
   const html = `<div class="notification-item new-payment"><strong>${pelanggan.nama}</strong> <span class="amount">${formatRupiah(pelanggan.jumlah)}</span> <span class="location"><i class="fas ${icon}"></i> ${metode}</span></div>`;
-  content.innerHTML = html + html; content.style.animation = 'none'; content.offsetHeight; content.style.animation = `scroll-left ${getComputedStyle(document.documentElement).getPropertyValue('--scroll-duration')} linear infinite`;
+  content.innerHTML = html + html;
+  content.style.animation = 'none'; content.offsetHeight;
+  content.style.animation = `scroll-left ${getComputedStyle(document.documentElement).getPropertyValue('--scroll-duration')} linear infinite`;
 }
 function updateNotificationBar(payments) {
-  const bar = document.getElementById('notificationBar'), content = document.getElementById('notificationContent'); if (!payments.length) { bar.style.display = 'none'; return; }
-  bar.style.display = 'block'; last5Payments = payments.slice(0, 5); let html = '';
+  const bar = document.getElementById('notificationBar'), content = document.getElementById('notificationContent');
+  if (!payments.length) { bar.style.display = 'none'; return; }
+  bar.style.display = 'block';
+  last5Payments = payments.slice(0, 5);
+  let html = '';
   payments.forEach(p => { html += `<div class="notification-item"><strong>${p.nama}</strong> <span class="amount">${formatRupiah(p.jumlah)}</span> <span class="location"><i class="fas fa-${p.lokasi === 'Kantor' ? 'building' : 'mobile-alt'}"></i> ${p.lokasi}</span></div>`; });
-  content.innerHTML = html + html; updatePaymentVoiceButtons();
+  content.innerHTML = html + html;
+  updatePaymentVoiceButtons();
 }
 function calculateRevenue() {
   totalRevenue = 0; totalKubikasi = 0; let recent = [];
   pelangganDataFromLaravel.forEach(p => { const s = getPaymentStatus(p); if (s.status !== 'Belum Bayar') { totalRevenue += parseFloat(p.jumlah) || 0; totalKubikasi += parseFloat(p.pakai) || 0; if (s.tanggal) recent.push({ nama: p.nama || 'Pelanggan', jumlah: parseFloat(p.jumlah) || 0, kubikasi: parseFloat(p.pakai) || 0, lokasi: p.nama_wilayah || '-', tanggal: s.tanggal, metode: s.metode }); } });
-  recent.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)); updateNotificationBar(recent.slice(0, 10));
+  recent.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+  updateNotificationBar(recent.slice(0, 10));
 }
 
 // ============================================
-// 14. LIVE DASHBOARD & MAP LAYERS
+// LIVE DASHBOARD
 // ============================================
-function createUnpaidMarker(pelanggan, coords) { return L.marker(coords, { icon: L.divIcon({ className: 'custom-div-icon', html: `<div class="unpaid-marker-wrapper"><div class="unpaid-marker-label">${pelanggan.nama || '-'}</div><div class="unpaid-marker-pulse"></div><div class="unpaid-marker-pin"><i class="fas fa-exclamation"></i></div><div class="unpaid-marker-amount">${formatRupiah(pelanggan.jumlah)}</div></div>`, iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -10] }), zIndexOffset: 300 }); }
+function createUnpaidMarker(pelanggan, coords) {
+  return L.marker(coords, { icon: L.divIcon({ className: 'custom-div-icon', html: `<div class="unpaid-marker-wrapper"><div class="unpaid-marker-label">${pelanggan.nama || '-'}</div><div class="unpaid-marker-pulse"></div><div class="unpaid-marker-pin"><i class="fas fa-exclamation"></i></div><div class="unpaid-marker-amount">${formatRupiah(pelanggan.jumlah)}</div></div>`, iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -10] }), zIndexOffset: 300 });
+}
 function loadUnpaidCustomerMarkers() {
-  unpaidCustomerMarkers.forEach(m => map.removeLayer(m)); unpaidCustomerMarkers = []; unpaidCustomerList = [];
+  unpaidCustomerMarkers.forEach(m => map.removeLayer(m));
+  unpaidCustomerMarkers = []; unpaidCustomerList = [];
   pelangganDataFromLaravel.forEach(p => {
     if (getPaymentStatus(p).status !== 'Belum Bayar') return;
-    const coords = parseKoordinator(p.koordinator); if (!coords || !isInArea(coords[0], coords[1])) return;
-    const marker = createUnpaidMarker(p, coords); const wilayah = convertRegionRomanToNumber(p.nama_wilayah || '-');
+    const coords = parseKoordinator(p.koordinator);
+    if (!coords || !isInArea(coords[0], coords[1])) return;
+    const marker = createUnpaidMarker(p, coords);
+    const wilayah = convertRegionRomanToNumber(p.nama_wilayah || '-');
     marker.bindPopup(`<div style="min-width:220px;"><div style="background:linear-gradient(135deg,#ef4444,#dc2626);color:white;padding:8px;border-radius:6px 6px 0 0;font-weight:700;">BELUM BAYAR</div><div style="padding:10px;"><strong>${p.nama}</strong><br>No: ${p.no_pelanggan}<br>Wilayah: ${wilayah}<div style="margin-top:8px;padding:8px;background:#fef2f2;border-radius:6px;"><strong style="color:#dc2626;">${formatRupiah(p.jumlah)}</strong></div><div style="margin-top:8px;"><button onclick="showRouteTo(${coords[0]},${coords[1]},'${(p.nama||'Pelanggan').replace(/'/g,"\\'")}')" style="width:100%;padding:6px;background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-route"></i> Navigasi ke Lokasi</button></div></div></div>`);
-    marker.addTo(map); unpaidCustomerMarkers.push(marker); unpaidCustomerList.push({ marker, coords, data: p, nama: p.nama || '-', jumlah: parseFloat(p.jumlah) || 0, wilayah });
+    marker.addTo(map);
+    unpaidCustomerMarkers.push(marker);
+    unpaidCustomerList.push({ marker, coords, data: p, nama: p.nama || '-', jumlah: parseFloat(p.jumlah) || 0, wilayah });
   });
   document.getElementById('liveCounterTotal').textContent = unpaidCustomerList.length;
   if (!unpaidCustomerList.length && isLiveDashboardActive) { showNotification('✅ Semua sudah bayar', 'success'); stopLiveCycle(); }
 }
 function highlightUnpaidMarker(index) {
   if (index < 0 || index >= unpaidCustomerList.length) return;
-  const c = unpaidCustomerList[index]; map.flyTo(c.coords, 18, { duration: 1.5 }); setTimeout(() => c.marker.openPopup(), 1500); updateLiveInfoPanel(c, index);
+  const c = unpaidCustomerList[index];
+  map.flyTo(c.coords, 18, { duration: 1.5 });
+  setTimeout(() => c.marker.openPopup(), 1500);
+  updateLiveInfoPanel(c, index);
   if (voiceSettings.enabled && !isLiveMuted) {
     speak(`Pelanggan ${formatNameForSpeech(c.nama)}, belum membayar ${formatRupiah(c.jumlah)}.`, voiceSettings.paymentGender, () => { if (isLiveDashboardActive) { if (liveCycleInterval) clearTimeout(liveCycleInterval); liveCycleInterval = setTimeout(() => { liveCycleIndex = (liveCycleIndex + 1) % unpaidCustomerList.length; highlightUnpaidMarker(liveCycleIndex); }, 3000); } });
   } else if (isLiveDashboardActive) { if (liveCycleInterval) clearTimeout(liveCycleInterval); liveCycleInterval = setTimeout(() => { liveCycleIndex = (liveCycleIndex + 1) % unpaidCustomerList.length; highlightUnpaidMarker(liveCycleIndex); }, liveCycleSpeed); }
 }
-function updateLiveInfoPanel(c, i) { const p = document.getElementById('liveInfoPanel'); if (!p) return; p.style.display = 'flex'; document.getElementById('liveCustomerName').textContent = c.nama; document.getElementById('liveCustomerDetail').textContent = `${c.wilayah} • No. ${c.data.no_pelanggan}`; document.getElementById('liveCustomerAmount').textContent = formatRupiah(c.jumlah); document.getElementById('liveCounterCurrent').textContent = i + 1; document.getElementById('liveCounterTotal').textContent = unpaidCustomerList.length; }
-function startLiveCycle() { if (!unpaidCustomerList.length) { showNotification('❌ Tidak ada pelanggan belum bayar', 'warning'); return; } isLiveDashboardActive = true; liveCycleIndex = 0; highlightUnpaidMarker(0); document.getElementById('btnLiveStart').disabled = true; document.getElementById('btnLiveStop').disabled = false; document.getElementById('liveBtn').classList.add('active'); document.getElementById('liveText').textContent = 'LIVE ON'; showNotification(`🔴 LIVE: ${unpaidCustomerList.length} pelanggan belum bayar`, 'live'); }
-function stopLiveCycle() { if (liveCycleInterval) { clearTimeout(liveCycleInterval); liveCycleInterval = null; } isLiveDashboardActive = false; document.getElementById('btnLiveStart').disabled = false; document.getElementById('btnLiveStop').disabled = true; document.getElementById('liveBtn').classList.remove('active'); document.getElementById('liveText').textContent = 'LIVE OFF'; document.getElementById('liveInfoPanel').style.display = 'none'; map.flyTo([-6.88, 107.97], 14, { duration: 1 }); }
+function updateLiveInfoPanel(c, i) {
+  const p = document.getElementById('liveInfoPanel');
+  if (!p) return;
+  p.style.display = 'flex';
+  document.getElementById('liveCustomerName').textContent = c.nama;
+  document.getElementById('liveCustomerDetail').textContent = `${c.wilayah} • No. ${c.data.no_pelanggan}`;
+  document.getElementById('liveCustomerAmount').textContent = formatRupiah(c.jumlah);
+  document.getElementById('liveCounterCurrent').textContent = i + 1;
+  document.getElementById('liveCounterTotal').textContent = unpaidCustomerList.length;
+}
+function startLiveCycle() {
+  if (!unpaidCustomerList.length) { showNotification('❌ Tidak ada pelanggan belum bayar', 'warning'); return; }
+  isLiveDashboardActive = true; liveCycleIndex = 0;
+  highlightUnpaidMarker(0);
+  document.getElementById('btnLiveStart').disabled = true;
+  document.getElementById('btnLiveStop').disabled = false;
+  document.getElementById('liveBtn').classList.add('active');
+  document.getElementById('liveText').textContent = 'LIVE ON';
+  showNotification(` LIVE: ${unpaidCustomerList.length} pelanggan belum bayar`, 'live');
+}
+function stopLiveCycle() {
+  if (liveCycleInterval) { clearTimeout(liveCycleInterval); liveCycleInterval = null; }
+  isLiveDashboardActive = false;
+  document.getElementById('btnLiveStart').disabled = false;
+  document.getElementById('btnLiveStop').disabled = true;
+  document.getElementById('liveBtn').classList.remove('active');
+  document.getElementById('liveText').textContent = 'LIVE OFF';
+  document.getElementById('liveInfoPanel').style.display = 'none';
+  map.flyTo([-6.88, 107.97], 14, { duration: 1 });
+}
 function toggleLiveDashboard() { isLiveDashboardActive ? stopLiveCycle() : startLiveCycle(); }
 function setLiveSpeed(v) { liveCycleSpeed = v * 1000; document.getElementById('liveSpeedValue').textContent = v + ' detik'; }
-function initBaseLayers() { baseLayers = { street: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }), satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: '© Esri' }), terrain: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, attribution: '© OpenTopoMap' }), dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, attribution: '© CARTO' }) }; }
-function switchLayer(name) { if (!baseLayers[name]) return; if (currentBaseLayer) map.removeLayer(currentBaseLayer); currentBaseLayer = baseLayers[name]; currentBaseLayer.addTo(map); currentLayer = name; document.querySelectorAll('.layer-btn').forEach(b => b.classList.remove('active')); document.querySelector(`.layer-btn[data-layer="${name}"]`)?.classList.add('active'); }
 
 // ============================================
-// 15. MAP INITIALIZATION
+// LAYER CONTROL
+// ============================================
+function initBaseLayers() {
+  baseLayers = {
+    street: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }),
+    satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: '© Esri' }),
+    terrain: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, attribution: '© OpenTopoMap' }),
+    dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, attribution: '© CARTO' })
+  };
+}
+function switchLayer(name) {
+  if (!baseLayers[name]) return;
+  if (currentBaseLayer) map.removeLayer(currentBaseLayer);
+  currentBaseLayer = baseLayers[name]; currentBaseLayer.addTo(map); currentLayer = name;
+  document.querySelectorAll('.layer-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.layer-btn[data-layer="${name}"]`)?.classList.add('active');
+}
+
+// ============================================
+// MAP INITF
 // ============================================
 function initMap() {
   const bounds = L.latLngBounds(L.latLng(-6.98, 107.80), L.latLng(-6.80, 108.15));
   map = L.map('map', { center: [-6.918, 108.074], zoom: 16, minZoom: 11, maxZoom: 18, maxBounds: bounds, maxBoundsViscosity: 0.8, zoomControl: false });
   L.control.zoom({ position: 'topright' }).addTo(map);
-  initBaseLayers(); currentBaseLayer = baseLayers[currentLayer]; currentBaseLayer.addTo(map);
+  initBaseLayers();
+  currentBaseLayer = baseLayers[currentLayer]; currentBaseLayer.addTo(map);
   const polygon = [[-6.9584,108.0315],[-6.9421,108.0242],[-6.9315,108.0198],[-6.9202,108.0211],[-6.9110,108.0322],[-6.8985,108.0410],[-6.8842,108.0556],[-6.8810,108.0695],[-6.8892,108.0841],[-6.9011,108.0920],[-6.9154,108.0985],[-6.9320,108.0950],[-6.9488,108.0862],[-6.9595,108.0711],[-6.9680,108.0544],[-6.9642,108.0398],[-6.9584,108.0315]];
   L.polygon(polygon, { color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.1, weight: 3, dashArray: '10, 5' }).addTo(map);
-  
+//   if (Object.keys(gangguanFotosData).length > 0) {
+//     L.Control.FotoSlideshow = L.Control.extend({
+//       options: { position: 'topleft' },
+//       onAdd: function() {
+//         const c = L.DomUtil.create('div', 'leaflet-control-foto-slideshow');
+//         c.innerHTML = `<div class="foto-slideshow-container" id="petaSlideshowContainer"><div id="petaSlideshowTrack"><img id="petaSlideshowImg1" class="slide-img active" src="" alt=""><img id="petaSlideshowImg2" class="slide-img next" src="" alt=""></div><div id="petaSlideshowBadge" class="foto-slideshow-badge" style="display:none;"><i class="fas fa-circle" style="font-size:7px;"></i> LIVE</div><div id="petaSlideshowCaption" class="foto-slideshow-caption" style="display:none;"></div></div>`;
+//         L.DomEvent.disableClickPropagation(c);
+//         return c;
+//       }
+//     });
+//     petaSlideshowControlInstance = new L.Control.FotoSlideshow({ position: 'topleft' });
+//     petaSlideshowControlInstance.addTo(map);
+//     setTimeout(startPetaSlideshow, 1500);
+//   }
   loadBangunan(); loadGangguan(); loadTitikPenting(); loadPelanggan(); loadZona();
   calculateRevenue(); loadUnpaidCustomerMarkers(); loadWilayahDanBlok();
   updateTodayStatsDisplay(); updateRevenueProgress();
   if (gangguanData.length) { activeGangguanList = gangguanData.filter(g => g.status !== 'selesai'); updateGangguanVoiceButtons(); }
   initSidebarAutoScroll(); setScrollSpeed(60);
   document.getElementById('searchResults').innerHTML = '<div class="search-empty">Ketik untuk mencari pelanggan</div>';
-  
   startRealtimePolling();
   setTimeout(initAutoLive, 2000);
+  // ✅ TANDAI LOAD SELESAI SETELAH 5 DETIK
+setTimeout(() => { isInitialLoadComplete = true; }, 5000);
   initAudioUnlock();
-  // setTimeout(() => { if (reminderEnabled) scheduleNextReminder(); }, 2000);
-  // ✅ Auto aktifkan UI & Timer Pengingat 2 detik setelah peta dimuat
-  setTimeout(() => { initReminderAutoActive(); },3600000);
-  // ✅ TANDAI LOAD SELESAI
-  window.isInitialLoadComplete = true;
-  console.log('✅ Initial load selesai - Suara realtime AKTIF untuk pembayaran BARU saja');
-
-  // ✅ TAMBAHKAN INI: Tampilkan Elevasi Kantor saat pertama kali dimuat
-  setTimeout(() => {
-    // 1. Hapus kontrol elevasi lama jika ada (mencegah duplikat/error)
-    if (typeof elevationControl !== 'undefined' && elevationControl) {
-      try { map.removeControl(elevationControl); } catch(e) {}
-      elevationControl = null;
-    }
-    
-    // 2. Cari data bangunan dengan jenis 'kantor' dari database
-    const kantor = bangunanData.find(b => b.jenis_bangunan === 'kantor' || (b.nama_bangunan && b.nama_bangunan.toLowerCase().includes('kantor')));
-    
-    // Fallback ke koordinat exact PC Anda jika data kantor belum ada di database
-    let targetLat = -6.917821785545315; 
-    let targetLng = 108.07163674919619;
-    
-    if (kantor && kantor.coordinates) {
-      const coords = parseCoordinates(kantor.coordinates);
-      if (coords && coords.length > 0) {
-        targetLat = coords[0][0];
-        targetLng = coords[0][1];
-        console.log('✅ Menggunakan koordinat kantor dari database:', targetLat, targetLng);
-      }
-    } else {
-      console.log('ℹ️ Tidak ada data "kantor" di DB, pakai koordinat default PC Anda');
-    }
-    
-    // 3. Buat data rute dummy di sekitar lokasi target untuk memicu grafik elevasi
-    window.currentRouteCoords = [
-      { lng: targetLng - 0.0008, lat: targetLat - 0.0008, alt: 145 },
-      { lng: targetLng - 0.0004, lat: targetLat - 0.0004, alt: 148 },
-      { lng: targetLng, lat: targetLat, alt: 152 }, // Titik pusat kantor
-      { lng: targetLng + 0.0004, lat: targetLat + 0.0004, alt: 148 },
-      { lng: targetLng + 0.0008, lat: targetLat + 0.0008, alt: 145 }
-    ];
-    
-    // 4. Panggil fungsi untuk menampilkan grafik elevasi di pojok kiri bawah peta
-    showElevationProfile();
-    
-    // 5. Zoom otomatis ke lokasi kantor agar langsung terlihat jelas
-    map.flyTo([targetLat, targetLng], 16, { duration: 1.5 });
-    
-    console.log('✅ Grafik elevasi kantor berhasil ditampilkan!');
-  }, 2500); // ⏱️ Delay 2.5 detik agar peta dan library elevation siap sepenuhnya
+  setTimeout(() => { if (reminderEnabled) scheduleNextReminder(); }, 2000);
 }
-function loadBangunan() { bangunanData.forEach(b => { try { const c = parseCoordinates(b.coordinates); if (!c || !c.length || !hasPointInArea(c)) return; const poly = L.polygon(c, { color: b.warna, fillColor: b.warna, fillOpacity: 0.25, weight: 2 }).addTo(map); const center = poly.getBounds().getCenter(); const icons = { reservoir: { i: 'fa-database', c: '#06b6d4' }, ipa: { i: 'fa-industry', c: '#8b5cf6' }, kantor: { i: 'fa-building', c: '#3b82f6' } }; const cfg = icons[b.jenis_bangunan] || { i: 'fa-building', c: '#6b7280' }; const m = L.marker(center, { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:${cfg.c};width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);"><i class="fas ${cfg.i}"></i></div>`, iconSize: [34, 34], iconAnchor: [17, 17] }) }).addTo(map); m.bindPopup(`<div style="min-width:180px;"><strong>${b.nama_bangunan}</strong><br>${b.jenis_bangunan}<div style="margin-top:8px;"><button onclick="showRouteTo(${center.lat},${center.lng},'${(b.nama_bangunan||'Bangunan').replace(/'/g,"\\'")}')" style="width:100%;padding:6px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-route"></i> Navigasi ke Lokasi</button></div></div>`); markerLayers[`bangunan_${b.id}`] = m; } catch(e) {} }); }
-function loadGangguan() { gangguanData.forEach(g => { try { const lat = parseFloat(g.latitude), lng = parseFloat(g.longitude); if (isNaN(lat) || isNaN(lng)) return; const colors = { menunggu: '#ef4444', dalam_proses: '#f59e0b', selesai: '#10b981' }; const c = colors[g.status] || '#ef4444'; const m = L.marker([lat, lng], { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:${c};width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:3px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.4);font-size:16px;"><i class="fas fa-exclamation-triangle"></i></div>`, iconSize: [40, 40], iconAnchor: [20, 20] }) }).addTo(map); m.bindPopup(`<div style="min-width:200px;"><strong style="color:${c}">${g.kode_laporan}</strong><br>${g.lokasi || '-'}<br>Status: ${g.status}<div style="margin-top:8px;display:flex;gap:4px;"><button onclick="focusOnGangguan(${g.id})" style="flex:1;padding:6px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-search-location"></i> Lihat</button><button onclick="showRouteTo(${lat},${lng},'Gangguan ${g.kode_laporan}')" style="flex:1;padding:6px;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-route"></i> Rute</button></div></div>`); markerLayers[`gangguan_${g.id}`] = m; } catch(e) {} }); }
-function loadTitikPenting() { titikPentingData.forEach(t => { try { const lat = parseFloat(t.latitude), lng = parseFloat(t.longitude); if (isNaN(lat) || isNaN(lng) || !isInArea(lat, lng)) return; const m = L.marker([lat, lng], { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:#3b82f6;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:2px solid white;font-size:10px;"><i class="fas fa-map-pin"></i></div>`, iconSize: [24, 24], iconAnchor: [12, 12] }) }).addTo(map); m.bindPopup(`<strong>${t.nama_titik}</strong><br>${t.jenis_titik}`); markerLayers[`titik_${t.id}`] = m; } catch(e) {} }); }
-function loadZona() { zonaData.forEach(z => { try { const coords = parseCoordinates(z.coordinates); if (!coords || !coords.length || !hasPointInArea(coords)) return; const polygon = L.polygon(coords, { color: z.warna || '#f59e0b', fillColor: z.warna || '#f59e0b', fillOpacity: 0.2, weight: 3, dashArray: '8, 5' }).addTo(map); zonaLayers[z.id] = { polygon }; } catch(e) {} }); }
+function startPetaSlideshow() {
+  petaSlideshowPhotos = [];
+  Object.keys(gangguanFotosData).forEach(gid => { (gangguanFotosData[gid] || []).forEach(f => { const g = gangguanData.find(x => x.id == gid); petaSlideshowPhotos.push({ url: f.url, kode: g ? g.kode_laporan : '-', lokasi: g ? g.lokasi : '-', gangguanId: gid }); }); });
+  petaSlideshowPhotos.sort(() => Math.random() - 0.5);
+  if (!petaSlideshowPhotos.length) return;
+  const img1 = document.getElementById('petaSlideshowImg1');
+  if (img1) { img1.src = petaSlideshowPhotos[0].url; img1.className = 'slide-img active'; }
+  document.getElementById('petaSlideshowBadge').style.display = 'flex';
+  const cap = document.getElementById('petaSlideshowCaption');
+  if (cap) { cap.style.display = 'block'; cap.textContent = `${petaSlideshowPhotos[0].kode} • ${petaSlideshowPhotos[0].lokasi}`; }
+  petaSlideshowIndex = 1;
+  petaSlideshowInterval = setInterval(showNextPetaPhoto, 6000);
+}
+function showNextPetaPhoto() {
+  if (!petaSlideshowPhotos.length) return;
+  const photo = petaSlideshowPhotos[petaSlideshowIndex % petaSlideshowPhotos.length];
+  const img1 = document.getElementById('petaSlideshowImg1'), img2 = document.getElementById('petaSlideshowImg2');
+  if (!img1 || !img2) return;
+  const active = currentImgSlot === 1 ? img1 : img2;
+  const next = currentImgSlot === 1 ? img2 : img1;
+  next.src = photo.url;
+  active.className = 'slide-img slide-out';
+  next.className = 'slide-img active';
+  const cap = document.getElementById('petaSlideshowCaption');
+  if (cap) { cap.style.display = 'block'; cap.textContent = `${photo.kode} • ${photo.lokasi}`; }
+  currentImgSlot = currentImgSlot === 1 ? 2 : 1;
+  petaSlideshowIndex++;
+}
+function loadBangunan() {
+  bangunanData.forEach(b => {
+    try {
+      const c = parseCoordinates(b.coordinates);
+      if (!c || !c.length || !hasPointInArea(c)) return;
+      const poly = L.polygon(c, { color: b.warna, fillColor: b.warna, fillOpacity: 0.25, weight: 2 }).addTo(map);
+      const center = poly.getBounds().getCenter();
+      const icons = { reservoir: { i: 'fa-database', c: '#06b6d4' }, ipa: { i: 'fa-industry', c: '#8b5cf6' }, kantor: { i: 'fa-building', c: '#3b82f6' } };
+      const cfg = icons[b.jenis_bangunan] || { i: 'fa-building', c: '#6b7280' };
+      const m = L.marker(center, { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:${cfg.c};width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);"><i class="fas ${cfg.i}"></i></div>`, iconSize: [34, 34], iconAnchor: [17, 17] }) }).addTo(map);
+      m.bindPopup(`<div style="min-width:180px;"><strong>${b.nama_bangunan}</strong><br>${b.jenis_bangunan}<div style="margin-top:8px;"><button onclick="showRouteTo(${center.lat},${center.lng},'${(b.nama_bangunan||'Bangunan').replace(/'/g,"\\'")}')" style="width:100%;padding:6px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-route"></i> Navigasi ke Lokasi</button></div></div>`);
+      markerLayers[`bangunan_${b.id}`] = m;
+    } catch(e) {}
+  });
+}
+function loadGangguan() {
+  gangguanData.forEach(g => {
+    try {
+      const lat = parseFloat(g.latitude), lng = parseFloat(g.longitude);
+      if (isNaN(lat) || isNaN(lng)) return;
+      const colors = { menunggu: '#ef4444', dalam_proses: '#f59e0b', selesai: '#10b981' };
+      const c = colors[g.status] || '#ef4444';
+      const m = L.marker([lat, lng], { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:${c};width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:3px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.4);font-size:16px;"><i class="fas fa-exclamation-triangle"></i></div>`, iconSize: [40, 40], iconAnchor: [20, 20] }) }).addTo(map);
+      m.bindPopup(`<div style="min-width:200px;"><strong style="color:${c}">${g.kode_laporan}</strong><br>${g.lokasi || '-'}<br>Status: ${g.status}<div style="margin-top:8px;display:flex;gap:4px;"><button onclick="focusOnGangguan(${g.id})" style="flex:1;padding:6px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-search-location"></i> Lihat</button><button onclick="showRouteTo(${lat},${lng},'Gangguan ${g.kode_laporan}')" style="flex:1;padding:6px;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-route"></i> Rute</button></div></div>`);
+      markerLayers[`gangguan_${g.id}`] = m;
+    } catch(e) {}
+  });
+}
+function loadTitikPenting() {
+  titikPentingData.forEach(t => {
+    try {
+      const lat = parseFloat(t.latitude), lng = parseFloat(t.longitude);
+      if (isNaN(lat) || isNaN(lng) || !isInArea(lat, lng)) return;
+      const m = L.marker([lat, lng], { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:#3b82f6;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:2px solid white;font-size:10px;"><i class="fas fa-map-pin"></i></div>`, iconSize: [24, 24], iconAnchor: [12, 12] }) }).addTo(map);
+      m.bindPopup(`<strong>${t.nama_titik}</strong><br>${t.jenis_titik}`);
+      markerLayers[`titik_${t.id}`] = m;
+    } catch(e) {}
+  });
+}
+function loadZona() {
+  zonaData.forEach(z => {
+    try {
+      const coords = parseCoordinates(z.coordinates);
+      if (!coords || !coords.length || !hasPointInArea(coords)) return;
+      const polygon = L.polygon(coords, { color: z.warna || '#f59e0b', fillColor: z.warna || '#f59e0b', fillOpacity: 0.2, weight: 3, dashArray: '8, 5' }).addTo(map);
+      zonaLayers[z.id] = { polygon };
+    } catch(e) {}
+  });
+}
 function loadPelanggan() {
   if (!pelangganDataFromLaravel.length) return;
   pelangganClusterGroup = L.markerClusterGroup({ maxClusterRadius: 50, spiderfyOnMaxZoom: true, showCoverageOnHover: false, iconCreateFunction: function(cluster) { const count = cluster.getChildCount(); let color = '#3b82f6', size = 24; if (count > 50) { color = '#ef4444'; size = 30; } else if (count > 20) { color = '#f59e0b'; size = 27; } return L.divIcon({ html: `<div style="background:${color};color:white;width:${size}px;height:${size}px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;border:3px solid white;">${count}</div>`, iconSize: L.point(size, size) }); } });
-  pelangganDataFromLaravel.forEach(p => { const s = getPaymentStatus(p); if (s.status === 'Belum Bayar') return; const coords = parseKoordinator(p.koordinator); if (!coords || !isInArea(coords[0], coords[1])) return; const m = L.marker(coords, { icon: L.divIcon({ className: 'custom-div-icon', html: `<div class="pelanggan-marker-small" style="background:${s.color};"><i class="fas ${s.icon}" style="color:white;font-size:5px;"></i></div>`, iconSize: [10, 10], iconAnchor: [5, 5] }), zIndexOffset: 500 }); m.bindPopup(`<div style="min-width:200px;"><strong>${p.nama}</strong><br>No: ${p.no_pelanggan}<br>Status: <span style="color:${s.color};font-weight:700">${s.status}</span><br>Tagihan: ${formatRupiah(p.jumlah)}<div style="margin-top:8px;display:flex;gap:4px;"><button onclick="goToLocation(${coords[0]},${coords[1]},18,{markerId:'pelanggan_${p.no_pelanggan}',openPopup:true})" style="flex:1;padding:6px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-search-location"></i> Lihat</button><button onclick="showRouteTo(${coords[0]},${coords[1]},'${(p.nama||'Pelanggan').replace(/'/g,"\\'")}')" style="flex:1;padding:6px;background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-route"></i> Rute</button></div></div>`); pelangganClusterGroup.addLayer(m); pelangganLayers[`pelanggan_${p.no_pelanggan}`] = { marker: m, coords }; });
+  pelangganDataFromLaravel.forEach(p => {
+    const s = getPaymentStatus(p);
+    if (s.status === 'Belum Bayar') return;
+    const coords = parseKoordinator(p.koordinator);
+    if (!coords || !isInArea(coords[0], coords[1])) return;
+    const m = L.marker(coords, { icon: L.divIcon({ className: 'custom-div-icon', html: `<div class="pelanggan-marker-small" style="background:${s.color};"><i class="fas ${s.icon}" style="color:white;font-size:5px;"></i></div>`, iconSize: [10, 10], iconAnchor: [5, 5] }), zIndexOffset: 500 });
+    m.bindPopup(`<div style="min-width:200px;"><strong>${p.nama}</strong><br>No: ${p.no_pelanggan}<br>Status: <span style="color:${s.color};font-weight:700">${s.status}</span><br>Tagihan: ${formatRupiah(p.jumlah)}<div style="margin-top:8px;display:flex;gap:4px;"><button onclick="goToLocation(${coords[0]},${coords[1]},18,{markerId:'pelanggan_${p.no_pelanggan}',openPopup:true})" style="flex:1;padding:6px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-search-location"></i> Lihat</button><button onclick="showRouteTo(${coords[0]},${coords[1]},'${(p.nama||'Pelanggan').replace(/'/g,"\\'")}')" style="flex:1;padding:6px;background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-route"></i> Rute</button></div></div>`);
+    pelangganClusterGroup.addLayer(m);
+    pelangganLayers[`pelanggan_${p.no_pelanggan}`] = { marker: m, coords };
+  });
   map.addLayer(pelangganClusterGroup);
 }
 function loadWilayahDanBlok() {
   const container = document.getElementById('wilayah-blok-container');
   try {
     const wilayahMap = {};
-    pelangganDataFromLaravel.forEach(p => { const w = p.nama_wilayah || 'Tidak Diketahui'; if (!wilayahMap[w]) wilayahMap[w] = { count: 0, status: { Kantor: 0, PPOB: 0, 'Belum Bayar': 0 } }; wilayahMap[w].count++; const s = getPaymentStatus(p); wilayahMap[w].status[s.status] = (wilayahMap[w].status[s.status] || 0) + 1; });
+    pelangganDataFromLaravel.forEach(p => {
+      const w = p.nama_wilayah || 'Tidak Diketahui';
+      if (!wilayahMap[w]) wilayahMap[w] = { count: 0, status: { Kantor: 0, PPOB: 0, 'Belum Bayar': 0 } };
+      wilayahMap[w].count++;
+      const s = getPaymentStatus(p);
+      wilayahMap[w].status[s.status] = (wilayahMap[w].status[s.status] || 0) + 1;
+    });
     let html = '';
     Object.entries(wilayahMap).sort((a, b) => b[1].count - a[1].count).forEach(([w, d]) => { html += `<div class="wilayah-card"><div class="wilayah-header" onclick="focusOnWilayah('${w.replace(/'/g, "\\'")}')"><span><i class="fas fa-map-marker-alt"></i> ${w}</span><span style="background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:12px;font-size:11px;">${d.count}</span></div><div class="wilayah-blok-list" style="padding:6px;font-size:9px;">🏢 ${d.status['Kantor'] || 0} | 📱 ${d.status['PPOB'] || 0} | ⚠️ ${d.status['Belum Bayar'] || 0}</div></div>`; });
     container.innerHTML = html || '<div class="empty-state">Tidak ada data</div>';
@@ -1626,10 +2100,12 @@ function loadWilayahDanBlok() {
 }
 
 // ============================================
-// 16. SEARCH & FOCUS
+// SEARCH & FOCUS
 // ============================================
 function performSearch() {
-  const q = document.getElementById('searchInput').value.trim().toLowerCase(); const filter = document.getElementById('searchFilter').value; const rc = document.getElementById('searchResults');
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const filter = document.getElementById('searchFilter').value;
+  const rc = document.getElementById('searchResults');
   if (!q && filter === 'all') { rc.innerHTML = '<div class="search-empty">Ketik untuk mencari</div>'; return; }
   let results = pelangganDataFromLaravel.filter(p => { const s = getPaymentStatus(p); if (filter !== 'all' && s.status !== filter) return false; if (!q) return true; return (p.no_pelanggan || '').toLowerCase().includes(q) || (p.nama || '').toLowerCase().includes(q); }).slice(0, 20);
   if (!results.length) { rc.innerHTML = '<div class="search-empty">Tidak ditemukan</div>'; return; }
@@ -1650,7 +2126,7 @@ function showWAQR() { new bootstrap.Modal(document.getElementById('waQRModal')).
 function changeSlideshow(dir) { /* placeholder */ }
 
 // ============================================
-// 17. INIT
+// INIT
 // ============================================
 document.addEventListener('DOMContentLoaded', () => { loadVoices(); setTimeout(loadVoices, 500); initMap(); });
 window.addEventListener('beforeunload', stopRealtimePolling);

@@ -11,29 +11,21 @@ use App\Models\Zona;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB; // <-- Ditambahkan untuk menyegarkan koneksi DB
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Load data lokal — cepat dan selalu tersedia
-        $gangguan = Gangguan::with('fotos')->orderBy('created_at', 'desc')->get();
-        $jalurPipa = JalurPipa::all();
-        $bangunan = Bangunan::all();
-        $titikPenting = TitikPenting::all();
-        $zonaList = Zona::all();
-
         // ==================================================
-        // AMBIL DATA PELANGGAN DARI API EKSTERNAL
+        // 1. AMBIL DATA PELANGGAN DARI API EKSTERNAL DULUAN
+        // Lakukan ini SEBELUM melakukan query DB agar koneksi DB tidak idle
         // ==================================================
         $cacheKey = 'data_pelanggan_pdam';
-
-        // ✅ SELALU ambil cache lama DULU sebagai cadangan
         $dataCadangan = Cache::get($cacheKey, []);
 
-        $pelanggan = Cache::remember($cacheKey, 300, function () use ($cacheKey, $dataCadangan) {
+        $pelanggan = Cache::remember($cacheKey, 300, function () use ($dataCadangan) {
             try {
-                // Timeout 2 detik — kalau API lambat, langsung pakai data lama
                 $response = Http::withoutVerifying()
                     ->timeout(2)
                     ->get('https://pdamsumedang.com/portal/dashboard_api/pelanggan.php?of_id=04');
@@ -42,21 +34,33 @@ class DashboardController extends Controller
                     $baru = $response->json();
                     if (!empty($baru) && is_array($baru)) {
                         Log::info('Data pelanggan berhasil diperbarui dari API');
-                        return $baru; // ✅ Ada data baru → simpan ke cache
+                        return $baru;
                     }
                 }
             } catch (\Exception $e) {
                 Log::warning('API PDAM lambat/error: ' . $e->getMessage());
             }
 
-            // ❌ API gagal / kosong → kembalikan data yang sudah ada sebelumnya
             return $dataCadangan ?: [];
         });
 
-        // Pastikan $pelanggan selalu berupa array
         if (!is_array($pelanggan)) {
             $pelanggan = [];
         }
+
+        // ==================================================
+        // 2. RECONNECT DATABASE (PENCEGAH ERROR HAS GONE AWAY)
+        // ==================================================
+        DB::reconnect();
+
+        // ==================================================
+        // 3. LOAD DATA LOKAL (BARU DIJALANKAN SETELAH API SELESAI)
+        // ==================================================
+        $gangguan = Gangguan::with('fotos')->orderBy('created_at', 'desc')->get();
+        $jalurPipa = JalurPipa::all();
+        $bangunan = Bangunan::all();
+        $titikPenting = TitikPenting::all();
+        $zonaList = Zona::all();
 
         // Hitung statistik
         $stats = [
