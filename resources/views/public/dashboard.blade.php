@@ -1130,9 +1130,11 @@ function calculateMonthlyRevenue() {
   });
   return { totalTarget, totalCollected, totalUnpaidWithPenalty, percentage: totalTarget > 0 ? (totalCollected / totalTarget) * 100 : 0, currentDay, daysInMonth, remainingDays, dailyTarget: remainingDays > 0 ? totalUnpaidWithPenalty / remainingDays : 0, totalKubikasiTarget, totalKubikasiCollected };
 }
+// GANTI dengan versi super ringan ini:
 function updateRevenueDisplay() {
-  const currentHash = pelangganDataFromLaravel.map(p => `${p.jumlah}|${p.tanggal_pembayaran_loket}|${p.tanggal_pembayaran_ppob}`).join('');
-  if (currentHash === lastDataHash) return; lastDataHash = currentHash; updateRevenueProgress();
+    // Langsung update tanpa perlu hashing array yang berat
+    updateRevenueProgress();
+    updateTodayStatsDisplay();
 }
 function updateRevenueProgress() {
   const stats = calculateMonthlyRevenue(); updateCircularProgress(stats.percentage);
@@ -1169,17 +1171,30 @@ function calculateTodayStats() {
   return { totalToday, countToday, kubikasiToday };
 }
 let lastTodayHash = '';
-function updateTodayStatsDisplay() {
-  const stats = calculateTodayStats(); const hash = `${stats.totalToday}|${stats.countToday}|${stats.kubikasiToday}`;
-  if (hash === lastTodayHash) return; lastTodayHash = hash;
-  const now = new Date(); if (isNaN(now.getTime())) return;
-  const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
-  document.getElementById('today-date').innerHTML = `<div style="font-size:9px;opacity:0.85;">Pembayaran Hari Ini</div><div style="font-size:11px;font-weight:700;">${dateStr}</div><div style="font-size:10px;opacity:0.9;"><i class="fas fa-clock"></i> ${timeStr} WIB</div>`;
-  document.getElementById('today-amount').textContent = formatRupiah(stats.totalToday) + ' || M³ ' + stats.kubikasiToday.toFixed(1);
-  document.getElementById('today-count').textContent = stats.countToday; document.getElementById('today-kubikasi').textContent = stats.kubikasiToday.toFixed(1);
+// ✅ VERSI RINGAN: Tanpa hashing array yang berat
+function updateRevenueDisplay() {
+    updateRevenueProgress();
 }
-setInterval(updateTodayStatsDisplay, 6000);
+
+let lastTodayUpdate = 0;
+function updateTodayStatsDisplay() {
+    // Hanya update maksimal 1x per menit untuk menghemat CPU
+    const now = Date.now();
+    if (now - lastTodayUpdate < 60000) return; 
+    lastTodayUpdate = now;
+
+    const stats = calculateTodayStats(); 
+    const nowDate = new Date(); 
+    const dateStr = nowDate.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    const timeStr = nowDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
+    
+    document.getElementById('today-date').innerHTML = `<div style="font-size:9px;opacity:0.85;">Pembayaran Hari Ini</div><div style="font-size:11px;font-weight:700;">${dateStr}</div><div style="font-size:10px;opacity:0.9;"><i class="fas fa-clock"></i> ${timeStr} WIB</div>`;
+    document.getElementById('today-amount').textContent = formatRupiah(stats.totalToday) + ' || M³ ' + stats.kubikasiToday.toFixed(1);
+    document.getElementById('today-count').textContent = stats.countToday; 
+    document.getElementById('today-kubikasi').textContent = stats.kubikasiToday.toFixed(1);
+}
+
+// HAPUS BARIS INI JIKA ADA DI BAWAH: setInterval(updateTodayStatsDisplay, 6000);
 
 // ============================================
 // 9. VOICE SYSTEM
@@ -1195,26 +1210,48 @@ function categorizeIndonesianVoices() {
   if (!indonesianMaleVoices.length) indonesianMaleVoices = [...indonesianVoices];
 }
 function speak(text, gender = 'female', callback) {
-  if (!voiceSettings.enabled || !('speechSynthesis' in window)) { if (callback) callback(); return; }
-  try { speechSynthesis.cancel(); } catch(e) {}
-  const audioEl = document.getElementById('backgroundMusic'); const wasPlaying = isMusicPlaying && !isMusicPaused; const origVol = audioEl ? audioEl.volume : 0.3;
-  if (wasPlaying && audioEl) audioEl.volume = Math.max(0.05, origVol * 0.3);
-  const trySpeak = (retry = 0) => {
-    if (availableVoices.length === 0 && retry < 10) { setTimeout(() => trySpeak(retry + 1), 200); return; }
-    setTimeout(() => {
-      try {
-        const u = new SpeechSynthesisUtterance(text); u.lang = 'id-ID';
-        const idx = gender === 'female' ? voiceSettings.paymentVoiceIndex : voiceSettings.gangguanVoiceIndex;
-        const pool = gender === 'female' ? indonesianFemaleVoices : indonesianMaleVoices;
-        if (pool.length) u.voice = pool[idx % pool.length] || pool[0]; else if (indonesianVoices.length) u.voice = indonesianVoices[0];
-        const p = voiceProfiles[idx] || voiceProfiles[0]; u.pitch = p.pitch; u.rate = p.rate; u.volume = voiceSettings.volume;
-        u.onend = () => { if (wasPlaying && audioEl) audioEl.volume = origVol; if (callback) callback(); };
-        u.onerror = () => { if (wasPlaying && audioEl) audioEl.volume = origVol; if (callback) callback(); };
-        setTimeout(() => { try { speechSynthesis.speak(u); } catch(e) { if (callback) callback(); } }, 50);
-      } catch(e) { if (callback) callback(); }
-    }, 50);
-  };
-  trySpeak();
+    if (!voiceSettings.enabled || !('speechSynthesis' in window)) { if (callback) callback(); return; }
+    
+    try { speechSynthesis.cancel(); } catch(e) {}
+    
+    const audioEl = document.getElementById('backgroundMusic'); 
+    const wasPlaying = isMusicPlaying && !isMusicPaused; 
+    const origVol = audioEl ? audioEl.volume : 0.3;
+    if (wasPlaying && audioEl) audioEl.volume = Math.max(0.05, origVol * 0.3);
+
+    // ✅ OPTIMASI: Langsung proses tanpa setTimeout bertumpuk
+    const trySpeak = (retry = 0) => {
+        if (availableVoices.length === 0 && retry < 10) { 
+            setTimeout(() => trySpeak(retry + 1), 200); 
+            return; 
+        }
+        
+        try {
+            const u = new SpeechSynthesisUtterance(text); 
+            u.lang = 'id-ID';
+            
+            const idx = gender === 'female' ? voiceSettings.paymentVoiceIndex : voiceSettings.gangguanVoiceIndex;
+            const pool = gender === 'female' ? indonesianFemaleVoices : indonesianMaleVoices;
+            
+            if (pool.length) u.voice = pool[idx % pool.length] || pool[0]; 
+            else if (indonesianVoices.length) u.voice = indonesianVoices[0];
+            
+            const p = voiceProfiles[idx] || voiceProfiles[0]; 
+            u.pitch = p.pitch; 
+            u.rate = p.rate; 
+            u.volume = voiceSettings.volume;
+            
+            u.onend = () => { if (wasPlaying && audioEl) audioEl.volume = origVol; if (callback) callback(); };
+            u.onerror = () => { if (wasPlaying && audioEl) audioEl.volume = origVol; if (callback) callback(); };
+            
+            // ✅ LANGSUNG SPEAK (Tanpa delay 50ms)
+            speechSynthesis.speak(u); 
+        } catch(e) { 
+            if (callback) callback(); 
+        }
+    };
+    
+    trySpeak();
 }
 function addToVoiceQueue(text, gender = 'female', callback = null) { voiceQueue.push({ text, gender, callback }); processVoiceQueue(); }
 function processVoiceQueue() { if (isVoiceSpeaking || !voiceQueue.length) return; isVoiceSpeaking = true; const item = voiceQueue.shift(); speak(item.text, item.gender, () => { isVoiceSpeaking = false; if (item.callback) item.callback(); setTimeout(processVoiceQueue, 500); }); }
@@ -1267,221 +1304,221 @@ function initializePaymentTimestamps() { pelangganDataFromLaravel.forEach(p => {
 // ============================================
 // REALTIME POLLING (VERSI RINGAN & CEPAT)
 // ============================================
-let spokenPayments = new Set(); // Cache sederhana untuk ID yang sudah dibacakan
-
-async function checkNewPayments() {
-  try {
-    const res = await fetch(API_REALTIME_URL + '?t=' + Date.now());
-    if (!res.ok) return;
-    const result = await res.json();
-    if (!result.success || !result.pelanggan) return;
-
-    const newPayments = [];
-    result.pelanggan.forEach(p => {
-      const mapped = { 
-        no_pelanggan: p.no_pelanggan || p.no_rekening || '-', 
-        nama: p.nama || 'Tanpa Nama', 
-        jumlah: p.jumlah || '0', 
-        pakai: p.pakai || '0', 
-        kode_gol_trf: p.kode_gol_trf || '-', 
-        nama_wilayah: p.nama_wilayah || p.cabang || '-', 
-        koordinator: p.koordinator || '', 
-        tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null, 
-        tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null 
-      };
-      const s = getPaymentStatus(mapped);
-      if (s.tanggal) { 
-        const last = lastKnownPaymentTimestamps[mapped.no_pelanggan]; 
-        if (!last || last !== s.tanggal) { 
-          newPayments.push({ ...mapped, statusInfo: s, isNewPayment: !last }); 
-          lastKnownPaymentTimestamps[mapped.no_pelanggan] = s.tanggal; 
-        } 
-      }
-    });
-
-    if (newPayments.length && !isFirstLoad) { 
-      // ✅ PERBAIKAN: Ambil HANYA pembayaran yang benar-benar baru
-      const trulyNewPayments = newPayments.filter(p => p.isNewPayment);
-      
-      if (trulyNewPayments.length > 0) {
-        // ✅ AMBIL HANYA 1 PELANGGAN PERTAMA (Terbaru)
-        const singleLatestPayment = trulyNewPayments[0];
-        
-        console.log(`🔊 Membacakan HANYA 1 pembayaran terbaru: ${singleLatestPayment.nama}`);
-        
-        // Panggil fungsi suara HANYA untuk 1 pelanggan ini
-        handlePaymentReceived(singleLatestPayment);
-        
-        // Update tampilan revenue (cukup 1x saja)
-        updateRevenueDisplay();
-
-        // Jika ada lebih dari 1 pembayaran baru, beri tahu di console bahwa sisanya di-skip suaranya
-        if (trulyNewPayments.length > 1) {
-          console.log(`ℹ️ ${trulyNewPayments.length - 1} pembayaran lain hanya di-update di UI, TIDAK dibacakan suaranya.`);
-        }
-      }
-    }
-  } catch(e) { 
-    console.error('Polling error:', e); 
-  }
-}
-function stopRealtimePolling() { if (realtimePollingInterval) { clearInterval(realtimePollingInterval); realtimePollingInterval = null; } }
-
 // ============================================
-// GLOBAL STATE & STORAGE (ANTI-DUPLIKASI)
+// 1. GLOBAL STATE & CACHE ANTI-SPAM
 // ============================================
 if (typeof window.processedPaymentKeys === 'undefined') {
-  window.processedPaymentKeys = new Set();
+    window.processedPaymentKeys = new Set();
+}
+// ============================================
+// 1. FUNGSI PEMBERSIH TEKS SUPER (SEMUA DALAM 1)
+// ============================================
+function sanitizeTextForTTS(text) {
+    // 1. Cek data kosong atau null
+    if (!text || text === '-' || String(text).toLowerCase() === 'null' || String(text).toLowerCase() === 'undefined') {
+        return 'tidak tersedia';
+    }
+    
+    let clean = String(text).trim();
+
+    // 2. Hapus karakter slash (\ atau /) dan ganti dengan spasi
+    // Contoh: "DARMARAJA\/BLOK I" -> "DARMARAJA BLOK I"
+    clean = clean.replace(/[\\\/]/g, ' ');
+
+    // 3. Perbaiki Singkatan Alamat & Gelar (Titik opsional agar aman)
+    clean = clean.replace(/\bKp\.?\b/gi, 'Kampung');
+    clean = clean.replace(/\bH\.?\b/gi, 'Haji');
+    clean = clean.replace(/\bHj\.?\b/gi, 'Hajah');
+    clean = clean.replace(/\bJl\.?\b/gi, 'Jalan');
+    clean = clean.replace(/\bNo\.?\b/gi, 'Nomor');
+    clean = clean.replace(/\bRT\b/gi, 'Er Te');    // RT dibaca "Er Te"
+    clean = clean.replace(/\bRW\b/gi, 'Er We');    // RW dibaca "Er We"
+
+    // 4. Gabungkan Huruf Spasi (Contoh: "A J A" atau "a j a" -> "aja")
+    clean = clean.replace(/\b([A-Za-z])\s+(?=[A-Za-z]\b)/g, '$1');
+    
+    // 5. Ubah ke Title Case agar TTS membaca sebagai kata utuh (Contoh: "aja" -> "Aja")
+    clean = clean.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+
+    // 6. Perbaiki Wilayah Romawi ke Angka (Case-insensitive)
+    clean = clean.replace(/\bwilayah\s+iv\b/gi, 'Wilayah 4')
+                 .replace(/\bwilayah\s+iii\b/gi, 'Wilayah 3')
+                 .replace(/\bwilayah\s+ii\b/gi, 'Wilayah 2')
+                 .replace(/\bwilayah\s+i\b/gi, 'Wilayah 1');
+
+    // 7. Bersihkan spasi ganda yang mungkin terbentuk
+    return clean.replace(/\s+/g, ' ').trim();
 }
 
 // ============================================
-// HELPER 1: FORMAT NAMA (Mengeja ke Kata)
+// 2. REALTIME POLLING (HANYA AMBIL 1 TERBARU)
 // ============================================
-// Mengubah "A J A" -> "Aja", "B U D I" -> "Budi"
-function formatNamaTanpaSpasiEja(nama) {
-  if (!nama) return 'Pelanggan';
-  
-  // Hapus spasi di antara huruf kapital/kecil tunggal secara presisi
-  let namaBersih = String(nama).replace(/(?<=\b[A-Za-z])\s+(?=[A-Za-z]\b)/g, '');
-  
-  // Format Title Case (Huruf depan kapital, sisanya kecil)
-  return namaBersih.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+async function checkNewPayments() {
+    try {
+        const res = await fetch(API_REALTIME_URL + '?t=' + Date.now());
+        if (!res.ok) return;
+        const result = await res.json();
+        if (!result.success || !result.pelanggan) return;
+
+        const newPayments = [];
+        result.pelanggan.forEach(p => {
+            const mapped = {
+                no_pelanggan: p.no_pelanggan || p.no_rekening || '-',
+                nama: p.nama || 'Tanpa Nama',
+                jumlah: p.jumlah || '0',
+                pakai: p.pakai || '0',
+                kode_gol_trf: p.kode_gol_trf || '-',
+                nama_wilayah: p.nama_wilayah || p.cabang || '-',
+                koordinator: p.koordinator || '',
+                tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null,
+                tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null
+            };
+            const s = getPaymentStatus(mapped);
+            if (s.tanggal) {
+                const last = lastKnownPaymentTimestamps[mapped.no_pelanggan];
+                if (!last || last !== s.tanggal) {
+                    newPayments.push({ ...mapped, statusInfo: s, isNewPayment: !last });
+                    lastKnownPaymentTimestamps[mapped.no_pelanggan] = s.tanggal;
+                }
+            }
+        });
+
+        if (newPayments.length && !isFirstLoad) {
+            const trulyNewPayments = newPayments.filter(p => p.isNewPayment);
+            
+            if (trulyNewPayments.length > 0) {
+                // Urutkan berdasarkan waktu terbaru agar yang paling baru ada di indeks 0
+                trulyNewPayments.sort((a, b) => {
+                    const timeA = a.statusInfo?.tanggal || 0;
+                    const timeB = b.statusInfo?.tanggal || 0;
+                    return new Date(timeB) - new Date(timeA);
+                });
+
+                // ✅ AMBIL HANYA 1 PELANGGAN TERBARU
+                const singleLatestPayment = trulyNewPayments[0];
+                console.log(`🔊 Membacakan HANYA 1 pembayaran terbaru: ${singleLatestPayment.nama}`);
+                
+                // Panggil fungsi suara HANYA untuk 1 pelanggan ini
+                handlePaymentReceived(singleLatestPayment);
+                
+                // Update tampilan revenue
+                if (typeof updateRevenueDisplay === 'function') updateRevenueDisplay();
+
+                if (trulyNewPayments.length > 1) {
+                    console.log(`ℹ️ ${trulyNewPayments.length - 1} pembayaran lain hanya di-update di UI, TIDAK dibacakan suaranya.`);
+                }
+            }
+        }
+    } catch(e) { 
+        console.error('Polling error:', e); 
+    }
+}
+
+function stopRealtimePolling() { 
+    if (typeof realtimePollingInterval !== 'undefined' && realtimePollingInterval) { 
+        clearInterval(realtimePollingInterval); 
+        realtimePollingInterval = null; 
+    } 
 }
 
 // ============================================
-// HELPER 2: FORMAT WILAYAH (Romawi ke Angka)
-// ============================================
-// Mengubah "WILAYAH I" / "Wilayah II" -> "Wilayah 1" / "Wilayah 2" (Anti-Dobel Kata)
-function formatWilayahKeAngka(wilayahText) {
-  if (!wilayahText) return 'Wilayah tidak terdaftar';
-
-  let teks = String(wilayahText).trim();
-
-  // Hapus kata "WILAYAH" dari string bawaan API agar tidak menjadi "Wilayah Wilayah X"
-  teks = teks.replace(/\bWILAYAH\b/gi, '').trim();
-
-  // Konversi Angka Romawi ke Angka Biasa (Urutan terbesar ke terkecil agar aman)
-  teks = teks
-    .replace(/\bIV\b/gi, '4')
-    .replace(/\bIII\b/gi, '3')
-    .replace(/\bII\b/gi, '2')
-    .replace(/\bI\b/gi, '1');
-
-  return `Wilayah ${teks}`;
-}
-
-// ============================================
-// FUNGSI UTAMA PEMBAYARAN REALTIME
+// 3. FUNGSI UTAMA PEMBAYARAN REALTIME (VERSI FINAL)
 // ============================================
 function handlePaymentReceived(pelanggan) {
-  if (!pelanggan || typeof pelanggan !== 'object') return;
+    if (!pelanggan || typeof pelanggan !== 'object') return;
 
-  // 1. Ekstraksi Data Pelanggan dengan Fallback Fleksibel
-  const namaPelanggan = pelanggan.nama || pelanggan.nama_pelanggan || 'Pelanggan';
-  const idUnik = pelanggan.no_pelanggan || pelanggan.id || pelanggan.no_sambungan || pelanggan.id_pelanggan || 'ID_UNKNOWN';
-  
-  // Tanggal / Stempel Waktu Transaksi
-  const tanggalAtauJam = pelanggan.tanggal_pembayaran_loket 
-    || pelanggan.tanggal_pembayaran_ppob 
-    || pelanggan.created_at 
-    || pelanggan.id_transaksi 
-    || Date.now();
+    // 1. Ekstraksi Data (Prioritas: nama_blok, lalu alamat)
+    const namaRaw = pelanggan.nama || pelanggan.nama_pelanggan || 'Pelanggan';
+    const alamatRaw = pelanggan.nama_blok || pelanggan.alamat || 'Alamat tidak tersedia'; 
+    const wilayahRaw = pelanggan.nama_wilayah || 'Wilayah tidak tersedia';
 
-  // 2. Buat Kunci Unik & Cek Anti-Spam
-  const paymentKey = `${idUnik}_${tanggalAtauJam}`.trim();
+    // 2. Bersihkan SEMUA teks menggunakan satu fungsi super agar seragam & natural
+    const namaBersih = sanitizeTextForTTS(namaRaw);
+    const alamatBersih = sanitizeTextForTTS(alamatRaw);
+    const wilayahBersih = sanitizeTextForTTS(wilayahRaw);
 
-  if (window.processedPaymentKeys.has(paymentKey)) {
-    console.log('⏳ Skip suara: Transaksi ini sudah dibacakan sebelumnya.');
-    return;
-  }
+    // 3. Anti-Spam Cache
+    const idUnik = pelanggan.no_pelanggan || pelanggan.id || 'ID_UNKNOWN';
+    const tanggalAtauJam = pelanggan.tanggal_pembayaran_loket || pelanggan.tanggal_pembayaran_ppob || Date.now();
+    const paymentKey = `${idUnik}_${tanggalAtauJam}`.trim();
 
-  // Tandai kunci transaksi sebagai sudah diproses
-  window.processedPaymentKeys.add(paymentKey);
+    if (window.processedPaymentKeys.has(paymentKey)) {
+        console.log('⏳ Skip suara: Transaksi ini sudah dibacakan sebelumnya.');
+        return;
+    }
+    
+    window.processedPaymentKeys.add(paymentKey);
+    if (window.processedPaymentKeys.size > 100) {
+        window.processedPaymentKeys.delete(window.processedPaymentKeys.values().next().value);
+    }
 
-  // Batasi kapasitas memori Set (Maksimal simpan 100 entri terakhir)
-  if (window.processedPaymentKeys.size > 100) {
-    const firstItem = window.processedPaymentKeys.values().next().value;
-    window.processedPaymentKeys.delete(firstItem);
-  }
+    // 4. Deteksi Sumber Transaksi (PPOB vs Kantor)
+    const metode = pelanggan?.statusInfo?.metode || (pelanggan.tanggal_pembayaran_ppob && pelanggan.tanggal_pembayaran_ppob !== '-' ? 'PPOB' : 'Kantor');
+    const isPPOB = String(metode).toUpperCase() === 'PPOB';
 
-  // 3. Olah Teks (Nama, Alamat, Wilayah)
-  const namaNormal = formatNamaTanpaSpasiEja(namaPelanggan);
-  const alamatRaw = pelanggan.alamat || pelanggan.alamat_pelanggan || 'alamat tidak terdaftar';
-  const wilayahRaw = pelanggan.wilayah || pelanggan.nama_wilayah || pelanggan.kode_wilayah || '';
-  const wilayahNormal = formatWilayahKeAngka(wilayahRaw);
+    // 5. Susun Kalimat Suara
+    let fullMessage = '';
+    if (isPPOB) {
+        fullMessage = `INFO PPOB. Pembayaran dari ${namaBersih}, di ${alamatBersih}, ${wilayahBersih}. Telah berhasil diterima. Terima kasih.`;
+    } else {
+        fullMessage = `Yang Terhormat ${namaBersih}, di ${alamatBersih}, ${wilayahBersih}. Telah berhasil diterima di Kantor Unit Darmaraja. Terima kasih.`;
+    }
 
-  // 4. Deteksi Sumber Transaksi (PPOB vs Kantor Unit)
-  const metode = pelanggan?.statusInfo?.metode || pelanggan?.metode_pembayaran || '';
-  const isPPOB = String(metode).toUpperCase() === 'PPOB' || Boolean(pelanggan.tanggal_pembayaran_ppob);
+    console.log('💰 Payment received (Dibacakan):', fullMessage);
 
-  // 5. Susun kalimat lengkap untuk pembacaan suara (TTS)
-  let fullMessage = '';
+    // 6. Notifikasi Visual
+    if (typeof showNotification === 'function') {
+        showNotification(isPPOB ? `📲 INFO PPOB: ${namaBersih}` : `💰 Pembayaran Kantor: ${namaBersih}`, 'payment');
+    }
 
-  if (isPPOB) {
-    // Format Suara PPOB
-    fullMessage = `INFO PPOB: Yth. ${namaNormal}, ${alamatRaw}, ${wilayahNormal}. Pembayaran berhasil diterima. Terima kasih atas kepercayaan Anda!`;
-  } else {
-    // Format Suara Kantor Unit
-    fullMessage = `Yth. ${namaNormal}, ${alamatRaw}, ${wilayahNormal}. Pembayaran diterima melalui Kantor Unit Darmaraja. Terima kasih atas kepercayaan Anda pada PDAM Darmaraja!`;
-  }
-
-  console.log('💰 Payment received (Dibacakan):', fullMessage);
-
-  // 6. Notifikasi Visual UI (Opsional)
-  if (typeof showNotification === 'function') {
-    showNotification(
-      isPPOB ? `📲 INFO PPOB: ${namaNormal}` : `💰 Pembayaran Kantor: ${namaNormal}`, 
-      'payment'
-    );
-  }
-
-  // 7. Eksekusi Pembacaan Suara (Text-to-Speech)
-  if (typeof speak === 'function') {
-    speak(fullMessage, 'female');
-  } else if ('speechSynthesis' in window) {
-    const utterance = new SpeechSynthesisUtterance(fullMessage);
-    utterance.lang = 'id-ID';
-    utterance.rate = 0.95; // Kecepatan pembacaan optimal
-    speechSynthesis.speak(utterance);
-  }
+    // 7. Eksekusi Suara (Langsung, tanpa delay)
+    if (typeof speak === 'function') {
+        speak(fullMessage, 'female');
+    } else if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(fullMessage);
+        utterance.lang = 'id-ID';
+        utterance.rate = 0.95; // Kecepatan pembacaan optimal
+        speechSynthesis.speak(utterance);
+    }
 }
+
 // ============================================
-// TEST FUNCTIONS
+// 4. FUNGSI TEST (Untuk Debugging di Console)
 // ============================================
 function testPaymentNotification() {
-  console.log('🧪 Testing pembayaran KANTOR...');
-  window.isInitialLoadComplete = true;
-  const dummy = { 
-    no_pelanggan: 'TEST-KANTOR-' + Date.now(), 
-    nama: 'A J A', 
-    nama_blok: 'BLOK C3 / 12', 
-    alamat: 'Jl. Raya Darmaraja No. 45', 
-    nama_wilayah: 'WILAYAH I', 
-    jumlah: '604800', 
-    pakai: '71', 
-    kode_gol_trf: 'RT.D', 
-    statusInfo: { status: 'Kantor', color: '#10b981', icon: 'fa-building', tanggal: new Date().toISOString(), metode: 'Kantor' } 
-  };
-  handlePaymentReceived(dummy);
-  if (typeof updateUIAfterPayment === 'function') updateUIAfterPayment(dummy);
+    console.log('🧪 Testing pembayaran KANTOR...');
+    window.isInitialLoadComplete = true;
+    const dummy = { 
+        no_pelanggan: 'TEST-KANTOR-' + Date.now(), 
+        nama: 'A J A', 
+        nama_blok: 'BLOK C3 / 12', 
+        alamat: 'Jl. Raya Darmaraja No. 45', 
+        nama_wilayah: 'WILAYAH I', 
+        jumlah: '604800', 
+        pakai: '71', 
+        kode_gol_trf: 'RT.D', 
+        statusInfo: { status: 'Kantor', color: '#10b981', icon: 'fa-building', tanggal: new Date().toISOString(), metode: 'Kantor' } 
+    };
+    handlePaymentReceived(dummy);
+    if (typeof updateUIAfterPayment === 'function') updateUIAfterPayment(dummy);
 }
 
 function testPaymentPPOB() {
-  console.log('🧪 Testing pembayaran PPOB...');
-  window.isInitialLoadComplete = true;
-  const dummy = { 
-    no_pelanggan: 'TEST-PPOB-' + Date.now(), 
-    nama: 'H. ACENG SUHANDI', 
-    nama_blok: 'BLOK A2 / 07', 
-    alamat: 'Kp. Cieunteung RT 02 RW 05', 
-    nama_wilayah: 'WILAYAH III', 
-    jumlah: '418600', 
-    pakai: '52', 
-    kode_gol_trf: 'RT.D', 
-    statusInfo: { status: 'PPOB', color: '#f59e0b', icon: 'fa-mobile-alt', tanggal: new Date().toISOString(), metode: 'PPOB' } 
-  };
-  handlePaymentReceived(dummy);
-  if (typeof updateUIAfterPayment === 'function') updateUIAfterPayment(dummy);
+    console.log('🧪 Testing pembayaran PPOB...');
+    window.isInitialLoadComplete = true;
+    const dummy = { 
+        no_pelanggan: 'TEST-PPOB-' + Date.now(), 
+        nama: 'H. ACENG SUHANDI', 
+        nama_blok: 'BLOK A2 / 07', 
+        alamat: 'Kp. Cieunteung RT 02 RW 05', 
+        nama_wilayah: 'WILAYAH III', 
+        jumlah: '418600', 
+        pakai: '52', 
+        kode_gol_trf: 'RT.D', 
+        statusInfo: { status: 'PPOB', color: '#f59e0b', icon: 'fa-mobile-alt', tanggal: new Date().toISOString(), metode: 'PPOB' } 
+    };
+    handlePaymentReceived(dummy);
+    if (typeof updateUIAfterPayment === 'function') updateUIAfterPayment(dummy);
 }
 function updateUIAfterPayment(pelanggan) {
   const bar = document.getElementById('notificationBar'), content = document.getElementById('notificationContent'); if (!bar || !content) return;
@@ -1537,7 +1574,7 @@ function switchLayer(name) { if (!baseLayers[name]) return; if (currentBaseLayer
 // ============================================
 function initMap() {
   const bounds = L.latLngBounds(L.latLng(-6.98, 107.80), L.latLng(-6.80, 108.15));
-  map = L.map('map', { center: [-6.918, 108.074], zoom: 16, minZoom: 11, maxZoom: 18, maxBounds: bounds, maxBoundsViscosity: 0.8, zoomControl: false });
+  map = L.map('map', { center: [-6.918, 108.074], zoom: 16, minZoom: 11, maxZoom: 18, maxBounds: bounds, maxBoundsViscosity: 0.8, zoomControl: false, preferCanvas: true,fadeAnimation: false,markerZoomAnimation: false});
   L.control.zoom({ position: 'topright' }).addTo(map);
   initBaseLayers(); currentBaseLayer = baseLayers[currentLayer]; currentBaseLayer.addTo(map);
   const polygon = [[-6.9584,108.0315],[-6.9421,108.0242],[-6.9315,108.0198],[-6.9202,108.0211],[-6.9110,108.0322],[-6.8985,108.0410],[-6.8842,108.0556],[-6.8810,108.0695],[-6.8892,108.0841],[-6.9011,108.0920],[-6.9154,108.0985],[-6.9320,108.0950],[-6.9488,108.0862],[-6.9595,108.0711],[-6.9680,108.0544],[-6.9642,108.0398],[-6.9584,108.0315]];
@@ -1555,7 +1592,7 @@ function initMap() {
   initAudioUnlock();
   // setTimeout(() => { if (reminderEnabled) scheduleNextReminder(); }, 2000);
   // ✅ Auto aktifkan UI & Timer Pengingat 2 detik setelah peta dimuat
-  setTimeout(() => { initReminderAutoActive(); },3600000);
+  setTimeout(() => { initReminderAutoActive(); },2000);
   // ✅ TANDAI LOAD SELESAI
   window.isInitialLoadComplete = true;
   console.log('✅ Initial load selesai - Suara realtime AKTIF untuk pembayaran BARU saja');
@@ -1644,7 +1681,21 @@ function focusOnWilayah(nama) { const coords = []; pelangganDataFromLaravel.forE
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
 function toggleFullscreen() { const w = document.getElementById('mainWrapper'), b = document.getElementById('expandBtn'); if (!document.fullscreenElement) { w.requestFullscreen?.(); w.classList.add('is-fullscreen'); isFullscreen = true; b.classList.add('active'); b.innerHTML = '<i class="fas fa-compress"></i> <span>Keluar</span>'; } else { document.exitFullscreen?.(); w.classList.remove('is-fullscreen'); isFullscreen = false; b.classList.remove('active'); b.innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>'; } setTimeout(() => map?.invalidateSize(), 300); }
 document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement) { document.getElementById('mainWrapper').classList.remove('is-fullscreen'); isFullscreen = false; document.getElementById('expandBtn').classList.remove('active'); document.getElementById('expandBtn').innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>'; } setTimeout(() => map?.invalidateSize(), 300); });
-function initSidebarAutoScroll() { const sb = document.getElementById('sidebarContent'); if (!sb) return; sidebarScrollInterval = setInterval(() => { if (Date.now() - lastActivityTime > 30000 && sb.scrollHeight > sb.clientHeight + 50) { sb.scrollTop += sidebarScrollDirection; if (sb.scrollTop >= sb.scrollHeight - sb.clientHeight - 5) sidebarScrollDirection = -1; else if (sb.scrollTop <= 0) sidebarScrollDirection = 1; } }, 50); ['mousemove', 'click', 'keypress'].forEach(e => document.addEventListener(e, throttle(() => lastActivityTime = Date.now(), 500))); }
+function initSidebarAutoScroll() { 
+    const sb = document.getElementById('sidebarContent'); 
+    if (!sb) return; 
+    
+    // ✅ OPTIMASI: Ubah dari 50 menjadi 150 (3x lebih ringan, tapi tetap mulus)
+    sidebarScrollInterval = setInterval(() => { 
+        if (Date.now() - lastActivityTime > 30000 && sb.scrollHeight > sb.clientHeight + 50) { 
+            sb.scrollTop += sidebarScrollDirection; 
+            if (sb.scrollTop >= sb.scrollHeight - sb.clientHeight - 5) sidebarScrollDirection = -1; 
+            else if (sb.scrollTop <= 0) sidebarScrollDirection = 1; 
+        } 
+    }, 150); // <-- UBAH DI SINI
+    
+    ['mousemove', 'click', 'keypress'].forEach(e => document.addEventListener(e, throttle(() => lastActivityTime = Date.now(), 500))); 
+}
 let waQRGenerated = false;
 function showWAQR() { new bootstrap.Modal(document.getElementById('waQRModal')).show(); if (!waQRGenerated) { new QRCode(document.getElementById('wa-qrcode'), { text: 'https://wa.me/6288294979966', width: 200, height: 200, colorDark: '#128C7E', colorLight: '#ffffff' }); waQRGenerated = true; } }
 function changeSlideshow(dir) { /* placeholder */ }
