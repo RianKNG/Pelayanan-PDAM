@@ -337,19 +337,6 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
     .circular-progress-wrapper { width: 80px; height: 80px; }
     .wilayah-progress-strip { display: none; }
 }
-/* ============================================
-ANIMASI LOGO BERGELANTUNGAN (LEBIH TERLIHAT)
-============================================ */
-@keyframes swing-logo-kuat {
-    0% { transform: rotate(-12deg); }
-    50% { transform: rotate(12deg); }
-    100% { transform: rotate(-12deg); }
-}
-
-.unit-image-wrapper {
-    animation: swing-logo-kuat 2.5s ease-in-out infinite;
-    transform-origin: top center; /* ✅ Titik gantung di bagian atas tengah */
-}
 </style>
 </head>
 <body>
@@ -696,8 +683,7 @@ const pelangganDataFromLaravel = @json($pelanggan ?? []);
 const zonaData = @json($zonaList ?? []);
 const gangguanFotosData = @json($gangguanFotosData ?? []);
 const API_REALTIME_URL = '/api/pelanggan/realtime';
-const POLLING_INTERVAL = 2000; // ✅ Dipercepat ke 10 detik agar lebih responsif
-let isFetchingPayments = false; // ✅ GUARD: Mencegah request menumpuk jika internet lambat
+const POLLING_INTERVAL = 10000; // ✅ Dipercepat ke 10 detik agar lebih responsif
 
 // ============================================
 // 2. GLOBAL STATE & CACHE
@@ -717,10 +703,6 @@ let audioUnlocked = false;
 let currentRouteControl = null, userLocationMarker = null, userLocation = null, routeStartMarker = null, routeDestMarker = null, routingLoaded = false, elevationControl = null;
 let reminderEnabled = true, reminderTimeout = null;
 let lastTriggered = { ist: '', pulang: '' };
-// ============================================
-// VARIABEL UNTUK NARASI PROGRES HARIAN (JAM 1 SIANG)
-// ============================================
-
 
 // ✅ ANTI-SPAM CACHE UNTUK PEMBAYARAN
 if (typeof window.processedPaymentKeys === 'undefined') {
@@ -735,20 +717,18 @@ const REMINDER_MESSAGES = {
 
 // ✅ TAMBAHKAN FUNGSI INI DI SINI:
 function initReminderAutoActive() {
-    // 1. Paksa status logika menjadi AKTIF
-    reminderEnabled = true;
-
-    // 2. Update UI agar terlihat hijau/aktif
     const dot = document.getElementById('reminderStatusDot');
     const txt = document.getElementById('reminderStatusText');
+    
+    // 1. Paksa UI menjadi hijau/aktif (tanpa memunculkan notifikasi toast)
     if (dot) dot.className = 'voice-status-dot active';
-    if (txt) txt.textContent = 'Pengingat Aktif (Otomatis)';
-
-    // 3. Langsung jalankan timer penjadwalan
+    if (txt) txt.textContent = 'Pengingat Aktif';
+    
+    // 2. Jalankan penjadwalan timer Istirahat & Pulang
     if (typeof scheduleNextReminder === 'function') {
         scheduleNextReminder();
     }
-    console.log('✅ Sistem Pengingat otomatis AKTIF tanpa perlu diklik');
+    console.log('✅ Sistem Pengingat (Istirahat & Pulang) otomatis AKTIF');
 }
 const voiceProfiles = [{ name: 'Default', pitch: 1.0, rate: 0.95 },{ name: 'Alternatif 1', pitch: 1.1, rate: 0.90 },{ name: 'Alternatif 2', pitch: 0.9, rate: 1.00 },{ name: 'Alternatif 3', pitch: 1.2, rate: 0.85 },{ name: 'Alternatif 4', pitch: 0.8, rate: 1.05 }];
 const musicFolder = '/audio/';
@@ -763,11 +743,7 @@ let isPaymentVoicePlaying = false, isPaymentVoicePaused = false, repeatPaymentVo
 let voiceQueue = [], isVoiceSpeaking = false, isNarrating = false, currentNarrationIndex = 0, narrationPaused = false;
 let unpaidCustomerMarkers = [], unpaidCustomerList = [];
 let displayedPct = 0, lastDataHash = '';
-// ============================================
-// VARIABEL NARASI PROGRES HARIAN (JAM 1 SIANG > 85%)
-// ============================================
-let hasSpokenDailyProgress = false; // Agar hanya bunyi 1x sehari
-let lastSpokenDate = '';            // Untuk mendeteksi pergantian hari
+
 // ============================================
 // 3. UTILITY FUNCTIONS
 // ============================================
@@ -855,16 +831,12 @@ function scheduleNextReminder() {
   if (next) { const delay = next.time - now; reminderTimeout = setTimeout(() => { triggerReminder(next.type); scheduleNextReminder(); }, delay); }
 }
 function triggerReminder(type) {
-    const messages = REMINDER_MESSAGES[type];
-    const msg = messages[Math.floor(Math.random() * messages.length)];
-    showBigReminder(type, msg);
-    const label = type === 'ist' ? '⏰ ISTIRAHAT' : '🏠 PULANG';
-    showNotification(`${label}: ${msg.substring(0, 50)}...`, type === 'ist' ? 'warning' : 'info');
-    
-    // ✅ PERBAIKAN: Paksa gunakan suara LAKI-LAKI ('male') untuk pengingat
-    if (voiceSettings.enabled) {
-        speak(msg, 'male'); 
-    }
+  const messages = REMINDER_MESSAGES[type];
+  const msg = messages[Math.floor(Math.random() * messages.length)];
+  showBigReminder(type, msg);
+  const label = type === 'ist' ? '⏰ ISTIRAHAT' : '🏠 PULANG';
+  showNotification(`${label}: ${msg.substring(0, 50)}...`, type === 'ist' ? 'warning' : 'info');
+  if (voiceSettings.enabled && !isLiveMuted) speak(msg, voiceSettings.paymentGender);
 }
 function showBigReminder(type, msg) {
   document.querySelectorAll('.big-reminder-overlay').forEach(el => el.remove());
@@ -1165,34 +1137,12 @@ function updateRevenueDisplay() {
     updateTodayStatsDisplay();
 }
 function updateRevenueProgress() {
-    const stats = calculateMonthlyRevenue(); 
-    updateCircularProgress(stats.percentage);
-    
-    document.getElementById('currentDayOfMonth').textContent = stats.currentDay; 
-    document.getElementById('remainingDays').textContent = stats.remainingDays;
-    document.getElementById('targetRevenue').textContent = formatRupiah(stats.totalTarget) + ' || ' + stats.totalKubikasiTarget.toFixed(1) + ' M³';
-    document.getElementById('collectedRevenue').textContent = formatRupiah(stats.totalCollected) + ' || ' + stats.totalKubikasiCollected.toFixed(1) + ' M³';
-    document.getElementById('remainingRevenue').textContent = formatRupiah(stats.totalUnpaidWithPenalty); 
-    document.getElementById('dailyTarget').textContent = formatRupiah(stats.dailyTarget);
-    
-    renderWilayahProgress();
-
-    // ✅ LOGIKA BARU: Cek Jam 1 Siang (13:00) & Progres > 85%
-    const now = new Date();
-    const currentDateStr = now.toDateString(); // Contoh: "Mon Aug 31 2026"
-    const currentHour = now.getHours();        // 13 = jam 1 siang
-
-    // 1. Reset flag jika hari sudah berganti
-    if (lastSpokenDate !== currentDateStr) {
-        hasSpokenDailyProgress = false;
-        lastSpokenDate = currentDateStr;
-    }
-
-    // 2. Cek kondisi: Jam >= 13, belum dibacakan hari ini, DAN progres >= 85%
-    if (currentHour >= 13 && !hasSpokenDailyProgress && stats.percentage >= 85.0) {
-        hasSpokenDailyProgress = true; // Tandai sudah dibacakan hari ini (anti-spam)
-        setTimeout(() => narrateProgressUpdate(stats), 1500); // Delay 1.5 detik agar UI stabil
-    }
+  const stats = calculateMonthlyRevenue(); updateCircularProgress(stats.percentage);
+  document.getElementById('currentDayOfMonth').textContent = stats.currentDay; document.getElementById('remainingDays').textContent = stats.remainingDays;
+  document.getElementById('targetRevenue').textContent = formatRupiah(stats.totalTarget) + ' || ' + stats.totalKubikasiTarget.toFixed(1) + ' M³';
+  document.getElementById('collectedRevenue').textContent = formatRupiah(stats.totalCollected) + ' || ' + stats.totalKubikasiCollected.toFixed(1) + ' M³';
+  document.getElementById('remainingRevenue').textContent = formatRupiah(stats.totalUnpaidWithPenalty); document.getElementById('dailyTarget').textContent = formatRupiah(stats.dailyTarget);
+  renderWilayahProgress();
 }
 function calculateWilayahProgress() {
   const mapWil = {};
@@ -1363,55 +1313,47 @@ if (typeof window.processedPaymentKeys === 'undefined') {
 // ============================================
 // 1. FUNGSI PEMBERSIH TEKS SUPER (SEMUA DALAM 1)
 // ============================================
-// ============================================
-// FUNGSI PEMBERSIH TEKS (ANTI DUPLIKASI & SALAH BACA)
-// ============================================
 function sanitizeTextForTTS(text) {
-    // 1. Cek data kosong
+    // 1. Cek data kosong atau null
     if (!text || text === '-' || String(text).toLowerCase() === 'null' || String(text).toLowerCase() === 'undefined') {
-        return '';
+        return 'tidak tersedia';
     }
     
     let clean = String(text).trim();
-    
-    // 2. Hapus karakter slash (\ atau /)
+
+    // 2. Hapus karakter slash (\ atau /) dan ganti dengan spasi
+    // Contoh: "DARMARAJA\/BLOK I" -> "DARMARAJA BLOK I"
     clean = clean.replace(/[\\\/]/g, ' ');
-    
-    // 3. Perbaiki singkatan
+
+    // 3. Perbaiki Singkatan Alamat & Gelar (Titik opsional agar aman)
     clean = clean.replace(/\bKp\.?\b/gi, 'Kampung');
     clean = clean.replace(/\bH\.?\b/gi, 'Haji');
     clean = clean.replace(/\bHj\.?\b/gi, 'Hajah');
     clean = clean.replace(/\bJl\.?\b/gi, 'Jalan');
     clean = clean.replace(/\bNo\.?\b/gi, 'Nomor');
-    clean = clean.replace(/\bRT\b/gi, 'Er Te');
-    clean = clean.replace(/\bRW\b/gi, 'Er We');
-    
-    // 4. Gabungkan huruf spasi (A J A -> AJA)
+    clean = clean.replace(/\bRT\b/gi, 'Er Te');    // RT dibaca "Er Te"
+    clean = clean.replace(/\bRW\b/gi, 'Er We');    // RW dibaca "Er We"
+
+    // 4. Gabungkan Huruf Spasi (Contoh: "A J A" atau "a j a" -> "aja")
     clean = clean.replace(/\b([A-Za-z])\s+(?=[A-Za-z]\b)/g, '$1');
     
-    // 5. Ubah ke lowercase lalu Title Case
+    // 5. Ubah ke Title Case agar TTS membaca sebagai kata utuh (Contoh: "aja" -> "Aja")
     clean = clean.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
-    
-    // 6. ✅ PERBAIKAN: Hapus duplikasi "Wilayah Wilayah" -> "Wilayah"
-    clean = clean.replace(/\bWilayah\s+Wilayah\b/gi, 'Wilayah');
-    
-    // 7. Perbaiki Romawi ke Angka
-    clean = clean.replace(/\bWilayah\s+IV\b/gi, 'Wilayah 4')
-                 .replace(/\bWilayah\s+III\b/gi, 'Wilayah 3')
-                 .replace(/\bWilayah\s+II\b/gi, 'Wilayah 2')
-                 .replace(/\bWilayah\s+I\b/gi, 'Wilayah 1');
-    
-    // 8. Bersihkan spasi ganda
+
+    // 6. Perbaiki Wilayah Romawi ke Angka (Case-insensitive)
+    clean = clean.replace(/\bwilayah\s+iv\b/gi, 'Wilayah 4')
+                 .replace(/\bwilayah\s+iii\b/gi, 'Wilayah 3')
+                 .replace(/\bwilayah\s+ii\b/gi, 'Wilayah 2')
+                 .replace(/\bwilayah\s+i\b/gi, 'Wilayah 1');
+
+    // 7. Bersihkan spasi ganda yang mungkin terbentuk
     return clean.replace(/\s+/g, ' ').trim();
 }
+
 // ============================================
 // 2. REALTIME POLLING (HANYA AMBIL 1 TERBARU)
 // ============================================
 async function checkNewPayments() {
-    // ✅ CEK GUARD: Jika request sebelumnya belum selesai, skip agar tidak menumpuk
-    if (isFetchingPayments) return;
-    isFetchingPayments = true;
-
     try {
         const res = await fetch(API_REALTIME_URL + '?t=' + Date.now());
         if (!res.ok) return;
@@ -1443,22 +1385,32 @@ async function checkNewPayments() {
 
         if (newPayments.length && !isFirstLoad) {
             const trulyNewPayments = newPayments.filter(p => p.isNewPayment);
+            
             if (trulyNewPayments.length > 0) {
-                trulyNewPayments.sort((a, b) => new Date(b.statusInfo?.tanggal || 0) - new Date(a.statusInfo?.tanggal || 0));
+                // Urutkan berdasarkan waktu terbaru agar yang paling baru ada di indeks 0
+                trulyNewPayments.sort((a, b) => {
+                    const timeA = a.statusInfo?.tanggal || 0;
+                    const timeB = b.statusInfo?.tanggal || 0;
+                    return new Date(timeB) - new Date(timeA);
+                });
+
+                // ✅ AMBIL HANYA 1 PELANGGAN TERBARU
                 const singleLatestPayment = trulyNewPayments[0];
+                console.log(`🔊 Membacakan HANYA 1 pembayaran terbaru: ${singleLatestPayment.nama}`);
                 
-                // ✅ LANGSUNG BUNYIKAN SUARA (Prioritas Utama)
+                // Panggil fungsi suara HANYA untuk 1 pelanggan ini
                 handlePaymentReceived(singleLatestPayment);
                 
-                // Update UI di background
-                setTimeout(() => { if (typeof updateRevenueDisplay === 'function') updateRevenueDisplay(); }, 100);
+                // Update tampilan revenue
+                if (typeof updateRevenueDisplay === 'function') updateRevenueDisplay();
+
+                if (trulyNewPayments.length > 1) {
+                    console.log(`ℹ️ ${trulyNewPayments.length - 1} pembayaran lain hanya di-update di UI, TIDAK dibacakan suaranya.`);
+                }
             }
         }
-    } catch(e) {
-        console.error('Polling error:', e);
-    } finally {
-        // ✅ BUKA KUNCI: Agar polling 2 detik berikutnya bisa jalan
-        isFetchingPayments = false;
+    } catch(e) { 
+        console.error('Polling error:', e); 
     }
 }
 
@@ -1472,18 +1424,15 @@ function stopRealtimePolling() {
 // ============================================
 // 3. FUNGSI UTAMA PEMBAYARAN REALTIME (VERSI FINAL)
 // ============================================
-// ============================================
-// FUNGSI PEMBAYARAN REALTIME (VERSI FINAL)
-// ============================================
 function handlePaymentReceived(pelanggan) {
     if (!pelanggan || typeof pelanggan !== 'object') return;
 
-    // 1. Ekstraksi Data
-    const namaRaw = pelanggan.nama || pelanggan.nama_pelanggan || '';
-    const alamatRaw = pelanggan.nama_blok || pelanggan.alamat || '';
-    const wilayahRaw = pelanggan.nama_wilayah || '';
+    // 1. Ekstraksi Data (Prioritas: nama_blok, lalu alamat)
+    const namaRaw = pelanggan.nama || pelanggan.nama_pelanggan || 'Pelanggan';
+    const alamatRaw = pelanggan.nama_blok || pelanggan.alamat || 'Alamat tidak tersedia'; 
+    const wilayahRaw = pelanggan.nama_wilayah || 'Wilayah tidak tersedia';
 
-    // 2. Sanitasi Teks
+    // 2. Bersihkan SEMUA teks menggunakan satu fungsi super agar seragam & natural
     const namaBersih = sanitizeTextForTTS(namaRaw);
     const alamatBersih = sanitizeTextForTTS(alamatRaw);
     const wilayahBersih = sanitizeTextForTTS(wilayahRaw);
@@ -1494,39 +1443,32 @@ function handlePaymentReceived(pelanggan) {
     const paymentKey = `${idUnik}_${tanggalAtauJam}`.trim();
 
     if (window.processedPaymentKeys.has(paymentKey)) {
-        console.log('⏳ Skip suara: Transaksi ini sudah dibacakan.');
+        console.log('⏳ Skip suara: Transaksi ini sudah dibacakan sebelumnya.');
         return;
     }
+    
     window.processedPaymentKeys.add(paymentKey);
     if (window.processedPaymentKeys.size > 100) {
         window.processedPaymentKeys.delete(window.processedPaymentKeys.values().next().value);
     }
 
-    // 4. Deteksi PPOB vs Kantor
+    // 4. Deteksi Sumber Transaksi (PPOB vs Kantor)
     const metode = pelanggan?.statusInfo?.metode || (pelanggan.tanggal_pembayaran_ppob && pelanggan.tanggal_pembayaran_ppob !== '-' ? 'PPOB' : 'Kantor');
     const isPPOB = String(metode).toUpperCase() === 'PPOB';
 
-    // 5. ✅ Susun Kalimat Suara (Hanya sebut data yang ada)
-    let kalimatLokasi = '';
-    if (alamatBersih && wilayahBersih) {
-        kalimatLokasi = `, di ${alamatBersih}, ${wilayahBersih}`;
-    } else if (alamatBersih) {
-        kalimatLokasi = `, di ${alamatBersih}`;
-    } else if (wilayahBersih) {
-        kalimatLokasi = `,${wilayahBersih}`;
+    // 5. Susun Kalimat Suara
+    let fullMessage = '';
+    if (isPPOB) {
+        fullMessage = `INFO PPOB. Pembayaran dari ${namaBersih}, di ${alamatBersih}, ${wilayahBersih}. Telah berhasil diterima. Terima kasih.`;
+    } else {
+        fullMessage = `Yang Terhormat ${namaBersih}, di ${alamatBersih}, ${wilayahBersih}. Telah berhasil diterima di Kantor Unit Darmaraja. Terima kasih.`;
     }
 
-    const namaFinal = namaBersih || 'Pelanggan';
-    const sumber = isPPOB ? 'PPOB' : 'Kantor Unit Darmaraja';
-    const pembuka = isPPOB ? 'INFO PPOB. ' : '';
-
-    const fullMessage = `${pembuka}Pembayaran dari ${namaFinal}${kalimatLokasi}. Telah berhasil diterima melalui ${sumber}. Terima kasih.`;
-
-    console.log(' Payment received:', fullMessage);
+    console.log('💰 Payment received (Dibacakan):', fullMessage);
 
     // 6. Notifikasi Visual
     if (typeof showNotification === 'function') {
-        showNotification(isPPOB ? `📲 INFO PPOB: ${namaFinal}` : `💰 Pembayaran: ${namaFinal}`, 'payment');
+        showNotification(isPPOB ? `📲 INFO PPOB: ${namaBersih}` : `💰 Pembayaran Kantor: ${namaBersih}`, 'payment');
     }
 
     // 7. Eksekusi Suara (Langsung, tanpa delay)
@@ -1535,7 +1477,7 @@ function handlePaymentReceived(pelanggan) {
     } else if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(fullMessage);
         utterance.lang = 'id-ID';
-        utterance.rate = 1.0;
+        utterance.rate = 0.95; // Kecepatan pembacaan optimal
         speechSynthesis.speak(utterance);
     }
 }
@@ -1595,104 +1537,7 @@ function calculateRevenue() {
   pelangganDataFromLaravel.forEach(p => { const s = getPaymentStatus(p); if (s.status !== 'Belum Bayar') { totalRevenue += parseFloat(p.jumlah) || 0; totalKubikasi += parseFloat(p.pakai) || 0; if (s.tanggal) recent.push({ nama: p.nama || 'Pelanggan', jumlah: parseFloat(p.jumlah) || 0, kubikasi: parseFloat(p.pakai) || 0, lokasi: p.nama_wilayah || '-', tanggal: s.tanggal, metode: s.metode }); } });
   recent.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)); updateNotificationBar(recent.slice(0, 10));
 }
-let hasSpokenAt88Percent = false;
 
-function updateRevenueProgress() {
-    const stats = calculateMonthlyRevenue(); 
-    updateCircularProgress(stats.percentage);
-    
-    document.getElementById('currentDayOfMonth').textContent = stats.currentDay; 
-    document.getElementById('remainingDays').textContent = stats.remainingDays;
-    document.getElementById('targetRevenue').textContent = formatRupiah(stats.totalTarget) + ' || ' + stats.totalKubikasiTarget.toFixed(1) + ' M³';
-    document.getElementById('collectedRevenue').textContent = formatRupiah(stats.totalCollected) + ' || ' + stats.totalKubikasiCollected.toFixed(1) + ' M³';
-    document.getElementById('remainingRevenue').textContent = formatRupiah(stats.totalUnpaidWithPenalty); 
-    document.getElementById('dailyTarget').textContent = formatRupiah(stats.dailyTarget);
-    
-    renderWilayahProgress();
-    
-    // ✅ HAPUS atau KOMENTARI baris berikut jika ada:
-    // if (stats.percentage >= 85) narrateProgressUpdate(stats);
-    // narrateProgressUpdate(stats);
-}
-// HAPUS BARIS INI JIKA ADA DI BAWAH: setInterval(updateTodayStatsDisplay, 6000);
-
-// ============================================
-// NARASI PROGRES HARIAN (JAM 1 SIANG, > 85%)
-// ============================================
-// HAPUS BARIS INI JIKA ADA DI BAWAH: setInterval(updateTodayStatsDisplay, 6000);
-
-// ============================================
-// NARASI PROGRES HARIAN (JAM 1 SIANG, > 85%)
-// ============================================
-function narrateProgressUpdate(stats) {
-    if (!voiceSettings.enabled) return;
-
-    const pct = stats.percentage.toFixed(1);
-    const daysPassed = stats.currentDay;
-    const daysLeft = stats.remainingDays;
-
-    let text = `Darmaraja tim yang hebat. `;
-    text += `Saat ini progres pendapatan sudah mencapai ${pct} persen. `;
-    text += `Jumlah hari berjalan ${daysPassed} hari. `;
-
-    if (daysLeft > 0) {
-        text += `Dengan estimasi sisa ${daysLeft} hari, `;
-        text += `ayo tingkatkan performa agar target tercapai. `; // ✅ Tanpa nominal
-        text += `Semangat!`;
-    } else {
-        text += `Hari ini adalah hari terakhir bulan ini. Mari kita tutup bulan ini dengan hasil maksimal!`;
-    }
-
-    showNotification('📢 Membacakan update progres harian...', 'info');
-    // ✅ Paksa suara LAKI-LAKI
-    speak(text, 'male');
-}
-
-function startDailyProgressChecker() {
-    setInterval(() => {
-        const now = new Date();
-        const currentDateStr = now.toDateString();
-        const currentHour = now.getHours(); // 13 = jam 1 siang
-        
-        // 1. Reset flag jika hari sudah berganti
-        if (lastSpokenDate !== currentDateStr) {
-            hasSpokenDailyProgress = false;
-            lastSpokenDate = currentDateStr;
-        }
-        
-        // 2. HANYA bunyi jika: Jam >= 13, belum dibacakan hari ini, DAN progres >= 85%
-        if (currentHour >= 13 && !hasSpokenDailyProgress) {
-            const stats = calculateMonthlyRevenue();
-            if (stats.percentage >= 85.0) {
-                hasSpokenDailyProgress = true; // ✅ KUNCI: Tandai sudah dibacakan agar tidak loop
-                setTimeout(() => narrateProgressUpdate(stats), 1500);
-            }
-        }
-    }, 60000); // Cek setiap 1 menit (60000 ms)
-}
-
-function startDailyProgressChecker() {
-    setInterval(() => {
-        const now = new Date();
-        const currentDateStr = now.toDateString(); // Contoh: "Mon Aug 31 2026"
-        const currentHour = now.getHours();        // 13 = jam 1 siang
-        
-        // 1. Reset flag jika hari sudah berganti
-        if (lastSpokenDate !== currentDateStr) {
-            hasSpokenDailyProgress = false;
-            lastSpokenDate = currentDateStr;
-        }
-        
-        // 2. HANYA bunyi jika: Jam >= 13 (1 siang) DAN progres >= 85% DAN belum dibacakan hari ini
-        if (currentHour >= 13 && !hasSpokenDailyProgress) {
-            const stats = calculateMonthlyRevenue();
-            if (stats.percentage >= 85.0) {
-                hasSpokenDailyProgress = true; // Tandai sudah dibacakan hari ini (anti-spam)
-                setTimeout(() => narrateProgressUpdate(stats), 1500); // Delay 1.5 detik agar UI stabil
-            }
-        }
-    }, 60000); // Cek setiap 1 menit (60000 ms)
-}
 // ============================================
 // 14. LIVE DASHBOARD & MAP LAYERS
 // ============================================
@@ -1750,15 +1595,7 @@ function initMap() {
   setTimeout(() => { initReminderAutoActive(); },2000);
   // ✅ TANDAI LOAD SELESAI
   window.isInitialLoadComplete = true;
-      // ✅ Auto aktifkan UI & Timer Pengingat 2 detik setelah peta dimuath
-    // ✅ Aktifkan scheduler narasi progres harian jam 1 siang
-    startDailyProgressChecker();
-    
-    // ✅ TANDAI LOAD SELESAI
-    window.isInitialLoadComplete = true;
-    console.log('✅ Initial load selesai - Suara realtime AKTIF untuk pembayaran BARU saja');
-    
-    // ... (kode elevasi kantor tetap di sini) ...
+  console.log('✅ Initial load selesai - Suara realtime AKTIF untuk pembayaran BARU saja');
 
   // ✅ TAMBAHKAN INI: Tampilkan Elevasi Kantor saat pertama kali dimuat
   setTimeout(() => {
