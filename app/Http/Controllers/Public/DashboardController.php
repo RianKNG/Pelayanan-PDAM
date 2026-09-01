@@ -11,16 +11,13 @@ use App\Models\Zona;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB; // <-- Ditambahkan untuk menyegarkan koneksi DB
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // ==================================================
-        // 1. AMBIL DATA PELANGGAN DARI API EKSTERNAL DULUAN
-        // Lakukan ini SEBELUM melakukan query DB agar koneksi DB tidak idle
-        // ==================================================
+        // 1. AMBIL DATA PELANGGAN DARI API EKSTERNAL (Cache 5 menit untuk load awal yang cepat)
         $cacheKey = 'data_pelanggan_pdam';
         $dataCadangan = Cache::get($cacheKey, []);
 
@@ -33,14 +30,12 @@ class DashboardController extends Controller
                 if ($response->successful()) {
                     $baru = $response->json();
                     if (!empty($baru) && is_array($baru)) {
-                        Log::info('Data pelanggan berhasil diperbarui dari API');
                         return $baru;
                     }
                 }
             } catch (\Exception $e) {
                 Log::warning('API PDAM lambat/error: ' . $e->getMessage());
             }
-
             return $dataCadangan ?: [];
         });
 
@@ -48,21 +43,16 @@ class DashboardController extends Controller
             $pelanggan = [];
         }
 
-        // ==================================================
-        // 2. RECONNECT DATABASE (PENCEGAH ERROR HAS GONE AWAY)
-        // ==================================================
+        // 2. RECONNECT DATABASE
         DB::reconnect();
 
-        // ==================================================
-        // 3. LOAD DATA LOKAL (BARU DIJALANKAN SETELAH API SELESAI)
-        // ==================================================
+        // 3. LOAD DATA LOKAL
         $gangguan = Gangguan::with('fotos')->orderBy('created_at', 'desc')->get();
         $jalurPipa = JalurPipa::all();
         $bangunan = Bangunan::all();
         $titikPenting = TitikPenting::all();
         $zonaList = Zona::all();
 
-        // Hitung statistik
         $stats = [
             'total' => $gangguan->count(),
             'menunggu' => $gangguan->where('status', 'menunggu')->count(),
@@ -75,10 +65,8 @@ class DashboardController extends Controller
             'total_pelanggan' => count($pelanggan),
         ];
 
-        // Gangguan aktif untuk alert
         $gangguanAktif = $gangguan->where('status', '!=', 'selesai');
 
-        // Foto Fallback & Format Data
         $gangguanFotosData = [];
         foreach ($gangguan as $g) {
             if ($g->fotos && $g->fotos->count() > 0) {
@@ -111,5 +99,32 @@ class DashboardController extends Controller
             'pelanggan',
             'gangguanFotosData'
         ));
+    }
+
+    // ✅ TAMBAHKAN METHOD INI: Khusus untuk polling realtime frontend
+    public function realtime()
+    {
+        // Cache sangat pendek (10 detik) agar terasa real-time 
+        // tapi tidak membebani server API eksternal dengan request tiap 3 detik
+        $pelanggan = Cache::remember('data_pelanggan_realtime', 10, function () {
+            try {
+                $response = Http::withoutVerifying()
+                    ->timeout(3)
+                    ->get('https://pdamsumedang.com/portal/dashboard_api/pelanggan.php?of_id=04');
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    return is_array($data) ? $data : [];
+                }
+            } catch (\Exception $e) {
+                Log::warning('Realtime API PDAM error: ' . $e->getMessage());
+            }
+            return [];
+        });
+
+        return response()->json([
+            'success' => true,
+            'pelanggan' => $pelanggan
+        ]);
     }
 }

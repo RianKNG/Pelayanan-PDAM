@@ -605,6 +605,7 @@ const pelangganDataFromLaravel = @json($pelanggan ?? []);
 const zonaData = @json($zonaList ?? []);
 const gangguanFotosData = @json($gangguanFotosData ?? []);
 const API_REALTIME_URL = '/api/pelanggan/realtime';
+
 const POLLING_INTERVAL = 3000;
 let isFetchingPayments = false;
 let map, jalurLayers = {}, markerLayers = {}, pelangganLayers = {}, pelangganClusterGroup, zonaLayers = {};
@@ -690,7 +691,23 @@ function initAutoLive() { isLiveMuted = true; syncMuteUI(); if (unpaidCustomerLi
 function updateCircularProgress(percentage) { const fill = document.getElementById('circularProgressFill'); const dot = document.getElementById('circularDot'); const pctEl = document.getElementById('circularPercentage'); if (!fill) return; let main, light, glow; if (percentage < 40) { main = '#ef4444'; light = '#fca5a5'; glow = '239,68,68'; } else if (percentage < 70) { main = '#f59e0b'; light = '#fde68a'; glow = '245,158,11'; } else { main = '#10b981'; light = '#a7f3d0'; glow = '16,185,129'; } const stops = document.querySelectorAll('#progressGradient stop'); if (stops.length >= 3) { stops[0].style.stopColor = light; stops[1].style.stopColor = main; stops[2].style.stopColor = light; } fill.style.filter = `drop-shadow(0 0 8px rgba(${glow},0.8))`; if (pctEl) { pctEl.style.color = light; pctEl.style.textShadow = `0 0 10px rgba(${glow},0.9), 0 0 22px rgba(${glow},0.6), 0 2px 3px rgba(0,0,0,0.9)`; } if (dot) { dot.style.background = light; dot.style.boxShadow = `0 0 8px rgba(${glow},1), 0 0 18px rgba(${glow},0.7)`; const r = (dot.closest('.circular-progress-wrapper').offsetWidth / 2) * 0.9; dot.style.transform = `rotate(${percentage * 3.6}deg) translateY(-${r}px)`; } const C = 2 * Math.PI * 45; fill.style.strokeDasharray = C; fill.style.strokeDashoffset = C - (percentage / 100) * C; animateCounter(displayedPct, percentage, 2000); displayedPct = percentage; }
 function animateCounter(from, to, duration) { const el = document.getElementById('circularPercentage'); if (!el) return; const start = performance.now(); function frame(now) { const t = Math.min((now - start) / duration, 1); const eased = 1 - Math.pow(1 - t, 3); el.textContent = (from + (to - from) * eased).toFixed(1) + '%'; if (t < 1) requestAnimationFrame(frame); } requestAnimationFrame(frame); }
 function calculateMonthlyRevenue() { const now = new Date(); const currentDay = now.getDate(); const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(); const remainingDays = daysInMonth - currentDay; let totalTarget = 0, totalCollected = 0, totalUnpaidWithPenalty = 0, totalKubikasiTarget = 0, totalKubikasiCollected = 0; pelangganDataFromLaravel.forEach(p => { const jumlah = parseFloat(p.jumlah) || 0; const kubikasi = parseFloat(p.pakai) || 0; const hasLoket = p.tanggal_pembayaran_loket && !['-','.','',null].includes(p.tanggal_pembayaran_loket); const hasPPOB = p.tanggal_pembayaran_ppob && !['-','.','',null].includes(p.tanggal_pembayaran_ppob); totalKubikasiTarget += kubikasi; if (hasLoket || hasPPOB) { totalCollected += jumlah; totalKubikasiCollected += kubikasi; } else { let tagihan = jumlah; if (currentDay > 20) tagihan += 5000; if (jumlah > 1000000) tagihan += 10000; totalUnpaidWithPenalty += tagihan; } totalTarget += jumlah; }); return { totalTarget, totalCollected, totalUnpaidWithPenalty, percentage: totalTarget > 0 ? (totalCollected / totalTarget) * 100 : 0, currentDay, daysInMonth, remainingDays, dailyTarget: remainingDays > 0 ? totalUnpaidWithPenalty / remainingDays : 0, totalKubikasiTarget, totalKubikasiCollected }; }
-function updateRevenueDisplay() { updateRevenueProgress(); }
+// ✅ Gunakan requestAnimationFrame untuk UI updates
+function updateRevenueDisplay() {
+    requestAnimationFrame(() => {
+        updateRevenueProgress();
+        updateTodayStatsDisplay();
+    });
+}
+// ✅ Debounce untuk update yang sering
+function debounce(fn, wait) {
+    let timeout;
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn.apply(this, args), wait);
+    };
+}checkNewPayments()
+
+const debouncedUpdateRevenue = debounce(updateRevenueDisplay, 300);
 function updateRevenueProgress() { const stats = calculateMonthlyRevenue(); updateCircularProgress(stats.percentage); document.getElementById('currentDayOfMonth').textContent = stats.currentDay; document.getElementById('remainingDays').textContent = stats.remainingDays; document.getElementById('targetRevenue').textContent = formatRupiah(stats.totalTarget) + ' || ' + stats.totalKubikasiTarget.toFixed(1) + ' M³'; document.getElementById('collectedRevenue').textContent = formatRupiah(stats.totalCollected) + ' || ' + stats.totalKubikasiCollected.toFixed(1) + ' M³'; document.getElementById('remainingRevenue').textContent = formatRupiah(stats.totalUnpaidWithPenalty); document.getElementById('dailyTarget').textContent = formatRupiah(stats.dailyTarget); renderWilayahProgress(); const now = new Date(); const currentDateStr = now.toDateString(); const currentHour = now.getHours(); if (lastSpokenDate !== currentDateStr) { hasSpokenDailyProgress = false; lastSpokenDate = currentDateStr; } if (currentHour >= 13 && !hasSpokenDailyProgress && stats.percentage >= 85.0) { hasSpokenDailyProgress = true; setTimeout(() => narrateProgressUpdate(stats), 1500); } }
 function calculateWilayahProgress() { const mapWil = {}; pelangganDataFromLaravel.forEach(p => { const w = p.nama_wilayah || 'Tidak Diketahui'; if (!mapWil[w]) mapWil[w] = { target: 0, collected: 0, count: 0, paid: 0 }; mapWil[w].target += parseFloat(p.jumlah) || 0; mapWil[w].count++; if (getPaymentStatus(p).status !== 'Belum Bayar') { mapWil[w].collected += parseFloat(p.jumlah) || 0; mapWil[w].paid++; } }); return mapWil; }
 function renderWilayahProgress() { const grid = document.getElementById('wilayahProgressGrid'); if (!grid) return; const C = 2 * Math.PI * 26; let html = ''; Object.entries(calculateWilayahProgress()).sort((a, b) => (b[1].collected / (b[1].target || 1)) - (a[1].collected / (a[1].target || 1))).forEach(([wilayah, d]) => { const pct = d.target > 0 ? (d.collected / d.target) * 100 : 0; const color = pct < 40 ? '#ef4444' : pct < 70 ? '#f59e0b' : '#10b981'; const offset = C - (pct / 100) * C; html += `<div class="wilayah-ring-card" onclick="focusOnWilayah('${wilayah.replace(/'/g, "\\'")}')"><div class="wilayah-ring-wrapper"><svg width="52" height="52" viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="6"/><circle cx="30" cy="30" r="26" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}" data-offset="${offset}" transform="rotate(-90 30 30)" style="transition: stroke-dashoffset 1.5s ease;"/></svg><div class="wilayah-ring-pct" style="color:${color}">${pct.toFixed(0)}%</div></div><div class="wilayah-ring-name">${wilayah}</div><div class="wilayah-ring-detail">${d.paid}/${d.count} lunas</div></div>`; }); grid.innerHTML = html; setTimeout(() => { grid.querySelectorAll('circle[data-offset]').forEach(c => c.style.strokeDashoffset = c.getAttribute('data-offset')); }, 150); }
@@ -738,9 +755,102 @@ function generateDynamicNarration() { const n = []; n.push("Selamat datang di Si
 function narrateUnitProfile() { if (isNarrating) { isNarrating = false; clearVoiceQueue(); showNotification('❌ Narasi dihentikan', 'info'); return; } isNarrating = true; currentNarrationIndex = 0; if (isLiveDashboardActive) stopLiveCycle(); const narrations = generateDynamicNarration(); (function playNext() { if (!isNarrating || currentNarrationIndex >= narrations.length) { isNarrating = false; showNotification('✅ Narasi selesai', 'success'); return; } speak(narrations[currentNarrationIndex], voiceSettings.paymentGender, () => { currentNarrationIndex++; setTimeout(playNext, 800); }); })(); }
 function startRealtimePolling() { initializePaymentTimestamps(); realtimePollingInterval = setInterval(checkNewPayments, POLLING_INTERVAL); setTimeout(checkNewPayments, 1500); }
 function initializePaymentTimestamps() { pelangganDataFromLaravel.forEach(p => { const s = getPaymentStatus(p); if (s.tanggal) lastKnownPaymentTimestamps[p.no_pelanggan] = s.tanggal; }); isFirstLoad = false; }
-async function checkNewPayments() { if (isFetchingPayments) return; isFetchingPayments = true; try { const res = await fetch(API_REALTIME_URL + '?t=' + Date.now()); if (!res.ok) return; const result = await res.json(); if (!result.success || !result.pelanggan) return; const newPayments = []; result.pelanggan.forEach(p => { const mapped = { no_pelanggan: p.no_pelanggan || p.no_rekening || '-', nama: p.nama || 'Tanpa Nama', jumlah: p.jumlah || '0', pakai: p.pakai || '0', kode_gol_trf: p.kode_gol_trf || '-', nama_wilayah: p.nama_wilayah || p.cabang || '-', koordinator: p.koordinator || '', tanggal_pembayaran_loket: p.tanggal_pembayaran_loket || null, tanggal_pembayaran_ppob: p.tanggal_pembayaran_ppob || null }; const s = getPaymentStatus(mapped); if (s.tanggal) { const last = lastKnownPaymentTimestamps[mapped.no_pelanggan]; if (!last || last !== s.tanggal) { newPayments.push({ ...mapped, statusInfo: s, isNewPayment: !last }); lastKnownPaymentTimestamps[mapped.no_pelanggan] = s.tanggal; } } }); if (newPayments.length && !isFirstLoad) { const trulyNewPayments = newPayments.filter(p => p.isNewPayment); if (trulyNewPayments.length > 0) { trulyNewPayments.sort((a, b) => new Date(b.statusInfo?.tanggal || 0) - new Date(a.statusInfo?.tanggal || 0)); const singleLatestPayment = trulyNewPayments[0]; handlePaymentReceived(singleLatestPayment); setTimeout(() => { if (typeof updateRevenueDisplay === 'function') updateRevenueDisplay(); }, 100); } } } catch(e) { console.error('Polling error:', e); } finally { isFetchingPayments = false; } }
+// ✅ TAMBAHKAN 2 VARIABEL GLOBAL INI DI ATAS (dekat variabel lain)
+let knownPaidIds = new Set();       // Menyimpan ID pelanggan yang SUDAH DIKETAHUI bayar
+let isInitialSyncDone = false;      // Penanda apakah data awal sudah dimuat
+
+async function checkNewPayments() {
+    // Guard: Mencegah request menumpuk jika internet lambat
+    if (isFetchingPayments) return;
+    isFetchingPayments = true;
+
+    try {
+        const res = await fetch(API_REALTIME_URL + '?t=' + Date.now());
+        if (!res.ok) return;
+        
+        const result = await res.json();
+        if (!result.success || !result.pelanggan) return;
+
+        let latestPayment = null;
+        let latestTime = 0;
+
+        // ✅ OPTIMASI: Loop sekali, langsung cari yang PALING BARU
+        for (let i = 0; i < result.pelanggan.length; i++) {
+            const p = result.pelanggan[i];
+            
+            const hasLoket = p.tanggal_pembayaran_loket && !['-','.','',null].includes(p.tanggal_pembayaran_loket);
+            const hasPPOB = p.tanggal_pembayaran_ppob && !['-','.','',null].includes(p.tanggal_pembayaran_ppob);
+
+            if (hasLoket || hasPPOB) {
+                const tStr = hasLoket ? p.tanggal_pembayaran_loket : p.tanggal_pembayaran_ppob;
+                const tTime = new Date(tStr).getTime();
+                const last = lastKnownPaymentTimestamps[p.no_pelanggan];
+
+                // Jika ini data baru (belum pernah ada di cache)
+                if (!last || last !== tStr) {
+                    lastKnownPaymentTimestamps[p.no_pelanggan] = tStr; // Simpan ke cache
+
+                    // Bandingkan waktu, ambil yang paling baru
+                    if (tTime > latestTime) {
+                        latestTime = tTime;
+                        latestPayment = {
+                            no_pelanggan: p.no_pelanggan || '-',
+                            nama: p.nama || 'Tanpa Nama',
+                            nama_blok: p.nama_blok || p.alamat || '',
+                            nama_wilayah: p.nama_wilayah || p.cabang || '',
+                            tanggal_pembayaran_loket: hasLoket ? tStr : null,
+                            tanggal_pembayaran_ppob: hasPPOB ? tStr : null,
+                            statusInfo: {
+                                metode: hasLoket ? 'Kantor' : 'PPOB',
+                                tanggal: tStr
+                            }
+                        };
+                    }
+                }
+            }
+        }
+
+        // ✅ EKSEKUSI LANGSUNG: Jika ada data baru, BUNYIKAN SEKARANG JUGA
+        if (latestPayment && !isFirstLoad) {
+            console.log('🔊 Pembayaran terdeteksi, langsung dibacakan:', latestPayment.nama);
+            
+            // 1. Panggil suara PRIORITAS TERTINGGI (Tanpa delay)
+            handlePaymentReceived(latestPayment);
+
+            // 2. Update UI (Angka, Notifikasi) di background SETELAH suara dipanggil
+            // Menggunakan setTimeout 50ms agar tidak memblokir thread suara
+            setTimeout(() => {
+                if (typeof updateRevenueDisplay === 'function') updateRevenueDisplay();
+            }, 50);
+        }
+
+        // Tandai load pertama sudah selesai
+        isFirstLoad = false;
+
+    } catch(e) {
+        console.error('Polling error:', e);
+    } finally {
+        isFetchingPayments = false;
+    }
+}
 function stopRealtimePolling() { if (typeof realtimePollingInterval !== 'undefined' && realtimePollingInterval) { clearInterval(realtimePollingInterval); realtimePollingInterval = null; } }
-function handlePaymentReceived(pelanggan) { if (!pelanggan || typeof pelanggan !== 'object') return; const namaRaw = pelanggan.nama || pelanggan.nama_pelanggan || ''; const alamatRaw = pelanggan.nama_blok || pelanggan.alamat || ''; const wilayahRaw = pelanggan.nama_wilayah || ''; const namaBersih = sanitizeTextForTTS(namaRaw); const alamatBersih = sanitizeTextForTTS(alamatRaw); const wilayahBersih = sanitizeTextForTTS(wilayahRaw); const idUnik = pelanggan.no_pelanggan || pelanggan.id || 'ID_UNKNOWN'; const tanggalAtauJam = pelanggan.tanggal_pembayaran_loket || pelanggan.tanggal_pembayaran_ppob || Date.now(); const paymentKey = `${idUnik}_${tanggalAtauJam}`.trim(); if (window.processedPaymentKeys.has(paymentKey)) { console.log('⏳ Skip suara: Transaksi ini sudah dibacakan.'); return; } window.processedPaymentKeys.add(paymentKey); if (window.processedPaymentKeys.size > 100) { window.processedPaymentKeys.delete(window.processedPaymentKeys.values().next().value); } const metode = pelanggan?.statusInfo?.metode || (pelanggan.tanggal_pembayaran_ppob && pelanggan.tanggal_pembayaran_ppob !== '-' ? 'PPOB' : 'Kantor'); const isPPOB = String(metode).toUpperCase() === 'PPOB'; let kalimatLokasi = ''; if (alamatBersih && wilayahBersih) { kalimatLokasi = `, di ${alamatBersih}, ${wilayahBersih}`; } else if (alamatBersih) { kalimatLokasi = `, di ${alamatBersih}`; } else if (wilayahBersih) { kalimatLokasi = `,${wilayahBersih}`; } const namaFinal = namaBersih || 'Pelanggan'; const sumber = isPPOB ? 'PPOB' : 'Kantor Unit Darmaraja'; const pembuka = isPPOB ? 'INFO PPOB. ' : ''; const fullMessage = `${pembuka}Pembayaran dari ${namaFinal}${kalimatLokasi}. Telah berhasil diterima melalui ${sumber}. Terima kasih.`; console.log('💰 Payment received:', fullMessage); if (typeof showNotification === 'function') { showNotification(isPPOB ? `📲 INFO PPOB: ${namaFinal}` : `💰 Pembayaran: ${namaFinal}`, 'payment'); } if (typeof speak === 'function') { speak(fullMessage, 'female'); } else if ('speechSynthesis' in window) { const utterance = new SpeechSynthesisUtterance(fullMessage); utterance.lang = 'id-ID'; utterance.rate = 1.0; speechSynthesis.speak(utterance); } }
+function handlePaymentReceived(pelanggan) {
+    if (!pelanggan) return;
+    
+    // ✅ OPTIMASI: Sanitasi lebih cepat
+    const nama = sanitizeTextForTTS(pelanggan.nama || 'Pelanggan');
+    const metode = pelanggan.tanggal_pembayaran_ppob ? 'PPOB' : 'Kantor';
+    
+    const message = `${metode === 'PPOB' ? 'INFO PPOB. ' : ''}Pembayaran dari ${nama} telah berhasil diterima melalui ${metode}. Terima kasih.`;
+    
+    // ✅ PRIORITAS TERTINGGI: Langsung speak
+    if (typeof speak === 'function') {
+        speak(message, 'female');
+    }
+    
+    // Visual notification (non-blocking)
+    showNotification(`${metode}: ${nama}`, 'payment');
+}
 function testPaymentNotification() { console.log('🧪 Testing pembayaran KANTOR...'); window.isInitialLoadComplete = true; const dummy = { no_pelanggan: 'TEST-KANTOR-' + Date.now(), nama: 'A J A', nama_blok: 'BLOK C3 / 12', alamat: 'Jl. Raya Darmaraja No. 45', nama_wilayah: 'WILAYAH I', jumlah: '604800', pakai: '71', kode_gol_trf: 'RT.D', statusInfo: { status: 'Kantor', color: '#10b981', icon: 'fa-building', tanggal: new Date().toISOString(), metode: 'Kantor' } }; handlePaymentReceived(dummy); }
 function testPaymentPPOB() { console.log('🧪 Testing pembayaran PPOB...'); window.isInitialLoadComplete = true; const dummy = { no_pelanggan: 'TEST-PPOB-' + Date.now(), nama: 'H. ACENG SUHANDI', nama_blok: 'BLOK A2 / 07', alamat: 'Kp. Cieunteung RT 02 RW 05', nama_wilayah: 'WILAYAH III', jumlah: '418600', pakai: '52', kode_gol_trf: 'RT.D', statusInfo: { status: 'PPOB', color: '#f59e0b', icon: 'fa-mobile-alt', tanggal: new Date().toISOString(), metode: 'PPOB' } }; handlePaymentReceived(dummy); }
 function updateNotificationBar(payments) { const bar = document.getElementById('notificationBar'), content = document.getElementById('notificationContent'); if (!payments.length) { bar.style.display = 'none'; return; } bar.style.display = 'block'; last5Payments = payments.slice(0, 5); let html = ''; payments.forEach(p => { html += `<div class="notification-item"><strong>${p.nama}</strong> <span class="amount">${formatRupiah(p.jumlah)}</span> <span class="location"><i class="fas fa-${p.lokasi === 'Kantor' ? 'building' : 'mobile-alt'}"></i> ${p.lokasi}</span></div>`; }); content.innerHTML = html + html; updatePaymentVoiceButtons(); }
@@ -957,9 +1067,13 @@ function initMap() {
     startRealtimePolling();
     setTimeout(initAutoLive, 2000);
     initAudioUnlock();
+    
+    // ✅ TAMBAHKAN BARIS INI:
+    bacakanPelangganTerakhirSaatLoad();
     setTimeout(() => { initReminderAutoActive(); }, 2000);
     window.isInitialLoadComplete = true;
     startDailyProgressChecker();
+    
     console.log('✅ Initial load selesai - Cluster optimized AKTIF');
     setTimeout(() => {
         if (typeof elevationControl !== 'undefined' && elevationControl) { try { map.removeControl(elevationControl); } catch(e) {} elevationControl = null; }
@@ -970,6 +1084,7 @@ function initMap() {
         showElevationProfile(); map.setView([targetLat, targetLng], 16);
         console.log('✅ Grafik elevasi kantor berhasil ditampilkan!');
     }, 2500);
+
 }
 function loadBangunan() { bangunanData.forEach(b => { try { const c = parseCoordinates(b.coordinates); if (!c || !c.length || !hasPointInArea(c)) return; const poly = L.polygon(c, { color: b.warna, fillColor: b.warna, fillOpacity: 0.25, weight: 2 }).addTo(map); const center = poly.getBounds().getCenter(); const icons = { reservoir: { i: 'fa-database', c: '#06b6d4' }, ipa: { i: 'fa-industry', c: '#8b5cf6' }, kantor: { i: 'fa-building', c: '#3b82f6' } }; const cfg = icons[b.jenis_bangunan] || { i: 'fa-building', c: '#6b7280' }; const m = L.marker(center, { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:${cfg.c};width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);"><i class="fas ${cfg.i}"></i></div>`, iconSize: [34, 34], iconAnchor: [17, 17] }) }).addTo(map); m.bindPopup(`<div style="min-width:180px;"><strong>${b.nama_bangunan}</strong><br>${b.jenis_bangunan}<div style="margin-top:8px;"><button onclick="showRouteTo(${center.lat},${center.lng},'${(b.nama_bangunan||'Bangunan').replace(/'/g,"\\'")}')" style="width:100%;padding:6px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-route"></i> Navigasi ke Lokasi</button></div></div>`); markerLayers[`bangunan_${b.id}`] = m; } catch(e) {} }); }
 function loadGangguan() { gangguanData.forEach(g => { try { const lat = parseFloat(g.latitude), lng = parseFloat(g.longitude); if (isNaN(lat) || isNaN(lng)) return; const colors = { menunggu: '#ef4444', dalam_proses: '#f59e0b', selesai: '#10b981' }; const c = colors[g.status] || '#ef4444'; const m = L.marker([lat, lng], { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:${c};width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:3px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.4);font-size:16px;"><i class="fas fa-exclamation-triangle"></i></div>`, iconSize: [40, 40], iconAnchor: [20, 20] }) }).addTo(map); m.bindPopup(`<div style="min-width:200px;"><strong style="color:${c}">${g.kode_laporan}</strong><br>${g.lokasi || '-'}<br>Status: ${g.status}<div style="margin-top:8px;display:flex;gap:4px;"><button onclick="focusOnGangguan(${g.id})" style="flex:1;padding:6px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-search-location"></i> Lihat</button><button onclick="showRouteTo(${lat},${lng},'Gangguan ${g.kode_laporan}')" style="flex:1;padding:6px;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-route"></i> Rute</button></div></div>`); markerLayers[`gangguan_${g.id}`] = m; } catch(e) {} }); }
@@ -990,6 +1105,64 @@ function initSidebarAutoScroll() { const sb = document.getElementById('sidebarCo
 let waQRGenerated = false;
 function showWAQR() { new bootstrap.Modal(document.getElementById('waQRModal')).show(); if (!waQRGenerated) { new QRCode(document.getElementById('wa-qrcode'), { text: 'https://wa.me/6288294979966', width: 200, height: 200, colorDark: '#128C7E', colorLight: '#ffffff' }); waQRGenerated = true; } }
 function changeSlideshow(dir) { /* placeholder */ }
+// ============================================
+// ✅ BACAKAN 1 PELANGGAN TERAKHIR SAAT LOAD
+// ============================================
+function bacakanPelangganTerakhirSaatLoad() {
+    // 1. Kumpulkan semua pelanggan yang sudah bayar
+    const paidCustomers = pelangganDataFromLaravel.filter(p => {
+        const hasLoket = p.tanggal_pembayaran_loket && !['-','.','',null].includes(p.tanggal_pembayaran_loket);
+        const hasPPOB = p.tanggal_pembayaran_ppob && !['-','.','',null].includes(p.tanggal_pembayaran_ppob);
+        return hasLoket || hasPPOB;
+    });
+
+    // 2. Jika tidak ada yang bayar, skip
+    if (paidCustomers.length === 0) {
+        console.log('️ Tidak ada data pembayaran untuk dibacakan saat load.');
+        return;
+    }
+
+    // 3. Urutkan berdasarkan tanggal terbaru
+    paidCustomers.sort((a, b) => {
+        const dateA = new Date(a.tanggal_pembayaran_loket || a.tanggal_pembayaran_ppob || 0);
+        const dateB = new Date(b.tanggal_pembayaran_loket || b.tanggal_pembayaran_ppob || 0);
+        return dateB - dateA; // Terbaru di atas
+    });
+
+    // 4. Ambil 1 yang paling baru
+    const latestCustomer = paidCustomers[0];
+    const tanggalBayar = latestCustomer.tanggal_pembayaran_loket || latestCustomer.tanggal_pembayaran_ppob;
+    
+    // 5. Format data untuk dibacakan
+    const mapped = {
+        no_pelanggan: latestCustomer.no_pelanggan || latestCustomer.no_rekening || '-',
+        nama: latestCustomer.nama || 'Tanpa Nama',
+        nama_blok: latestCustomer.nama_blok || latestCustomer.alamat || '',
+        nama_wilayah: latestCustomer.nama_wilayah || latestCustomer.cabang || '',
+        tanggal_pembayaran_loket: latestCustomer.tanggal_pembayaran_loket || null,
+        tanggal_pembayaran_ppob: latestCustomer.tanggal_pembayaran_ppob || null,
+        statusInfo: {
+            status: latestCustomer.tanggal_pembayaran_loket ? 'Kantor' : 'PPOB',
+            metode: latestCustomer.tanggal_pembayaran_loket ? 'Kantor' : 'PPOB',
+            tanggal: tanggalBayar
+        }
+    };
+
+    // 6. Tandai sebagai sudah dibacakan (agar tidak duplikat)
+    const idUnik = mapped.no_pelanggan;
+    const paymentKey = `${idUnik}_${tanggalBayar}`.trim();
+    window.processedPaymentKeys.add(paymentKey);
+    
+    // 7. Simpan timestamp agar tidak dianggap "baru" di polling berikutnya
+    lastKnownPaymentTimestamps[mapped.no_pelanggan] = tanggalBayar;
+
+    console.log('🔊 Membacakan 1 pelanggan terakhir saat load:', mapped.nama);
+
+    // 8. Delay 3 detik agar audio unlock & peta siap
+    setTimeout(() => {
+        handlePaymentReceived(mapped);
+    }, 3000);
+}
 document.addEventListener('DOMContentLoaded', () => { loadVoices(); setTimeout(loadVoices, 500); initMap(); });
 window.addEventListener('beforeunload', () => { stopRealtimePolling(); if (sidebarScrollInterval) clearInterval(sidebarScrollInterval); if (reminderTimeout) clearTimeout(reminderTimeout); if (liveCycleInterval) clearTimeout(liveCycleInterval); });
 window.addEventListener('resize', throttle(() => map?.invalidateSize(), 250));

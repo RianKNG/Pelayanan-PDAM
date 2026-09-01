@@ -54,15 +54,51 @@ Route::prefix('api')->group(function () {
     };
 
     // 1. API PELANGGAN REALTIME
-    Route::get('/pelanggan/realtime', function () use ($getPelangganData) {
-        $pelanggan = $getPelangganData();
+    Route::get('/pelanggan/realtime', function () {
+    $cacheKey = 'data_pelanggan_realtime_2s';
 
-        return response()->json([
-            'success' => !empty($pelanggan),
-            'pelanggan' => $pelanggan,
-            'timestamp' => now()
-        ]);
-    });
+    // 1. Cek apakah ada data valid di Cache
+    if (\Illuminate\Support\Facades\Cache::has($cacheKey)) {
+        $pelanggan = \Illuminate\Support\Facades\Cache::get($cacheKey);
+    } else {
+        // 2. Jika tidak ada di Cache, baru panggil API eksternal
+        try {
+            $response = \Illuminate\Support\Facades\Http::withoutVerifying()
+                ->timeout(3)
+                ->withHeaders([
+                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+                    'Accept'     => 'application/json',
+                ])
+                ->get('https://pdamsumedang.com/portal/dashboard_api/pelanggan.php', [
+                    'of_id' => '04'
+                ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                if (!empty($data) && is_array($data)) {
+                    $pelanggan = $data;
+                    // HANYA simpan ke cache jika data TIDAK kosong
+                    \Illuminate\Support\Facades\Cache::put($cacheKey, $pelanggan, 2);
+                } else {
+                    $pelanggan = [];
+                }
+            } else {
+                $pelanggan = [];
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Realtime API Error: ' . $e->getMessage());
+            $pelanggan = [];
+        }
+    }
+
+    return response()->json([
+        'success'   => true,
+        'pelanggan' => $pelanggan,
+        'count'     => count($pelanggan),
+        'timestamp' => now()->toIso8601String()
+    ]);
+});
 
     // 2. API CARI PELANGGAN
     Route::get('/pelanggan/cari/{no_pelanggan}', function ($no_pelanggan) use ($getPelangganData) {
