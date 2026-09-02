@@ -16,6 +16,7 @@ protected $fillable = [
     'elevasi', // BARU
     'ukuran', // <-- TAMBAHKAN INI
     'keterangan',
+    
 ];
 
 protected $casts = [

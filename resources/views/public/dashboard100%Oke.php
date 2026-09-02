@@ -705,7 +705,7 @@ function debounce(fn, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(() => fn.apply(this, args), wait);
     };
-}
+}checkNewPayments()
 
 const debouncedUpdateRevenue = debounce(updateRevenueDisplay, 300);
 function updateRevenueProgress() { const stats = calculateMonthlyRevenue(); updateCircularProgress(stats.percentage); document.getElementById('currentDayOfMonth').textContent = stats.currentDay; document.getElementById('remainingDays').textContent = stats.remainingDays; document.getElementById('targetRevenue').textContent = formatRupiah(stats.totalTarget) + ' || ' + stats.totalKubikasiTarget.toFixed(1) + ' M³'; document.getElementById('collectedRevenue').textContent = formatRupiah(stats.totalCollected) + ' || ' + stats.totalKubikasiCollected.toFixed(1) + ' M³'; document.getElementById('remainingRevenue').textContent = formatRupiah(stats.totalUnpaidWithPenalty); document.getElementById('dailyTarget').textContent = formatRupiah(stats.dailyTarget); renderWilayahProgress(); const now = new Date(); const currentDateStr = now.toDateString(); const currentHour = now.getHours(); if (lastSpokenDate !== currentDateStr) { hasSpokenDailyProgress = false; lastSpokenDate = currentDateStr; } if (currentHour >= 13 && !hasSpokenDailyProgress && stats.percentage >= 85.0) { hasSpokenDailyProgress = true; setTimeout(() => narrateProgressUpdate(stats), 1500); } }
@@ -834,50 +834,21 @@ async function checkNewPayments() {
     }
 }
 function stopRealtimePolling() { if (typeof realtimePollingInterval !== 'undefined' && realtimePollingInterval) { clearInterval(realtimePollingInterval); realtimePollingInterval = null; } }
-function convertRomanBlock(text) {
-    if (!text) return '';
-    let cleanText = text.replace(/\\\//g, '/');
-    const romanMap = {
-        'VIII': '8', 'VII': '7', 'VI': '6', 'IV': '4', 'V': '5',
-        'III': '3', 'II': '2', 'I': '1', 'IX': '9', 'X': '10'
-    };
-    return cleanText.replace(/\b(blok)\s+(X|IX|VIII|VII|VI|V|IV|III|II|I)\b/gi, (match, prefix, roman) => {
-        return `${prefix} ${romanMap[roman.toUpperCase()]}`;
-    });
-}
-
 function handlePaymentReceived(pelanggan) {
     if (!pelanggan) return;
     
-    const rawBlok = convertRomanBlock(pelanggan.nama_blok || 'terverifikasi');
+    // ✅ OPTIMASI: Sanitasi lebih cepat
     const nama = sanitizeTextForTTS(pelanggan.nama || 'Pelanggan');
-    const nama_blok = sanitizeTextForTTS(rawBlok);
     const metode = pelanggan.tanggal_pembayaran_ppob ? 'PPOB' : 'Kantor';
     
-    // 🎲 DAFTAR VARIASI KALIMAT TTS
-    const templates = [
-    `Pembayaran atas nama ${nama} dari ${nama_blok} lewat ${metode} sudah diterima. Terima kasih.`,
-    `Terima kasih, pembayaran dari ${nama} di ${nama_blok} berhasil masuk melalui ${metode}.`,
-    `Pembayaran dari ${nama}, ${nama_blok}, telah sukses diproses via ${metode}.`,
-    `Info masuk. Pembayaran ${metode} dari ${nama} daerah ${nama_blok} sudah diterima. Terima kasih.`,
-    `Pembayaran ${metode} dari ${nama} di ${nama_blok} sudah terverifikasi. Terima kasih.`,
-    `Terima kasih ${nama} dari ${nama_blok}, pembayaran via ${metode} sudah kami terima.`,
-    `Transaksi sukses. Pembayaran dari ${nama}, ${nama_blok}, lewat ${metode} berhasil diproses.`,
-    `Sistem mencatat pembayaran ${metode} dari ${nama} di ${nama_blok} telah masuk.`,
-    `Konfirmasi pembayaran dari ${nama}, ${nama_blok}, via ${metode} telah berhasil.`,
-    `Terima kasih. Pembayaran ${metode} atas nama ${nama} lokasi ${nama_blok} sudah diterima.`
-];
-
-    // Ambil kalimat secara acak
-    const randomMessage = templates[Math.floor(Math.random() * templates.length)];
+    const message = `${metode === 'PPOB' ? 'INFO PPOB. ' : ''}Pembayaran dari ${nama} telah berhasil diterima melalui ${metode}. Terima kasih.`;
     
-    // Format pesan akhir (tambah prefix jika PPOB)
-    const finalMessage = `${metode === 'PPOB' ? 'INFO PPOB. ' : ''}${randomMessage}`;
-    
+    // ✅ PRIORITAS TERTINGGI: Langsung speak
     if (typeof speak === 'function') {
-        speak(finalMessage, 'female');
+        speak(message, 'female');
     }
     
+    // Visual notification (non-blocking)
     showNotification(`${metode}: ${nama}`, 'payment');
 }
 function testPaymentNotification() { console.log('🧪 Testing pembayaran KANTOR...'); window.isInitialLoadComplete = true; const dummy = { no_pelanggan: 'TEST-KANTOR-' + Date.now(), nama: 'A J A', nama_blok: 'BLOK C3 / 12', alamat: 'Jl. Raya Darmaraja No. 45', nama_wilayah: 'WILAYAH I', jumlah: '604800', pakai: '71', kode_gol_trf: 'RT.D', statusInfo: { status: 'Kantor', color: '#10b981', icon: 'fa-building', tanggal: new Date().toISOString(), metode: 'Kantor' } }; handlePaymentReceived(dummy); }

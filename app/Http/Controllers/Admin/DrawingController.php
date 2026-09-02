@@ -20,8 +20,8 @@ class DrawingController extends Controller
         $titikPenting = TitikPenting::all();
         $zonaList = Zona::all();
         
-        // Cache API selama 1 jam (3600 detik) agar performa web tetap ngebut
-        $pelangganStats = Cache::remember('pelanggan_zona_stats', 3600, function () {
+        // Cache API selama 5 menit (300 detik) agar performa web tetap ngebut
+        $pelangganStats = Cache::remember('pelanggan_zona_stats_v3', 300, function () {
             return $this->getPelangganZonaStats();
         });
 
@@ -30,16 +30,12 @@ class DrawingController extends Controller
             'bangunan',
             'titikPenting',
             'zonaList',
-            'pelangganStats' // <-- Kirim data API ke view
+            'pelangganStats'
         ));
     }
 
-
-
-private function getPelangganZonaStats()
-{
-    // Pakai key baru supaya cache lama tidak nyangkut
-    return Cache::remember('pelanggan_zona_stats_v3', 300, function () {
+    private function getPelangganZonaStats()
+    {
         try {
             $response = Http::timeout(15)->get('https://pdamsumedang.com/portal/dashboard_api/pelanggan.php?of_id=04');
 
@@ -67,7 +63,7 @@ private function getPelangganZonaStats()
 
             $zone = $this->determineZone($kodeBlok, $alamat);
 
-            // Jika ada kode aneh yang belum terpetakan, baru masuk Lainnya
+            // Jika ada kode aneh yang belum terpetakan, masuk Lainnya
             if (!isset($stats[$zone])) {
                 $zone = 'Lainnya';
             }
@@ -85,78 +81,60 @@ private function getPelangganZonaStats()
         }
 
         return $stats;
-    });
-}
-
-private function normalizeText($value)
-{
-    $value = strtolower(trim((string) $value));
-
-    $value = str_replace(
-        ['/', '\\', '-', '_', '.', ','],
-        ' ',
-        $value
-    );
-
-    return trim(preg_replace('/\s+/', ' ', $value));
-}
-
-private function containsAny(string $text, array $keywords): bool
-{
-    $text = ' ' . $text . ' ';
-
-    foreach ($keywords as $keyword) {
-        if (str_contains($text, $keyword)) {
-            return true;
-        }
     }
 
-    return false;
-}
-
-private function determineZone(string $kode, string $alamat): string
-{
-    $kode = trim($kode);
-
-    // Mapping utama berdasarkan kode_blok
-    $map = [
-        // Zona 1
-      '304001 ' => 'Karang Pakuan',
-'301001' => 'Jl. Raya Darmaraja\/Blok I',
-'301002' => 'Jl. Kaum Kaler\/Blok II',
-'301003' => 'Jl. Raya DMJ\/Blok III',
-'301004' => 'Jl. Karang Tanjung\/Blok IV',
-'301005' => 'Jl. Kaum Kidul\/Blok V',
-'301006' => 'Jl. Desa Darmaraja\/Blok VI',
-'301007' => 'Jl. Kamenteng Girang',
-'302001' => 'Jl. Sirnaraga\/Blok I',
-'302002' => 'Jl. Cipicung\/Blok II',
-'303002' => 'Jl. Dusun Pasar\/Blok II',
-'303004' => 'Jl. Dusu Pasar\/Blok IV',
-'304001' => 'Karang Pakuan',
-'304002' => 'JLN CINANGSI',
-
-    ];
-
-    // Khusus 0301003: punya beberapa zona
-    if ($kode === '0301003') {
-        // CIKIRAY / CIKIRAI masuk Zona 4
-        if ($this->containsAny($alamat, ['cikiray', 'cikirai'])) {
-            return 'Zona 4';
-        }
-
-        // Jika ada JL / JLN, anggap Jl Raya Darmaraja III masuk Zona 5
-        if ($this->containsAny($alamat, [' jl ', ' jln '])) {
-            return 'Zona 5';
-        }
-
-        // Selain itu masuk Zona 2
-        return 'Zona 2';
+    private function normalizeText($value)
+    {
+        $value = strtolower(trim((string) $value));
+        $value = str_replace(['/', '\\', '-', '_', '.', ','], ' ', $value);
+        return trim(preg_replace('/\s+/', ' ', $value));
     }
 
-    return $map[$kode] ?? 'Lainnya';
-}
+    private function containsAny(string $text, array $keywords): bool
+    {
+        $text = ' ' . $text . ' ';
+        foreach ($keywords as $keyword) {
+            if (str_contains($text, $keyword)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    private function determineZone(string $kode, string $alamat): string
+    {
+        $kode = trim($kode);
+
+        // PERBAIKAN: Pastikan return value adalah 'Zona X' agar cocok dengan key array $stats
+        $map = [
+            '304001' => 'Zona 1',
+            '301001' => 'Zona 1',
+            '301002' => 'Zona 1',
+            '301003' => 'Zona 1',
+            '301004' => 'Zona 1',
+            '301005' => 'Zona 1',
+            '301006' => 'Zona 1',
+            '301007' => 'Zona 1',
+            '302001' => 'Zona 1',
+            '302002' => 'Zona 1',
+            '303002' => 'Zona 1',
+            '303004' => 'Zona 1',
+            '304002' => 'Zona 1',
+        ];
+
+        // Khusus 0301003 / 301003: punya beberapa zona
+        if ($kode === '0301003' || $kode === '301003') {
+            if ($this->containsAny($alamat, ['cikiray', 'cikirai'])) {
+                return 'Zona 4';
+            }
+            if ($this->containsAny($alamat, [' jl ', ' jln '])) {
+                return 'Zona 5';
+            }
+            return 'Zona 2';
+        }
+
+        return $map[$kode] ?? 'Lainnya';
+    }
 
     public function saveJalur(Request $request)
     {
@@ -167,7 +145,7 @@ private function determineZone(string $kode, string $alamat): string
             'warna' => 'required|string',
             'ketebalan' => 'nullable|integer',
             'keterangan' => 'nullable|string',
-            'coordinates' => 'required',
+            'coordinates' => 'required|string',
         ]);
 
         $jalur = JalurPipa::create([
@@ -185,18 +163,25 @@ private function determineZone(string $kode, string $alamat): string
 
     public function saveBangunan(Request $request)
     {
+        // PERBAIKAN: Menambahkan validasi untuk field baru
         $request->validate([
             'nama_bangunan' => 'required|string',
             'jenis_bangunan' => 'required|string',
             'warna' => 'required|string',
+            'ukuran_bangunan' => 'nullable|string',      // <-- BARU
+            'elevasi' => 'nullable|numeric',             // <-- BARU
+            'sumber_elevasi' => 'nullable|string',       // <-- BARU
             'keterangan' => 'nullable|string',
-            'coordinates' => 'required',
+            'coordinates' => 'required|string',
         ]);
 
         $bangunan = Bangunan::create([
             'nama_bangunan' => $request->nama_bangunan,
             'jenis_bangunan' => $request->jenis_bangunan,
             'warna' => $request->warna,
+            'ukuran_bangunan' => $request->ukuran_bangunan, // <-- BARU
+            'elevasi' => $request->elevasi,                 // <-- BARU
+            'sumber_elevasi' => $request->sumber_elevasi,   // <-- BARU
             'keterangan' => $request->keterangan,
             'coordinates' => $request->coordinates,
         ]);
@@ -207,24 +192,24 @@ private function determineZone(string $kode, string $alamat): string
     public function saveTitik(Request $request)
     {
         $request->validate([
-    'nama_titik' => 'required|string',
-    'jenis_titik' => 'required|string',
-    'latitude' => 'required|numeric',
-    'longitude' => 'required|numeric',
-    'elevasi' => 'nullable|numeric',
-    'ukuran' => 'nullable|in:12 inch,10 inch,8 inch,6 inch,4 inch,3 inch,2 inch,1.5 inch,1 inch',
-    'keterangan' => 'nullable|string',
-]);
+            'nama_titik' => 'required|string',
+            'jenis_titik' => 'required|string',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'elevasi' => 'nullable|numeric',
+            'ukuran' => 'nullable|string', // Diperlonggar agar fleksibel
+            'keterangan' => 'nullable|string',
+        ]);
 
-$titik = TitikPenting::create([
-    'nama_titik' => $request->nama_titik,
-    'jenis_titik' => $request->jenis_titik,
-    'latitude' => $request->latitude,
-    'longitude' => $request->longitude,
-    'elevasi' => $request->elevasi,
-    'ukuran' => $request->ukuran, // <-- TAMBAHKAN BARIS INI
-    'keterangan' => $request->keterangan,
-]);
+        $titik = TitikPenting::create([
+            'nama_titik' => $request->nama_titik,
+            'jenis_titik' => $request->jenis_titik,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'elevasi' => $request->elevasi,
+            'ukuran' => $request->ukuran,
+            'keterangan' => $request->keterangan,
+        ]);
 
         return response()->json(['success' => true, 'data' => $titik]);
     }
@@ -238,7 +223,7 @@ $titik = TitikPenting::create([
             'elevasi_min' => 'nullable|numeric',
             'elevasi_max' => 'nullable|numeric',
             'keterangan' => 'nullable|string',
-            'coordinates' => 'required',
+            'coordinates' => 'required|string',
         ]);
 
         $zona = Zona::create([
