@@ -4,15 +4,14 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Peta Jaringan Pipa - PDAM UP Darmaraja</title>
-
-<!-- ✅ HANYA LIBRARY WAJIB DI HEAD (yang lain di-lazy load) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+<link rel="stylesheet" href="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.min.css" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root { --scroll-duration: 60s; }
@@ -38,9 +37,11 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .notification-scroll { overflow: hidden; white-space: nowrap; }
 .notification-scroll-content { display: inline-block; animation: scroll-left var(--scroll-duration, 60s) linear infinite; font-size: 9px; }
 .notification-item { display: inline-block; margin-right: 20px; padding: 2px 8px; background: rgba(255,255,255,0.1); border-radius: 10px; }
+.notification-item.new-payment { animation: flashNew 2s ease; }
 .notification-item strong { color: #fff; font-size: 9px; }
 .notification-item .amount { color: #86efac; font-size: 9px; }
 .notification-item .location { color: #fcd34d; font-size: 8px; }
+@keyframes flashNew { 0%,100% { background: rgba(255,255,255,0.1); } 50% { background: linear-gradient(135deg, #10b981, #059669); } }
 @keyframes scroll-left { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 .unit-progress-bar { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 999; }
 .unit-progress-container { max-width: 1600px; margin: 0 auto; padding: 0 16px; padding-right: 280px; display: flex; align-items: center; gap: 16px; }
@@ -159,20 +160,23 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .voice-status-indicator { display: flex; align-items: center; gap: 6px; margin-top: 6px; padding: 6px; background: white; border-radius: 6px; font-size: 8px; }
 .voice-status-dot { width: 6px; height: 6px; border-radius: 50%; background: #94a3b8; }
 .voice-status-dot.active { background: #10b981; }
-.gangguan-voice-control, .payment-voice-control, .music-control, .scroll-control, .mute-control, .reminder-control { margin-top: 10px; padding: 10px; border-radius: 8px; border: 2px solid; }
+.gangguan-voice-control, .payment-voice-control, .music-control, .scroll-control, .youtube-control, .mute-control, .reminder-control { margin-top: 10px; padding: 10px; border-radius: 8px; border: 2px solid; }
 .gangguan-voice-control { background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b; }
 .payment-voice-control { background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-color: #10b981; }
 .music-control { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); border-color: #6366f1; }
 .scroll-control { background: linear-gradient(135deg, #fce7f3, #fbcfe8); border-color: #ec4899; }
+.youtube-control { background: linear-gradient(135deg, #fee2e2, #fecaca); border-color: #ef4444; }
 .mute-control, .reminder-control { background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b; }
 .voice-control-title { font-size: 9px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
 .gangguan-voice-control .voice-control-title { color: #92400e; }
 .payment-voice-control .voice-control-title { color: #065f46; }
 .music-control .voice-control-title { color: #3730a3; }
 .scroll-control .voice-control-title { color: #9d174d; }
+.youtube-control .voice-control-title { color: #991b1b; }
 .mute-control .voice-control-title, .reminder-control .voice-control-title { color: #92400e; }
-.live-info-panel { position: fixed !important; bottom: 15px !important; right: 275px !important; left: auto !important; transform: none !important; background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(30, 58, 138, 0.92)) !important; backdrop-filter: blur(16px) saturate(150%) !important; color: white; padding: 10px 16px !important; border-radius: 12px !important; border: 1px solid rgba(239, 68, 68, 0.4) !important; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important; z-index: 9997 !important; display: flex; align-items: center; gap: 14px !important; min-width: 340px !important; max-width: 420px !important; transition: all 0.3s ease !important; }
+.live-info-panel { position: fixed !important; bottom: 15px !important; right: 275px !important; left: auto !important; transform: none !important; background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(30, 58, 138, 0.92)) !important; backdrop-filter: blur(16px) saturate(150%) !important; color: white; padding: 10px 16px !important; border-radius: 12px !important; border: 1px solid rgba(239, 68, 68, 0.4) !important; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important; z-index: 9997 !important; display: flex; align-items: center; gap: 14px !important; min-width: 340px !important; max-width: 420px !important; animation: slideInRightPanel 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important; transition: all 0.3s ease !important; }
 .live-info-panel:hover { transform: translateY(-2px) !important; border-color: rgba(239, 68, 68, 0.6) !important; }
+@keyframes slideInRightPanel { from { transform: translateX(30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 .live-info-panel .live-indicator { display: flex; align-items: center; gap: 6px; padding: 5px 12px !important; background: linear-gradient(135deg, #ef4444, #dc2626) !important; border-radius: 20px !important; font-size: 10px !important; font-weight: 800 !important; letter-spacing: 1px !important; flex-shrink: 0; }
 .live-info-panel .live-dot { width: 7px; height: 7px; background: white; border-radius: 50%; animation: live-pulse 1.5s infinite; }
 @keyframes live-pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.3); } }
@@ -183,6 +187,16 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .live-info-panel .counter { text-align: center; padding: 5px 10px !important; background: rgba(255, 255, 255, 0.08) !important; border-radius: 10px !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; min-width: 55px !important; flex-shrink: 0; }
 .live-info-panel .counter-num { font-size: 15px !important; font-weight: 900 !important; color: #fbbf24 !important; line-height: 1.1; }
 .live-info-panel .counter-label { font-size: 7px !important; opacity: 0.7 !important; text-transform: uppercase !important; letter-spacing: 1px !important; margin: 2px 0 !important; }
+.unpaid-marker-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+.unpaid-marker-pin { width: 14px; height: 14px; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-size: 7px; box-shadow: 0 1px 4px rgba(239,68,68,0.5); position: relative; z-index: 2; transition: all 0.3s ease; pointer-events: auto; }
+.unpaid-marker-pulse { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; border-radius: 50%; background: rgba(239,68,68,0.3); animation: unpaid-pulse 2s infinite; z-index: 1; }
+@keyframes unpaid-pulse { 0% { transform: translate(-50%,-50%) scale(1); opacity: 0.6; } 100% { transform: translate(-50%,-50%) scale(2); opacity: 0; } }
+.unpaid-marker-label { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #dc2626, #991b1b); color: white; padding: 1px 6px; border-radius: 8px; font-size: 7px; font-weight: 700; white-space: nowrap; box-shadow: 0 1px 4px rgba(0,0,0,0.3); border: 1px solid white; z-index: 3; max-width: 100px; overflow: hidden; text-overflow: ellipsis; opacity: 0; transition: opacity 0.3s; }
+.unpaid-marker-wrapper:hover .unpaid-marker-label, .unpaid-marker-wrapper.highlighted .unpaid-marker-label { opacity: 1; }
+.unpaid-marker-amount { position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%); background: #fbbf24; color: #7c2d12; padding: 1px 5px; border-radius: 5px; font-size: 7px; font-weight: 800; white-space: nowrap; box-shadow: 0 1px 3px rgba(0,0,0,0.2); z-index: 3; opacity: 0; transition: opacity 0.3s; }
+.unpaid-marker-wrapper:hover .unpaid-marker-amount, .unpaid-marker-wrapper.highlighted .unpaid-marker-amount { opacity: 1; }
+.unpaid-marker-wrapper.highlighted .unpaid-marker-pin { background: linear-gradient(135deg, #fbbf24, #f59e0b); box-shadow: 0 2px 12px rgba(251,191,36,0.8); transform: scale(1.8); width: 20px; height: 20px; }
+.unpaid-marker-wrapper.highlighted .unpaid-marker-pulse { background: rgba(251,191,36,0.5); }
 .pelanggan-marker-small { width: 10px; height: 10px; border-radius: 50%; border: 2px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
 .pelanggan-marker-small:hover { transform: scale(1.5); box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 .toast-notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: white; padding: 10px 16px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); z-index: 99999; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; animation: toastSlide 0.3s ease; max-width: 350px; }
@@ -266,36 +280,14 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 .unit-image-wrapper { animation: swing-logo-kuat 2.5s ease-in-out infinite; transform-origin: top center; }
 .marker-cluster-custom { background: transparent !important; border: none !important; }
 .unpaid-cluster-custom { background: transparent !important; border: none !important; }
-
-/* ============================================
-   ✅ REALTIME INDICATOR
-   ============================================ */
+/* ✅ REALTIME INDICATOR */
 .realtime-indicator { position: fixed; top: 115px; right: 275px; background: rgba(16,185,129,0.95); color: white; padding: 3px 10px; border-radius: 12px; font-size: 9px; font-weight: 700; z-index: 9998; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(16,185,129,0.4); }
 .realtime-dot { width: 6px; height: 6px; background: white; border-radius: 50%; animation: live-pulse 1s infinite; }
-
-/* ============================================
-   ✅ PERFORMANCE OPTIMIZATION (CSS)
-   ============================================ */
-.sidebar-content { contain: layout style paint; }
-.wilayah-progress-grid { contain: layout style; }
-.notification-scroll-content { contain: layout style; }
-.revenue-progress-details { contain: layout style; }
-.stats-grid { contain: layout style paint; }
-.circular-fill { will-change: stroke-dashoffset; }
-.circular-dot { will-change: transform; }
-.live-info-panel { will-change: transform; }
-.unit-image-wrapper { will-change: transform; }
-.toast-notification { will-change: transform; }
-.gangguan-card { content-visibility: auto; contain-intrinsic-size: 0 180px; }
-.list-item { content-visibility: auto; contain-intrinsic-size: 0 50px; }
-.wilayah-card { content-visibility: auto; contain-intrinsic-size: 0 70px; }
-.search-result-item { content-visibility: auto; contain-intrinsic-size: 0 40px; }
-.unit-image-wrapper img { image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; }
-.sidebar-content * { backface-visibility: hidden; }
 </style>
 </head>
 <body>
 <audio id="backgroundMusic" loop preload="none"></audio>
+<div id="youtubePlayerContainer" style="position:fixed;bottom:-200px;right:-200px;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1;"></div>
 <svg style="position:absolute;width:0;height:0">
 <defs>
 <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -377,13 +369,11 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 </div>
 </div>
 </div>
-
 <!-- ✅ REALTIME INDICATOR -->
 <div class="realtime-indicator" id="realtimeIndicator">
 <div class="realtime-dot"></div>
 <span>LIVE <span id="realtimeClock">00:00:00</span></span>
 </div>
-
 <div class="main-wrapper" id="mainWrapper">
 <div id="map"></div>
 <div class="live-info-panel" id="liveInfoPanel" style="display: none">
@@ -444,7 +434,15 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 <button class="voice-btn repeat" id="btnLoopMusic" onclick="toggleLoopMusic()" style="background:linear-gradient(135deg,#6366f1,#4f46e5)"><i class="fas fa-redo"></i> Rotasi</button>
 </div>
 </div>
-<!-- ✅ YOUTUBE DIHAPUS TOTAL -->
+<div class="youtube-control">
+<div class="voice-control-title"><i class="fab fa-youtube"></i> YOUTUBE MUSIC</div>
+<div class="voice-control-row"><input type="text" id="youtubeUrl" placeholder="Paste link YouTube..." style="flex:1;padding:6px;border:1px solid #e2e8f0;border-radius:6px;font-size:9px;" /></div>
+<div class="voice-btn-group" style="margin-top:6px">
+<button class="voice-btn play" onclick="loadYouTube()"><i class="fab fa-youtube"></i> Putar</button>
+<button class="voice-btn stop" onclick="stopYouTube()"><i class="fas fa-stop"></i> Stop</button>
+</div>
+<div class="voice-control-row" style="margin-top:6px"><div class="voice-control-label">Volume</div><input type="range" min="0" max="100" value="50" id="youtubeVolumeSlider" oninput="setYouTubeVolume(this.value)" /><span id="youtubeVolumeValue" style="font-size:9px;font-weight:600;min-width:30px">50%</span></div>
+</div>
 <div class="mute-control">
 <div class="voice-control-title"><i class="fas fa-volume-mute"></i> MUTE SUARA LIVE</div>
 <div class="voice-btn-group"><button class="voice-btn" id="btnMuteLive" onclick="toggleMuteLive()" style="background:linear-gradient(135deg,#ef4444,#dc2626);grid-column:span 2"><i class="fas fa-volume-up"></i> <span id="muteLiveText">Mute Suara Live</span></button></div>
@@ -598,13 +596,13 @@ body { font-family: "Inter", sans-serif; background: #0f172a; overflow: hidden; 
 </div>
 </div></div>
 </div>
-
-<!-- ✅ HANYA LIBRARY WAJIB - sisanya lazy load -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+<script src="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
 /* ============================================
    ✅ DATA DARI LARAVEL
@@ -616,43 +614,17 @@ const titikPentingData = @json($titikPenting ?? []);
 const pelangganDataFromLaravel = @json($pelanggan ?? []);
 const zonaData = @json($zonaList ?? []);
 const gangguanFotosData = @json($gangguanFotosData ?? []);
-const musicFolder = '{{ asset("musik/") }}/';
 
 /* ============================================
    ✅ KONFIGURASI REALTIME & PERFORMA
    ============================================ */
 const API_REALTIME_URL = '/api/pelanggan/realtime';
-const POLLING_INTERVAL = 1500;
-const UI_UPDATE_INTERVAL = 1000;
-const WILAYAH_RENDER_INTERVAL = 5000;
+const POLLING_INTERVAL = 1500;          // ✅ 1.5 detik (lebih cepat)
+const UI_UPDATE_INTERVAL = 1000;        // ✅ Update UI tiap 1 detik
+const WILAYAH_RENDER_INTERVAL = 5000;   // ✅ Render wilayah tiap 5 detik (hemat CPU)
 
 /* ============================================
-   ✅ LAZY LOADER - Load script CSS/JS hanya saat dibutuhkan
-   ============================================ */
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-    if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
-    const s = document.createElement('script');
-    s.src = src;
-    s.onload = resolve;
-    s.onerror = reject;
-    document.head.appendChild(s);
-  });
-}
-function loadCSS(href) {
-  if (document.querySelector(`link[href="${href}"]`)) return Promise.resolve();
-  return new Promise((resolve, reject) => {
-    const l = document.createElement('link');
-    l.rel = 'stylesheet';
-    l.href = href;
-    l.onload = resolve;
-    l.onerror = reject;
-    document.head.appendChild(l);
-  });
-}
-
-/* ============================================
-   ✅ VARIABEL GLOBAL
+   ✅ VARIABEL GLOBAL - REALTIME ENGINE
    ============================================ */
 let isFetchingPayments = false;
 let map, jalurLayers = {}, markerLayers = {}, pelangganLayers = {}, pelangganClusterGroup, zonaLayers = {};
@@ -660,26 +632,42 @@ let unpaidClusterGroup = null;
 let isFullscreen = false, totalRevenue = 0, totalKubikasi = 0;
 let currentLayer = 'satellite', baseLayers = {}, currentBaseLayer = null;
 let isMusicPlaying = false, isMusicPaused = false, autoRotateMusic = true, currentMusicType = '', currentPlaylistIndex = 0;
-let isLiveDashboardActive = false;
+let isLiveDashboardActive = false, highlightedMarkerElement = null;
 let liveCycleInterval = null, liveCycleIndex = 0, liveCycleSpeed = 7000;
 let isLiveMuted = false;
 let realtimePollingInterval = null, lastKnownPaymentTimestamps = {}, isFirstLoad = true;
 let lastActivityTime = Date.now(), sidebarScrollDirection = 1, sidebarScrollInterval;
+let youtubePlayer = null, isYoutubeReady = false;
 let audioUnlocked = false;
-let currentRouteControl = null, routeStartMarker = null, routeDestMarker = null, routingLoaded = false, elevationControl = null;
+let currentRouteControl = null, userLocationMarker = null, userLocation = null, routeStartMarker = null, routeDestMarker = null, routingLoaded = false, elevationControl = null;
 let reminderEnabled = true, reminderTimeout = null;
 if (typeof window.processedPaymentKeys === 'undefined') { window.processedPaymentKeys = new Set(); }
 let isInitialLoadComplete = false;
-let uiUpdateInterval = null;
-let dataChangeDetected = false;
-let cachedTodayStats = null;
-let cachedMonthlyStats = null;
-let lastWilayahRenderTime = 0;
+
+/* ✅ VARIABEL BARU - REALTIME & CACHE */
+let uiUpdateInterval = null;            // Loop UI per detik
+let wilayahRenderInterval = null;       // Loop render wilayah
+let dataChangeDetected = false;         // Flag: ada data baru dari API
+let lastDataHash = '';                  // Hash data untuk deteksi perubahan
+let cachedTodayStats = null;            // Cache stats hari ini
+let cachedMonthlyStats = null;          // Cache stats bulanan
+let lastWilayahRenderTime = 0;          // Waktu terakhir render wilayah
+let realtimeClockInterval = null;       // Jam realtime di indicator
 
 const REMINDER_MESSAGES = {
   ist: ["Waktu istirahat telah tiba. Jangan lupa makan siang. Tetap semangat!","Istirahat dulu yuk. Jaga kesehatan agar tetap produktif.","Saatnya rehat sejenak. Refresh pikiran, lanjutkan pekerjaan dengan segar."],
   pulang: ["Waktu pulang telah tiba. Terima kasih atas kerja keras hari ini. Hati-hati di jalan!","Simpan peralatan, rapikan meja, dan pulang dengan selamat.","Alhamdulillah hari ini selesai. Sampai jumpa besok, jaga kesehatan!"]
 };
+
+function initReminderAutoActive() {
+  reminderEnabled = true;
+  const dot = document.getElementById('reminderStatusDot');
+  const txt = document.getElementById('reminderStatusText');
+  if (dot) dot.className = 'voice-status-dot active';
+  if (txt) txt.textContent = 'Pengingat Aktif (Otomatis)';
+  if (typeof scheduleNextReminder === 'function') scheduleNextReminder();
+  console.log('✅ Sistem Pengingat otomatis AKTIF');
+}
 
 const voiceProfiles = [
   { name: 'Warm & Friendly', pitch: 1.0, rate: 0.90 },
@@ -696,141 +684,365 @@ let voiceSettings = { enabled: true, volume: 0.8, gangguanGender: 'female', gang
 let availableVoices = [], indonesianVoices = [], indonesianFemaleVoices = [], indonesianMaleVoices = [];
 let isGangguanVoicePlaying = false, isGangguanVoicePaused = false, repeatGangguanVoice = false, activeGangguanList = [];
 let isPaymentVoicePlaying = false, isPaymentVoicePaused = false, repeatPaymentVoice = false, last5Payments = [], currentPaymentIndex = 0;
-let voiceQueue = [], isVoiceSpeaking = false, isNarrating = false, currentNarrationIndex = 0;
+let voiceQueue = [], isVoiceSpeaking = false, isNarrating = false, currentNarrationIndex = 0, narrationPaused = false;
 let unpaidCustomerMarkers = [], unpaidCustomerList = [];
 let displayedPct = 0;
 let hasSpokenDailyProgress = false;
 let lastSpokenDate = '';
+let knownPaidIds = new Set();
+let isInitialSyncDone = false;
 
 /* ============================================
    ✅ UTILITY FUNCTIONS
    ============================================ */
-function throttle(fn, wait = 100) { let last = 0; return function(...args) { const now = Date.now(); if (now - last >= wait) { last = now; fn.apply(this, args); } }; }
-function debounce(fn, wait) { let timeout; return (...args) => { clearTimeout(timeout); timeout = setTimeout(() => fn.apply(this, args), wait); }; }
-function parseKoordinator(s) { try { if (!s) return null; const c = s.split(',').map(x => parseFloat(x.trim())); return (c.length === 2 && !isNaN(c[0]) && !isNaN(c[1])) ? c : null; } catch(e) { return null; } }
-function formatRupiah(a) { return (!a || a === 0) ? 'Rp 0' : 'Rp ' + parseInt(a).toLocaleString('id-ID'); }
-function isInArea(lat, lng) { return lat >= -6.98 && lat <= -6.80 && lng >= 107.80 && lng <= 108.15; }
-function parseCoordinates(s) { try { if (!s) return null; let str = String(s).trim(); if (str.startsWith('"') && str.endsWith('"')) str = str.substring(1, str.length - 1); str = str.replace(/\\/g, ''); let coords = JSON.parse(str); if (Array.isArray(coords) && coords.length > 0 && Array.isArray(coords[0])) coords = coords[0]; return coords.map(c => (typeof c === 'object' && c !== null && c.lat !== undefined && c.lng !== undefined) ? [parseFloat(c.lat), parseFloat(c.lng)] : c); } catch(e) { return null; } }
-function hasPointInArea(coords) { return coords && Array.isArray(coords) && coords.some(c => isInArea(c[0], c[1])); }
-function showNotification(msg, type = 'info') { const toast = document.createElement('div'); toast.className = `toast-notification ${type}`; const icons = { success: 'fa-check-circle', info: 'fa-info-circle', warning: 'fa-exclamation-triangle', live: 'fa-broadcast-tower', payment: 'fa-money-bill-wave' }; toast.innerHTML = `<i class="fas ${icons[type] || 'fa-info-circle'}"></i><span>${msg}</span>`; document.body.appendChild(toast); setTimeout(() => { toast.style.animation = 'toastSlide 0.3s ease reverse'; setTimeout(() => toast.remove(), 300); }, 3000); }
-function getPaymentStatus(p) { const hasLoket = p.tanggal_pembayaran_loket && !['-','.','',null].includes(p.tanggal_pembayaran_loket); const hasPPOB = p.tanggal_pembayaran_ppob && !['-','.','',null].includes(p.tanggal_pembayaran_ppob); if (hasLoket) return { status: 'Kantor', color: '#10b981', icon: 'fa-building', tanggal: p.tanggal_pembayaran_loket, metode: 'Kantor' }; if (hasPPOB) return { status: 'PPOB', color: '#f59e0b', icon: 'fa-mobile-alt', tanggal: p.tanggal_pembayaran_ppob, metode: 'PPOB' }; return { status: 'Belum Bayar', color: '#ef4444', icon: 'fa-times', tanggal: null, metode: null }; }
-function toTitleCase(str) { return str ? str.replace(/\w\S*/g, t => t.charAt(0).toUpperCase() + t.substr(1).toLowerCase()) : str; }
-function convertRegionRomanToNumber(name) { if (!name) return name; const map = { X:'10',IX:'9',VIII:'8',VII:'7',VI:'6',V:'5',IV:'4',III:'3',II:'2',I:'1' }; return name.replace(/\b(X|IX|VIII|VII|VI|V|IV|III|II|I)\b/g, m => map[m] || m); }
-function formatNameForSpeech(name) { return name ? toTitleCase(name.trim().replace(/\s+/g, ' ').toLowerCase()) : 'Pelanggan'; }
-function cleanSpacedLetters(text) { if (!text) return text; const parts = text.trim().split(/\s+/); if (parts.length >= 2 && parts.every(p => p.length === 1 && /^[A-Za-z]$/.test(p))) { const joined = parts.join(''); return joined.charAt(0).toUpperCase() + joined.slice(1).toLowerCase(); } return text; }
-function sanitizeTextForTTS(text) { if (!text || text === '-' || String(text).toLowerCase() === 'null' || String(text).toLowerCase() === 'undefined') return ''; let clean = String(text).trim(); clean = clean.replace(/[\\\/]/g, ' '); clean = clean.replace(/\bKp\.?\b/gi, 'Kampung'); clean = clean.replace(/\bH\.?\b/gi, 'Haji'); clean = clean.replace(/\bHj\.?\b/gi, 'Hajah'); clean = clean.replace(/\bJl\.?\b/gi, 'Jalan'); clean = clean.replace(/\bNo\.?\b/gi, 'Nomor'); clean = clean.replace(/\bRT\b/gi, 'Er Te'); clean = clean.replace(/\bRW\b/gi, 'Er We'); clean = clean.replace(/\b([A-Za-z])\s+(?=[A-Za-z]\b)/g, '$1'); clean = clean.toLowerCase().replace(/\b\w/g, char => char.toUpperCase()); clean = clean.replace(/\bWilayah\s+Wilayah\b/gi, 'Wilayah'); clean = clean.replace(/\bWilayah\s+IV\b/gi, 'Wilayah 4').replace(/\bWilayah\s+III\b/gi, 'Wilayah 3').replace(/\bWilayah\s+II\b/gi, 'Wilayah 2').replace(/\bWilayah\s+I\b/gi, 'Wilayah 1'); return clean.replace(/\s+/g, ' ').trim(); }
+function throttle(fn, wait = 100) {
+  let last = 0;
+  return function(...args) {
+    const now = Date.now();
+    if (now - last >= wait) { last = now; fn.apply(this, args); }
+  };
+}
+
+function debounce(fn, wait) {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn.apply(this, args), wait);
+  };
+}
+
+function parseKoordinator(s) {
+  try {
+    if (!s) return null;
+    const c = s.split(',').map(x => parseFloat(x.trim()));
+    return (c.length === 2 && !isNaN(c[0]) && !isNaN(c[1])) ? c : null;
+  } catch(e) { return null; }
+}
+
+function formatRupiah(a) {
+  return (!a || a === 0) ? 'Rp 0' : 'Rp ' + parseInt(a).toLocaleString('id-ID');
+}
+
+function formatDate(s) {
+  return (!s || s === '-' || s === '.') ? '-' : new Date(s).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function isInArea(lat, lng) {
+  return lat >= -6.98 && lat <= -6.80 && lng >= 107.80 && lng <= 108.15;
+}
+
+function parseCoordinates(s) {
+  try {
+    if (!s) return null;
+    let str = String(s).trim();
+    if (str.startsWith('"') && str.endsWith('"')) str = str.substring(1, str.length - 1);
+    str = str.replace(/\\/g, '');
+    let coords = JSON.parse(str);
+    if (Array.isArray(coords) && coords.length > 0 && Array.isArray(coords[0])) coords = coords[0];
+    return coords.map(c => (typeof c === 'object' && c !== null && c.lat !== undefined && c.lng !== undefined) ? [parseFloat(c.lat), parseFloat(c.lng)] : c);
+  } catch(e) { return null; }
+}
+
+function hasPointInArea(coords) {
+  return coords && Array.isArray(coords) && coords.some(c => isInArea(c[0], c[1]));
+}
+
+function showNotification(msg, type = 'info') {
+  const toast = document.createElement('div');
+  toast.className = `toast-notification ${type}`;
+  const icons = { success: 'fa-check-circle', info: 'fa-info-circle', warning: 'fa-exclamation-triangle', live: 'fa-broadcast-tower', payment: 'fa-money-bill-wave' };
+  toast.innerHTML = `<i class="fas ${icons[type] || 'fa-info-circle'}"></i><span>${msg}</span>`;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'toastSlide 0.3s ease reverse';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+function getPaymentStatus(p) {
+  const hasLoket = p.tanggal_pembayaran_loket && !['-','.','',null].includes(p.tanggal_pembayaran_loket);
+  const hasPPOB = p.tanggal_pembayaran_ppob && !['-','.','',null].includes(p.tanggal_pembayaran_ppob);
+  if (hasLoket) return { status: 'Kantor', color: '#10b981', icon: 'fa-building', tanggal: p.tanggal_pembayaran_loket, metode: 'Kantor' };
+  if (hasPPOB) return { status: 'PPOB', color: '#f59e0b', icon: 'fa-mobile-alt', tanggal: p.tanggal_pembayaran_ppob, metode: 'PPOB' };
+  return { status: 'Belum Bayar', color: '#ef4444', icon: 'fa-times', tanggal: null, metode: null };
+}
+
+function toTitleCase(str) {
+  return str ? str.replace(/\w\S*/g, t => t.charAt(0).toUpperCase() + t.substr(1).toLowerCase()) : str;
+}
+
+function convertRegionRomanToNumber(name) {
+  if (!name) return name;
+  const map = { X:'10',IX:'9',VIII:'8',VII:'7',VI:'6',V:'5',IV:'4',III:'3',II:'2',I:'1' };
+  return name.replace(/\b(X|IX|VIII|VII|VI|V|IV|III|II|I)\b/g, m => map[m] || m);
+}
+
+function formatNameForSpeech(name) {
+  return name ? toTitleCase(name.trim().replace(/\s+/g, ' ').toLowerCase()) : 'Pelanggan';
+}
+
+function cleanSpacedLetters(text) {
+  if (!text) return text;
+  const parts = text.trim().split(/\s+/);
+  if (parts.length >= 2 && parts.every(p => p.length === 1 && /^[A-Za-z]$/.test(p))) {
+    const joined = parts.join('');
+    return joined.charAt(0).toUpperCase() + joined.slice(1).toLowerCase();
+  }
+  return text;
+}
+
+function sanitizeTextForTTS(text) {
+  if (!text || text === '-' || String(text).toLowerCase() === 'null' || String(text).toLowerCase() === 'undefined') return '';
+  let clean = String(text).trim();
+  clean = clean.replace(/[\\\/]/g, ' ');
+  clean = clean.replace(/\bKp\.?\b/gi, 'Kampung');
+  clean = clean.replace(/\bH\.?\b/gi, 'Haji');
+  clean = clean.replace(/\bHj\.?\b/gi, 'Hajah');
+  clean = clean.replace(/\bJl\.?\b/gi, 'Jalan');
+  clean = clean.replace(/\bNo\.?\b/gi, 'Nomor');
+  clean = clean.replace(/\bRT\b/gi, 'Er Te');
+  clean = clean.replace(/\bRW\b/gi, 'Er We');
+  clean = clean.replace(/\b([A-Za-z])\s+(?=[A-Za-z]\b)/g, '$1');
+  clean = clean.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+  clean = clean.replace(/\bWilayah\s+Wilayah\b/gi, 'Wilayah');
+  clean = clean.replace(/\bWilayah\s+IV\b/gi, 'Wilayah 4').replace(/\bWilayah\s+III\b/gi, 'Wilayah 3').replace(/\bWilayah\s+II\b/gi, 'Wilayah 2').replace(/\bWilayah\s+I\b/gi, 'Wilayah 1');
+  return clean.replace(/\s+/g, ' ').trim();
+}
 
 /* ============================================
    ✅ REMINDER SYSTEM
    ============================================ */
-function initReminderAutoActive() {
-  reminderEnabled = true;
+function toggleReminder(state) {
+  reminderEnabled = state;
   const dot = document.getElementById('reminderStatusDot');
   const txt = document.getElementById('reminderStatusText');
-  if (dot) dot.className = 'voice-status-dot active';
-  if (txt) txt.textContent = 'Pengingat Aktif (Otomatis)';
-  if (typeof scheduleNextReminder === 'function') scheduleNextReminder();
-  console.log('✅ Sistem Pengingat otomatis AKTIF');
+  if (state) {
+    dot.className = 'voice-status-dot active';
+    txt.textContent = 'Pengingat Aktif';
+    scheduleNextReminder();
+    showNotification('🔔 Pengingat diaktifkan', 'success');
+  } else {
+    dot.className = 'voice-status-dot paused';
+    txt.textContent = 'Pengingat Nonaktif';
+    if (reminderTimeout) { clearTimeout(reminderTimeout); reminderTimeout = null; }
+    showNotification('🔕 Pengingat dimatikan', 'warning');
+  }
 }
-function toggleReminder(state) { reminderEnabled = state; const dot = document.getElementById('reminderStatusDot'); const txt = document.getElementById('reminderStatusText'); if (state) { dot.className = 'voice-status-dot active'; txt.textContent = 'Pengingat Aktif'; scheduleNextReminder(); showNotification('🔔 Pengingat diaktifkan', 'success'); } else { dot.className = 'voice-status-dot paused'; txt.textContent = 'Pengingat Nonaktif'; if (reminderTimeout) { clearTimeout(reminderTimeout); reminderTimeout = null; } showNotification('🔕 Pengingat dimatikan', 'warning'); } }
-function scheduleNextReminder() { if (reminderTimeout) clearTimeout(reminderTimeout); if (!reminderEnabled) return; const now = new Date(); const istTime = document.getElementById('reminderIstTime')?.value || '12:00'; const isFriday = now.getDay() === 5; const pulangTime = isFriday ? (document.getElementById('reminderPulangJumat')?.value || '16:30') : (document.getElementById('reminderPulangTime')?.value || '16:00'); const [istH, istM] = istTime.split(':').map(Number); const [pH, pM] = pulangTime.split(':').map(Number); const targets = [{ h: istH, m: istM, type: 'ist' },{ h: pH, m: pM, type: 'pulang' }]; let next = null; targets.forEach(t => { const target = new Date(); target.setHours(t.h, t.m, 0, 0); if (target > now && (!next || target < next.time)) next = { time: target, type: t.type }; }); if (next) { const delay = next.time - now; reminderTimeout = setTimeout(() => { triggerReminder(next.type); scheduleNextReminder(); }, delay); } }
-function triggerReminder(type) { const messages = REMINDER_MESSAGES[type]; const msg = messages[Math.floor(Math.random() * messages.length)]; showBigReminder(type, msg); const label = type === 'ist' ? '⏰ ISTIRAHAT' : '🏠 PULANG'; showNotification(`${label}: ${msg.substring(0, 50)}...`, type === 'ist' ? 'warning' : 'info'); if (voiceSettings.enabled) speak(msg, 'male'); }
-function showBigReminder(type, msg) { document.querySelectorAll('.big-reminder-overlay').forEach(el => el.remove()); const overlay = document.createElement('div'); overlay.className = 'big-reminder-overlay'; overlay.style.cssText = `position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:99999;display:flex;align-items:center;justify-content:center;`; const colors = { ist: { bg: 'linear-gradient(135deg,#f59e0b,#d97706)', icon: 'fa-coffee', title: '⏰ WAKTU ISTIRAHAT' }, pulang: { bg: 'linear-gradient(135deg,#ec4899,#db2777)', icon: 'fa-home', title: '🏠 WAKTU PULANG' } }; const c = colors[type]; overlay.innerHTML = `<div style="background:white;border-radius:20px;padding:40px;max-width:500px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);"><div style="width:100px;height:100px;margin:0 auto 20px;border-radius:50%;background:${c.bg};display:flex;align-items:center;justify-content:center;"><i class="fas ${c.icon}" style="font-size:50px;color:white;"></i></div><h2 style="color:#1e293b;font-size:28px;margin-bottom:15px;font-weight:800;">${c.title}</h2><p style="color:#475569;font-size:16px;line-height:1.6;margin-bottom:25px;">${msg}</p><div style="font-size:12px;color:#94a3b8;margin-bottom:20px;"><i class="fas fa-clock"></i> ${new Date().toLocaleTimeString('id-ID')} WIB</div><button onclick="this.closest('.big-reminder-overlay').remove()" style="background:${c.bg};color:white;border:none;padding:12px 40px;border-radius:30px;font-size:14px;font-weight:700;cursor:pointer;"><i class="fas fa-check"></i> Mengerti</button></div>`; document.body.appendChild(overlay); setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, 30000); }
-function testReminder(type) { const msg = REMINDER_MESSAGES[type][0]; showBigReminder(type, msg); showNotification(`🧪 Test pengingat ${type === 'ist' ? 'istirahat' : 'pulang'}`, 'info'); if (voiceSettings.enabled) speak(msg, voiceSettings.paymentGender); }
+
+function scheduleNextReminder() {
+  if (reminderTimeout) clearTimeout(reminderTimeout);
+  if (!reminderEnabled) return;
+  const now = new Date();
+  const istTime = document.getElementById('reminderIstTime')?.value || '12:00';
+  const isFriday = now.getDay() === 5;
+  const pulangTime = isFriday ? (document.getElementById('reminderPulangJumat')?.value || '16:30') : (document.getElementById('reminderPulangTime')?.value || '16:00');
+  const [istH, istM] = istTime.split(':').map(Number);
+  const [pH, pM] = pulangTime.split(':').map(Number);
+  const targets = [{ h: istH, m: istM, type: 'ist' },{ h: pH, m: pM, type: 'pulang' }];
+  let next = null;
+  targets.forEach(t => {
+    const target = new Date();
+    target.setHours(t.h, t.m, 0, 0);
+    if (target > now && (!next || target < next.time)) next = { time: target, type: t.type };
+  });
+  if (next) {
+    const delay = next.time - now;
+    reminderTimeout = setTimeout(() => {
+      triggerReminder(next.type);
+      scheduleNextReminder();
+    }, delay);
+  }
+}
+
+function triggerReminder(type) {
+  const messages = REMINDER_MESSAGES[type];
+  const msg = messages[Math.floor(Math.random() * messages.length)];
+  showBigReminder(type, msg);
+  const label = type === 'ist' ? '⏰ ISTIRAHAT' : '🏠 PULANG';
+  showNotification(`${label}: ${msg.substring(0, 50)}...`, type === 'ist' ? 'warning' : 'info');
+  if (voiceSettings.enabled) speak(msg, 'male');
+}
+
+function showBigReminder(type, msg) {
+  document.querySelectorAll('.big-reminder-overlay').forEach(el => el.remove());
+  const overlay = document.createElement('div');
+  overlay.className = 'big-reminder-overlay';
+  overlay.style.cssText = `position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:99999;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease;`;
+  const colors = {
+    ist: { bg: 'linear-gradient(135deg,#f59e0b,#d97706)', icon: 'fa-coffee', title: '⏰ WAKTU ISTIRAHAT' },
+    pulang: { bg: 'linear-gradient(135deg,#ec4899,#db2777)', icon: 'fa-home', title: '🏠 WAKTU PULANG' }
+  };
+  const c = colors[type];
+  overlay.innerHTML = `<div style="background:white;border-radius:20px;padding:40px;max-width:500px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);"><div style="width:100px;height:100px;margin:0 auto 20px;border-radius:50%;background:${c.bg};display:flex;align-items:center;justify-content:center;animation:pulse-reminder 2s infinite;"><i class="fas ${c.icon}" style="font-size:50px;color:white;"></i></div><h2 style="color:#1e293b;font-size:28px;margin-bottom:15px;font-weight:800;">${c.title}</h2><p style="color:#475569;font-size:16px;line-height:1.6;margin-bottom:25px;">${msg}</p><div style="font-size:12px;color:#94a3b8;margin-bottom:20px;"><i class="fas fa-clock"></i> ${new Date().toLocaleTimeString('id-ID')} WIB</div><button onclick="this.closest('.big-reminder-overlay').remove()" style="background:${c.bg};color:white;border:none;padding:12px 40px;border-radius:30px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.2);"><i class="fas fa-check"></i> Mengerti</button></div>`;
+  document.body.appendChild(overlay);
+  setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, 30000);
+}
+
+function testReminder(type) {
+  const msg = REMINDER_MESSAGES[type][0];
+  showBigReminder(type, msg);
+  showNotification(`🧪 Test pengingat ${type === 'ist' ? 'istirahat' : 'pulang'}`, 'info');
+  if (voiceSettings.enabled) speak(msg, voiceSettings.paymentGender);
+}
 
 /* ============================================
-   ✅ ROUTING - LAZY LOAD
+   ✅ ROUTING & NAVIGATION
    ============================================ */
-function getIndonesianInstruction(step) { const type = step.maneuver.type; const modifier = step.maneuver.modifier || ''; const name = step.name || ''; const road = (name && name !== 'road' && name !== 'path' && name !== 'residential') ? name : 'jalan ini'; switch (type) { case 'depart': return `Berangkat dari lokasi Anda`; case 'arrive': return `Anda telah sampai di tujuan`; case 'turn': if (modifier === 'left') return `Belok kiri ke ${road}`; if (modifier === 'right') return `Belok kanan ke ${road}`; if (modifier === 'slight left') return `Belok agak ke kiri ke ${road}`; if (modifier === 'slight right') return `Belok agak ke kanan ke ${road}`; return `Belok ke ${road}`; case 'continue': case 'new name': return `Lurus terus di ${road}`; case 'roundabout': case 'rotary': return `Masuk bundaran, ambil keluaran ke ${road}`; case 'merge': return `Bergabung ke arah ${modifier} ke ${road}`; case 'fork': if (modifier === 'left') return `Ambil jalan kiri ke ${road}`; if (modifier === 'right') return `Ambil jalan kanan ke ${road}`; return `Ambil jalan di persimpangan ke ${road}`; case 'end of road': if (modifier === 'left') return `Akhir jalan, belok kiri ke ${road}`; if (modifier === 'right') return `Akhir jalan, belok kanan ke ${road}`; return `Akhir jalan, belok ke ${road}`; default: return `Lanjutkan ke ${road}`; } }
+function getIndonesianInstruction(step) {
+  const type = step.maneuver.type;
+  const modifier = step.maneuver.modifier || '';
+  const name = step.name || '';
+  const road = (name && name !== 'road' && name !== 'path' && name !== 'residential') ? name : 'jalan ini';
+  switch (type) {
+    case 'depart': return `Berangkat dari lokasi Anda`;
+    case 'arrive': return `Anda telah sampai di tujuan`;
+    case 'turn':
+      if (modifier === 'left') return `Belok kiri ke ${road}`;
+      if (modifier === 'right') return `Belok kanan ke ${road}`;
+      if (modifier === 'slight left') return `Belok agak ke kiri ke ${road}`;
+      if (modifier === 'slight right') return `Belok agak ke kanan ke ${road}`;
+      return `Belok ke ${road}`;
+    case 'continue': case 'new name': return `Lurus terus di ${road}`;
+    case 'roundabout': case 'rotary': return `Masuk bundaran, ambil keluaran ke ${road}`;
+    case 'merge': return `Bergabung ke arah ${modifier} ke ${road}`;
+    case 'fork':
+      if (modifier === 'left') return `Ambil jalan kiri ke ${road}`;
+      if (modifier === 'right') return `Ambil jalan kanan ke ${road}`;
+      return `Ambil jalan di persimpangan ke ${road}`;
+    case 'end of road':
+      if (modifier === 'left') return `Akhir jalan, belok kiri ke ${road}`;
+      if (modifier === 'right') return `Akhir jalan, belok kanan ke ${road}`;
+      return `Akhir jalan, belok ke ${road}`;
+    default: return `Lanjutkan ke ${road}`;
+  }
+}
 
 async function showRouteTo(lat, lng, label = 'Tujuan') {
   showNotification('🗺️ Memuat modul navigasi...', 'info');
   const ok = await ensureRoutingLoaded();
   if (!ok) return;
-  const start = [-6.917821785545315, 108.07163674919619];
-  clearRoute(true);
-  routeStartMarker = L.marker(start, { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:3px solid white;box-shadow:0 2px 12px rgba(59,130,246,0.6);font-size:13px;"><i class="fas fa-location-arrow"></i></div>`, iconSize: [32, 32], iconAnchor: [16, 16] }) }).addTo(map);
-  routeDestMarker = L.marker([lat, lng], { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:linear-gradient(135deg,#ef4444,#dc2626);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:3px solid white;box-shadow:0 2px 12px rgba(239,68,68,0.6);font-size:13px;"><i class="fas fa-flag-checkered"></i></div>`, iconSize: [32, 32], iconAnchor: [16, 16] }) }).addTo(map);
-  currentRouteControl = L.Routing.control({
-    waypoints: [L.latLng(start[0], start[1]), L.latLng(lat, lng)],
-    routeWhileDragging: false, showAlternatives: true, addWaypoints: false, draggableWaypoints: false, fitSelectedRoutes: true,
-    lineOptions: { styles: [{ color: '#3b82f6', opacity: 0.95, weight: 6 },{ color: '#ffffff', opacity: 0.4, weight: 2 }] },
-    createMarker: () => null,
-    formatter: new L.Routing.Formatter({ language: 'en', units: 'metric' }),
-    router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' })
-  }).addTo(map);
-  currentRouteControl.on('routesfound', function(e) {
-    const route = e.routes[0];
-    const jarakKm = (route.summary.totalDistance / 1000).toFixed(2);
-    const waktuMenit = Math.ceil(route.summary.totalTime / 60);
-    showNotification(`🗺️ Rute ke ${label}: ${jarakKm} km • ±${waktuMenit} menit`, 'success');
-    const container = document.querySelector('.leaflet-routing-container');
-    if (container) {
-      let html = `<div class="route-summary-box"><i class="fas fa-route"></i> ${jarakKm} km • ±${waktuMenit} menit</div>`;
-      html += `<div style="margin-top:10px; font-weight:700; color:#1e293b; margin-bottom:8px; font-size:13px;">📋 Petunjuk Arah:</div>`;
-      let ttsText = `Rute ke ${label}. Jarak ${jarakKm} kilometer, estimasi waktu ${waktuMenit} menit. `;
-      if (route.legs && route.legs[0] && route.legs[0].steps) {
-        route.legs[0].steps.forEach((step) => {
-          if (step.maneuver.type === 'depart' || step.maneuver.type === 'arrive') return;
-          const instruction = getIndonesianInstruction(step);
-          const distText = step.distance > 1000 ? (step.distance/1000).toFixed(1) + ' km' : Math.round(step.distance) + ' m';
-          let icon = 'fa-arrow-up';
-          if (step.maneuver.modifier && step.maneuver.modifier.includes('left')) icon = 'fa-arrow-turn-up fa-rotate-270';
-          if (step.maneuver.modifier && step.maneuver.modifier.includes('right')) icon = 'fa-arrow-turn-up fa-rotate-90';
-          html += `<div class="turn-direction"><i class="fas ${icon}"></i><span>${instruction}</span><span class="distance">${distText}</span></div>`;
-          ttsText += `${instruction}. `;
-        });
+  getUserLocation((start) => {
+    clearRoute(true);
+    routeStartMarker = L.marker(start, {
+      icon: L.divIcon({
+        className: 'custom-div-icon',
+        html: `<div style="background:linear-gradient(135deg,#3b82f6,#2563eb);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:3px solid white;box-shadow:0 2px 12px rgba(59,130,246,0.6);font-size:13px;"><i class="fas fa-location-arrow"></i></div>`,
+        iconSize: [32, 32], iconAnchor: [16, 16]
+      })
+    }).addTo(map).bindPopup(`<div style="text-align:center"><strong>📍 Lokasi Anda</strong><br><small>Titik awal navigasi</small></div>`);
+    routeDestMarker = L.marker([lat, lng], {
+      icon: L.divIcon({
+        className: 'custom-div-icon',
+        html: `<div style="background:linear-gradient(135deg,#ef4444,#dc2626);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:3px solid white;box-shadow:0 2px 12px rgba(239,68,68,0.6);font-size:13px;"><i class="fas fa-flag-checkered"></i></div>`,
+        iconSize: [32, 32], iconAnchor: [16, 16]
+      })
+    }).addTo(map);
+    currentRouteControl = L.Routing.control({
+      waypoints: [L.latLng(start[0], start[1]), L.latLng(lat, lng)],
+      routeWhileDragging: false, showAlternatives: true, addWaypoints: false,
+      draggableWaypoints: false, fitSelectedRoutes: true,
+      lineOptions: {
+        styles: [{ color: '#3b82f6', opacity: 0.95, weight: 6 },{ color: '#ffffff', opacity: 0.4, weight: 2 }]
+      },
+      altLineOptions: { styles: [{ color: '#94a3b8', opacity: 0.5, weight: 4, dashArray: '8,6' }] },
+      createMarker: () => null,
+      formatter: new L.Routing.Formatter({ language: 'en', units: 'metric' }),
+      router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' })
+    }).addTo(map);
+    currentRouteControl.on('routesfound', function(e) {
+      const route = e.routes[0];
+      const jarakKm = (route.summary.totalDistance / 1000).toFixed(2);
+      const waktuMenit = Math.ceil(route.summary.totalTime / 60);
+      showNotification(`🗺️ Rute ke ${label}: ${jarakKm} km • ±${waktuMenit} menit`, 'success');
+      const container = document.querySelector('.leaflet-routing-container');
+      if (container) {
+        let html = `<div class="route-summary-box"><i class="fas fa-route"></i> ${jarakKm} km • ±${waktuMenit} menit</div>`;
+        html += `<div style="margin-top:10px; font-weight:700; color:#1e293b; margin-bottom:8px; font-size:13px;">📋 Petunjuk Arah:</div>`;
+        let ttsText = `Rute ke ${label}. Jarak ${jarakKm} kilometer, estimasi waktu ${waktuMenit} menit. `;
+        if (route.legs && route.legs[0] && route.legs[0].steps) {
+          route.legs[0].steps.forEach((step) => {
+            if (step.maneuver.type === 'depart' || step.maneuver.type === 'arrive') return;
+            const instruction = getIndonesianInstruction(step);
+            const distText = step.distance > 1000 ? (step.distance/1000).toFixed(1) + ' km' : Math.round(step.distance) + ' m';
+            let icon = 'fa-arrow-up';
+            if (step.maneuver.modifier && step.maneuver.modifier.includes('left')) icon = 'fa-arrow-turn-up fa-rotate-270';
+            if (step.maneuver.modifier && step.maneuver.modifier.includes('right')) icon = 'fa-arrow-turn-up fa-rotate-90';
+            if (step.maneuver.type === 'roundabout' || step.maneuver.type === 'rotary') icon = 'fa-circle-notch';
+            html += `<div class="turn-direction"><i class="fas ${icon}"></i><span>${instruction}</span><span class="distance">${distText}</span></div>`;
+            ttsText += `${instruction}. `;
+          });
+        }
+        html += `<button class="elevation-btn" onclick="showElevationProfile()"><i class="fas fa-chart-area"></i> Lihat Profil Elevasi</button>`;
+        html += `<button class="elevation-btn" onclick="speakRouteInstructions()" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)"><i class="fas fa-volume-up"></i> Bacakan Petunjuk</button>`;
+        container.innerHTML = html;
+        window.currentRouteTTS = ttsText;
+        window.currentRouteCoords = route.coordinates;
       }
-      html += `<button class="elevation-btn" onclick="showElevationProfile()"><i class="fas fa-chart-area"></i> Lihat Profil Elevasi</button>`;
-      html += `<button class="elevation-btn" onclick="speakRouteInstructions()" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)"><i class="fas fa-volume-up"></i> Bacakan Petunjuk</button>`;
-      container.innerHTML = html;
-      window.currentRouteTTS = ttsText;
-      window.currentRouteCoords = route.coordinates;
-    }
-    map.flyTo([lat, lng], 16, { duration: 1.2 });
+      map.flyTo([lat, lng], 16, { duration: 1.2 });
+    });
+    currentRouteControl.on('routingerror', function() {
+      showNotification('❌ Gagal menghitung rute. Coba lagi.', 'warning');
+      clearRoute();
+    });
+    const btn = document.getElementById('clearRouteBtn');
+    if (btn) btn.style.display = 'flex';
   });
-  currentRouteControl.on('routingerror', function() { showNotification('❌ Gagal menghitung rute', 'warning'); clearRoute(); });
-  const btn = document.getElementById('clearRouteBtn');
-  if (btn) btn.style.display = 'flex';
 }
 
 async function ensureRoutingLoaded() {
   if (routingLoaded) return true;
-  try {
-    await Promise.all([
-      loadCSS('https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css'),
-      loadScript('https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js')
-    ]);
-    routingLoaded = true;
-    return true;
-  } catch(e) {
-    console.error('❌ Gagal load routing:', e);
-    showNotification('❌ Gagal memuat navigasi', 'warning');
-    return false;
-  }
+  return new Promise((resolve) => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css';
+    document.head.appendChild(link);
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js';
+    script.onload = () => { routingLoaded = true; resolve(true); };
+    script.onerror = () => { showNotification('❌ Gagal memuat routing', 'warning'); resolve(false); };
+    document.head.appendChild(script);
+  });
+}
+
+function getUserLocation(callback) {
+  const DARMAKOORDINAT = [-6.917821785545315, 108.07163674919619];
+  userLocation = DARMAKOORDINAT;
+  if (typeof callback === 'function') callback(userLocation);
 }
 
 function clearRoute(silent = false) {
-  if (currentRouteControl && typeof currentRouteControl.remove === 'function') { try { map.removeControl(currentRouteControl); } catch(e) {} currentRouteControl = null; }
-  if (routeStartMarker) { try { map.removeLayer(routeStartMarker); } catch(e) {} routeStartMarker = null; }
-  if (routeDestMarker) { try { map.removeLayer(routeDestMarker); } catch(e) {} routeDestMarker = null; }
-  if (elevationControl && typeof elevationControl.remove === 'function') { try { map.removeControl(elevationControl); } catch(e) {} elevationControl = null; }
+  if (currentRouteControl && typeof currentRouteControl.remove === 'function') {
+    try { map.removeControl(currentRouteControl); } catch(e) {}
+    currentRouteControl = null;
+  }
+  if (routeStartMarker && typeof routeStartMarker.remove === 'function') {
+    try { map.removeLayer(routeStartMarker); } catch(e) {}
+    routeStartMarker = null;
+  }
+  if (routeDestMarker && typeof routeDestMarker.remove === 'function') {
+    try { map.removeLayer(routeDestMarker); } catch(e) {}
+    routeDestMarker = null;
+  }
+  if (elevationControl && typeof elevationControl.remove === 'function') {
+    try { map.removeControl(elevationControl); } catch(e) {}
+    elevationControl = null;
+  }
   const btn = document.getElementById('clearRouteBtn');
   if (btn) btn.style.display = 'none';
   if (!silent) showNotification('🗑️ Rute dihapus', 'info');
 }
 
-async function showElevationProfile() {
-  if (!window.currentRouteCoords || !window.currentRouteCoords.length) { showNotification('❌ Tidak ada data rute', 'warning'); return; }
-  if (elevationControl && typeof elevationControl.remove === 'function') { try { map.removeControl(elevationControl); } catch(e) {} elevationControl = null; return; }
+function showElevationProfile() {
+  if (!window.currentRouteCoords || !window.currentRouteCoords.length) {
+    showNotification('❌ Tidak ada data rute', 'warning');
+    return;
+  }
+  if (elevationControl && typeof elevationControl.remove === 'function') {
+    try { map.removeControl(elevationControl); } catch(e) {}
+    elevationControl = null;
+    return;
+  }
   try {
-    if (!L.control.elevation) {
-      await Promise.all([
-        loadCSS('https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.min.css'),
-        loadScript('https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.min.js')
-      ]);
-      await new Promise(r => setTimeout(r, 200));
-    }
     elevationControl = L.control.elevation({
       position: "bottomleft", theme: "lightblue-theme",
       width: 400, height: 125,
@@ -839,46 +1051,156 @@ async function showElevationProfile() {
       hoverNumber: { decimalsX: 2, decimalsY: 0 },
       detached: false, elevationDiv: null
     }).addTo(map);
-    const lineCoords = window.currentRouteCoords.map((c, index) => [ c.lng, c.lat, c.alt !== undefined ? c.alt : (c.elevation !== undefined ? c.elevation : 100 + (index % 50) * 2) ]);
-    const geojson = { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: lineCoords } };
+    const lineCoords = window.currentRouteCoords.map((c, index) => [
+      c.lng, c.lat, c.alt !== undefined ? c.alt : (c.elevation !== undefined ? c.elevation : 100 + (index % 50) * 2)
+    ]);
+    const geojson = {
+      type: 'Feature', properties: {},
+      geometry: { type: 'LineString', coordinates: lineCoords }
+    };
     elevationControl.addData(geojson);
     showNotification('📈 Profil elevasi ditampilkan', 'info');
   } catch(e) {
-    console.error('❌ Error elevasi:', e);
+    console.error('❌ Error menampilkan elevasi:', e);
     showNotification('❌ Gagal menampilkan elevasi', 'warning');
   }
 }
 
-function speakRouteInstructions() { if (window.currentRouteTTS) { showNotification('🔊 Membacakan petunjuk arah...', 'info'); speak(window.currentRouteTTS, 'female'); } }
-function goToLocation(lat, lng, zoom = 17, options = {}) { if (!map || isNaN(lat) || isNaN(lng)) return false; map.flyTo([lat, lng], zoom, { duration: 1.2 }); if (options.openPopup && options.markerId) { setTimeout(() => { const m = markerLayers[options.markerId] || pelangganLayers[options.markerId]?.marker; if (m) m.openPopup(); }, 1200); } return true; }
+function speakRouteInstructions() {
+  if (window.currentRouteTTS) {
+    showNotification('🔊 Membacakan petunjuk arah...', 'info');
+    speak(window.currentRouteTTS, 'female');
+  }
+}
+
+function goToLocation(lat, lng, zoom = 17, options = {}) {
+  if (!map || isNaN(lat) || isNaN(lng)) {
+    showNotification('❌ Koordinat tidak valid', 'warning');
+    return false;
+  }
+  map.flyTo([lat, lng], zoom, { duration: 1.2 });
+  if (options.openPopup && options.markerId) {
+    setTimeout(() => {
+      const m = markerLayers[options.markerId] || pelangganLayers[options.markerId]?.marker;
+      if (m) m.openPopup();
+    }, 1200);
+  }
+  return true;
+}
 
 /* ============================================
-   ✅ AUDIO UNLOCK
+   ✅ AUDIO UNLOCK & YOUTUBE
    ============================================ */
 function initAudioUnlock() {
   const unlockHandler = () => {
     if (audioUnlocked) return;
     audioUnlocked = true;
-    if ('speechSynthesis' in window) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); setTimeout(() => speechSynthesis.cancel(), 100); }
+    console.log('🔓 Audio unlocked');
+    if ('speechSynthesis' in window) {
+      const u = new SpeechSynthesisUtterance(' ');
+      u.volume = 0;
+      speechSynthesis.speak(u);
+      setTimeout(() => speechSynthesis.cancel(), 100);
+    }
     const audioEl = document.getElementById('backgroundMusic');
     if (audioEl && audioEl.src && audioEl.src !== window.location.href) audioEl.play().catch(() => {});
     document.removeEventListener('click', unlockHandler);
     document.removeEventListener('touchstart', unlockHandler);
+    document.removeEventListener('keydown', unlockHandler);
   };
   document.addEventListener('click', unlockHandler, { once: false });
   document.addEventListener('touchstart', unlockHandler, { once: false });
+  document.addEventListener('keydown', unlockHandler, { once: false });
+}
+
+function extractYouTubeId(url) {
+  const m = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+  return (m && m[2].length === 11) ? m[2] : null;
+}
+
+function loadYouTube() {
+  const url = document.getElementById('youtubeUrl').value.trim();
+  if (!url) { showNotification('❌ Paste link YouTube dulu', 'warning'); return; }
+  const videoId = extractYouTubeId(url);
+  if (!videoId) { showNotification('❌ Link tidak valid', 'warning'); return; }
+  if (!window.YT) {
+    showNotification('📺 Memuat YouTube...', 'info');
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    tag.onload = () => {
+      const checkReady = setInterval(() => {
+        if (window.YT && window.YT.Player) {
+          clearInterval(checkReady);
+          isYoutubeReady = true;
+          createYouTubePlayer(videoId);
+        }
+      }, 100);
+    };
+    document.head.appendChild(tag);
+  } else {
+    createYouTubePlayer(videoId);
+  }
+}
+
+function createYouTubePlayer(videoId) {
+  if (youtubePlayer) { try { youtubePlayer.destroy(); } catch(e) {} }
+  document.getElementById('youtubePlayerContainer').innerHTML = '<div id="ytPlayer"></div>';
+  youtubePlayer = new YT.Player('ytPlayer', {
+    height: '1', width: '1', videoId: videoId,
+    playerVars: { autoplay: 1, controls: 0, loop: 1, playlist: videoId },
+    events: {
+      onReady: (e) => {
+        e.target.setVolume(document.getElementById('youtubeVolumeSlider')?.value || 50);
+        e.target.playVideo();
+        showNotification('🎵 Musik diputar', 'success');
+      },
+      onError: () => showNotification('❌ Video tidak bisa diputar', 'warning')
+    }
+  });
+}
+
+function stopYouTube() {
+  if (youtubePlayer && typeof youtubePlayer.stopVideo === 'function') {
+    try { youtubePlayer.stopVideo(); youtubePlayer.destroy(); } catch(e) {}
+  }
+  youtubePlayer = null;
+  document.getElementById('youtubePlayerContainer').innerHTML = '';
+  showNotification('⏹️ YouTube dihentikan', 'info');
+}
+
+function setYouTubeVolume(v) {
+  document.getElementById('youtubeVolumeValue').textContent = v + '%';
+  if (youtubePlayer && typeof youtubePlayer.setVolume === 'function') youtubePlayer.setVolume(parseInt(v));
 }
 
 function toggleMuteLive() { isLiveMuted = !isLiveMuted; syncMuteUI(); }
+
 function syncMuteUI() {
   const btn = document.getElementById('btnMuteLive');
   const statusDot = document.getElementById('muteLiveStatusDot');
   const statusText = document.getElementById('muteLiveStatusText');
   if (!btn) return;
-  if (isLiveMuted) { btn.style.background = 'linear-gradient(135deg,#10b981,#059669)'; btn.innerHTML = '<i class="fas fa-volume-mute"></i> <span id="muteLiveText">Unmute Suara Live</span>'; if (statusDot) statusDot.className = 'voice-status-dot paused'; if (statusText) statusText.textContent = 'Suara Live Dimatikan'; }
-  else { btn.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)'; btn.innerHTML = '<i class="fas fa-volume-up"></i> <span id="muteLiveText">Mute Suara Live</span>'; if (statusDot) statusDot.className = 'voice-status-dot active'; if (statusText) statusText.textContent = 'Suara Live Aktif'; }
+  if (isLiveMuted) {
+    btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+    btn.innerHTML = '<i class="fas fa-volume-mute"></i> <span id="muteLiveText">Unmute Suara Live</span>';
+    if (statusDot) statusDot.className = 'voice-status-dot paused';
+    if (statusText) statusText.textContent = 'Suara Live Dimatikan';
+  } else {
+    btn.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
+    btn.innerHTML = '<i class="fas fa-volume-up"></i> <span id="muteLiveText">Mute Suara Live</span>';
+    if (statusDot) statusDot.className = 'voice-status-dot active';
+    if (statusText) statusText.textContent = 'Suara Live Aktif';
+  }
 }
-function initAutoLive() { isLiveMuted = true; syncMuteUI(); if (unpaidCustomerList.length > 0) { startLiveCycle(); showNotification('🔴 LIVE aktif otomatis — suara mute', 'live'); } }
+
+function initAutoLive() {
+  isLiveMuted = true;
+  syncMuteUI();
+  if (unpaidCustomerList.length > 0) {
+    startLiveCycle();
+    showNotification('🔴 LIVE aktif otomatis — suara mute, klik Unmute di Panel Suara untuk mengaktifkan', 'live');
+  }
+}
 
 /* ============================================
    ✅ CIRCULAR PROGRESS & REVENUE
@@ -893,38 +1215,78 @@ function updateCircularProgress(percentage) {
   else if (percentage < 70) { main = '#f59e0b'; light = '#fde68a'; glow = '245,158,11'; }
   else { main = '#10b981'; light = '#a7f3d0'; glow = '16,185,129'; }
   const stops = document.querySelectorAll('#progressGradient stop');
-  if (stops.length >= 3) { stops[0].style.stopColor = light; stops[1].style.stopColor = main; stops[2].style.stopColor = light; }
+  if (stops.length >= 3) {
+    stops[0].style.stopColor = light;
+    stops[1].style.stopColor = main;
+    stops[2].style.stopColor = light;
+  }
   fill.style.filter = `drop-shadow(0 0 8px rgba(${glow},0.8))`;
-  if (pctEl) { pctEl.style.color = light; pctEl.style.textShadow = `0 0 10px rgba(${glow},0.9), 0 0 22px rgba(${glow},0.6), 0 2px 3px rgba(0,0,0,0.9)`; }
-  if (dot) { dot.style.background = light; dot.style.boxShadow = `0 0 8px rgba(${glow},1), 0 0 18px rgba(${glow},0.7)`; const r = (dot.closest('.circular-progress-wrapper').offsetWidth / 2) * 0.9; dot.style.transform = `rotate(${percentage * 3.6}deg) translateY(-${r}px)`; }
+  if (pctEl) {
+    pctEl.style.color = light;
+    pctEl.style.textShadow = `0 0 10px rgba(${glow},0.9), 0 0 22px rgba(${glow},0.6), 0 2px 3px rgba(0,0,0,0.9)`;
+  }
+  if (dot) {
+    dot.style.background = light;
+    dot.style.boxShadow = `0 0 8px rgba(${glow},1), 0 0 18px rgba(${glow},0.7)`;
+    const r = (dot.closest('.circular-progress-wrapper').offsetWidth / 2) * 0.9;
+    dot.style.transform = `rotate(${percentage * 3.6}deg) translateY(-${r}px)`;
+  }
   const C = 2 * Math.PI * 45;
   fill.style.strokeDasharray = C;
   fill.style.strokeDashoffset = C - (percentage / 100) * C;
   animateCounter(displayedPct, percentage, 1500);
   displayedPct = percentage;
 }
-function animateCounter(from, to, duration) { const el = document.getElementById('circularPercentage'); if (!el) return; const start = performance.now(); function frame(now) { const t = Math.min((now - start) / duration, 1); const eased = 1 - Math.pow(1 - t, 3); el.textContent = (from + (to - from) * eased).toFixed(1) + '%'; if (t < 1) requestAnimationFrame(frame); } requestAnimationFrame(frame); }
+
+function animateCounter(from, to, duration) {
+  const el = document.getElementById('circularPercentage');
+  if (!el) return;
+  const start = performance.now();
+  function frame(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3);
+    el.textContent = (from + (to - from) * eased).toFixed(1) + '%';
+    if (t < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
 
 /* ============================================
-   ✅ STATS CALCULATION - DENGAN CACHE
+   ✅ PERHITUNGAN STATS - DENGAN CACHE
    ============================================ */
 function calculateMonthlyRevenue() {
   const now = new Date();
   const currentDay = now.getDate();
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
   const remainingDays = daysInMonth - currentDay;
-  let totalTarget = 0, totalCollected = 0, totalUnpaidWithPenalty = 0, totalKubikasiTarget = 0, totalKubikasiCollected = 0;
+  let totalTarget = 0, totalCollected = 0, totalUnpaidWithPenalty = 0;
+  let totalKubikasiTarget = 0, totalKubikasiCollected = 0;
+  
   pelangganDataFromLaravel.forEach(p => {
     const jumlah = parseFloat(p.jumlah) || 0;
     const kubikasi = parseFloat(p.pakai) || 0;
     const hasLoket = p.tanggal_pembayaran_loket && !['-','.','',null].includes(p.tanggal_pembayaran_loket);
     const hasPPOB = p.tanggal_pembayaran_ppob && !['-','.','',null].includes(p.tanggal_pembayaran_ppob);
     totalKubikasiTarget += kubikasi;
-    if (hasLoket || hasPPOB) { totalCollected += jumlah; totalKubikasiCollected += kubikasi; }
-    else { let tagihan = jumlah; if (currentDay > 20) tagihan += 5000; if (jumlah > 1000000) tagihan += 10000; totalUnpaidWithPenalty += tagihan; }
+    if (hasLoket || hasPPOB) {
+      totalCollected += jumlah;
+      totalKubikasiCollected += kubikasi;
+    } else {
+      let tagihan = jumlah;
+      if (currentDay > 20) tagihan += 5000;
+      if (jumlah > 1000000) tagihan += 10000;
+      totalUnpaidWithPenalty += tagihan;
+    }
     totalTarget += jumlah;
   });
-  return { totalTarget, totalCollected, totalUnpaidWithPenalty, percentage: totalTarget > 0 ? (totalCollected / totalTarget) * 100 : 0, currentDay, daysInMonth, remainingDays, dailyTarget: remainingDays > 0 ? totalUnpaidWithPenalty / remainingDays : 0, totalKubikasiTarget, totalKubikasiCollected };
+  
+  return {
+    totalTarget, totalCollected, totalUnpaidWithPenalty,
+    percentage: totalTarget > 0 ? (totalCollected / totalTarget) * 100 : 0,
+    currentDay, daysInMonth, remainingDays,
+    dailyTarget: remainingDays > 0 ? totalUnpaidWithPenalty / remainingDays : 0,
+    totalKubikasiTarget, totalKubikasiCollected
+  };
 }
 
 function calculateTodayStats() {
@@ -934,7 +1296,11 @@ function calculateTodayStats() {
     const s = getPaymentStatus(p);
     if (s.tanggal) {
       const d = new Date(s.tanggal).toISOString().split('T')[0];
-      if (d === todayStr) { totalToday += parseFloat(p.jumlah) || 0; kubikasiToday += parseFloat(p.pakai) || 0; countToday++; }
+      if (d === todayStr) {
+        totalToday += parseFloat(p.jumlah) || 0;
+        kubikasiToday += parseFloat(p.pakai) || 0;
+        countToday++;
+      }
     }
   });
   return { totalToday, countToday, kubikasiToday };
@@ -947,21 +1313,32 @@ function calculateWilayahProgress() {
     if (!mapWil[w]) mapWil[w] = { target: 0, collected: 0, count: 0, paid: 0 };
     mapWil[w].target += parseFloat(p.jumlah) || 0;
     mapWil[w].count++;
-    if (getPaymentStatus(p).status !== 'Belum Bayar') { mapWil[w].collected += parseFloat(p.jumlah) || 0; mapWil[w].paid++; }
+    if (getPaymentStatus(p).status !== 'Belum Bayar') {
+      mapWil[w].collected += parseFloat(p.jumlah) || 0;
+      mapWil[w].paid++;
+    }
   });
   return mapWil;
 }
 
 /* ============================================
-   ✅ UPDATE UI - OPTIMIZED
+   ✅ UPDATE UI - OPTIMIZED DENGAN CACHE
    ============================================ */
 function updateRevenueDisplay() {
-  requestAnimationFrame(() => { updateRevenueProgress(); updateTodayStatsDisplay(); });
+  requestAnimationFrame(() => {
+    updateRevenueProgress();
+    updateTodayStatsDisplay();
+  });
 }
 
 function updateRevenueProgress() {
-  if (!cachedMonthlyStats || dataChangeDetected) { cachedMonthlyStats = calculateMonthlyRevenue(); dataChangeDetected = false; }
+  // ✅ Gunakan cache jika tidak ada perubahan data
+  if (!cachedMonthlyStats || dataChangeDetected) {
+    cachedMonthlyStats = calculateMonthlyRevenue();
+    dataChangeDetected = false;
+  }
   const stats = cachedMonthlyStats;
+  
   updateCircularProgress(stats.percentage);
   document.getElementById('currentDayOfMonth').textContent = stats.currentDay;
   document.getElementById('remainingDays').textContent = stats.remainingDays;
@@ -969,13 +1346,25 @@ function updateRevenueProgress() {
   document.getElementById('collectedRevenue').textContent = formatRupiah(stats.totalCollected) + ' || ' + stats.totalKubikasiCollected.toFixed(1) + ' M³';
   document.getElementById('remainingRevenue').textContent = formatRupiah(stats.totalUnpaidWithPenalty);
   document.getElementById('dailyTarget').textContent = formatRupiah(stats.dailyTarget);
+  
+  // ✅ Render wilayah hanya tiap 5 detik (performa)
   const now = Date.now();
-  if (now - lastWilayahRenderTime >= WILAYAH_RENDER_INTERVAL) { renderWilayahProgress(); lastWilayahRenderTime = now; }
+  if (now - lastWilayahRenderTime >= WILAYAH_RENDER_INTERVAL || dataChangeDetected) {
+    renderWilayahProgress();
+    lastWilayahRenderTime = now;
+  }
+  
   const nowDate = new Date();
   const currentDateStr = nowDate.toDateString();
   const currentHour = nowDate.getHours();
-  if (lastSpokenDate !== currentDateStr) { hasSpokenDailyProgress = false; lastSpokenDate = currentDateStr; }
-  if (currentHour >= 13 && !hasSpokenDailyProgress && stats.percentage >= 85.0) { hasSpokenDailyProgress = true; setTimeout(() => narrateProgressUpdate(stats), 1500); }
+  if (lastSpokenDate !== currentDateStr) {
+    hasSpokenDailyProgress = false;
+    lastSpokenDate = currentDateStr;
+  }
+  if (currentHour >= 13 && !hasSpokenDailyProgress && stats.percentage >= 85.0) {
+    hasSpokenDailyProgress = true;
+    setTimeout(() => narrateProgressUpdate(stats), 1500);
+  }
 }
 
 function renderWilayahProgress() {
@@ -983,24 +1372,35 @@ function renderWilayahProgress() {
   if (!grid) return;
   const C = 2 * Math.PI * 26;
   let html = '';
-  Object.entries(calculateWilayahProgress()).sort((a, b) => (b[1].collected / (b[1].target || 1)) - (a[1].collected / (a[1].target || 1))).forEach(([wilayah, d]) => {
-    const pct = d.target > 0 ? (d.collected / d.target) * 100 : 0;
-    const color = pct < 40 ? '#ef4444' : pct < 70 ? '#f59e0b' : '#10b981';
-    const offset = C - (pct / 100) * C;
-    html += `<div class="wilayah-ring-card" onclick="focusOnWilayah('${wilayah.replace(/'/g, "\\'")}')"><div class="wilayah-ring-wrapper"><svg width="52" height="52" viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="6"/><circle cx="30" cy="30" r="26" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}" data-offset="${offset}" transform="rotate(-90 30 30)" style="transition: stroke-dashoffset 1.5s ease;"/></svg><div class="wilayah-ring-pct" style="color:${color}">${pct.toFixed(0)}%</div></div><div class="wilayah-ring-name">${wilayah}</div><div class="wilayah-ring-detail">${d.paid}/${d.count} lunas</div></div>`;
-  });
+  Object.entries(calculateWilayahProgress())
+    .sort((a, b) => (b[1].collected / (b[1].target || 1)) - (a[1].collected / (a[1].target || 1)))
+    .forEach(([wilayah, d]) => {
+      const pct = d.target > 0 ? (d.collected / d.target) * 100 : 0;
+      const color = pct < 40 ? '#ef4444' : pct < 70 ? '#f59e0b' : '#10b981';
+      const offset = C - (pct / 100) * C;
+      html += `<div class="wilayah-ring-card" onclick="focusOnWilayah('${wilayah.replace(/'/g, "\\'")}')"><div class="wilayah-ring-wrapper"><svg width="52" height="52" viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="6"/><circle cx="30" cy="30" r="26" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}" data-offset="${offset}" transform="rotate(-90 30 30)" style="transition: stroke-dashoffset 1.5s ease;"/></svg><div class="wilayah-ring-pct" style="color:${color}">${pct.toFixed(0)}%</div></div><div class="wilayah-ring-name">${wilayah}</div><div class="wilayah-ring-detail">${d.paid}/${d.count} lunas</div></div>`;
+    });
   grid.innerHTML = html;
-  setTimeout(() => { grid.querySelectorAll('circle[data-offset]').forEach(c => c.style.strokeDashoffset = c.getAttribute('data-offset')); }, 150);
+  setTimeout(() => {
+    grid.querySelectorAll('circle[data-offset]').forEach(c => c.style.strokeDashoffset = c.getAttribute('data-offset'));
+  }, 150);
 }
 
 /* ✅ UPDATE HARI INI - REALTIME PER DETIK (TANPA GUARD) */
 function updateTodayStatsDisplay() {
-  if (!cachedTodayStats || dataChangeDetected) { cachedTodayStats = calculateTodayStats(); }
+  // ✅ HAPUS GUARD 60 DETIK - update tiap kali dipanggil
+  if (!cachedTodayStats || dataChangeDetected) {
+    cachedTodayStats = calculateTodayStats();
+  }
   const stats = cachedTodayStats;
   const nowDate = new Date();
   const dateStr = nowDate.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   const timeStr = nowDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-  document.getElementById('today-date').innerHTML = `<div style="font-size:9px;opacity:0.85;">Pembayaran Hari Ini</div><div style="font-size:11px;font-weight:700;">${dateStr}</div><div style="font-size:10px;opacity:0.9;"><i class="fas fa-clock"></i> ${timeStr} WIB</div>`;
+  
+  document.getElementById('today-date').innerHTML =
+    `<div style="font-size:9px;opacity:0.85;">Pembayaran Hari Ini</div>
+     <div style="font-size:11px;font-weight:700;">${dateStr}</div>
+     <div style="font-size:10px;opacity:0.9;"><i class="fas fa-clock"></i> ${timeStr} WIB</div>`;
   document.getElementById('today-amount').textContent = formatRupiah(stats.totalToday) + ' || M³ ' + stats.kubikasiToday.toFixed(1);
   document.getElementById('today-count').textContent = stats.countToday;
   document.getElementById('today-kubikasi').textContent = stats.kubikasiToday.toFixed(1);
@@ -1011,31 +1411,81 @@ function updateTodayStatsDisplay() {
    ============================================ */
 function startUIUpdateLoop() {
   if (uiUpdateInterval) clearInterval(uiUpdateInterval);
+  
   uiUpdateInterval = setInterval(() => {
+    // ✅ Update jam realtime di card "Hari Ini"
     updateTodayStatsDisplay();
+    
+    // ✅ Update jam di realtime indicator
     const now = new Date();
     const clockEl = document.getElementById('realtimeClock');
-    if (clockEl) clockEl.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+    if (clockEl) {
+      clockEl.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+    }
   }, UI_UPDATE_INTERVAL);
+  
   console.log('✅ UI update loop AKTIF (1 detik)');
 }
 
 /* ============================================
    ✅ VOICE SYSTEM
    ============================================ */
-function isIndonesianVoice(voice) { if (!voice) return false; const lang = (voice.lang || '').toLowerCase(), name = (voice.name || '').toLowerCase(); if (lang.startsWith('id')) return true; return ID_KEYWORDS.some(k => name.includes(k)); }
-function detectGender(voice) { if (!voice) return 'unknown'; const name = (voice.name || '').toLowerCase(); if (FEMALE_KEYWORDS.some(k => name.includes(k))) return 'female'; if (MALE_KEYWORDS.some(k => name.includes(k))) return 'male'; return 'unknown'; }
-function loadVoices() { if (!('speechSynthesis' in window)) return; availableVoices = speechSynthesis.getVoices(); categorizeIndonesianVoices(); if (availableVoices.length === 0) speechSynthesis.onvoiceschanged = () => { availableVoices = speechSynthesis.getVoices(); categorizeIndonesianVoices(); }; }
-function categorizeIndonesianVoices() { indonesianVoices = []; indonesianFemaleVoices = []; indonesianMaleVoices = []; availableVoices.forEach(v => { if (isIndonesianVoice(v)) { indonesianVoices.push(v); const g = detectGender(v); if (g === 'female') indonesianFemaleVoices.push(v); else if (g === 'male') indonesianMaleVoices.push(v); } }); if (!indonesianVoices.length) indonesianVoices = [...availableVoices]; if (!indonesianFemaleVoices.length) indonesianFemaleVoices = [...indonesianVoices]; if (!indonesianMaleVoices.length) indonesianMaleVoices = [...indonesianVoices]; }
+function isIndonesianVoice(voice) {
+  if (!voice) return false;
+  const lang = (voice.lang || '').toLowerCase(), name = (voice.name || '').toLowerCase();
+  if (lang.startsWith('id')) return true;
+  return ID_KEYWORDS.some(k => name.includes(k));
+}
+
+function detectGender(voice) {
+  if (!voice) return 'unknown';
+  const name = (voice.name || '').toLowerCase();
+  if (FEMALE_KEYWORDS.some(k => name.includes(k))) return 'female';
+  if (MALE_KEYWORDS.some(k => name.includes(k))) return 'male';
+  return 'unknown';
+}
+
+function loadVoices() {
+  if (!('speechSynthesis' in window)) return;
+  availableVoices = speechSynthesis.getVoices();
+  categorizeIndonesianVoices();
+  if (availableVoices.length === 0) speechSynthesis.onvoiceschanged = () => {
+    availableVoices = speechSynthesis.getVoices();
+    categorizeIndonesianVoices();
+  };
+}
+
+function categorizeIndonesianVoices() {
+  indonesianVoices = []; indonesianFemaleVoices = []; indonesianMaleVoices = [];
+  availableVoices.forEach(v => {
+    if (isIndonesianVoice(v)) {
+      indonesianVoices.push(v);
+      const g = detectGender(v);
+      if (g === 'female') indonesianFemaleVoices.push(v);
+      else if (g === 'male') indonesianMaleVoices.push(v);
+    }
+  });
+  if (!indonesianVoices.length) indonesianVoices = [...availableVoices];
+  if (!indonesianFemaleVoices.length) indonesianFemaleVoices = [...indonesianVoices];
+  if (!indonesianMaleVoices.length) indonesianMaleVoices = [...indonesianVoices];
+}
+
 function speak(text, gender = 'female', callback) {
-  if (!voiceSettings.enabled || !('speechSynthesis' in window)) { if (callback) callback(); return; }
+  if (!voiceSettings.enabled || !('speechSynthesis' in window)) {
+    if (callback) callback();
+    return;
+  }
   try { speechSynthesis.cancel(); } catch(e) {}
   const audioEl = document.getElementById('backgroundMusic');
   const wasPlaying = isMusicPlaying && !isMusicPaused;
   const origVol = audioEl ? audioEl.volume : 0.3;
   if (wasPlaying && audioEl) audioEl.volume = Math.max(0.05, origVol * 0.3);
+  
   const trySpeak = (retry = 0) => {
-    if (availableVoices.length === 0 && retry < 10) { setTimeout(() => trySpeak(retry + 1), 200); return; }
+    if (availableVoices.length === 0 && retry < 10) {
+      setTimeout(() => trySpeak(retry + 1), 200);
+      return;
+    }
     try {
       const u = new SpeechSynthesisUtterance(text);
       u.lang = 'id-ID';
@@ -1044,110 +1494,441 @@ function speak(text, gender = 'female', callback) {
       if (pool.length) u.voice = pool[idx % pool.length] || pool[0];
       else if (indonesianVoices.length) u.voice = indonesianVoices[0];
       const p = voiceProfiles[idx] || voiceProfiles[0];
-      u.pitch = p.pitch; u.rate = p.rate; u.volume = voiceSettings.volume;
-      u.onend = () => { if (wasPlaying && audioEl) audioEl.volume = origVol; if (callback) callback(); };
-      u.onerror = () => { if (wasPlaying && audioEl) audioEl.volume = origVol; if (callback) callback(); };
+      u.pitch = p.pitch;
+      u.rate = p.rate;
+      u.volume = voiceSettings.volume;
+      u.onend = () => {
+        if (wasPlaying && audioEl) audioEl.volume = origVol;
+        if (callback) callback();
+      };
+      u.onerror = () => {
+        if (wasPlaying && audioEl) audioEl.volume = origVol;
+        if (callback) callback();
+      };
       speechSynthesis.speak(u);
-    } catch(e) { if (callback) callback(); }
+    } catch(e) {
+      if (callback) callback();
+    }
   };
   trySpeak();
 }
-function addToVoiceQueue(text, gender = 'female', callback = null) { voiceQueue.push({ text, gender, callback }); processVoiceQueue(); }
-function processVoiceQueue() { if (isVoiceSpeaking || !voiceQueue.length) return; isVoiceSpeaking = true; const item = voiceQueue.shift(); speak(item.text, item.gender, () => { isVoiceSpeaking = false; if (item.callback) item.callback(); setTimeout(processVoiceQueue, 500); }); }
-function clearVoiceQueue() { voiceQueue = []; isVoiceSpeaking = false; try { speechSynthesis.cancel(); } catch(e) {} }
+
+function addToVoiceQueue(text, gender = 'female', callback = null) {
+  voiceQueue.push({ text, gender, callback });
+  processVoiceQueue();
+}
+
+function processVoiceQueue() {
+  if (isVoiceSpeaking || !voiceQueue.length) return;
+  isVoiceSpeaking = true;
+  const item = voiceQueue.shift();
+  speak(item.text, item.gender, () => {
+    isVoiceSpeaking = false;
+    if (item.callback) item.callback();
+    setTimeout(processVoiceQueue, 500);
+  });
+}
+
+function clearVoiceQueue() {
+  voiceQueue = [];
+  isVoiceSpeaking = false;
+  try { speechSynthesis.cancel(); } catch(e) {}
+}
+
 function updateGangguanGender() { voiceSettings.gangguanGender = document.getElementById('gangguanGenderSelect').value; }
 function updatePaymentGender() { voiceSettings.paymentGender = document.getElementById('paymentGenderSelect').value; }
-function updateVoiceIndex() { voiceSettings.gangguanVoiceIndex = parseInt(document.getElementById('gangguanVoiceSelect').value); voiceSettings.paymentVoiceIndex = parseInt(document.getElementById('paymentVoiceSelect').value); }
+function updateVoiceIndex() {
+  voiceSettings.gangguanVoiceIndex = parseInt(document.getElementById('gangguanVoiceSelect').value);
+  voiceSettings.paymentVoiceIndex = parseInt(document.getElementById('paymentVoiceSelect').value);
+}
 function testVoice() { speak('Halo, ini test suara PDAM UP Darmaraja.', voiceSettings.paymentGender); }
-function setVoiceVolume(v) { voiceSettings.volume = v / 100; document.getElementById('volumeValue').textContent = v + '%'; }
+function setVoiceVolume(v) {
+  voiceSettings.volume = v / 100;
+  document.getElementById('volumeValue').textContent = v + '%';
+}
 function toggleVoicePanel() { document.getElementById('voicePanel').classList.toggle('active'); }
 
 /* ============================================
    ✅ MUSIC CONTROL
    ============================================ */
-function changeMusic() { const t = document.getElementById('musicSelect').value; if (!t) return; currentMusicType = t; const i = musicPlaylist.indexOf(t); if (i !== -1) currentPlaylistIndex = i; const a = document.getElementById('backgroundMusic'); a.src = musicFolder + t; a.load(); a.oncanplaythrough = () => { if (!isMusicPlaying) playMusic(); }; }
-function playMusic() { const a = document.getElementById('backgroundMusic'); if (!a.src || a.src === window.location.href) { showNotification('❌ Pilih musik dulu', 'warning'); return; } a.volume = parseInt(document.getElementById('musicVolumeSlider').value) / 100; a.loop = false; a.onended = () => { if (autoRotateMusic) playNextTrack(); }; a.play().then(() => { isMusicPlaying = true; isMusicPaused = false; document.getElementById('btnPlayMusic').disabled = true; document.getElementById('btnStopMusic').disabled = false; }).catch(() => showNotification('❌ Klik halaman dulu', 'warning')); }
-function playNextTrack() { currentPlaylistIndex = (currentPlaylistIndex + 1) % musicPlaylist.length; currentMusicType = musicPlaylist[currentPlaylistIndex]; const a = document.getElementById('backgroundMusic'); a.src = musicFolder + currentMusicType; a.load(); a.oncanplaythrough = () => a.play(); }
-function stopMusic() { const a = document.getElementById('backgroundMusic'); a.pause(); a.currentTime = 0; isMusicPlaying = false; isMusicPaused = false; document.getElementById('btnPlayMusic').disabled = false; document.getElementById('btnStopMusic').disabled = true; }
+function changeMusic() {
+  const t = document.getElementById('musicSelect').value;
+  if (!t) return;
+  currentMusicType = t;
+  const i = musicPlaylist.indexOf(t);
+  if (i !== -1) currentPlaylistIndex = i;
+  const a = document.getElementById('backgroundMusic');
+  a.src = (typeof musicFolder !== 'undefined' ? musicFolder : '') + t;
+  a.load();
+  a.oncanplaythrough = () => { if (!isMusicPlaying) playMusic(); };
+}
+
+function playMusic() {
+  const a = document.getElementById('backgroundMusic');
+  if (!a.src || a.src === window.location.href) {
+    showNotification('❌ Pilih musik dulu', 'warning');
+    return;
+  }
+  a.volume = parseInt(document.getElementById('musicVolumeSlider').value) / 100;
+  a.loop = false;
+  a.onended = () => { if (autoRotateMusic) playNextTrack(); };
+  a.play().then(() => {
+    isMusicPlaying = true;
+    isMusicPaused = false;
+    document.getElementById('btnPlayMusic').disabled = true;
+    document.getElementById('btnStopMusic').disabled = false;
+  }).catch(() => showNotification('❌ Klik halaman dulu', 'warning'));
+}
+
+function playNextTrack() {
+  currentPlaylistIndex = (currentPlaylistIndex + 1) % musicPlaylist.length;
+  currentMusicType = musicPlaylist[currentPlaylistIndex];
+  const a = document.getElementById('backgroundMusic');
+  a.src = (typeof musicFolder !== 'undefined' ? musicFolder : '') + currentMusicType;
+  a.load();
+  a.oncanplaythrough = () => a.play();
+}
+
+function pauseMusic() {
+  const a = document.getElementById('backgroundMusic');
+  if (!isMusicPlaying) return;
+  if (isMusicPaused) { a.play(); isMusicPaused = false; }
+  else { a.pause(); isMusicPaused = true; }
+}
+
+function stopMusic() {
+  const a = document.getElementById('backgroundMusic');
+  a.pause();
+  a.currentTime = 0;
+  isMusicPlaying = false;
+  isMusicPaused = false;
+  document.getElementById('btnPlayMusic').disabled = false;
+  document.getElementById('btnStopMusic').disabled = true;
+}
+
 function toggleLoopMusic() { autoRotateMusic = !autoRotateMusic; }
-function setMusicVolume(v) { document.getElementById('backgroundMusic').volume = v / 100; document.getElementById('musicVolumeValue').textContent = v + '%'; }
-function setScrollSpeed(v) { const duration = 210 - v; document.documentElement.style.setProperty('--scroll-duration', duration + 's'); const c = document.getElementById('notificationContent'); if (c) { c.style.animation = 'none'; c.offsetHeight; c.style.animation = `scroll-left ${duration}s linear infinite`; } let label = 'Normal'; if (v < 40) label = 'Sangat Lambat'; else if (v < 70) label = 'Lambat'; else if (v < 130) label = 'Cepat'; else label = 'Sangat Cepat'; document.getElementById('scrollSpeedValue').textContent = label; }
+function setMusicVolume(v) {
+  document.getElementById('backgroundMusic').volume = v / 100;
+  document.getElementById('musicVolumeValue').textContent = v + '%';
+}
+function setScrollSpeed(v) {
+  const duration = 210 - v;
+  document.documentElement.style.setProperty('--scroll-duration', duration + 's');
+  const c = document.getElementById('notificationContent');
+  if (c) {
+    c.style.animation = 'none';
+    c.offsetHeight;
+    c.style.animation = `scroll-left ${duration}s linear infinite`;
+  }
+  let label = 'Normal';
+  if (v < 40) label = 'Sangat Lambat';
+  else if (v < 70) label = 'Lambat';
+  else if (v < 130) label = 'Cepat';
+  else label = 'Sangat Cepat';
+  document.getElementById('scrollSpeedValue').textContent = label;
+}
 
 /* ============================================
    ✅ GANGGUAN VOICE
    ============================================ */
-function formatGangguanVoiceText(g) { const kode = g.kode_laporan.split('').join(' '); const status = g.status === 'menunggu' ? 'Menunggu' : g.status === 'dalam_proses' ? 'Dalam Proses' : 'Selesai'; let lokasi = toTitleCase(cleanSpacedLetters(g.lokasi || '-').toLowerCase()); lokasi = convertRegionRomanToNumber(lokasi); let wilayah = toTitleCase(cleanSpacedLetters(g.wilayah_terdampak || '-').toLowerCase()); wilayah = convertRegionRomanToNumber(wilayah); return `Gangguan nomor ${kode}. Status: ${status}. Lokasi: ${lokasi}. Wilayah Terdampak: ${wilayah}. Ukuran pipa: ${g.ukuran_pipa || '-'}.`; }
-function playGangguanVoiceLoop() { if (!isGangguanVoicePlaying || isGangguanVoicePaused) return; if (!activeGangguanList.length) { updateGangguanVoiceStatus('idle', 'Tidak ada gangguan'); return; } let idx = 0; (function playNext() { if (!isGangguanVoicePlaying || isGangguanVoicePaused) return; if (idx >= activeGangguanList.length) { if (repeatGangguanVoice) { idx = 0; setTimeout(playNext, 2000); } else stopGangguanVoice(); return; } updateGangguanVoiceStatus('playing', `Memutar: ${activeGangguanList[idx].kode_laporan}`); addToVoiceQueue(formatGangguanVoiceText(activeGangguanList[idx]), voiceSettings.gangguanGender, () => { idx++; setTimeout(playNext, 1500); }); })(); }
-function playGangguanVoice() { if (!activeGangguanList.length) { showNotification('⚠️ Tidak ada gangguan aktif', 'warning'); return; } isGangguanVoicePlaying = true; isGangguanVoicePaused = false; updateGangguanVoiceStatus('playing', `Memutar ${activeGangguanList.length} gangguan`); updateGangguanVoiceButtons(); playGangguanVoiceLoop(); }
-function stopGangguanVoice() { isGangguanVoicePlaying = false; isGangguanVoicePaused = false; try { speechSynthesis.cancel(); } catch(e){} updateGangguanVoiceStatus('idle', 'Dihentikan'); updateGangguanVoiceButtons(); }
+function formatGangguanVoiceText(g) {
+  const kode = g.kode_laporan.split('').join(' ');
+  const status = g.status === 'menunggu' ? 'Menunggu' : g.status === 'dalam_proses' ? 'Dalam Proses' : 'Selesai';
+  let lokasi = toTitleCase(cleanSpacedLetters(g.lokasi || '-').toLowerCase());
+  lokasi = convertRegionRomanToNumber(lokasi);
+  let wilayah = toTitleCase(cleanSpacedLetters(g.wilayah_terdampak || '-').toLowerCase());
+  wilayah = convertRegionRomanToNumber(wilayah);
+  return `Gangguan nomor ${kode}. Status: ${status}. Lokasi: ${lokasi}. Wilayah Terdampak: ${wilayah}. Ukuran pipa: ${g.ukuran_pipa || '-'}.`;
+}
+
+function playGangguanVoiceLoop() {
+  if (!isGangguanVoicePlaying || isGangguanVoicePaused) return;
+  if (!activeGangguanList.length) {
+    updateGangguanVoiceStatus('idle', 'Tidak ada gangguan');
+    return;
+  }
+  let idx = 0;
+  (function playNext() {
+    if (!isGangguanVoicePlaying || isGangguanVoicePaused) return;
+    if (idx >= activeGangguanList.length) {
+      if (repeatGangguanVoice) { idx = 0; setTimeout(playNext, 2000); }
+      else stopGangguanVoice();
+      return;
+    }
+    updateGangguanVoiceStatus('playing', `Memutar: ${activeGangguanList[idx].kode_laporan}`);
+    addToVoiceQueue(formatGangguanVoiceText(activeGangguanList[idx]), voiceSettings.gangguanGender, () => {
+      idx++;
+      setTimeout(playNext, 1500);
+    });
+  })();
+}
+
+function playGangguanVoice() {
+  if (!activeGangguanList.length) {
+    showNotification('⚠️ Tidak ada gangguan aktif', 'warning');
+    return;
+  }
+  isGangguanVoicePlaying = true;
+  isGangguanVoicePaused = false;
+  updateGangguanVoiceStatus('playing', `Memutar ${activeGangguanList.length} gangguan`);
+  updateGangguanVoiceButtons();
+  playGangguanVoiceLoop();
+}
+
+function pauseGangguanVoice() {
+  if (!isGangguanVoicePlaying) return;
+  isGangguanVoicePaused = !isGangguanVoicePaused;
+  if (isGangguanVoicePaused) try { speechSynthesis.pause(); } catch(e){}
+  else try { speechSynthesis.resume(); } catch(e){}
+  updateGangguanVoiceStatus(isGangguanVoicePaused ? 'paused' : 'playing', isGangguanVoicePaused ? 'Dijeda' : 'Dilanjutkan');
+  updateGangguanVoiceButtons();
+}
+
+function stopGangguanVoice() {
+  isGangguanVoicePlaying = false;
+  isGangguanVoicePaused = false;
+  try { speechSynthesis.cancel(); } catch(e){}
+  updateGangguanVoiceStatus('idle', 'Dihentikan');
+  updateGangguanVoiceButtons();
+}
+
 function toggleRepeatGangguan() { repeatGangguanVoice = !repeatGangguanVoice; }
-function updateGangguanVoiceStatus(s, t) { const d = document.getElementById('gangguanVoiceStatusDot'); d.className = 'voice-status-dot' + (s === 'playing' ? ' active' : s === 'paused' ? ' paused' : ''); document.getElementById('gangguanVoiceStatusText').textContent = t; }
-function updateGangguanVoiceButtons() { const h = activeGangguanList.length > 0; document.getElementById('btnPlayGangguan').disabled = isGangguanVoicePlaying || !h; document.getElementById('btnStopGangguan').disabled = !isGangguanVoicePlaying && !isGangguanVoicePaused; }
+
+function updateGangguanVoiceStatus(s, t) {
+  const d = document.getElementById('gangguanVoiceStatusDot');
+  d.className = 'voice-status-dot' + (s === 'playing' ? ' active' : s === 'paused' ? ' paused' : '');
+  document.getElementById('gangguanVoiceStatusText').textContent = t;
+}
+
+function updateGangguanVoiceButtons() {
+  const h = activeGangguanList.length > 0;
+  document.getElementById('btnPlayGangguan').disabled = isGangguanVoicePlaying || !h;
+  document.getElementById('btnStopGangguan').disabled = !isGangguanVoicePlaying && !isGangguanVoicePaused;
+}
 
 /* ============================================
    ✅ PAYMENT VOICE
    ============================================ */
-function playPaymentSequence() { if (!isPaymentVoicePlaying || isPaymentVoicePaused) return; if (currentPaymentIndex >= last5Payments.length) { if (repeatPaymentVoice) { currentPaymentIndex = 0; setTimeout(playPaymentSequence, 2000); } else stopPaymentVoice(); return; } const p = last5Payments[currentPaymentIndex]; updatePaymentVoiceStatus('playing', `Memutar: ${p.nama}`); const nama = formatNameForSpeech(p.nama); const metode = p.metode === 'PPOB' ? 'P. P. O. B.' : 'Kantor Unit Cabang'; const text = `Terima kasih kepada Yang Terhormat, ${nama}, telah melakukan pembayaran di ${metode}.`; addToVoiceQueue(text, voiceSettings.paymentGender, () => { currentPaymentIndex++; setTimeout(playPaymentSequence, 1500); }); }
-function playLast5Payments() { if (!last5Payments.length) { showNotification('❌ Belum ada data pembayaran', 'warning'); return; } isPaymentVoicePlaying = true; isPaymentVoicePaused = false; currentPaymentIndex = 0; updatePaymentVoiceStatus('playing', `Memutar ${last5Payments.length} pembayaran`); updatePaymentVoiceButtons(); playPaymentSequence(); }
-function stopPaymentVoice() { isPaymentVoicePlaying = false; isPaymentVoicePaused = false; currentPaymentIndex = 0; try { speechSynthesis.cancel(); } catch(e){} updatePaymentVoiceStatus('idle', 'Dihentikan'); updatePaymentVoiceButtons(); }
+function playPaymentSequence() {
+  if (!isPaymentVoicePlaying || isPaymentVoicePaused) return;
+  if (currentPaymentIndex >= last5Payments.length) {
+    if (repeatPaymentVoice) { currentPaymentIndex = 0; setTimeout(playPaymentSequence, 2000); }
+    else stopPaymentVoice();
+    return;
+  }
+  const p = last5Payments[currentPaymentIndex];
+  updatePaymentVoiceStatus('playing', `Memutar: ${p.nama}`);
+  const nama = formatNameForSpeech(p.nama);
+  const metode = p.metode === 'PPOB' ? 'P. P. O. B.' : 'Kantor Unit Cabang';
+  const text = `Terima kasih kepada Yang Terhormat, ${nama}, telah melakukan pembayaran di ${metode}.`;
+  addToVoiceQueue(text, voiceSettings.paymentGender, () => {
+    currentPaymentIndex++;
+    setTimeout(playPaymentSequence, 1500);
+  });
+}
+
+function playLast5Payments() {
+  if (!last5Payments.length) {
+    showNotification('❌ Belum ada data pembayaran', 'warning');
+    return;
+  }
+  isPaymentVoicePlaying = true;
+  isPaymentVoicePaused = false;
+  currentPaymentIndex = 0;
+  updatePaymentVoiceStatus('playing', `Memutar ${last5Payments.length} pembayaran`);
+  updatePaymentVoiceButtons();
+  playPaymentSequence();
+}
+
+function pausePaymentVoice() {
+  if (!isPaymentVoicePlaying) return;
+  isPaymentVoicePaused = !isPaymentVoicePaused;
+  if (isPaymentVoicePaused) try { speechSynthesis.pause(); } catch(e){}
+  else try { speechSynthesis.resume(); } catch(e){}
+  updatePaymentVoiceStatus(isPaymentVoicePaused ? 'paused' : 'playing', isPaymentVoicePaused ? 'Dijeda' : 'Dilanjutkan');
+  updatePaymentVoiceButtons();
+}
+
+function stopPaymentVoice() {
+  isPaymentVoicePlaying = false;
+  isPaymentVoicePaused = false;
+  currentPaymentIndex = 0;
+  try { speechSynthesis.cancel(); } catch(e){}
+  updatePaymentVoiceStatus('idle', 'Dihentikan');
+  updatePaymentVoiceButtons();
+}
+
 function toggleRepeatPayment() { repeatPaymentVoice = !repeatPaymentVoice; }
-function updatePaymentVoiceStatus(s, t) { const d = document.getElementById('paymentVoiceStatusDot'); d.className = 'voice-status-dot' + (s === 'playing' ? ' active' : s === 'paused' ? ' paused' : ''); document.getElementById('paymentVoiceStatusText').textContent = t; }
-function updatePaymentVoiceButtons() { const h = last5Payments.length > 0; document.getElementById('btnPlayPayment').disabled = isPaymentVoicePlaying || !h; document.getElementById('btnStopPayment').disabled = !isPaymentVoicePlaying && !isPaymentVoicePaused; }
+
+function updatePaymentVoiceStatus(s, t) {
+  const d = document.getElementById('paymentVoiceStatusDot');
+  d.className = 'voice-status-dot' + (s === 'playing' ? ' active' : s === 'paused' ? ' paused' : '');
+  document.getElementById('paymentVoiceStatusText').textContent = t;
+}
+
+function updatePaymentVoiceButtons() {
+  const h = last5Payments.length > 0;
+  document.getElementById('btnPlayPayment').disabled = isPaymentVoicePlaying || !h;
+  document.getElementById('btnStopPayment').disabled = !isPaymentVoicePlaying && !isPaymentVoicePaused;
+}
 
 /* ============================================
    ✅ NARRATION
    ============================================ */
-function generateDynamicNarration() { const n = []; n.push("Selamat datang di Sistem Monitoring PDAM Unit Pelaksana Darmaraja."); const total = pelangganDataFromLaravel.length; let kantor = 0, ppob = 0, belum = 0; pelangganDataFromLaravel.forEach(p => { const s = getPaymentStatus(p); if (s.status === 'Kantor') kantor++; else if (s.status === 'PPOB') ppob++; else belum++; }); n.push(`Saat ini kami melayani ${total} pelanggan. ${kantor} membayar di kantor, ${ppob} melalui PPOB, dan ${belum} belum membayar.`); const aktif = gangguanData.filter(g => g.status !== 'selesai').length; n.push(aktif > 0 ? `Terdapat ${aktif} gangguan aktif.` : 'Seluruh jaringan beroperasi normal.'); const stats = calculateMonthlyRevenue(); n.push(`Progres pendapatan bulan ini ${stats.percentage.toFixed(1)} persen, terkumpul ${formatRupiah(stats.totalCollected)} dari target ${formatRupiah(stats.totalTarget)}.`); return n; }
-function narrateUnitProfile() { if (isNarrating) { isNarrating = false; clearVoiceQueue(); showNotification('❌ Narasi dihentikan', 'info'); return; } isNarrating = true; currentNarrationIndex = 0; if (isLiveDashboardActive) stopLiveCycle(); const narrations = generateDynamicNarration(); (function playNext() { if (!isNarrating || currentNarrationIndex >= narrations.length) { isNarrating = false; showNotification('✅ Narasi selesai', 'success'); return; } speak(narrations[currentNarrationIndex], voiceSettings.paymentGender, () => { currentNarrationIndex++; setTimeout(playNext, 800); }); })(); }
+function generateDynamicNarration() {
+  const n = [];
+  n.push("Selamat datang di Sistem Monitoring PDAM Unit Pelaksana Darmaraja.");
+  const total = pelangganDataFromLaravel.length;
+  let kantor = 0, ppob = 0, belum = 0;
+  pelangganDataFromLaravel.forEach(p => {
+    const s = getPaymentStatus(p);
+    if (s.status === 'Kantor') kantor++;
+    else if (s.status === 'PPOB') ppob++;
+    else belum++;
+  });
+  n.push(`Saat ini kami melayani ${total} pelanggan. ${kantor} membayar di kantor, ${ppob} melalui PPOB, dan ${belum} belum membayar.`);
+  const aktif = gangguanData.filter(g => g.status !== 'selesai').length;
+  n.push(aktif > 0 ? `Terdapat ${aktif} gangguan aktif.` : 'Seluruh jaringan beroperasi normal.');
+  const stats = calculateMonthlyRevenue();
+  n.push(`Progres pendapatan bulan ini ${stats.percentage.toFixed(1)} persen, terkumpul ${formatRupiah(stats.totalCollected)} dari target ${formatRupiah(stats.totalTarget)}.`);
+  return n;
+}
+
+function narrateUnitProfile() {
+  if (isNarrating) {
+    isNarrating = false;
+    clearVoiceQueue();
+    showNotification('❌ Narasi dihentikan', 'info');
+    return;
+  }
+  isNarrating = true;
+  currentNarrationIndex = 0;
+  if (isLiveDashboardActive) stopLiveCycle();
+  const narrations = generateDynamicNarration();
+  (function playNext() {
+    if (!isNarrating || currentNarrationIndex >= narrations.length) {
+      isNarrating = false;
+      showNotification('✅ Narasi selesai', 'success');
+      return;
+    }
+    speak(narrations[currentNarrationIndex], voiceSettings.paymentGender, () => {
+      currentNarrationIndex++;
+      setTimeout(playNext, 800);
+    });
+  })();
+}
 
 /* ============================================
    ✅ REALTIME POLLING - DENGAN DATA MERGE
    ============================================ */
-function startRealtimePolling() { initializePaymentTimestamps(); realtimePollingInterval = setInterval(checkNewPayments, POLLING_INTERVAL); setTimeout(checkNewPayments, 1500); }
-function initializePaymentTimestamps() { pelangganDataFromLaravel.forEach(p => { const s = getPaymentStatus(p); if (s.tanggal) lastKnownPaymentTimestamps[p.no_pelanggan] = s.tanggal; }); isFirstLoad = false; }
+function startRealtimePolling() {
+  initializePaymentTimestamps();
+  realtimePollingInterval = setInterval(checkNewPayments, POLLING_INTERVAL);
+  setTimeout(checkNewPayments, 1500);
+}
+
+function initializePaymentTimestamps() {
+  pelangganDataFromLaravel.forEach(p => {
+    const s = getPaymentStatus(p);
+    if (s.tanggal) lastKnownPaymentTimestamps[p.no_pelanggan] = s.tanggal;
+  });
+  isFirstLoad = false;
+}
 
 async function checkNewPayments() {
   if (isFetchingPayments) return;
   isFetchingPayments = true;
+  
   try {
     const res = await fetch(API_REALTIME_URL + '?t=' + Date.now());
     if (!res.ok) return;
     const result = await res.json();
     if (!result.success || !result.pelanggan) return;
-    let latestPayment = null, latestTime = 0, hasAnyChange = false;
+    
+    let latestPayment = null;
+    let latestTime = 0;
+    let hasAnyChange = false;
+    
+    // ✅ LOOP SEKALIGUS: merge data + cari terbaru
     for (let i = 0; i < result.pelanggan.length; i++) {
       const p = result.pelanggan[i];
       const hasLoket = p.tanggal_pembayaran_loket && !['-','.','',null].includes(p.tanggal_pembayaran_loket);
       const hasPPOB = p.tanggal_pembayaran_ppob && !['-','.','',null].includes(p.tanggal_pembayaran_ppob);
+      
       if (hasLoket || hasPPOB) {
         const tStr = hasLoket ? p.tanggal_pembayaran_loket : p.tanggal_pembayaran_ppob;
         const tTime = new Date(tStr).getTime();
         const last = lastKnownPaymentTimestamps[p.no_pelanggan];
+        
+        // ✅ MERGE DATA ke lokal agar dashboard ikut berubah
         const localIdx = pelangganDataFromLaravel.findIndex(x => x.no_pelanggan === p.no_pelanggan);
         if (localIdx !== -1) {
           if (hasLoket) pelangganDataFromLaravel[localIdx].tanggal_pembayaran_loket = p.tanggal_pembayaran_loket;
           if (hasPPOB) pelangganDataFromLaravel[localIdx].tanggal_pembayaran_ppob = p.tanggal_pembayaran_ppob;
         }
+        
         if (!last || last !== tStr) {
           lastKnownPaymentTimestamps[p.no_pelanggan] = tStr;
           hasAnyChange = true;
+          
           if (tTime > latestTime) {
             latestTime = tTime;
-            latestPayment = { no_pelanggan: p.no_pelanggan || '-', nama: p.nama || 'Tanpa Nama', nama_blok: p.nama_blok || p.alamat || '', nama_wilayah: p.nama_wilayah || p.cabang || '', tanggal_pembayaran_loket: hasLoket ? tStr : null, tanggal_pembayaran_ppob: hasPPOB ? tStr : null, statusInfo: { metode: hasLoket ? 'Kantor' : 'PPOB', tanggal: tStr } };
+            latestPayment = {
+              no_pelanggan: p.no_pelanggan || '-',
+              nama: p.nama || 'Tanpa Nama',
+              nama_blok: p.nama_blok || p.alamat || '',
+              nama_wilayah: p.nama_wilayah || p.cabang || '',
+              tanggal_pembayaran_loket: hasLoket ? tStr : null,
+              tanggal_pembayaran_ppob: hasPPOB ? tStr : null,
+              statusInfo: { metode: hasLoket ? 'Kantor' : 'PPOB', tanggal: tStr }
+            };
           }
         }
       }
     }
-    if (hasAnyChange) { dataChangeDetected = true; cachedTodayStats = null; cachedMonthlyStats = null; }
+    
+    // ✅ SET FLAG: ada perubahan data → invalidate cache
+    if (hasAnyChange) {
+      dataChangeDetected = true;
+      cachedTodayStats = null;
+      cachedMonthlyStats = null;
+    }
+    
+    // ✅ UPDATE UI SETIAP POLLING (bukan cuma saat ada baru)
     updateRevenueDisplay();
-    if (latestPayment && !isFirstLoad) { console.log('🔊 Pembayaran terdeteksi:', latestPayment.nama); handlePaymentReceived(latestPayment); }
+    
+    // ✅ SUARA & NOTIFIKASI hanya saat ada pembayaran baru
+    if (latestPayment && !isFirstLoad) {
+      console.log('🔊 Pembayaran terdeteksi:', latestPayment.nama);
+      handlePaymentReceived(latestPayment);
+    }
+    
     isFirstLoad = false;
-  } catch(e) { console.error('Polling error:', e); }
-  finally { isFetchingPayments = false; }
+  } catch(e) {
+    console.error('Polling error:', e);
+  } finally {
+    isFetchingPayments = false;
+  }
 }
-function stopRealtimePolling() { if (realtimePollingInterval) { clearInterval(realtimePollingInterval); realtimePollingInterval = null; } }
 
-function convertRomanBlock(text) { if (!text) return ''; let cleanText = text.replace(/\\\//g, '/'); const romanMap = { 'VIII': '8', 'VII': '7', 'VI': '6', 'IV': '4', 'V': '5', 'III': '3', 'II': '2', 'I': '1', 'IX': '9', 'X': '10' }; return cleanText.replace(/\b(blok)\s+(X|IX|VIII|VII|VI|V|IV|III|II|I)\b/gi, (match, prefix, roman) => `${prefix} ${romanMap[roman.toUpperCase()]}`); }
+function stopRealtimePolling() {
+  if (typeof realtimePollingInterval !== 'undefined' && realtimePollingInterval) {
+    clearInterval(realtimePollingInterval);
+    realtimePollingInterval = null;
+  }
+}
+
+function convertRomanBlock(text) {
+  if (!text) return '';
+  let cleanText = text.replace(/\\\//g, '/');
+  const romanMap = {
+    'VIII': '8', 'VII': '7', 'VI': '6', 'IV': '4', 'V': '5',
+    'III': '3', 'II': '2', 'I': '1', 'IX': '9', 'X': '10'
+  };
+  return cleanText.replace(/\b(blok)\s+(X|IX|VIII|VII|VI|V|IV|III|II|I)\b/gi, (match, prefix, roman) => {
+    return `${prefix} ${romanMap[roman.toUpperCase()]}`;
+  });
+}
 
 function handlePaymentReceived(pelanggan) {
   if (!pelanggan) return;
@@ -1155,6 +1936,7 @@ function handlePaymentReceived(pelanggan) {
   const nama = sanitizeTextForTTS(pelanggan.nama || 'Pelanggan');
   const nama_blok = sanitizeTextForTTS(rawBlok);
   const metode = pelanggan.tanggal_pembayaran_ppob ? 'PPOB' : 'Kantor';
+  
   const templates = [
     `Pembayaran atas nama ${nama} dari ${nama_blok} lewat ${metode} sudah diterima. Terima kasih.`,
     `Terima kasih, pembayaran dari ${nama} di ${nama_blok} berhasil masuk melalui ${metode}.`,
@@ -1167,51 +1949,201 @@ function handlePaymentReceived(pelanggan) {
     `Konfirmasi pembayaran dari ${nama}, ${nama_blok}, via ${metode} telah berhasil.`,
     `Terima kasih. Pembayaran ${metode} atas nama ${nama} lokasi ${nama_blok} sudah diterima.`
   ];
+  
   const randomMessage = templates[Math.floor(Math.random() * templates.length)];
   const finalMessage = `${metode === 'PPOB' ? 'INFO PPOB. ' : ''}${randomMessage}`;
+  
   if (typeof speak === 'function') speak(finalMessage, 'female');
   showNotification(`${metode}: ${nama}`, 'payment');
 }
 
-function updateNotificationBar(payments) { const bar = document.getElementById('notificationBar'), content = document.getElementById('notificationContent'); if (!payments.length) { bar.style.display = 'none'; return; } bar.style.display = 'block'; last5Payments = payments.slice(0, 5); let html = ''; payments.forEach(p => { html += `<div class="notification-item"><strong>${p.nama}</strong> <span class="amount">${formatRupiah(p.jumlah)}</span> <span class="location"><i class="fas fa-${p.lokasi === 'Kantor' ? 'building' : 'mobile-alt'}"></i> ${p.lokasi}</span></div>`; }); content.innerHTML = html + html; updatePaymentVoiceButtons(); }
+function testPaymentNotification() {
+  console.log('🧪 Testing pembayaran KANTOR...');
+  window.isInitialLoadComplete = true;
+  const dummy = {
+    no_pelanggan: 'TEST-KANTOR-' + Date.now(),
+    nama: 'A J A',
+    nama_blok: 'BLOK C3 / 12',
+    alamat: 'Jl. Raya Darmaraja No. 45',
+    nama_wilayah: 'WILAYAH I',
+    jumlah: '604800',
+    pakai: '71',
+    kode_gol_trf: 'RT.D',
+    statusInfo: { status: 'Kantor', color: '#10b981', icon: 'fa-building', tanggal: new Date().toISOString(), metode: 'Kantor' }
+  };
+  handlePaymentReceived(dummy);
+}
 
-function calculateRevenue() { totalRevenue = 0; totalKubikasi = 0; let recent = []; pelangganDataFromLaravel.forEach(p => { const s = getPaymentStatus(p); if (s.status !== 'Belum Bayar') { totalRevenue += parseFloat(p.jumlah) || 0; totalKubikasi += parseFloat(p.pakai) || 0; if (s.tanggal) recent.push({ nama: p.nama || 'Pelanggan', jumlah: parseFloat(p.jumlah) || 0, kubikasi: parseFloat(p.pakai) || 0, lokasi: p.nama_wilayah || '-', tanggal: s.tanggal, metode: s.metode }); } }); recent.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)); updateNotificationBar(recent.slice(0, 10)); }
+function testPaymentPPOB() {
+  console.log('🧪 Testing pembayaran PPOB...');
+  window.isInitialLoadComplete = true;
+  const dummy = {
+    no_pelanggan: 'TEST-PPOB-' + Date.now(),
+    nama: 'H. ACENG SUHANDI',
+    nama_blok: 'BLOK A2 / 07',
+    alamat: 'Kp. Cieunteung RT 02 RW 05',
+    nama_wilayah: 'WILAYAH III',
+    jumlah: '418600',
+    pakai: '52',
+    kode_gol_trf: 'RT.D',
+    statusInfo: { status: 'PPOB', color: '#f59e0b', icon: 'fa-mobile-alt', tanggal: new Date().toISOString(), metode: 'PPOB' }
+  };
+  handlePaymentReceived(dummy);
+}
 
-function narrateProgressUpdate(stats) { if (!voiceSettings.enabled) return; const pct = stats.percentage.toFixed(1); const daysPassed = stats.currentDay; const daysLeft = stats.remainingDays; let text = `Darmaraja tim yang hebat. Saat ini progres pendapatan sudah mencapai ${pct} persen. Jumlah hari berjalan ${daysPassed} hari. `; if (daysLeft > 0) text += `Dengan estimasi sisa ${daysLeft} hari, ayo tingkatkan performa agar target tercapai. Semangat!`; else text += `Hari ini adalah hari terakhir bulan ini. Mari kita tutup bulan ini dengan hasil maksimal!`; showNotification('📢 Membacakan update progres harian...', 'info'); speak(text, 'male'); }
+function updateNotificationBar(payments) {
+  const bar = document.getElementById('notificationBar'), content = document.getElementById('notificationContent');
+  if (!payments.length) { bar.style.display = 'none'; return; }
+  bar.style.display = 'block';
+  last5Payments = payments.slice(0, 5);
+  let html = '';
+  payments.forEach(p => {
+    html += `<div class="notification-item"><strong>${p.nama}</strong> <span class="amount">${formatRupiah(p.jumlah)}</span> <span class="location"><i class="fas fa-${p.lokasi === 'Kantor' ? 'building' : 'mobile-alt'}"></i> ${p.lokasi}</span></div>`;
+  });
+  content.innerHTML = html + html;
+  updatePaymentVoiceButtons();
+}
 
-function startDailyProgressChecker() { setInterval(() => { const now = new Date(); const currentDateStr = now.toDateString(); const currentHour = now.getHours(); if (lastSpokenDate !== currentDateStr) { hasSpokenDailyProgress = false; lastSpokenDate = currentDateStr; } if (currentHour >= 13 && !hasSpokenDailyProgress) { const stats = calculateMonthlyRevenue(); if (stats.percentage >= 85.0) { hasSpokenDailyProgress = true; setTimeout(() => narrateProgressUpdate(stats), 1500); } } }, 60000); }
+function calculateRevenue() {
+  totalRevenue = 0;
+  totalKubikasi = 0;
+  let recent = [];
+  pelangganDataFromLaravel.forEach(p => {
+    const s = getPaymentStatus(p);
+    if (s.status !== 'Belum Bayar') {
+      totalRevenue += parseFloat(p.jumlah) || 0;
+      totalKubikasi += parseFloat(p.pakai) || 0;
+      if (s.tanggal) recent.push({
+        nama: p.nama || 'Pelanggan',
+        jumlah: parseFloat(p.jumlah) || 0,
+        kubikasi: parseFloat(p.pakai) || 0,
+        lokasi: p.nama_wilayah || '-',
+        tanggal: s.tanggal,
+        metode: s.metode
+      });
+    }
+  });
+  recent.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+  updateNotificationBar(recent.slice(0, 10));
+}
+
+function narrateProgressUpdate(stats) {
+  if (!voiceSettings.enabled) return;
+  const pct = stats.percentage.toFixed(1);
+  const daysPassed = stats.currentDay;
+  const daysLeft = stats.remainingDays;
+  let text = `Darmaraja tim yang hebat. `;
+  text += `Saat ini progres pendapatan sudah mencapai ${pct} persen. `;
+  text += `Jumlah hari berjalan ${daysPassed} hari. `;
+  if (daysLeft > 0) {
+    text += `Dengan estimasi sisa ${daysLeft} hari, ayo tingkatkan performa agar target tercapai. Semangat!`;
+  } else {
+    text += `Hari ini adalah hari terakhir bulan ini. Mari kita tutup bulan ini dengan hasil maksimal!`;
+  }
+  showNotification('📢 Membacakan update progres harian...', 'info');
+  speak(text, 'male');
+}
+
+function startDailyProgressChecker() {
+  setInterval(() => {
+    const now = new Date();
+    const currentDateStr = now.toDateString();
+    const currentHour = now.getHours();
+    if (lastSpokenDate !== currentDateStr) {
+      hasSpokenDailyProgress = false;
+      lastSpokenDate = currentDateStr;
+    }
+    if (currentHour >= 13 && !hasSpokenDailyProgress) {
+      const stats = calculateMonthlyRevenue();
+      if (stats.percentage >= 85.0) {
+        hasSpokenDailyProgress = true;
+        setTimeout(() => narrateProgressUpdate(stats), 1500);
+      }
+    }
+  }, 60000);
+}
 
 /* ============================================
    ✅ CLUSTER BELUM BAYAR
    ============================================ */
 function loadUnpaidCustomerMarkers() {
-  if (unpaidClusterGroup) { try { map.removeLayer(unpaidClusterGroup); } catch(e) {} unpaidClusterGroup = null; }
-  unpaidCustomerMarkers = []; unpaidCustomerList = [];
+  if (unpaidClusterGroup) {
+    try { map.removeLayer(unpaidClusterGroup); } catch(e) {}
+    unpaidClusterGroup = null;
+  }
+  unpaidCustomerMarkers = [];
+  unpaidCustomerList = [];
+  
   unpaidClusterGroup = L.markerClusterGroup({
-    maxClusterRadius: 120, disableClusteringAtZoom: 17, spiderfyOnMaxZoom: true, spiderfyDistanceMultiplier: 2,
-    showCoverageOnHover: false, removeOutsideVisibleBounds: true, chunkedLoading: true, chunkInterval: 150, chunkDelay: 50, animate: false,
+    maxClusterRadius: 120,
+    disableClusteringAtZoom: 17,
+    spiderfyOnMaxZoom: true,
+    spiderfyDistanceMultiplier: 2,
+    showCoverageOnHover: false,
+    removeOutsideVisibleBounds: true,
+    chunkedLoading: true,
+    chunkInterval: 150,
+    chunkDelay: 50,
+    animate: false,
     iconCreateFunction: function(cluster) {
       const count = cluster.getChildCount();
       let color = '#ef4444', size = 28;
-      if (count > 100) { color = '#dc2626'; size = 40; } else if (count > 50) { color = '#ef4444'; size = 34; } else if (count > 20) { color = '#f59e0b'; size = 30; }
-      return L.divIcon({ html: `<div style="background:${color};color:white;width:${size}px;height:${size}px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;border:3px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.4);">${count}</div>`, iconSize: L.point(size, size), className: 'unpaid-cluster-custom' });
+      if (count > 100) { color = '#dc2626'; size = 40; }
+      else if (count > 50) { color = '#ef4444'; size = 34; }
+      else if (count > 20) { color = '#f59e0b'; size = 30; }
+      return L.divIcon({
+        html: `<div style="background:${color};color:white;width:${size}px;height:${size}px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;border:3px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.4);">${count}</div>`,
+        iconSize: L.point(size, size),
+        className: 'unpaid-cluster-custom'
+      });
     }
   });
+  
   pelangganDataFromLaravel.forEach(p => {
     if (getPaymentStatus(p).status !== 'Belum Bayar') return;
     const coords = parseKoordinator(p.koordinator);
     if (!coords || !isInArea(coords[0], coords[1])) return;
     const wilayah = convertRegionRomanToNumber(p.nama_wilayah || '-');
-    const marker = L.marker(coords, { icon: L.divIcon({ className: 'unpaid-marker-simple', html: `<div style="width:12px;height:12px;background:#ef4444;border-radius:50%;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>`, iconSize: [12, 12], iconAnchor: [6, 6] }), zIndexOffset: 300 });
-    marker.bindPopup(`<div style="min-width:200px;padding:8px;"><div style="background:linear-gradient(135deg,#ef4444,#dc2626);color:white;padding:6px;border-radius:4px;font-weight:700;font-size:11px;margin-bottom:6px;">BELUM BAYAR</div><strong style="font-size:12px;">${p.nama}</strong><br><small style="color:#64748b;">No: ${p.no_pelanggan}</small><br><small>Wilayah: ${wilayah}</small><div style="margin-top:6px;padding:6px;background:#fef2f2;border-radius:4px;"><strong style="color:#dc2626;font-size:11px;">${formatRupiah(p.jumlah)}</strong></div><div style="margin-top:8px;"><button onclick="showRouteTo(${coords[0]},${coords[1]},'${(p.nama||'Pelanggan').replace(/'/g,"\\'")}')" style="width:100%;padding:6px;background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-route"></i> Navigasi ke Lokasi</button></div></div>`, { maxWidth: 220 });
+    
+    const marker = L.marker(coords, {
+      icon: L.divIcon({
+        className: 'unpaid-marker-simple',
+        html: `<div style="width:12px;height:12px;background:#ef4444;border-radius:50%;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>`,
+        iconSize: [12, 12],
+        iconAnchor: [6, 6]
+      }),
+      zIndexOffset: 300
+    });
+    
+    marker.bindPopup(`<div style="min-width:200px;padding:8px;">
+      <div style="background:linear-gradient(135deg,#ef4444,#dc2626);color:white;padding:6px;border-radius:4px;font-weight:700;font-size:11px;margin-bottom:6px;">BELUM BAYAR</div>
+      <strong style="font-size:12px;">${p.nama}</strong><br>
+      <small style="color:#64748b;">No: ${p.no_pelanggan}</small><br>
+      <small>Wilayah: ${wilayah}</small>
+      <div style="margin-top:6px;padding:6px;background:#fef2f2;border-radius:4px;">
+        <strong style="color:#dc2626;font-size:11px;">${formatRupiah(p.jumlah)}</strong>
+      </div>
+      <div style="margin-top:8px;">
+        <button onclick="showRouteTo(${coords[0]},${coords[1]},'${(p.nama||'Pelanggan').replace(/'/g,"\\'")}')"
+          style="width:100%;padding:6px;background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;">
+          <i class="fas fa-route"></i> Navigasi ke Lokasi
+        </button>
+      </div>
+    </div>`, { maxWidth: 220 });
+    
     unpaidClusterGroup.addLayer(marker);
     unpaidCustomerList.push({ marker, coords, data: p, nama: p.nama || '-', jumlah: parseFloat(p.jumlah) || 0, wilayah });
     unpaidCustomerMarkers.push(marker);
   });
+  
   map.addLayer(unpaidClusterGroup);
   document.getElementById('liveCounterTotal').textContent = unpaidCustomerList.length;
   console.log(`✅ Cluster belum bayar dimuat: ${unpaidCustomerList.length} marker`);
-  if (!unpaidCustomerList.length && isLiveDashboardActive) { showNotification('✅ Semua sudah bayar', 'success'); stopLiveCycle(); }
+  
+  if (!unpaidCustomerList.length && isLiveDashboardActive) {
+    showNotification('✅ Semua sudah bayar', 'success');
+    stopLiveCycle();
+  }
 }
 
 /* ============================================
@@ -1220,25 +2152,67 @@ function loadUnpaidCustomerMarkers() {
 function loadPelanggan() {
   if (!pelangganDataFromLaravel.length) return;
   pelangganClusterGroup = L.markerClusterGroup({
-    maxClusterRadius: 120, disableClusteringAtZoom: 17, spiderfyOnMaxZoom: true, spiderfyDistanceMultiplier: 2,
-    showCoverageOnHover: false, removeOutsideVisibleBounds: true, chunkedLoading: true, chunkInterval: 150, chunkDelay: 50, animate: false,
+    maxClusterRadius: 120,
+    disableClusteringAtZoom: 17,
+    spiderfyOnMaxZoom: true,
+    spiderfyDistanceMultiplier: 2,
+    showCoverageOnHover: false,
+    removeOutsideVisibleBounds: true,
+    chunkedLoading: true,
+    chunkInterval: 150,
+    chunkDelay: 50,
+    animate: false,
     iconCreateFunction: function(cluster) {
       const count = cluster.getChildCount();
       let color = '#3b82f6', size = 26;
-      if (count > 100) { color = '#ef4444'; size = 38; } else if (count > 50) { color = '#f59e0b'; size = 32; } else if (count > 20) { color = '#3b82f6'; size = 28; }
-      return L.divIcon({ html: `<div style="background:${color};color:white;width:${size}px;height:${size}px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);">${count}</div>`, iconSize: L.point(size, size), className: 'marker-cluster-custom' });
+      if (count > 100) { color = '#ef4444'; size = 38; }
+      else if (count > 50) { color = '#f59e0b'; size = 32; }
+      else if (count > 20) { color = '#3b82f6'; size = 28; }
+      return L.divIcon({
+        html: `<div style="background:${color};color:white;width:${size}px;height:${size}px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);">${count}</div>`,
+        iconSize: L.point(size, size),
+        className: 'marker-cluster-custom'
+      });
     }
   });
+  
   pelangganDataFromLaravel.forEach(p => {
     const s = getPaymentStatus(p);
     if (s.status === 'Belum Bayar') return;
     const coords = parseKoordinator(p.koordinator);
     if (!coords || !isInArea(coords[0], coords[1])) return;
-    const m = L.marker(coords, { icon: L.divIcon({ className: 'pelanggan-marker-small', html: `<div style="width:10px;height:10px;border-radius:50%;background:${s.color};border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>`, iconSize: [10, 10], iconAnchor: [5, 5] }), zIndexOffset: 500 });
-    m.bindPopup(`<div style="min-width:180px;padding:8px;"><strong style="font-size:12px;">${p.nama}</strong><br><small style="color:#64748b;">No: ${p.no_pelanggan}</small><br><span style="color:${s.color};font-weight:700;font-size:11px;">${s.status}</span><br><div style="margin-top:4px;font-size:11px;font-weight:600;">${formatRupiah(p.jumlah)}</div><div style="margin-top:8px;display:flex;gap:4px;"><button onclick="goToLocation(${coords[0]},${coords[1]},18,{markerId:'pelanggan_${p.no_pelanggan}',openPopup:true})" style="flex:1;padding:6px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-search-location"></i> Lihat</button><button onclick="showRouteTo(${coords[0]},${coords[1]},'${(p.nama||'Pelanggan').replace(/'/g,"\\'")}')" style="flex:1;padding:6px;background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-route"></i> Rute</button></div></div>`, { maxWidth: 200 });
+    
+    const m = L.marker(coords, {
+      icon: L.divIcon({
+        className: 'pelanggan-marker-small',
+        html: `<div style="width:10px;height:10px;border-radius:50%;background:${s.color};border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>`,
+        iconSize: [10, 10],
+        iconAnchor: [5, 5]
+      }),
+      zIndexOffset: 500
+    });
+    
+    m.bindPopup(`<div style="min-width:180px;padding:8px;">
+      <strong style="font-size:12px;">${p.nama}</strong><br>
+      <small style="color:#64748b;">No: ${p.no_pelanggan}</small><br>
+      <span style="color:${s.color};font-weight:700;font-size:11px;">${s.status}</span><br>
+      <div style="margin-top:4px;font-size:11px;font-weight:600;">${formatRupiah(p.jumlah)}</div>
+      <div style="margin-top:8px;display:flex;gap:4px;">
+        <button onclick="goToLocation(${coords[0]},${coords[1]},18,{markerId:'pelanggan_${p.no_pelanggan}',openPopup:true})"
+          style="flex:1;padding:6px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;">
+          <i class="fas fa-search-location"></i> Lihat
+        </button>
+        <button onclick="showRouteTo(${coords[0]},${coords[1]},'${(p.nama||'Pelanggan').replace(/'/g,"\\'")}')"
+          style="flex:1;padding:6px;background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;">
+          <i class="fas fa-route"></i> Rute
+        </button>
+      </div>
+    </div>`, { maxWidth: 200 });
+    
     pelangganClusterGroup.addLayer(m);
     pelangganLayers[`pelanggan_${p.no_pelanggan}`] = { marker: m, coords };
   });
+  
   map.addLayer(pelangganClusterGroup);
   console.log(`✅ Cluster pelanggan dimuat`);
 }
@@ -1249,83 +2223,438 @@ function highlightUnpaidMarker(index) {
   map.flyTo(c.coords, 18, { duration: 1.5 });
   setTimeout(() => c.marker.openPopup(), 1500);
   updateLiveInfoPanel(c, index);
+  
   if (voiceSettings.enabled && !isLiveMuted) {
     speak(`Pelanggan ${formatNameForSpeech(c.nama)}, belum membayar ${formatRupiah(c.jumlah)}.`, voiceSettings.paymentGender, () => {
-      if (isLiveDashboardActive) { if (liveCycleInterval) clearTimeout(liveCycleInterval); liveCycleInterval = setTimeout(() => { liveCycleIndex = (liveCycleIndex + 1) % unpaidCustomerList.length; highlightUnpaidMarker(liveCycleIndex); }, 3000); }
+      if (isLiveDashboardActive) {
+        if (liveCycleInterval) clearTimeout(liveCycleInterval);
+        liveCycleInterval = setTimeout(() => {
+          liveCycleIndex = (liveCycleIndex + 1) % unpaidCustomerList.length;
+          highlightUnpaidMarker(liveCycleIndex);
+        }, 3000);
+      }
     });
   } else if (isLiveDashboardActive) {
     if (liveCycleInterval) clearTimeout(liveCycleInterval);
-    liveCycleInterval = setTimeout(() => { liveCycleIndex = (liveCycleIndex + 1) % unpaidCustomerList.length; highlightUnpaidMarker(liveCycleIndex); }, liveCycleSpeed);
+    liveCycleInterval = setTimeout(() => {
+      liveCycleIndex = (liveCycleIndex + 1) % unpaidCustomerList.length;
+      highlightUnpaidMarker(liveCycleIndex);
+    }, liveCycleSpeed);
   }
 }
 
-function updateLiveInfoPanel(c, i) { const p = document.getElementById('liveInfoPanel'); if (!p) return; p.style.display = 'flex'; document.getElementById('liveCustomerName').textContent = c.nama; document.getElementById('liveCustomerDetail').textContent = `${c.wilayah} • No. ${c.data.no_pelanggan}`; document.getElementById('liveCustomerAmount').textContent = formatRupiah(c.jumlah); document.getElementById('liveCounterCurrent').textContent = i + 1; document.getElementById('liveCounterTotal').textContent = unpaidCustomerList.length; }
+function updateLiveInfoPanel(c, i) {
+  const p = document.getElementById('liveInfoPanel');
+  if (!p) return;
+  p.style.display = 'flex';
+  document.getElementById('liveCustomerName').textContent = c.nama;
+  document.getElementById('liveCustomerDetail').textContent = `${c.wilayah} • No. ${c.data.no_pelanggan}`;
+  document.getElementById('liveCustomerAmount').textContent = formatRupiah(c.jumlah);
+  document.getElementById('liveCounterCurrent').textContent = i + 1;
+  document.getElementById('liveCounterTotal').textContent = unpaidCustomerList.length;
+}
 
-function startLiveCycle() { if (!unpaidCustomerList.length) { showNotification('❌ Tidak ada pelanggan belum bayar', 'warning'); return; } isLiveDashboardActive = true; liveCycleIndex = 0; highlightUnpaidMarker(0); document.getElementById('btnLiveStart').disabled = true; document.getElementById('btnLiveStop').disabled = false; document.getElementById('liveBtn').classList.add('active'); document.getElementById('liveText').textContent = 'LIVE ON'; showNotification(`🔴 LIVE: ${unpaidCustomerList.length} pelanggan belum bayar`, 'live'); }
-function stopLiveCycle() { if (liveCycleInterval) { clearTimeout(liveCycleInterval); liveCycleInterval = null; } isLiveDashboardActive = false; document.getElementById('btnLiveStart').disabled = false; document.getElementById('btnLiveStop').disabled = true; document.getElementById('liveBtn').classList.remove('active'); document.getElementById('liveText').textContent = 'LIVE OFF'; document.getElementById('liveInfoPanel').style.display = 'none'; map.flyTo([-6.88, 107.97], 14, { duration: 1 }); }
+function startLiveCycle() {
+  if (!unpaidCustomerList.length) {
+    showNotification('❌ Tidak ada pelanggan belum bayar', 'warning');
+    return;
+  }
+  isLiveDashboardActive = true;
+  liveCycleIndex = 0;
+  highlightUnpaidMarker(0);
+  document.getElementById('btnLiveStart').disabled = true;
+  document.getElementById('btnLiveStop').disabled = false;
+  document.getElementById('liveBtn').classList.add('active');
+  document.getElementById('liveText').textContent = 'LIVE ON';
+  showNotification(`🔴 LIVE: ${unpaidCustomerList.length} pelanggan belum bayar`, 'live');
+}
+
+function stopLiveCycle() {
+  if (liveCycleInterval) { clearTimeout(liveCycleInterval); liveCycleInterval = null; }
+  isLiveDashboardActive = false;
+  document.getElementById('btnLiveStart').disabled = false;
+  document.getElementById('btnLiveStop').disabled = true;
+  document.getElementById('liveBtn').classList.remove('active');
+  document.getElementById('liveText').textContent = 'LIVE OFF';
+  document.getElementById('liveInfoPanel').style.display = 'none';
+  map.flyTo([-6.88, 107.97], 14, { duration: 1 });
+}
+
 function toggleLiveDashboard() { isLiveDashboardActive ? stopLiveCycle() : startLiveCycle(); }
-function setLiveSpeed(v) { liveCycleSpeed = v * 1000; document.getElementById('liveSpeedValue').textContent = v + ' detik'; }
+
+function setLiveSpeed(v) {
+  liveCycleSpeed = v * 1000;
+  document.getElementById('liveSpeedValue').textContent = v + ' detik';
+}
 
 /* ============================================
    ✅ MAP INITIALIZATION
    ============================================ */
-function initBaseLayers() { baseLayers = { street: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }), satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: '© Esri' }), terrain: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, attribution: '© OpenTopoMap' }), dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, attribution: '© CARTO' }) }; }
-function switchLayer(name) { if (!baseLayers[name]) return; if (currentBaseLayer) map.removeLayer(currentBaseLayer); currentBaseLayer = baseLayers[name]; currentBaseLayer.addTo(map); currentLayer = name; document.querySelectorAll('.layer-btn').forEach(b => b.classList.remove('active')); document.querySelector(`.layer-btn[data-layer="${name}"]`)?.classList.add('active'); }
+function initBaseLayers() {
+  baseLayers = {
+    street: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }),
+    satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: '© Esri' }),
+    terrain: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, attribution: '© OpenTopoMap' }),
+    dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, attribution: '© CARTO' })
+  };
+}
+
+function switchLayer(name) {
+  if (!baseLayers[name]) return;
+  if (currentBaseLayer) map.removeLayer(currentBaseLayer);
+  currentBaseLayer = baseLayers[name];
+  currentBaseLayer.addTo(map);
+  currentLayer = name;
+  document.querySelectorAll('.layer-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.layer-btn[data-layer="${name}"]`)?.classList.add('active');
+}
 
 function initMap() {
   const bounds = L.latLngBounds(L.latLng(-6.98, 107.80), L.latLng(-6.80, 108.15));
-  map = L.map('map', { center: [-6.918, 108.074], zoom: 16, minZoom: 11, maxZoom: 18, maxBounds: bounds, maxBoundsViscosity: 0.8, zoomControl: false, preferCanvas: true, fadeAnimation: false, markerZoomAnimation: false, zoomAnimation: false, zoomSnap: 1, zoomDelta: 1 });
+  map = L.map('map', {
+    center: [-6.918, 108.074], zoom: 16, minZoom: 11, maxZoom: 18,
+    maxBounds: bounds, maxBoundsViscosity: 0.8, zoomControl: false,
+    preferCanvas: true, fadeAnimation: false, markerZoomAnimation: false,
+    zoomAnimation: false, zoomSnap: 1, zoomDelta: 1
+  });
+  
   L.control.zoom({ position: 'topright' }).addTo(map);
   initBaseLayers();
   currentBaseLayer = baseLayers[currentLayer];
   currentBaseLayer.addTo(map);
+  
   const polygon = [[-6.9584,108.0315],[-6.9421,108.0242],[-6.9315,108.0198],[-6.9202,108.0211],[-6.9110,108.0322],[-6.8985,108.0410],[-6.8842,108.0556],[-6.8810,108.0695],[-6.8892,108.0841],[-6.9011,108.0920],[-6.9154,108.0985],[-6.9320,108.0950],[-6.9488,108.0862],[-6.9595,108.0711],[-6.9680,108.0544],[-6.9642,108.0398],[-6.9584,108.0315]];
   L.polygon(polygon, { color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.1, weight: 3, dashArray: '10, 5' }).addTo(map);
-  setTimeout(() => { loadBangunan(); loadGangguan(); loadTitikPenting(); loadPelanggan(); loadZona(); }, 300);
+  
+  setTimeout(() => {
+    loadBangunan();
+    loadGangguan();
+    loadTitikPenting();
+    loadPelanggan();
+    loadZona();
+  }, 300);
+  
   calculateRevenue();
   setTimeout(() => { loadUnpaidCustomerMarkers(); }, 600);
-  setTimeout(() => { loadWilayahDanBlok(); updateTodayStatsDisplay(); updateRevenueProgress(); }, 900);
-  if (gangguanData.length) { activeGangguanList = gangguanData.filter(g => g.status !== 'selesai'); updateGangguanVoiceButtons(); }
+  setTimeout(() => {
+    loadWilayahDanBlok();
+    updateTodayStatsDisplay();
+    updateRevenueProgress();
+  }, 900);
+  
+  if (gangguanData.length) {
+    activeGangguanList = gangguanData.filter(g => g.status !== 'selesai');
+    updateGangguanVoiceButtons();
+  }
+  
   initSidebarAutoScroll();
   setScrollSpeed(60);
   document.getElementById('searchResults').innerHTML = '<div class="search-empty">Ketik untuk mencari pelanggan</div>';
+  
+  // ✅ START REALTIME ENGINE
   startRealtimePolling();
-  startUIUpdateLoop();
+  startUIUpdateLoop();  // ✅ BARU: Loop UI per detik
+  
   setTimeout(initAutoLive, 2000);
   initAudioUnlock();
   bacakanPelangganTerakhirSaatLoad();
   setTimeout(() => { initReminderAutoActive(); }, 2000);
   window.isInitialLoadComplete = true;
   startDailyProgressChecker();
+  
   console.log('✅ Initial load selesai - Realtime Engine AKTIF');
+  
+  setTimeout(() => {
+    if (typeof elevationControl !== 'undefined' && elevationControl) {
+      try { map.removeControl(elevationControl); } catch(e) {}
+      elevationControl = null;
+    }
+    const kantor = bangunanData.find(b => b.jenis_bangunan === 'kantor' || (b.nama_bangunan && b.nama_bangunan.toLowerCase().includes('kantor')));
+    let targetLat = -6.917821785545315;
+    let targetLng = 108.07163674919619;
+    if (kantor && kantor.coordinates) {
+      const coords = parseCoordinates(kantor.coordinates);
+      if (coords && coords.length > 0) {
+        targetLat = coords[0][0];
+        targetLng = coords[0][1];
+      }
+    }
+    window.currentRouteCoords = [
+      { lng: targetLng - 0.0008, lat: targetLat - 0.0008, alt: 145 },
+      { lng: targetLng - 0.0004, lat: targetLat - 0.0004, alt: 148 },
+      { lng: targetLng, lat: targetLat, alt: 152 },
+      { lng: targetLng + 0.0004, lat: targetLat + 0.0004, alt: 148 },
+      { lng: targetLng + 0.0008, lat: targetLat + 0.0008, alt: 145 }
+    ];
+    showElevationProfile();
+    map.setView([targetLat, targetLng], 16);
+    console.log('✅ Grafik elevasi kantor berhasil ditampilkan!');
+  }, 2500);
 }
 
-function loadBangunan() { bangunanData.forEach(b => { try { const c = parseCoordinates(b.coordinates); if (!c || !c.length || !hasPointInArea(c)) return; const poly = L.polygon(c, { color: b.warna, fillColor: b.warna, fillOpacity: 0.25, weight: 2 }).addTo(map); const center = poly.getBounds().getCenter(); const icons = { reservoir: { i: 'fa-database', c: '#06b6d4' }, ipa: { i: 'fa-industry', c: '#8b5cf6' }, kantor: { i: 'fa-building', c: '#3b82f6' } }; const cfg = icons[b.jenis_bangunan] || { i: 'fa-building', c: '#6b7280' }; const m = L.marker(center, { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:${cfg.c};width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);"><i class="fas ${cfg.i}"></i></div>`, iconSize: [34, 34], iconAnchor: [17, 17] }) }).addTo(map); m.bindPopup(`<div style="min-width:180px;"><strong>${b.nama_bangunan}</strong><br>${b.jenis_bangunan}<div style="margin-top:8px;"><button onclick="showRouteTo(${center.lat},${center.lng},'${(b.nama_bangunan||'Bangunan').replace(/'/g,"\\'")}')" style="width:100%;padding:6px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-route"></i> Navigasi ke Lokasi</button></div></div>`); markerLayers[`bangunan_${b.id}`] = m; } catch(e) {} }); }
-function loadGangguan() { gangguanData.forEach(g => { try { const lat = parseFloat(g.latitude), lng = parseFloat(g.longitude); if (isNaN(lat) || isNaN(lng)) return; const colors = { menunggu: '#ef4444', dalam_proses: '#f59e0b', selesai: '#10b981' }; const c = colors[g.status] || '#ef4444'; const m = L.marker([lat, lng], { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:${c};width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:3px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.4);font-size:16px;"><i class="fas fa-exclamation-triangle"></i></div>`, iconSize: [40, 40], iconAnchor: [20, 20] }) }).addTo(map); m.bindPopup(`<div style="min-width:200px;"><strong style="color:${c}">${g.kode_laporan}</strong><br>${g.lokasi || '-'}<br>Status: ${g.status}<div style="margin-top:8px;display:flex;gap:4px;"><button onclick="focusOnGangguan(${g.id})" style="flex:1;padding:6px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-search-location"></i> Lihat</button><button onclick="showRouteTo(${lat},${lng},'Gangguan ${g.kode_laporan}')" style="flex:1;padding:6px;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-route"></i> Rute</button></div></div>`); markerLayers[`gangguan_${g.id}`] = m; } catch(e) {} }); }
-function loadTitikPenting() { titikPentingData.forEach(t => { try { const lat = parseFloat(t.latitude), lng = parseFloat(t.longitude); if (isNaN(lat) || isNaN(lng) || !isInArea(lat, lng)) return; const m = L.marker([lat, lng], { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background:#3b82f6;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:2px solid white;font-size:10px;"><i class="fas fa-map-pin"></i></div>`, iconSize: [24, 24], iconAnchor: [12, 12] }) }).addTo(map); m.bindPopup(`<strong>${t.nama_titik}</strong><br>${t.jenis_titik}`); markerLayers[`titik_${t.id}`] = m; } catch(e) {} }); }
-function loadZona() { zonaData.forEach(z => { try { const coords = parseCoordinates(z.coordinates); if (!coords || !coords.length || !hasPointInArea(coords)) return; const polygon = L.polygon(coords, { color: z.warna || '#f59e0b', fillColor: z.warna || '#f59e0b', fillOpacity: 0.2, weight: 3, dashArray: '8, 5' }).addTo(map); zonaLayers[z.id] = { polygon }; } catch(e) {} }); }
-function loadWilayahDanBlok() { const container = document.getElementById('wilayah-blok-container'); try { const wilayahMap = {}; pelangganDataFromLaravel.forEach(p => { const w = p.nama_wilayah || 'Tidak Diketahui'; if (!wilayahMap[w]) wilayahMap[w] = { count: 0, status: { Kantor: 0, PPOB: 0, 'Belum Bayar': 0 } }; wilayahMap[w].count++; const s = getPaymentStatus(p); wilayahMap[w].status[s.status] = (wilayahMap[w].status[s.status] || 0) + 1; }); let html = ''; Object.entries(wilayahMap).sort((a, b) => b[1].count - a[1].count).forEach(([w, d]) => { html += `<div class="wilayah-card"><div class="wilayah-header" onclick="focusOnWilayah('${w.replace(/'/g, "\\'")}')"><span><i class="fas fa-map-marker-alt"></i> ${w}</span><span style="background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:12px;font-size:11px;">${d.count}</span></div><div class="wilayah-blok-list" style="padding:6px;font-size:9px;">🏢 ${d.status['Kantor'] || 0} | 📱 ${d.status['PPOB'] || 0} | ⚠️ ${d.status['Belum Bayar'] || 0}</div></div>`; }); container.innerHTML = html || '<div class="empty-state">Tidak ada data</div>'; } catch(e) { container.innerHTML = '<div class="empty-state">Gagal memuat</div>'; } }
-function performSearch() { const q = document.getElementById('searchInput').value.trim().toLowerCase(); const filter = document.getElementById('searchFilter').value; const rc = document.getElementById('searchResults'); if (!q && filter === 'all') { rc.innerHTML = '<div class="search-empty">Ketik untuk mencari</div>'; return; } let results = pelangganDataFromLaravel.filter(p => { const s = getPaymentStatus(p); if (filter !== 'all' && s.status !== filter) return false; if (!q) return true; return (p.no_pelanggan || '').toLowerCase().includes(q) || (p.nama || '').toLowerCase().includes(q); }).slice(0, 20); if (!results.length) { rc.innerHTML = '<div class="search-empty">Tidak ditemukan</div>'; return; } rc.innerHTML = results.map(p => { const s = getPaymentStatus(p); return `<div class="search-result-item" onclick="focusOnPelanggan('${p.no_pelanggan}')"><div><div class="sr-name">${p.nama}</div><div class="sr-detail">No: ${p.no_pelanggan}</div></div><div class="sr-badge" style="background:${s.color};">${s.status}</div></div>`; }).join(''); }
-function clearSearch() { document.getElementById('searchInput').value = ''; document.getElementById('searchFilter').value = 'all'; document.getElementById('searchResults').innerHTML = '<div class="search-empty">Ketik untuk mencari</div>'; }
-function focusOnPelanggan(no) { const d = pelangganLayers[`pelanggan_${no}`]; if (d) { map.flyTo(d.coords, 18, { duration: 1 }); setTimeout(() => d.marker.openPopup(), 1000); } else { const u = unpaidCustomerList.find(x => x.data.no_pelanggan === no); if (u) { map.flyTo(u.coords, 18, { duration: 1 }); setTimeout(() => u.marker.openPopup(), 1000); } else showNotification('❌ Tidak ditemukan', 'warning'); } }
-function focusOnBangunan(id) { const m = markerLayers[`bangunan_${id}`]; if (m) { map.setView(m.getLatLng(), 17); m.openPopup(); } }
-function focusOnZona(id) { if (zonaLayers[id]) map.fitBounds(zonaLayers[id].polygon.getBounds(), { padding: [80, 80], maxZoom: 16 }); }
-function focusOnGangguan(id) { const m = markerLayers[`gangguan_${id}`]; if (m) { map.flyTo(m.getLatLng(), 17, { duration: 0.8 }); setTimeout(() => m.openPopup(), 800); } }
-function focusOnWilayah(nama) { const coords = []; pelangganDataFromLaravel.forEach(p => { if ((p.nama_wilayah || '-') === nama) { const c = parseKoordinator(p.koordinator); if (c && isInArea(c[0], c[1])) coords.push(c); } }); if (!coords.length) { showNotification('❌ Tidak ada koordinat', 'warning'); return; } map.fitBounds(L.latLngBounds(coords), { padding: [100, 100], maxZoom: 15 }); }
-function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-function toggleFullscreen() { const w = document.getElementById('mainWrapper'), b = document.getElementById('expandBtn'); if (!document.fullscreenElement) { w.requestFullscreen?.(); w.classList.add('is-fullscreen'); isFullscreen = true; b.classList.add('active'); b.innerHTML = '<i class="fas fa-compress"></i> <span>Keluar</span>'; } else { document.exitFullscreen?.(); w.classList.remove('is-fullscreen'); isFullscreen = false; b.classList.remove('active'); b.innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>'; } setTimeout(() => map?.invalidateSize(), 300); }
-document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement) { document.getElementById('mainWrapper').classList.remove('is-fullscreen'); isFullscreen = false; document.getElementById('expandBtn').classList.remove('active'); document.getElementById('expandBtn').innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>'; } setTimeout(() => map?.invalidateSize(), 300); });
-function initSidebarAutoScroll() { const sb = document.getElementById('sidebarContent'); if (!sb) return; sidebarScrollInterval = setInterval(() => { if (Date.now() - lastActivityTime > 30000 && sb.scrollHeight > sb.clientHeight + 50) { sb.scrollTop += sidebarScrollDirection; if (sb.scrollTop >= sb.scrollHeight - sb.clientHeight - 5) sidebarScrollDirection = -1; else if (sb.scrollTop <= 0) sidebarScrollDirection = 1; } }, 150); ['mousemove', 'click', 'keypress'].forEach(e => document.addEventListener(e, throttle(() => lastActivityTime = Date.now(), 500))); }
-let waQRGenerated = false;
-function showWAQR() { new bootstrap.Modal(document.getElementById('waQRModal')).show(); if (!waQRGenerated) { new QRCode(document.getElementById('wa-qrcode'), { text: 'https://wa.me/6288294979966', width: 200, height: 200, colorDark: '#128C7E', colorLight: '#ffffff' }); waQRGenerated = true; } }
+function loadBangunan() {
+  bangunanData.forEach(b => {
+    try {
+      const c = parseCoordinates(b.coordinates);
+      if (!c || !c.length || !hasPointInArea(c)) return;
+      const poly = L.polygon(c, { color: b.warna, fillColor: b.warna, fillOpacity: 0.25, weight: 2 }).addTo(map);
+      const center = poly.getBounds().getCenter();
+      const icons = {
+        reservoir: { i: 'fa-database', c: '#06b6d4' },
+        ipa: { i: 'fa-industry', c: '#8b5cf6' },
+        kantor: { i: 'fa-building', c: '#3b82f6' }
+      };
+      const cfg = icons[b.jenis_bangunan] || { i: 'fa-building', c: '#6b7280' };
+      const m = L.marker(center, {
+        icon: L.divIcon({
+          className: 'custom-div-icon',
+          html: `<div style="background:${cfg.c};width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);"><i class="fas ${cfg.i}"></i></div>`,
+          iconSize: [34, 34], iconAnchor: [17, 17]
+        })
+      }).addTo(map);
+      m.bindPopup(`<div style="min-width:180px;"><strong>${b.nama_bangunan}</strong><br>${b.jenis_bangunan}<div style="margin-top:8px;"><button onclick="showRouteTo(${center.lat},${center.lng},'${(b.nama_bangunan||'Bangunan').replace(/'/g,"\\'")}')" style="width:100%;padding:6px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-route"></i> Navigasi ke Lokasi</button></div></div>`);
+      markerLayers[`bangunan_${b.id}`] = m;
+    } catch(e) {}
+  });
+}
 
+function loadGangguan() {
+  gangguanData.forEach(g => {
+    try {
+      const lat = parseFloat(g.latitude), lng = parseFloat(g.longitude);
+      if (isNaN(lat) || isNaN(lng)) return;
+      const colors = { menunggu: '#ef4444', dalam_proses: '#f59e0b', selesai: '#10b981' };
+      const c = colors[g.status] || '#ef4444';
+      const m = L.marker([lat, lng], {
+        icon: L.divIcon({
+          className: 'custom-div-icon',
+          html: `<div style="background:${c};width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:3px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.4);font-size:16px;"><i class="fas fa-exclamation-triangle"></i></div>`,
+          iconSize: [40, 40], iconAnchor: [20, 20]
+        })
+      }).addTo(map);
+      m.bindPopup(`<div style="min-width:200px;"><strong style="color:${c}">${g.kode_laporan}</strong><br>${g.lokasi || '-'}<br>Status: ${g.status}<div style="margin-top:8px;display:flex;gap:4px;"><button onclick="focusOnGangguan(${g.id})" style="flex:1;padding:6px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-search-location"></i> Lihat</button><button onclick="showRouteTo(${lat},${lng},'Gangguan ${g.kode_laporan}')" style="flex:1;padding:6px;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;border:none;border-radius:5px;font-size:10px;cursor:pointer;font-weight:600;"><i class="fas fa-route"></i> Rute</button></div></div>`);
+      markerLayers[`gangguan_${g.id}`] = m;
+    } catch(e) {}
+  });
+}
+
+function loadTitikPenting() {
+  titikPentingData.forEach(t => {
+    try {
+      const lat = parseFloat(t.latitude), lng = parseFloat(t.longitude);
+      if (isNaN(lat) || isNaN(lng) || !isInArea(lat, lng)) return;
+      const m = L.marker([lat, lng], {
+        icon: L.divIcon({
+          className: 'custom-div-icon',
+          html: `<div style="background:#3b82f6;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;border:2px solid white;font-size:10px;"><i class="fas fa-map-pin"></i></div>`,
+          iconSize: [24, 24], iconAnchor: [12, 12]
+        })
+      }).addTo(map);
+      m.bindPopup(`<strong>${t.nama_titik}</strong><br>${t.jenis_titik}`);
+      markerLayers[`titik_${t.id}`] = m;
+    } catch(e) {}
+  });
+}
+
+function loadZona() {
+  zonaData.forEach(z => {
+    try {
+      const coords = parseCoordinates(z.coordinates);
+      if (!coords || !coords.length || !hasPointInArea(coords)) return;
+      const polygon = L.polygon(coords, { color: z.warna || '#f59e0b', fillColor: z.warna || '#f59e0b', fillOpacity: 0.2, weight: 3, dashArray: '8, 5' }).addTo(map);
+      zonaLayers[z.id] = { polygon };
+    } catch(e) {}
+  });
+}
+
+function loadWilayahDanBlok() {
+  const container = document.getElementById('wilayah-blok-container');
+  try {
+    const wilayahMap = {};
+    pelangganDataFromLaravel.forEach(p => {
+      const w = p.nama_wilayah || 'Tidak Diketahui';
+      if (!wilayahMap[w]) wilayahMap[w] = { count: 0, status: { Kantor: 0, PPOB: 0, 'Belum Bayar': 0 } };
+      wilayahMap[w].count++;
+      const s = getPaymentStatus(p);
+      wilayahMap[w].status[s.status] = (wilayahMap[w].status[s.status] || 0) + 1;
+    });
+    let html = '';
+    Object.entries(wilayahMap).sort((a, b) => b[1].count - a[1].count).forEach(([w, d]) => {
+      html += `<div class="wilayah-card"><div class="wilayah-header" onclick="focusOnWilayah('${w.replace(/'/g, "\\'")}')"><span><i class="fas fa-map-marker-alt"></i> ${w}</span><span style="background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:12px;font-size:11px;">${d.count}</span></div><div class="wilayah-blok-list" style="padding:6px;font-size:9px;">🏢 ${d.status['Kantor'] || 0} | 📱 ${d.status['PPOB'] || 0} | ⚠️ ${d.status['Belum Bayar'] || 0}</div></div>`;
+    });
+    container.innerHTML = html || '<div class="empty-state">Tidak ada data</div>';
+  } catch(e) {
+    container.innerHTML = '<div class="empty-state">Gagal memuat</div>';
+  }
+}
+
+function performSearch() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const filter = document.getElementById('searchFilter').value;
+  const rc = document.getElementById('searchResults');
+  if (!q && filter === 'all') {
+    rc.innerHTML = '<div class="search-empty">Ketik untuk mencari</div>';
+    return;
+  }
+  let results = pelangganDataFromLaravel.filter(p => {
+    const s = getPaymentStatus(p);
+    if (filter !== 'all' && s.status !== filter) return false;
+    if (!q) return true;
+    return (p.no_pelanggan || '').toLowerCase().includes(q) || (p.nama || '').toLowerCase().includes(q);
+  }).slice(0, 20);
+  if (!results.length) {
+    rc.innerHTML = '<div class="search-empty">Tidak ditemukan</div>';
+    return;
+  }
+  rc.innerHTML = results.map(p => {
+    const s = getPaymentStatus(p);
+    return `<div class="search-result-item" onclick="focusOnPelanggan('${p.no_pelanggan}')"><div><div class="sr-name">${p.nama}</div><div class="sr-detail">No: ${p.no_pelanggan}</div></div><div class="sr-badge" style="background:${s.color};">${s.status}</div></div>`;
+  }).join('');
+}
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchFilter').value = 'all';
+  document.getElementById('searchResults').innerHTML = '<div class="search-empty">Ketik untuk mencari</div>';
+}
+
+function focusOnPelanggan(no) {
+  const d = pelangganLayers[`pelanggan_${no}`];
+  if (d) {
+    map.flyTo(d.coords, 18, { duration: 1 });
+    setTimeout(() => d.marker.openPopup(), 1000);
+  } else {
+    const u = unpaidCustomerList.find(x => x.data.no_pelanggan === no);
+    if (u) {
+      map.flyTo(u.coords, 18, { duration: 1 });
+      setTimeout(() => u.marker.openPopup(), 1000);
+    } else showNotification('❌ Tidak ditemukan', 'warning');
+  }
+}
+
+function focusOnBangunan(id) {
+  const m = markerLayers[`bangunan_${id}`];
+  if (m) { map.setView(m.getLatLng(), 17); m.openPopup(); }
+}
+
+function focusOnZona(id) {
+  if (zonaLayers[id]) map.fitBounds(zonaLayers[id].polygon.getBounds(), { padding: [80, 80], maxZoom: 16 });
+}
+
+function focusOnGangguan(id) {
+  const m = markerLayers[`gangguan_${id}`];
+  if (m) {
+    map.flyTo(m.getLatLng(), 17, { duration: 0.8 });
+    setTimeout(() => m.openPopup(), 800);
+  }
+}
+
+function focusOnWilayah(nama) {
+  const coords = [];
+  pelangganDataFromLaravel.forEach(p => {
+    if ((p.nama_wilayah || '-') === nama) {
+      const c = parseKoordinator(p.koordinator);
+      if (c && isInArea(c[0], c[1])) coords.push(c);
+    }
+  });
+  if (!coords.length) {
+    showNotification('❌ Tidak ada koordinat', 'warning');
+    return;
+  }
+  map.fitBounds(L.latLngBounds(coords), { padding: [100, 100], maxZoom: 15 });
+}
+
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+
+function toggleFullscreen() {
+  const w = document.getElementById('mainWrapper'), b = document.getElementById('expandBtn');
+  if (!document.fullscreenElement) {
+    w.requestFullscreen?.();
+    w.classList.add('is-fullscreen');
+    isFullscreen = true;
+    b.classList.add('active');
+    b.innerHTML = '<i class="fas fa-compress"></i> <span>Keluar</span>';
+  } else {
+    document.exitFullscreen?.();
+    w.classList.remove('is-fullscreen');
+    isFullscreen = false;
+    b.classList.remove('active');
+    b.innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>';
+  }
+  setTimeout(() => map?.invalidateSize(), 300);
+}
+
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) {
+    document.getElementById('mainWrapper').classList.remove('is-fullscreen');
+    isFullscreen = false;
+    document.getElementById('expandBtn').classList.remove('active');
+    document.getElementById('expandBtn').innerHTML = '<i class="fas fa-expand"></i> <span>Fullscreen</span>';
+  }
+  setTimeout(() => map?.invalidateSize(), 300);
+});
+
+function initSidebarAutoScroll() {
+  const sb = document.getElementById('sidebarContent');
+  if (!sb) return;
+  sidebarScrollInterval = setInterval(() => {
+    if (Date.now() - lastActivityTime > 30000 && sb.scrollHeight > sb.clientHeight + 50) {
+      sb.scrollTop += sidebarScrollDirection;
+      if (sb.scrollTop >= sb.scrollHeight - sb.clientHeight - 5) sidebarScrollDirection = -1;
+      else if (sb.scrollTop <= 0) sidebarScrollDirection = 1;
+    }
+  }, 150);
+  ['mousemove', 'click', 'keypress'].forEach(e => document.addEventListener(e, throttle(() => lastActivityTime = Date.now(), 500)));
+}
+
+let waQRGenerated = false;
+function showWAQR() {
+  new bootstrap.Modal(document.getElementById('waQRModal')).show();
+  if (!waQRGenerated) {
+    new QRCode(document.getElementById('wa-qrcode'), {
+      text: 'https://wa.me/6288294979966',
+      width: 200, height: 200,
+      colorDark: '#128C7E', colorLight: '#ffffff'
+    });
+    waQRGenerated = true;
+  }
+}
+
+function changeSlideshow(dir) { /* placeholder */ }
+
+/* ============================================
+   ✅ BACAKAN PELANGGAN TERAKHIR SAAT LOAD
+   ============================================ */
 function bacakanPelangganTerakhirSaatLoad() {
-  const paidCustomers = pelangganDataFromLaravel.filter(p => { const hasLoket = p.tanggal_pembayaran_loket && !['-','.','',null].includes(p.tanggal_pembayaran_loket); const hasPPOB = p.tanggal_pembayaran_ppob && !['-','.','',null].includes(p.tanggal_pembayaran_ppob); return hasLoket || hasPPOB; });
-  if (paidCustomers.length === 0) { console.log('⚠️ Tidak ada data pembayaran untuk dibacakan saat load.'); return; }
-  paidCustomers.sort((a, b) => { const dateA = new Date(a.tanggal_pembayaran_loket || a.tanggal_pembayaran_ppob || 0); const dateB = new Date(b.tanggal_pembayaran_loket || b.tanggal_pembayaran_ppob || 0); return dateB - dateA; });
+  const paidCustomers = pelangganDataFromLaravel.filter(p => {
+    const hasLoket = p.tanggal_pembayaran_loket && !['-','.','',null].includes(p.tanggal_pembayaran_loket);
+    const hasPPOB = p.tanggal_pembayaran_ppob && !['-','.','',null].includes(p.tanggal_pembayaran_ppob);
+    return hasLoket || hasPPOB;
+  });
+  if (paidCustomers.length === 0) {
+    console.log('⚠️ Tidak ada data pembayaran untuk dibacakan saat load.');
+    return;
+  }
+  paidCustomers.sort((a, b) => {
+    const dateA = new Date(a.tanggal_pembayaran_loket || a.tanggal_pembayaran_ppob || 0);
+    const dateB = new Date(b.tanggal_pembayaran_loket || b.tanggal_pembayaran_ppob || 0);
+    return dateB - dateA;
+  });
   const latestCustomer = paidCustomers[0];
   const tanggalBayar = latestCustomer.tanggal_pembayaran_loket || latestCustomer.tanggal_pembayaran_ppob;
-  const mapped = { no_pelanggan: latestCustomer.no_pelanggan || latestCustomer.no_rekening || '-', nama: latestCustomer.nama || 'Tanpa Nama', nama_blok: latestCustomer.nama_blok || latestCustomer.alamat || '', nama_wilayah: latestCustomer.nama_wilayah || latestCustomer.cabang || '', tanggal_pembayaran_loket: latestCustomer.tanggal_pembayaran_loket || null, tanggal_pembayaran_ppob: latestCustomer.tanggal_pembayaran_ppob || null, statusInfo: { status: latestCustomer.tanggal_pembayaran_loket ? 'Kantor' : 'PPOB', metode: latestCustomer.tanggal_pembayaran_loket ? 'Kantor' : 'PPOB', tanggal: tanggalBayar } };
+  const mapped = {
+    no_pelanggan: latestCustomer.no_pelanggan || latestCustomer.no_rekening || '-',
+    nama: latestCustomer.nama || 'Tanpa Nama',
+    nama_blok: latestCustomer.nama_blok || latestCustomer.alamat || '',
+    nama_wilayah: latestCustomer.nama_wilayah || latestCustomer.cabang || '',
+    tanggal_pembayaran_loket: latestCustomer.tanggal_pembayaran_loket || null,
+    tanggal_pembayaran_ppob: latestCustomer.tanggal_pembayaran_ppob || null,
+    statusInfo: {
+      status: latestCustomer.tanggal_pembayaran_loket ? 'Kantor' : 'PPOB',
+      metode: latestCustomer.tanggal_pembayaran_loket ? 'Kantor' : 'PPOB',
+      tanggal: tanggalBayar
+    }
+  };
   const idUnik = mapped.no_pelanggan;
   const paymentKey = `${idUnik}_${tanggalBayar}`.trim();
   window.processedPaymentKeys.add(paymentKey);
@@ -1334,8 +2663,25 @@ function bacakanPelangganTerakhirSaatLoad() {
   setTimeout(() => { handlePaymentReceived(mapped); }, 3000);
 }
 
-document.addEventListener('DOMContentLoaded', () => { loadVoices(); setTimeout(loadVoices, 500); initMap(); });
-window.addEventListener('beforeunload', () => { stopRealtimePolling(); if (uiUpdateInterval) clearInterval(uiUpdateInterval); if (sidebarScrollInterval) clearInterval(sidebarScrollInterval); if (reminderTimeout) clearTimeout(reminderTimeout); if (liveCycleInterval) clearTimeout(liveCycleInterval); });
+/* ============================================
+   ✅ EVENT LISTENERS
+   ============================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  loadVoices();
+  setTimeout(loadVoices, 500);
+  initMap();
+});
+
+window.addEventListener('beforeunload', () => {
+  stopRealtimePolling();
+  if (uiUpdateInterval) clearInterval(uiUpdateInterval);       // ✅ BARU
+  if (wilayahRenderInterval) clearInterval(wilayahRenderInterval); // ✅ BARU
+  if (realtimeClockInterval) clearInterval(realtimeClockInterval); // ✅ BARU
+  if (sidebarScrollInterval) clearInterval(sidebarScrollInterval);
+  if (reminderTimeout) clearTimeout(reminderTimeout);
+  if (liveCycleInterval) clearTimeout(liveCycleInterval);
+});
+
 window.addEventListener('resize', throttle(() => map?.invalidateSize(), 250));
 </script>
 </body>
