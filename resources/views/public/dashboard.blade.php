@@ -1147,7 +1147,22 @@ async function checkNewPayments() {
 }
 function stopRealtimePolling() { if (realtimePollingInterval) { clearInterval(realtimePollingInterval); realtimePollingInterval = null; } }
 
-function convertRomanBlock(text) { if (!text) return ''; let cleanText = text.replace(/\\\//g, '/'); const romanMap = { 'VIII': '8', 'VII': '7', 'VI': '6', 'IV': '4', 'V': '5', 'III': '3', 'II': '2', 'I': '1', 'IX': '9', 'X': '10' }; return cleanText.replace(/\b(blok)\s+(X|IX|VIII|VII|VI|V|IV|III|II|I)\b/gi, (match, prefix, roman) => `${prefix} ${romanMap[roman.toUpperCase()]}`); }
+function convertRomanBlock(text) { 
+  if (!text) return ''; 
+
+  // 1. Bersihkan backslash dan ganti garis miring (/) menjadi spasi agar TTS tidak jeda
+  let cleanText = text.replace(/\\/g, '').replace(/\//g, ' '); 
+
+  // 2. Gabungkan "JL. Raya" / "Jl Raya" / "Jalan Raya" menjadi "Jalanraya"
+  cleanText = cleanText.replace(/\bjl\.?\s+raya\b/gi, 'Jalanraya');
+
+  // 3. Ubah sisa kata "JL" atau "JL." mandiri menjadi "Jalan"
+  cleanText = cleanText.replace(/\bjl\.?\b/gi, 'Jalan');
+
+  // 4. Konversi angka romawi blok
+  const romanMap = { 'VIII': '8', 'VII': '7', 'VI': '6', 'IV': '4', 'V': '5', 'III': '3', 'II': '2', 'I': '1', 'IX': '9', 'X': '10' }; 
+  return cleanText.replace(/\b(blok)\s+(X|IX|VIII|VII|VI|V|IV|III|II|I)\b/gi, (match, prefix, roman) => `${prefix} ${romanMap[roman.toUpperCase()]}`); 
+}
 
 function handlePaymentReceived(pelanggan) {
   if (!pelanggan) return;
@@ -1156,16 +1171,16 @@ function handlePaymentReceived(pelanggan) {
   const nama_blok = sanitizeTextForTTS(rawBlok);
   const metode = pelanggan.tanggal_pembayaran_ppob ? 'PPOB' : 'Kantor';
   const templates = [
-    `Pembayaran atas nama ${nama} dari ${nama_blok} lewat ${metode} sudah diterima. Terima kasih.`,
-    `Terima kasih, pembayaran dari ${nama} di ${nama_blok} berhasil masuk melalui ${metode}.`,
-    `Pembayaran dari ${nama}, ${nama_blok}, telah sukses diproses via ${metode}.`,
-    `Info masuk. Pembayaran ${metode} dari ${nama} daerah ${nama_blok} sudah diterima. Terima kasih.`,
-    `Pembayaran ${metode} dari ${nama} di ${nama_blok} sudah terverifikasi. Terima kasih.`,
-    `Terima kasih ${nama} dari ${nama_blok}, pembayaran via ${metode} sudah kami terima.`,
-    `Transaksi sukses. Pembayaran dari ${nama}, ${nama_blok}, lewat ${metode} berhasil diproses.`,
-    `Sistem mencatat pembayaran ${metode} dari ${nama} di ${nama_blok} telah masuk.`,
-    `Konfirmasi pembayaran dari ${nama}, ${nama_blok}, via ${metode} telah berhasil.`,
-    `Terima kasih. Pembayaran ${metode} atas nama ${nama} lokasi ${nama_blok} sudah diterima.`
+      `Pembayaran atas nama ${nama}, lokasi ${nama_blok}, melalui ${metode} sudah diterima. Terima kasih.`,
+    `Terima kasih. Pembayaran atas nama ${nama} di ${nama_blok} telah berhasil diproses via ${metode}.`,
+    `Transaksi atas nama ${nama}, wilayah ${nama_blok}, sukses diterima melalui ${metode}.`,
+    `Transaksi ${metode} dari ${nama}, ${nama_blok}, sudah terverifikasi. Terima kasih.`,
+    `Sistem berhasil mencatat pembayaran ${metode} dari ${nama}, alamat ${nama_blok}.`,
+    `Terima kasih kepada Bapak atau Ibu ${nama} dari ${nama_blok}. Pembayaran via ${metode} telah kami terima.`,
+    `Transaksi sukses. Pembayaran ${metode} atas nama ${nama}, ${nama_blok}, telah selesai diproses.`,
+    `Pembayaran dari ${nama}, ${nama_blok}, melalui ${metode} dinyatakan berhasil. Terima kasih.`,
+    `Terima kasih. Pembayaran layanan dari ${nama}, area ${nama_blok}, lewat ${metode} sudah diterima.`,
+    `Pembayaran ${metode} atas nama ${nama}, lokasi ${nama_blok}, telah resmi terverifikasi.`
   ];
   const randomMessage = templates[Math.floor(Math.random() * templates.length)];
   const finalMessage = `${metode === 'PPOB' ? 'INFO PPOB. ' : ''}${randomMessage}`;
